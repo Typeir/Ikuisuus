@@ -1,8 +1,6 @@
 /**
  * @fileoverview Renders a library page embed on the home page.
- * @description Embeds a FeaturedPage in an iframe. Fills the layout cell it
- * is given; the home-page bento decides side-by-side versus stacked. Holds a
- * skeleton in the same box until the pick resolves and the embed reports load.
+ * @description Embeds a FeaturedPage in an iframe.
  *
  * @module modules/search/presentation/ArchivistPanel/ArchivistPanel
  * @version 1.1.0
@@ -39,9 +37,7 @@ interface ArchivistPanelProps {
 const SKELETON_PROSE = ['96%', '88%', '93%', '71%'];
 
 /**
- * Renders a library page embed that fills its layout cell. Renders a
- * same-sized skeleton until `page` resolves and the iframe fires `load`, so
- * the cell never changes size between the two states.
+ * Renders a library page embed that fills its layout cell.
  *
  * @param {ArchivistPanelProps} props - Component props
  * @param {FeaturedPage | null} props.page - The page to embed, or null while the pick is pending

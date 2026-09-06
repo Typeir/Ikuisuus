@@ -37,7 +37,6 @@ export type { TooltipPlacement } from './useTooltipAnchor';
  * @property {TooltipPlacement} [placement='top'] - Placement preference (will flip if insufficient space)
  * @property {number} [showDelay=200] - Delay before showing tooltip in ms
  * @property {number} [hideDelay=100] - Grace period before the exit starts, in ms.
- * Long enough to cross the gap onto the surface, which holds itself open.
  * @property {number} [maxWidth=300] - Maximum width of tooltip in px
  * @property {boolean} [disabled=false] - Whether tooltip is disabled
  * @property {ReactElement} children - Trigger element (must accept ref and event handlers)
@@ -48,7 +47,7 @@ export type { TooltipPlacement } from './useTooltipAnchor';
  * @property {() => void} [onItemClick] - Callback when trigger is clicked in clickable mode
  * @property {boolean} [showClickIcon=true] - When clickable, whether to show the rhombus `?` glyph (default true)
  * @property {boolean} [inline=false] - When true, attaches handlers directly to child via cloneElement
- *   instead of wrapping in a span. Use for absolutely-positioned triggers.
+ *   instead of wrapping in a span.
  * @property {boolean} [forceVisible=false] - When true, tooltip is shown regardless of hover state
  */
 export interface TooltipProps {
@@ -122,8 +121,7 @@ export const Tooltip = memo(function Tooltip({
 
   /**
    * Escape dismisses the tooltip without moving the pointer, which content
-   * shown on hover or focus has to allow (WCAG 2.1 SC 1.4.13). A pinned
-   * tooltip is the caller's to close, so it opts out.
+   * shown on hover or focus has to allow (WCAG 2.1 SC 1.4.13).
    */
   useEscapeDismiss(showPortal && !forceVisible, hideNow);
 

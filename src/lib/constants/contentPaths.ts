@@ -2,8 +2,7 @@
  * Content Path Constants
  *
  * @fileoverview Single source of truth for the library subdirectory each
- * content kind lives under. Consumed by the search taxonomy, the preview-path
- * and raw-content API routes, and anything else building content paths.
+ * content kind lives under.
  *
  * @module lib/constants/contentPaths
  * @version 1.0.0
@@ -11,7 +10,7 @@
  * @since 8.0.0
  */
 
-/** Library subdirectory for each content kind. Specializations nest under their vocation. */
+/** Library subdirectory for each content kind. */
 export const CONTENT_SUBDIRS = {
   monsters: 'monsters',
   heirlooms: 'items/heirlooms',

@@ -1,8 +1,7 @@
 /**
  * SWR Cache Key Builders
  *
- * @fileoverview Typed SWR cache key builder functions. Each builder returns a
- * `readonly` tuple or `null` to skip fetching. Co-locates URL builders.
+ * @fileoverview Typed SWR cache key builder functions.
  *
  * @module lib/fetch/swrKeys
  * @version 1.0.0
@@ -10,9 +9,7 @@
  * @since 1.0.0
  *
  * @description
- * Key tuples follow `[resourceName, ...params]`. Builders with an `enabled`
- * parameter return `null` when `enabled` is falsy. URL builders follow
- * `urlFor{Resource}(params)`.
+ * Key tuples follow `[resourceName, ...params]`.
  *
  * @example
  * // In a hook:

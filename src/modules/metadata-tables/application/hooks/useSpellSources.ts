@@ -1,8 +1,6 @@
 /**
  * @fileoverview Spell Source Data Hook
  * @description Hook for loading spell data from mixed source arrays.
- * Uses SWR for caching and deduplication; preserves the initial-load
- * vs. refetching distinction for spinner differentiation.
  *
  * @module modules/metadata-tables/application/hooks/useSpellSources
  * @author Typeir

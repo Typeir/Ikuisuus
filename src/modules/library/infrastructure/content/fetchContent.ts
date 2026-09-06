@@ -1,8 +1,7 @@
 /**
  * @fileoverview Content Fetcher
  * @description Resolves a ContentSourceAdapter (filesystem or GitHub) by
- * environment and delegates fetching through it. React `cache()` deduplicates
- * calls within one server request.
+ * environment and delegates fetching through it.
  *
  * @module lib/utils/fetchContent
  * @author Typeir
@@ -22,8 +21,6 @@ const log = logger.child({ module: 'ContentFetcher' });
 /**
  * @function isBuildTime
  * @description Returns whether the filesystem adapter should be used.
- * `CONTENT_FETCH_MODE` overrides; otherwise reads `NODE_ENV` and
- * `NEXT_PHASE` (`phase-production-build`, `phase-development-server`).
  *
  * @returns {boolean} True during dev or build, false in production runtime
  */

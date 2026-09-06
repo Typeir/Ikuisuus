@@ -1,8 +1,7 @@
 /**
  * @fileoverview Monster Multiattack Extractor
  * @description Extracts multiattack parent and child attack features from
- * monster stat block sub-sections. Creates the parent feature with the
- * multiattack token and enriched child attack features.
+ * monster stat block sub-sections.
  *
  * @version 1.0.0
  * @author Typeir
@@ -37,7 +36,6 @@ export function featureId(slug: string, name: string): string {
 
 /**
  * Extracts a multiattack parent feature and its inline child attack features.
- * Multiattack_refs are not populated here.
  *
  * @param {SubSection} multiSub - The multiattack sub-section (description only)
  * @param {SubSection[]} childSubs - Bold-label attack subs following the multiattack

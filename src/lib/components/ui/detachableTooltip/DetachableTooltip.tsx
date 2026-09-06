@@ -1,16 +1,6 @@
 /**
  * @fileoverview Detachable Tooltip
- * @description A draggable card that opens on hover. It is a card from the
- * first frame — there is no tooltip phase and no promotion, so nothing shifts
- * when it is kept. Leaving the trigger fades it out; leaving with Shift held,
- * or Shift+Enter, pins it. On a coarse pointer a tap opens the card rather than
- * following the trigger, since there is no hover to open it with.
- *
- * Placement is `useTooltipAnchor`, unchanged from the plain `Tooltip`: the
- * position is written straight to the DOM before paint and the card stays
- * hidden until the first write, so it never appears in a spot it then leaves.
- * The card keeps that anchoring until it is dragged, at which point `useDrag`
- * takes the position it already has.
+ * @description A draggable card that opens on hover.
  *
  * @module lib/components/ui/detachableTooltip/DetachableTooltip
  * @version 5.0.0
@@ -83,8 +73,6 @@ export interface DetachableTooltipProps {
 
 /**
  * Draggable card that opens on hover and stays when pinned.
- *
- * The trigger is cloned, not wrapped, so no layout box lands in running prose.
  *
  * @param {DetachableTooltipProps} props - Component props
  * @returns {React.ReactElement} The trigger plus the card portal
@@ -206,9 +194,7 @@ export function DetachableTooltip({
   );
 
   /**
-   * A tap opens the card instead of following the trigger. Without hover, a
-   * touch reader could otherwise only leave the page to read a definition; the
-   * card's own link is the way onward.
+   * A tap opens the card instead of following the trigger.
    *
    * @param {ReactMouseEvent} event - Click on the trigger
    */

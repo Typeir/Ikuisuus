@@ -18,8 +18,6 @@ import { useEffect } from 'react';
 
 /**
  * Broadcasts the current theme as a `CustomEvent` with `detail.theme`.
- * Skips the server-rendered pass so the first dispatch carries the hydrated
- * value.
  */
 export function useThemeChangedEvent(): void {
   const { theme } = useThemeState();

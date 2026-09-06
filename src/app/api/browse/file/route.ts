@@ -1,8 +1,7 @@
 /**
  * @fileoverview Browse File API Route
  * @description Fuzzy-matches a slug to a library content file and returns its
- * raw MDX source as JSON. Built for agents and external API consumers: one
- * GET, no session, cacheable.
+ * raw MDX source as JSON.
  *
  * @module app/api/browse/file/route
  * @version 1.0.0
@@ -32,9 +31,7 @@ const CACHE_CONTROL = 'public, s-maxage=3600, stale-while-revalidate=86400';
  * GET /api/browse/file?slug=<fuzzy>&locale=en
  *
  * Returns the best-matching content file with its raw MDX source, plus ranked
- * alternates so a caller can disambiguate. `source` keeps frontmatter intact —
- * deliberate for this audience, since the frontmatter is metadata. 404 when
- * nothing matches or no candidate file loads.
+ * alternates so a caller can disambiguate.
  *
  * @param {Request} req - Next.js request object
  * @returns {Promise<NextResponse>} JSON payload or error object

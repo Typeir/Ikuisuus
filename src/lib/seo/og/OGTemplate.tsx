@@ -1,12 +1,6 @@
 /**
  * @fileoverview OG image JSX template for satori.
  *
- * Renders a 1200×630 dark card using only satori-compatible inline styles (no
- * CSS classes or variables). Two-column layout: text 40%, entity image 820×820
- * overflowing the canvas, description as a faint watermark behind the image.
- * Uses only satori-supported React element syntax — no hooks, context, or
- * browser APIs.
- *
  * @module lib/seo/og/OGTemplate
  * @version 1.0.0
  * @author Typeir
@@ -37,8 +31,6 @@ export interface OGTemplateProps {
 /**
  * Derives a human-readable type/rarity tag line from card data.
  *
- * Priority: `rarity + itemType` → `creatureType` → `school + level` → `level` → `subLabel`
- *
  * @param {OGCardData} data - Card metadata
  * @returns {string} Formatted tag line
  */
@@ -57,8 +49,6 @@ function buildTagLine(data: OGCardData): string {
 
 /**
  * Satori-compatible JSX card template for OG image generation.
- *
- * Plain function component with no hooks, event handlers, or browser globals.
  *
  * @param {OGTemplateProps} props - Template data and optional image URL
  * @returns {React.ReactElement} JSX element tree for satori

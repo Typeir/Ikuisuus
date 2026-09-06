@@ -1,11 +1,7 @@
 /**
  * @fileoverview Migration 022 — Create monster_features table
  * @description Creates the `monster_features` child table storing feature
- * shards parsed from monster stat blocks. Each row belongs to a parent
- * monster row via a cascading foreign key.
- *
- * After applying, run `npx tsx scripts/db/pg/seed-from-fs.ts` to backfill the
- * rows from regenerated sidecars.
+ * shards parsed from monster stat blocks.
  *
  * @module scripts/db/migrations/022_create_monster_features_table
  * @author Typeir

@@ -29,7 +29,6 @@ import type React from 'react';
 
 /**
  * Execute a zoom-to-body camera transition.
- * Updates the followed body ID via the provided setter and dispatches SelectBody.
  *
  * @param {string} bodyId - Target body ID
  * @param {Map<string, CelestialEntry>} celestials - Active celestial entries

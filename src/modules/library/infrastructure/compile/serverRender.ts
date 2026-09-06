@@ -1,6 +1,6 @@
 /**
  * @fileoverview Serializes evaluated MDX React nodes to an HTML string via
- * react-dom/server. Server-only; not to be imported from the client graph.
+ * react-dom/server.
  * @module src/modules/library/infrastructure/compile/serverRender
  * @author Typeir
  * @version 1.0.0

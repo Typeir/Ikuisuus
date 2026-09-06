@@ -13,8 +13,6 @@ import { describe, expect, it } from 'vitest';
 
 /**
  * Standard layout: Features column immediately follows Tier Bonus.
- *
- * | Level | Tier Bonus | Features | ... |
  */
 const STANDARD_TABLE = `
 | Level | Tier Bonus | Features                                | Rages | Rage Damage |
@@ -26,10 +24,6 @@ const STANDARD_TABLE = `
 
 /**
  * Extended layout: extra column(s) before Features.
- * Strider, Esper, and similar vocations have class-specific columns
- * (Lay of the Land, Psionic Dice) before the Features column.
- *
- * | Level | Tier Bonus | Lay of the Land | Features | ... |
  */
 const EXTENDED_TABLE_STRIDER = `
 | Level | Tier Bonus | Lay of the Land | Features                                      | Prepared Spells | 1st | 2nd |
@@ -41,8 +35,6 @@ const EXTENDED_TABLE_STRIDER = `
 
 /**
  * Alternative header: "Vocation Features" instead of "Features".
- *
- * | Level | Tier Bonus | Vocation Features | ... |
  */
 const VOCATION_FEATURES_TABLE = `
 | Level | Tier Bonus | Vocation Features                  | Invocations |
@@ -53,8 +45,6 @@ const VOCATION_FEATURES_TABLE = `
 
 /**
  * Monk-style: multiple interleaved columns before "Vocation Features".
- *
- * | Level | PB | Martial Arts | Focus | Movement | Vocation Features |
  */
 const MONK_TABLE = `
 | Level | PB | Martial Arts | Focus | Movement | Vocation Features                                    |

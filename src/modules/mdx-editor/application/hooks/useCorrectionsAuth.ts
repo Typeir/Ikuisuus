@@ -2,7 +2,6 @@
  * Corrections Auth Hook
  *
  * @fileoverview React hook for session-based authentication in the corrections module.
- * Session token is stored in PersistentUiState.
  *
  * @module modules/mdx-editor/application/hooks/useCorrectionsAuth
  * @version 1.0.0
@@ -47,9 +46,6 @@ interface LoginResponse {
 
 /**
  * Message for a failed login, preferring what the server said.
- *
- * `fetcher` parses the error body, so a rejected sign-in still carries the
- * reason the route gave rather than only its status.
  *
  * @param {unknown} err - Thrown value
  * @returns {string} Message to show the user
@@ -104,7 +100,6 @@ export interface CorrectionsAuthActions {
 
 /**
  * Hook that manages corrections module authentication.
- * Validates a stored token on mount. Provides login/logout actions.
  *
  * @returns {CorrectionsAuthState & CorrectionsAuthActions} Auth state and actions
  */

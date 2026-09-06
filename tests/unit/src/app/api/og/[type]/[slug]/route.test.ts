@@ -1,8 +1,6 @@
 /**
  * @fileoverview Unit tests for the OG image API route.
  *
- * Mocks the data layer and renderer. Validates 400 / 404 / 500 / 200 response paths.
- *
  * @module tests/unit/src/app/api/og/[type]/[slug]/route.test
  */
 

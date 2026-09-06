@@ -1,7 +1,7 @@
 /**
  * @fileoverview Character Roster Component
  * @description Two-panel view: left sidebar lists saved characters; the right panel
- * shows the active character's sheet. Provides create, delete, and select actions.
+ * shows the active character's sheet.
  *
  * @module modules/character-builder/presentation/Roster/characterRoster
  * @version 1.0.0
@@ -39,7 +39,6 @@ export interface CharacterRosterProps {}
 
 /**
  * Character roster page with sidebar + detail panel layout.
- * All state comes from CharacterSheetContext.
  *
  * @component
  * @param {CharacterRosterProps} props - Component props

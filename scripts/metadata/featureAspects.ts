@@ -1,8 +1,7 @@
 /**
  * @fileoverview Feature-Scoped Aspects
  * @description Derives aspects for a single monster feature, not the whole stat
- * block. Returns facets from the feature's line range and, where present, the
- * parsed `trigger`, `target` and `saving_throw` shard fields.
+ * block.
  *
  * @module scripts/metadata/featureAspects
  * @version 1.0.0
@@ -56,8 +55,7 @@ const WITHIN_STRIDES = /\bwithin\s+\*{0,2}\[=\s*(\d+)\s*stride/gi;
 
 /**
  * Derives a feature's range band from its parsed target range and any inline
- * `within ... stride` text. The furthest distance wins; the feet are remapped
- * to a band from `RANGE_BANDS`.
+ * `within ... stride` text.
  *
  * @param {MonsterFeature} feature - The feature being tagged
  * @param {string} body - The feature's text
@@ -86,8 +84,6 @@ function rangeAspect(feature: MonsterFeature, body: string): string[] {
 
 /**
  * Recovers a feature's own text from the 0-based source line range on its shard.
- * The range's end is exclusive; pastes the following feature's title when
- * inclusive-sliced. Returns empty when the range is missing or empty.
  *
  * @param {MonsterFeature} feature - Feature carrying a source range
  * @param {string[]} lines - Lines of the stat block file
@@ -192,7 +188,7 @@ const SPEED_MOVEMENT: Record<string, string> = {
 
 /**
  * Derives aspects from a stat block's declared defence, sense and movement
- * fields. Entries outside the damage-type or condition vocabulary are skipped.
+ * fields.
  *
  * @param {StatBlockFields} fields - Declared stat block fields
  * @param {SharedData} sharedData - Shared game data

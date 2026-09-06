@@ -26,12 +26,6 @@ export interface ShardPreviewData {
 /**
  * Extract preview kind and slug from a CharacterShard sourceFile path.
  *
- * Handles patterns like:
- * - `character-creation/bloodlines/empyrean.bloodline.mdx` → { kind: 'bloodlines', slug: 'empyrean' }
- * - `character-creation/vocations/wizard/main.mdx` → { kind: 'vocations', slug: 'wizard' }
- * - `character-creation/specializations/evocation/main.mdx` → { kind: 'specializations', slug: 'evocation' }
- * - `feats/fireball.feat.mdx` → { kind: 'feats', slug: 'fireball' }
- *
  * @function shardToPreview
  * @param {string} sourceFile - Relative path from `src/content/en/`
  * @returns {ShardPreviewData | null} Preview data, or null if pattern not recognized
@@ -67,7 +61,6 @@ export function shardToPreview(sourceFile: string): ShardPreviewData | null {
 
 /**
  * Check if sourceFile matches bloodline pattern.
- * Pattern: character-creation/bloodlines/slug.bloodline.mdx
  *
  * @function isBoodlinePattern
  * @param {string[]} parts - Split path parts
@@ -84,7 +77,6 @@ function isBoodlinePattern(parts: string[], lastSegment: string): boolean {
 
 /**
  * Check if sourceFile matches vocation pattern.
- * Pattern: character-creation/vocations/slug/main.mdx
  *
  * @function isVocationPattern
  * @param {string[]} parts - Split path parts
@@ -102,7 +94,6 @@ function isVocationPattern(parts: string[], lastSegment: string): boolean {
 
 /**
  * Check if sourceFile matches specialization pattern.
- * Pattern: character-creation/specializations/slug/main.mdx
  *
  * @function isSpecializationPattern
  * @param {string[]} parts - Split path parts
@@ -123,7 +114,6 @@ function isSpecializationPattern(
 
 /**
  * Check if sourceFile matches feat pattern.
- * Pattern: character-creation/feats/slug.mdx
  *
  * @function isFeatPattern
  * @param {string[]} parts - Split path parts

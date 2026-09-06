@@ -19,14 +19,10 @@ import type {
 
 /**
  * Repository contract for monster metadata.
- *
- * Implementations MUST be safe to call even when the backing store is
- * unavailable — return empty arrays or null rather than throwing.
  */
 export interface MonsterRepository {
   /**
    * Returns all monster metadata records for a locale.
-   * Multi-stat-block files are pre-flattened (one entry per stat block).
    *
    * @param {string} locale - Locale code (e.g. 'en', 'es')
    * @returns {Promise<MonsterMetadata[]>} Full metadata array
@@ -35,7 +31,6 @@ export interface MonsterRepository {
 
   /**
    * Returns lightweight monster index entries for dropdown search.
-   * Only includes slug, title, cr, size, and creatureType.
    *
    * @param {string} locale - Locale code
    * @returns {Promise<MonsterIndexEntry[]>} Minimal projection array
@@ -44,7 +39,6 @@ export interface MonsterRepository {
 
   /**
    * Returns a single monster by slug or subSlug.
-   * For multi-stat-block files, matches on `subSlug` first, then `slug`.
    *
    * @param {string} locale - Locale code
    * @param {string} slug - Monster slug or subSlug identifier
@@ -54,7 +48,7 @@ export interface MonsterRepository {
 
   /**
    * Returns every stat block that shares a file slug — all creatures of a
-   * multi-stat-block sheet, in file order. Empty when nothing matches.
+   * multi-stat-block sheet, in file order.
    *
    * @param {string} locale - Locale code
    * @param {string} slug - File-level monster slug

@@ -2,7 +2,7 @@
  * Monster Metadata Bundler
  *
  * @fileoverview Aggregates individual monster metadata JSON files into a single
- * bundle for client-side import. Flattens multi-stat-block files.
+ * bundle for client-side import.
  *
  * @module scripts/wip/bundleMonsterMetadata
  * @version 1.0.0

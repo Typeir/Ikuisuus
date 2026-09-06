@@ -1,7 +1,6 @@
 /**
  * @fileoverview Metadata Generation Orchestrator
  * @description Coordinates metadata generation across all content types.
- * CLI entry point reads --persist and per-type flags.
  *
  * @module scripts/metadata/generateMetadata
  * @version 3.0.0
@@ -109,21 +108,7 @@ const CONTENT_TYPES: Record<string, ContentTypeConfig> = {
   },
   /**
    * ==========================================================================
-   * !!! TODO(content-2.0) — FLAMING HACK, READ BEFORE EXTENDING !!!
-   * ==========================================================================
-   * Rules-flavored files live OUTSIDE rules/ because folders are navigation,
-   * not taxonomy: boons (bloodlines/shared-boons) and vocation option-menus
-   * (maneuvers, metamagic, gadgets, mind-paths, eldritch-invocation,
-   * lay-of-the-land — *.rule.mdx under vocations/) are rules slapped onto
-   * another group. This config can only express "one directory + one suffix
-   * per run", so the two entries below re-run the RULES generator over
-   * foreign directories to give those files rules sidecars. Search's
-   * collector is still directory-scoped, so these pages do not reach the
-   * index at all until this is fixed.
-   *
-   * On the content 2.0 waitlist: generators declared per suffix (taxonomy),
-   * walking the content tree once, folders carrying zero semantics.
-   * ==========================================================================
+   * !!!
    */
   boons: {
     dir: 'src/content/en/character-creation/bloodlines',

@@ -1,12 +1,7 @@
 /**
  * @fileoverview ChevronScroll Component
  * @description Wraps a horizontal strip in a scroll container flanked by
- * always-visible left/right chevron buttons. Chevrons scroll by a fixed step and
- * disable at the scroll edges. Native scrollbar hidden. Children rendered unchanged.
- *
- * Consumers may set `--chevron-scroll-max` (visible strip cap) and
- * `--chevron-scroll-bleed` (scrollport padding for transforms that overhang
- * the items) via `className`.
+ * always-visible left/right chevron buttons.
  *
  * @module lib/components/ui/chevronScroll/ChevronScroll
  * @author Typeir

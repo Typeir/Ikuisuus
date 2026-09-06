@@ -1,7 +1,6 @@
 /**
  * @fileoverview Theme Enum Unit Tests
  * @description Tests for the Theme enum that defines available UI color themes.
- * Used by ThemeSelector component, themeScript, and CSS custom properties.
  *
  * @module tests/unit/src/lib/constants/themes.test
  * @version 1.0.0

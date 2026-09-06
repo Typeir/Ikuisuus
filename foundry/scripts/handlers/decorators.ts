@@ -1,9 +1,7 @@
 /**
  * @fileoverview Decorator factories for the Foundry feature handler system.
  * @description `@parser()` registers a monster sheet parser class; `@handler()`
- * registers a per-feature handler method. Method decorators queue entries;
- * the class decorator stores them on the constructor. The {@link ParserRegistry}
- * reads them at discovery time.
+ * registers a per-feature handler method.
  *
  * @module foundry/scripts/handlers/decorators
  * @version 2.0.0
@@ -16,13 +14,11 @@
 
 /**
  * Metadata key used to store the sheet slug on decorated parser classes.
- * The {@link parser} decorator writes to this key; the registry reads it.
  */
 export const PARSER_SHEET_KEY = Symbol('parser:sheet');
 
 /**
  * Metadata key used to store the handler map on the class constructor.
- * Each entry maps a feature ID suffix to the method name that handles it.
  */
 export const HANDLER_MAP_KEY = Symbol('handler:map');
 
@@ -38,14 +34,12 @@ export interface HandlerEntry {
 }
 
 /**
- * Module-level accumulator for handler entries. Method decorators push here;
- * the class decorator sweeps entries onto the constructor and resets.
+ * Module-level accumulator for handler entries.
  */
 let pendingHandlers: HandlerEntry[] = [];
 
 /**
  * Class decorator factory that binds a parser class to a specific monster sheet slug.
- * Also sweeps any pending handler entries onto the class constructor.
  *
  * @param {string} sheetSlug - The monster sheet slug (e.g. "war-goddess-yskeia")
  * @returns {ClassDecorator} Decorator that attaches the slug and handler map

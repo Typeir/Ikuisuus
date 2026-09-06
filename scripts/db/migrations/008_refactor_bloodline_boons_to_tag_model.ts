@@ -3,9 +3,6 @@
  * @description Replaces prose-heavy boon storage (`body`, `notes`) with a
  * normalized `tags` array for query-oriented metadata.
  *
- * Existing rows are best-effort backfilled with coarse tags derived from the
- * legacy prose columns before those columns are dropped.
- *
  * @module scripts/db/migrations/008_refactor_bloodline_boons_to_tag_model
  * @author Typeir
  * @version 1.0.0

@@ -2,8 +2,7 @@
  * Viewport Room Measurement
  *
  * @fileoverview Measures the vertical space between an element's edge and the
- * viewport bottom, re-measured on resize. Sizes dropdowns and scroll boxes
- * that must fit under their anchor.
+ * viewport bottom, re-measured on resize.
  *
  * @module lib/hooks/useRoomBelow
  * @version 1.0.0

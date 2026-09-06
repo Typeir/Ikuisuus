@@ -1,13 +1,7 @@
 /**
  * @fileoverview Heirloom attributes list.
  * @description Where an author writes `<Attributes />` inside an heirloom,
- * the item's number slots print there as a labelled list. The values reach it
- * through context rather than a prop or an anchor the card matches by name,
- * so the marker can sit anywhere under the heading that introduces it.
- *
- * Slot names are written as bare attributes, so `<Attributes burden />` names
- * what prints rather than describing the narrowing around it. `except` takes
- * the same names and withholds them instead.
+ * the item's number slots print there as a labelled list.
  *
  * @module modules/library/presentation/components/slots/Attributes
  * @version 1.0.0
@@ -35,8 +29,7 @@ export type HeirloomValues = Partial<Record<HeirloomSlotName, ReactNode>>;
 export const HeirloomValuesContext = createContext<HeirloomValues>({});
 
 /**
- * Props for the attributes marker. Each slot name is a bare attribute naming
- * itself; `except` withholds the names it lists.
+ * Props for the attributes marker.
  *
  * @property {string} [except] - Slot names to withhold, whitespace or comma separated
  */
@@ -47,8 +40,7 @@ export type AttributesProps = Partial<
 };
 
 /**
- * Whether an attribute was written. MDX gives a bare attribute `true`; the
- * string forms cover a value that reached the component already serialised.
+ * Whether an attribute was written.
  *
  * @param {boolean | string | undefined} value - Attribute value
  * @returns {boolean} True when the name was asked for
@@ -57,8 +49,7 @@ const asked = (value: boolean | string | undefined): boolean =>
   value === true || value === '' || value === 'true';
 
 /**
- * Slot names the marker prints, in schema order. Named slots win; failing
- * those, everything the item carries less whatever `except` withholds.
+ * Slot names the marker prints, in schema order.
  *
  * @param {HeirloomValues} values - Header slot values
  * @param {AttributesProps} props - Marker props

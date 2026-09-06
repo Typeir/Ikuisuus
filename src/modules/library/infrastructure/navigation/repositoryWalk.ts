@@ -2,8 +2,7 @@
  * Repository Walk Utilities
  *
  * @fileoverview Wraps {@link walk} and {@link shallowWalk} with the
- * {@link DirectorySourceAdapter} resolved from the runtime environment. The
- * shallow variant uses the LRU-cached {@link listDirectory} facade.
+ * {@link DirectorySourceAdapter} resolved from the runtime environment.
  *
  * @module modules/library/infrastructure/navigation/repositoryWalk
  * @version 1.0.0
@@ -41,8 +40,7 @@ import { SHALLOW_WALK_DEPTH, shallowWalk } from './walkShallow';
 
 /**
  * Builds an adapter that wraps the LRU-cached `listDirectory` for
- * {@link shallowWalk}. Ignores the `locale` argument forwarded by the walk
- * engine; the locale is captured in closure from {@link repositoryShallowWalk}.
+ * {@link shallowWalk}.
  *
  * @param {string} locale - Locale code captured from the calling context
  * @returns {DirectorySourceAdapter} Adapter backed by the cached `listDirectory`
@@ -66,10 +64,6 @@ const makeFileTreeAdapter = (locale: string): DirectorySourceAdapter => ({
 /**
  * Full recursive navigation tree walk.
  *
- * Resolves the {@link DirectorySourceAdapter} for the current environment
- * (filesystem during dev/build, GitHub API in production) and runs
- * {@link walk}.
- *
  * @param {string} locale - Locale code (e.g. "en", "es")
  * @param {string} [base=''] - URL base prefix for path construction
  * @returns {Promise<WalkNode[]>} Complete navigation tree
@@ -84,13 +78,6 @@ export const repositoryWalk = async (
 
 /**
  * Shallow navigation tree walk backed by the LRU-cached `listDirectory`.
- *
- * Recurses to `maxDepth` levels. Directories at the limit are returned as
- * stub nodes (`{ isStub: true, children: [] }`), lazy-loaded on demand via
- * the `/api/content/walk` route.
- *
- * `maxDepth = 1` returns only the immediate children of `relativePath`; all
- * subdirectories are stubs. Used by `/api/content/walk` for folder expansion.
  *
  * @param {string} locale - Locale code (e.g. "en", "es")
  * @param {string} [relativePath=''] - Starting path relative to the content root

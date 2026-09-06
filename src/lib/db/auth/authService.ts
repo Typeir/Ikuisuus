@@ -1,8 +1,7 @@
 /**
  * @fileoverview Auth Service — User Management & Session Facade
  * @description Handles password hashing, session token generation/verification,
- * and user CRUD via a swappable adapter (`setUserAdapter()`). Session tokens are
- * non-expiring `sha256(CORRECTIONS_SECRET + userId)` digests, validated by recomputation.
+ * and user CRUD via a swappable adapter (`setUserAdapter()`).
  *
  * @module lib/db/auth/authService
  * @version 1.0.0
@@ -50,7 +49,6 @@ export const getUserAdapter = (): UserAdapter => adapter;
 
 /**
  * Hashes a plain-text password with SHA-256.
- * Returns a 64-character hex string.
  *
  * @param {string} password - Plain-text password
  * @returns {string} SHA-256 hex digest
@@ -75,7 +73,6 @@ export const verifyPassword = (password: string, storedHash: string): boolean =>
 
 /**
  * Derives a non-expiring session token for a user.
- * Token = `sha256(CORRECTIONS_SECRET + userId)`.
  *
  * @param {string} userId - Unique user ID
  * @returns {string} 64-char hex session token
@@ -197,7 +194,6 @@ export const createUser = async (
 
 /**
  * Extracts a SessionPayload from a Bearer token in an incoming Authorization header.
- * Returns null if the token is missing, malformed, or invalid.
  *
  * @param {string | null} authHeader - Raw Authorization header value
  * @returns {Promise<SessionPayload | null>} Session payload or null

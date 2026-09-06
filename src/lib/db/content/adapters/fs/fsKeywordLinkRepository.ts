@@ -1,8 +1,7 @@
 /**
  * @fileoverview Filesystem Keyword Link Repository
  * @description Implements `KeywordLinkRepository` by reading the whole
- * `.meta/{locale}` mirror in one pass. The graph spans every content type, so
- * it reads the tree rather than a subdirectory.
+ * `.meta/{locale}` mirror in one pass.
  *
  * @module lib/db/content/adapters/fs/fsKeywordLinkRepository
  * @version 1.0.0

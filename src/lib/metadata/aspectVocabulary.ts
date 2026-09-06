@@ -50,7 +50,6 @@ interface SharedDataLike {
 
 /**
  * Names of a list referenced by `valuesFrom`, as lower-cased strings.
- * Accepts arrays of strings or arrays of `{ name }` objects.
  *
  * @param {unknown} list - Referenced list
  * @returns {string[]} Value names

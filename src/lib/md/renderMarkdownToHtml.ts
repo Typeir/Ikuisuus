@@ -11,7 +11,6 @@ import html from 'remark-html';
 
 /**
  * Converts raw Markdown content to HTML using `remark`.
- * Supports GitHub-flavored markdown extensions.
  *
  * @param {string} markdown - The raw Markdown content to convert.
  * @returns {Promise<string>} - The rendered HTML string.

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Text mutation utilities via execCommand. Preserves native undo/redo.
+ * @fileoverview Text mutation utilities via execCommand.
  *
  * @module modules/mdx-editor/domain/editorCommands
  * @version 1.0.0
@@ -132,7 +132,6 @@ export function insertAtCursor(id: string, text: string): void {
 
 /**
  * Inserts a markdown link wrapping the selected text.
- * Places cursor inside the URL placeholder.
  *
  * @param {string} id - Textarea DOM id
  * @param {string} value - Full editor text
@@ -197,7 +196,6 @@ export function triggerRedo(id: string): void {
 
 /**
  * Handles VS Code-style keyboard shortcuts on the editor textarea.
- * Undo (Ctrl+Z) and Redo (Ctrl+Y / Ctrl+Shift+Z) are handled natively by the browser.
  *
  * @param {React.KeyboardEvent} e - Keyboard event
  * @param {string} textareaId - Textarea DOM id

@@ -2,7 +2,7 @@
  * @fileoverview SearchBar Unit Tests
  * @description Tests input wiring, dropdown open/close rules, arrow/Enter/
  * Escape keyboard navigation, form submit, Cmd/Ctrl-K shortcut, and
- * outside-click dismissal. `useSearch` is mocked.
+ * outside-click dismissal.
  *
  * @module tests/unit/src/modules/search/presentation/SearchBar/SearchBar.test
  * @author Typeir

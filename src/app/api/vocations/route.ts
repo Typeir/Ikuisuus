@@ -1,8 +1,6 @@
 /**
  * @fileoverview GET /api/vocations JSON endpoint.
  * @description Serves vocation metadata from the active content repository.
- * Accepts ?locale query parameter; defaults to 'en'. Returns array of vocation
- * objects with core traits, features, and gameplay tags.
  *
  * @version 1.0.0
  * @author Typeir

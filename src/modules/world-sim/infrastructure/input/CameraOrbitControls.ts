@@ -1,8 +1,6 @@
 /**
  * @fileoverview Camera Orbit Controls — Input-Driven Spherical Orbit
  * @description Pure input handler for mouse drag, scroll zoom, and touch gestures.
- * Maintains spherical coordinates relative to an orbit center. Does not own
- * the target or camera; the CameraController reads these and applies positions.
  *
  * @module modules/world-sim/infrastructure/input/CameraOrbitControls
  * @version 2.0.0
@@ -25,7 +23,6 @@ import {
 
 /**
  * Manages user input for orbiting a camera around a center point.
- * Owns the spherical coordinate state and angular velocity damping.
  *
  * @class CameraOrbitControls
  */
@@ -141,7 +138,6 @@ export class CameraOrbitControls {
 
   /**
    * Apply damping to angular velocity each frame when not dragging.
-   * Sets isDirty if the spherical coords change.
    */
   applyDamping(): void {
     if (this.isDragging) return;

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Skills Table Component
  * @description Renders a full skills table with proficiency toggles, ability modifier,
- * and total bonus per skill. Each row can be clicked to cycle proficiency level.
+ * and total bonus per skill.
  *
  * @module modules/character-builder/presentation/stats/skillsTable
  * @version 1.0.0
@@ -47,7 +47,6 @@ export interface SkillsTableProps {
 
 /**
  * Full skills table with proficiency cycling and computed bonuses.
- * Clicking a skill row cycles: none → proficient → expert → none.
  *
  * @component
  * @param {SkillsTableProps} props - Component props
@@ -136,8 +135,6 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
 };
 
 /**
- * Memoized `SkillsTable` export. Re-renders only when one of its props
- * changes by reference (skills array, abilityScores map, tierBonus,
- * onChange callback, readOnly flag).
+ * Memoized `SkillsTable` export.
  */
 export const SkillsTable = memo(SkillsTableImpl);

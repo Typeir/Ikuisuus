@@ -2,9 +2,7 @@
  * SCSS Module Shim — preload via --import flag.
  *
  * @fileoverview Registers both ESM and CJS hooks so that .scss and
- * .module.scss imports resolve to inert Proxy objects. This enables
- * scripts to import React components that depend on CSS modules without
- * a bundler.
+ * .module.scss imports resolve to inert Proxy objects.
  *
  * @module scripts/utils/scssShim
  * @author Typeir

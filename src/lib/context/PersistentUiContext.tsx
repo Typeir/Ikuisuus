@@ -2,7 +2,7 @@
  * Persistent UI Context and Provider
  *
  * @fileoverview React Context for persistent UI state (theme, unit system,
- * sidebar). Exports provider and access hooks.
+ * sidebar).
  *
  * @module lib/context/PersistentUiContext
  * @version 2.2.0
@@ -56,8 +56,7 @@ interface PersistentUiDispatchContextValue {
 }
 
 /**
- * Subscription surface behind `usePersistentUiSelector`. Stable for the
- * provider's lifetime, so holding it in context never re-renders consumers.
+ * Subscription surface behind `usePersistentUiSelector`.
  *
  * @interface PersistentUiStore
  * @property {(listener: () => void) => () => void} subscribe - Registers a change listener; returns the unsubscribe
@@ -96,10 +95,7 @@ interface PersistentUiProviderProps {
  * @returns {JSX.Element} Context providers wrapping children
  *
  * @description Uses server-provided initialExpandedPaths to prevent hydration
- * mismatch. The selector snapshot ref is written during render rather than in
- * an effect so a consumer rendering in the same commit as a dispatch reads
- * the new state; deferred one commit, a row mirroring expansion into local
- * state would see a stale snapshot and revert its own toggle.
+ * mismatch.
  */
 export function PersistentUiProvider({
   children,
@@ -180,8 +176,6 @@ export function usePersistentUiState(): PersistentUiState {
 /**
  * Hook to access persistent UI state without requiring a provider.
  *
- * Returns the default state when no provider is present.
- *
  * @returns {PersistentUiState} Provider state, or the unhydrated defaults
  */
 export function usePersistentUiStateOptional(): PersistentUiState {
@@ -207,8 +201,6 @@ export function usePersistentUiDispatch(): (
 /**
  * Hook to access dispatch without requiring a provider.
  *
- * Returns null when no provider is present.
- *
  * @returns {((action: PersistentUiAction) => void) | null} Dispatch, or null with no provider
  */
 export function usePersistentUiDispatchOptional():
@@ -219,10 +211,7 @@ export function usePersistentUiDispatchOptional():
 }
 
 /**
- * Subscribes to one derived value of the persistent UI state. The component
- * re-renders only when the selected value changes (`Object.is`), so dispatches
- * that leave it untouched skip the component entirely. Selectors must return
- * a primitive or a reference stable across identical state.
+ * Subscribes to one derived value of the persistent UI state.
  *
  * @template T - Selected value type
  * @param {(state: PersistentUiState) => T} selector - Pure projection of the state

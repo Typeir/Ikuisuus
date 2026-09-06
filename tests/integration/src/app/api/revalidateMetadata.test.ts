@@ -1,10 +1,5 @@
 /**
  * Integration tests for post-publish metadata regeneration.
- *
- * Exercises the revalidate route against the real sync service wiring, with
- * only the ORM boundary and Next's cache primitives faked. Covers the publish
- * shapes that reach the endpoint: in-site editor publishes that archive a
- * draft, and bucket pushes that have no draft at all.
  */
 
 import { NextRequest } from 'next/server';

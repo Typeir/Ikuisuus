@@ -23,7 +23,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 /**
- * Spell table with external filter controls. Damocles and concentration filters.
+ * Spell table with external filter controls.
  *
  * @component
  * @param {SpellTablesProps} props

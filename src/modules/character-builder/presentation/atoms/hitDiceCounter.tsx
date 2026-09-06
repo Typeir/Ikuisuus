@@ -1,10 +1,6 @@
 /**
  * @fileoverview Hit Dice Counter Component
  * @description Compact counter above the HP cell in the combat stats row.
- * Shows the character's total hit dice as `Nd{type}` for a single vocation
- * and as `Nd?` with a breakdown tooltip for mixed (multiclassing) characters.
- * Die type per vocation resolves from `hitDie` first, then from `hitDiceLog`;
- * else {@link UNKNOWN_DIE}. Skips vocations with empty slug.
  * @module modules/character-builder/presentation/atoms/hitDiceCounter
  * @version 2.0.0
  * @author Typeir
@@ -50,9 +46,7 @@ function resolveDieFaces(entry: VocationEntry, log: HitDieRollEntry[]): number {
 }
 
 /**
- * Compact hit dice counter rendered above the HP cell. Single vocation: shows
- * e.g. `5d10`. Mixed vocations: shows `Nd?` with a tooltip listing each
- * vocation's die contribution and a note.
+ * Compact hit dice counter rendered above the HP cell.
  *
  * @component
  * @param {HitDiceCounterProps} props - Component props

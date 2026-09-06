@@ -13,7 +13,6 @@ import type { BannedIpEntry } from './bannedIps';
 
 /**
  * Persistence contract for banned IP ranges.
- * Implementations MUST be safe to call when the backing store is unavailable.
  */
 export interface BannedIpsAdapter {
   /**

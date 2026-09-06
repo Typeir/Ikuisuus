@@ -10,8 +10,7 @@
 
 /**
  * A single level–name feature pair sourced from vocation or specialization
- * metadata. Used both during metadata generation and at runtime when assembling
- * {@link CharacterShard} arrays.
+ * metadata.
  *
  * @interface FeatureEntry
  * @property {number} level - Character level at which the feature is gained

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Shared lookup maps for Foundry VTT dnd5e data model mappings.
  * @description Maps Ikuisuus metadata values (sizes, damage types, conditions,
- * skills, languages) to their dnd5e system equivalents. Used by all
- * content transformers.
+ * skills, languages) to their dnd5e system equivalents.
  *
  * @module foundry/scripts/constants/dnd5eMaps
  * @version 1.0.0
@@ -40,7 +39,6 @@ export const DAMAGE_TYPE_MAP: Record<string, string> = {
 
 /**
  * Maps condition names from Ikuisuus metadata to dnd5e condition keys.
- * Ikuisuus uses "Terrified" where dnd5e uses "frightened".
  */
 export const CONDITION_MAP: Record<string, string> = {
   blinded: 'blinded',

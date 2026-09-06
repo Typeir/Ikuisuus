@@ -1,7 +1,6 @@
 /**
  * @fileoverview PostgreSQL Banned IP Adapter (MikroORM)
  * @description Implements the `BannedIpsAdapter` interface using MikroORM.
- * Queries the `banned_ips` table via the shared ORM singleton.
  *
  * @module lib/security/adapters/pgBannedIpsAdapter
  * @version 1.0.0

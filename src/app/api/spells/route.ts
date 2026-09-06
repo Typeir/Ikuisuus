@@ -1,8 +1,6 @@
 /**
  * @fileoverview Spell metadata JSON endpoint.
- * @description Serves spell metadata from the content repository. Accepts
- * `locale`, `spells`, `listSource`, `listSources`, and `filters` in the POST
- * body. Returns an array of spell objects.
+ * @description Serves spell metadata from the content repository.
  *
  * @version 3.0.0
  * @author Typeir
@@ -38,8 +36,7 @@ import { NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Spells:List' });
 
 /**
- * Filter fields this route accepts. Any filter targeting a field outside this
- * set is rejected with 400.
+ * Filter fields this route accepts.
  *
  * @type {ReadonlySet<string>}
  */
@@ -82,8 +79,7 @@ const dedupeBySlug = (spells: SpellMetadata[]): SpellMetadata[] => {
 /**
  * POST /api/spells
  *
- * Returns spell metadata from the active content repository. Samples
- * `sources`, then `spells` slugs, else all spells, in that order.
+ * Returns spell metadata from the active content repository.
  *
  * @param {Request} req - Next.js request object
  * @returns {Promise<NextResponse>} JSON array of spell objects

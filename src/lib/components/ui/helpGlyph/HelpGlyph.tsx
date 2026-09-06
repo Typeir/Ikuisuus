@@ -1,9 +1,7 @@
 /**
  * @fileoverview HelpGlyph — the `?` mark in a rhombus.
  * @description Replaces lucide's `CircleHelp` wherever a control advertises a
- * tooltip or a lookup. Decorative: always `aria-hidden`; the owning control
- * carries the accessible name. Draws in `currentColor`, so the parent's
- * colour and hover rules apply unchanged.
+ * tooltip or a lookup.
  *
  * @module lib/components/ui/helpGlyph/HelpGlyph
  * @version 1.0.0

@@ -14,6 +14,7 @@ import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { unslotTrinket } from './slotForms';
 import {
   GameData,
   blankFrontmatter,
@@ -242,7 +243,7 @@ export function parseTrinketSource(
   sharedData: SharedData,
 ): object | null {
   try {
-    const body = blankFrontmatter(raw);
+    const body = unslotTrinket(blankFrontmatter(raw));
     const lines = body.split('\n').map((l) => l.trim());
 
     const slug = filePathToSlug(filePath);

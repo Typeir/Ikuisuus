@@ -2,11 +2,10 @@
  * @fileoverview Unit tests for Theme Selector Layout component
  * @module tests/unit/src/app/[locale]/utils/themeSelectorLayout.test
  * @description Validates ThemeSelectorLayout export and component signature.
- * Tests layout wrapper component for theme selection.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @/app/[locale]/utils/themeSelectorLayout
  */

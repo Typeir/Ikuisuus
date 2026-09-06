@@ -1,8 +1,6 @@
 /**
  * @fileoverview IconLink atom — a text link with a glyph on its right.
- * @description Next `Link` wearing a small fixed glyph vocabulary. Ghost at
- * rest, tone + glow on hover. Navigation is the framework's; the atom owns
- * the chrome only.
+ * @description Next `Link` wearing a small fixed glyph vocabulary.
  *
  * @module lib/components/ui/iconLink/IconLink
  * @version 1.0.0
@@ -19,7 +17,7 @@ import type { ComponentProps, ReactNode } from 'react';
 import styles from './iconLink.module.scss';
 
 /**
- * Glyph vocabulary. `edit` opens an editor, `open` a preview, `external` leaves the site.
+ * Glyph vocabulary.
  *
  * @typedef {'edit'|'open'|'external'} IconLinkKind
  */

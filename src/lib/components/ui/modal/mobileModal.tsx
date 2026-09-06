@@ -1,7 +1,7 @@
 /**
  * @fileoverview Generic Mobile Modal Component
  * @description Mobile bottom-sheet modal with focus trap, keyboard navigation,
- * and optional `console` variant. Renders to a portal for z-index stacking.
+ * and optional `console` variant.
  *
  * @module lib/components/ui/modal/mobileModal
  * @version 2.0.0
@@ -46,7 +46,6 @@ export interface MobileModalProps {
 
 /**
  * Mobile bottom-sheet modal with focus management and keyboard navigation.
- * Renders to document.body via portal.
  *
  * @component
  * @param {MobileModalProps} props - Modal configuration.

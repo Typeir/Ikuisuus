@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Draft
  * @description Decorator-based entity for the `drafts` table.
- * Stores temporary .mdx draft content prior to revalidation.
  *
  * @module lib/db/orm/entities/DraftEntity
  * @version 1.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Vocation base-proficiency sync hook
  * @description Syncs each vocation entry's `baseSavingThrows`, `baseSkillChoiceCount`,
  * `baseSkillChoices`, and `baseTradeFixed` from the vocation metadata its slug
- * resolves to. Patches only on a real difference.
+ * resolves to.
  *
  * @module modules/character-builder/presentation/builder/useVocationBaseSync
  * @version 2.0.0
@@ -69,7 +69,6 @@ interface VocationBaseSnapshot {
 /**
  * Syncs `baseSavingThrows`, `baseSkillChoiceCount`, `baseSkillChoices`, and
  * `baseTradeFixed` on every vocation entry from vocation metadata by slug.
- * Reads the vocation entries and the write API from the active-sheet context.
  *
  * @function useVocationBaseSync
  * @param {VocationOption[]} vocOptions - Loaded vocation metadata options

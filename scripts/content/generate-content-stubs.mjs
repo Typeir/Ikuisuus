@@ -1,8 +1,6 @@
 /**
  * Generates stub .mdx + .metadata.json for missing illness, condition, and
  * rules sub-page content files referenced by MDX library links.
- *
- * Run: node scripts/content/generate-content-stubs.mjs [--dry-run]
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'fs';

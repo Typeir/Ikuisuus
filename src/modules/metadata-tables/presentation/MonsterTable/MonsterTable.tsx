@@ -47,7 +47,6 @@ type MonsterTableWrapperProps = {
 
 /**
  * Fetches locale-aware monster data via API and renders MetadataTable.
- * Uses locale from props, route params, or defaults to 'en'.
  *
  * @component
  * @param {MonsterTableWrapperProps} props - Component props

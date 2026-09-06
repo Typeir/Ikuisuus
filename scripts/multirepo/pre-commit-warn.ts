@@ -1,8 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * @fileoverview Pre-commit hook that warns when the other repo in the
- * multirepo setup has uncommitted changes. Installed as
- * `.git/hooks/pre-commit` in the content submodule by `setup-hooks.ts`.
+ * multirepo setup has uncommitted changes.
  * @module scripts/multirepo/pre-commit-warn
  */
 import { spawnSync } from 'child_process';
@@ -11,7 +10,6 @@ import { resolve } from 'path';
 
 /**
  * Runs `git` with the given arguments inside a repo directory.
- * Returns the process exit status (0 = clean / success).
  * @param repo - Absolute path to the repository root.
  * @param args - Git subcommand and flags.
  */
@@ -49,7 +47,7 @@ function hasStaged(repo: string): boolean {
 }
 
 /**
- * Entry point. Exits 0 in all cases — this hook only warns, never blocks.
+ * Entry point.
  */
 function main(): void {
   if (process.env['IK_RUNNING'] === '1') {

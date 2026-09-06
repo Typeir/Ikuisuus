@@ -55,7 +55,7 @@ export const SIZE_SORT_ORDER: Readonly<Record<string, number>> = {
 } as const;
 
 /**
- * Label per spell level. Fallback values; localized strings override these.
+ * Label per spell level.
  *
  * @type {Readonly<Record<number, string>>}
  */

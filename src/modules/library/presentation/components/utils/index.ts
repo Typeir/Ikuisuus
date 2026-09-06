@@ -1,8 +1,7 @@
 /**
  * @fileoverview Machine text stream resolver for MDX section decorations.
  * @description Resolves a deterministic stream string from content metadata,
- * separator-wrapped and whitespace-normalised. Falls back to an FNV-1a32 hash of the
- * raw content when no metadata record exists for the slug path.
+ * separator-wrapped and whitespace-normalised.
  *
  * @module modules/library/presentation/components/utils/index
  * @version 1.0.0
@@ -23,7 +22,6 @@ const STREAM_SEPARATOR = ' // ';
 
 /**
  * Title-cases a slug-like token, replacing hyphens/underscores with spaces.
- * Example: "dreaded-defender" -> "Dreaded Defender"
  */
 function titleCaseToken(token: string): string {
   if (!token) return token;
@@ -47,7 +45,7 @@ function wrapSegment(body: string): string {
 }
 
 /**
- * Collapses whitespace in a stream string. The rail repeats it for the loop.
+ * Collapses whitespace in a stream string.
  *
  * @param {string} segment - Single-pass stream string
  * @returns {string} Normalized stream string
@@ -225,7 +223,6 @@ export async function resolveStreamSegment(
 
 /**
  * Resolves a deterministic stream string for a given page.
- * Falls back to an FNV-1a32 hash of the raw content.
  *
  * @param {string} locale - Content locale (e.g. "en", "es")
  * @param {string[]} slugSegments - Decoded slug path segments (e.g. ["monsters", "albedo"])

@@ -30,13 +30,12 @@ export const C = {
 } as const;
 
 /**
- * Environment forwarded to child git processes. Adds `IK_RUNNING=1`.
+ * Environment forwarded to child git processes.
  */
 export const CHILD_ENV = { ...process.env, IK_RUNNING: '1' };
 
 /**
  * ASCII logo displayed when the interactive TUI or help is launched.
- * Rendered in cyan.
  */
 export const LOGO = `   
   |==========================================================================================================================|

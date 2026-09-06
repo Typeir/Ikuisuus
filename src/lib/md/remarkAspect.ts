@@ -1,6 +1,6 @@
 /**
  * @fileoverview Inline aspect shorthand `[( group:value )]` → `<Aspect />`.
- * @description Shorthand rendering mode via optional `;display`. Malformed tokens stay as text.
+ * @description Shorthand rendering mode via optional `;display`.
  *
  * @module lib/md/remarkAspect
  * @version 1.0.0
@@ -21,8 +21,7 @@ import { visit } from 'unist-util-visit';
 export const ASPECT_COMPONENT_NAME = 'Aspect';
 
 /**
- * Matches `[( group:value )]` and `[( group:value;display )]`. Group and value
- * are kebab tokens; group may itself be namespaced (`meta:content`).
+ * Matches `[( group:value )]` and `[( group:value;display )]`.
  *
  * @constant
  */

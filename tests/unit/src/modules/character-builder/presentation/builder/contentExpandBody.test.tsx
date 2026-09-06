@@ -1,8 +1,6 @@
 /**
  * @fileoverview ContentExpandBody Tests
  * @description Unit tests for the unified inline content body component.
- * Validates the cached-text fast path, the lazy fetch error path, and the id
- * wiring used by the row's aria-controls.
  */
 
 import { ContentExpandBody } from '@/modules/character-builder/presentation/builder/contentExpandBody';

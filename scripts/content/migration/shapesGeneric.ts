@@ -1,7 +1,6 @@
 /**
  * @fileoverview Generic dice expression shapes (recovery, charges, rolls, bare dice)
  * @description Second half of target shapes — non-combat patterns.
- * Each transform returns replacement substring + old matched substring.
  *
  * @module scripts/content/migration/shapesGeneric
  * @version 1.0.0
@@ -103,7 +102,7 @@ const STOP_WORDS = new Set([
   'bonus',
 ]);
 
-/** Known damage type keywords. If the matched type matches one, it's valid. */
+/** Known damage type keywords. */
 const DAMAGE_TYPES = new Set([
   'bludgeoning',
   'piercing',

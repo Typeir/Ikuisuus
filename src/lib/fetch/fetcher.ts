@@ -2,7 +2,6 @@
  * SWR Global Fetcher
  *
  * @fileoverview Typed HTTP JSON fetcher for use as the SWR global fetcher.
- * Throws {@link FetchError} on non-OK responses.
  *
  * @module lib/fetch/fetcher
  * @version 1.0.0
@@ -12,7 +11,7 @@
  * @requires fetch Browser Fetch API (available in Next.js client and server)
  *
  * @description
- * Default fetcher for SWR hooks. Accepts a URL string or a `[url, RequestInit]` tuple.
+ * Default fetcher for SWR hooks.
  *
  * @example
  * // Used automatically by SWRConfig default fetcher

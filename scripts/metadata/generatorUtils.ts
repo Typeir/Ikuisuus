@@ -129,9 +129,6 @@ export function getMetaSubdir(contentType: string): string {
 
 /**
  * Resolves the output path for a .metadata.json file.
- * Always writes to the .meta/{locale}/{subdir}/ mirror tree, never alongside
- * the source; sidecars in the content tree are build clutter in a submodule
- * that serves as the content bucket.
  *
  * @param {string} sourceFilePath - Original MDX file path
  * @param {RegExp} filePattern - Pattern to replace with .metadata.json
@@ -205,8 +202,6 @@ export interface GeneratorConfig {
 
 /**
  * Stamps shared fields (versionHash, readingTime) onto metadata records.
- * Arrays receive the same values on every record. Generator-set values are
- * never overwritten except versionHash, which is always set here.
  *
  * @param {unknown} metadata - Parsed metadata object, array, or null
  * @param {string} hash - Pre-computed version hash

@@ -1,10 +1,6 @@
 /**
  * @fileoverview Content Repo Webhook API
  * @description Receives webhook calls from the content repo's GitHub Actions.
- * Currently supports banning IPs when the profanity filter catches content
- * that bypassed the corrections API's server-side check.
- *
- * Protected by the CONTENT_WEBHOOK_SECRET env var.
  *
  * @module app/api/content-webhook/route
  * @author Typeir
@@ -23,8 +19,6 @@ const log = logger.child({ module: 'API:ContentWebhook' });
  * POST /api/content-webhook
  *
  * @description Handles webhook events from the content repo's CI.
- *
- * Body: `{ action: "ban-ip", ip: string, reason: string }`
  */
 export async function POST(req: NextRequest) {
   const secret = process.env.CONTENT_WEBHOOK_SECRET;

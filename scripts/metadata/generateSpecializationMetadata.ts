@@ -13,6 +13,7 @@
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
+import { parentVocationOf, unslotVocation } from './slotForms';
 import path from 'path';
 import {
     applyAuthoredFeatureAspects,
@@ -263,13 +264,13 @@ async function parseSpecializationFile(
 ): Promise<Record<string, unknown> | null> {
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const body = blankFrontmatter(raw);
+    const body = unslotVocation(blankFrontmatter(raw));
     const lines = body.split(TEXT.lineSplit).map((l) => l.trim());
     const title = parseTitle(lines);
     const slug = filePathToSlug(filePath);
 
     const parentDir = path.basename(path.dirname(filePath));
-    const vocation = parentDir;
+    const vocation = parentVocationOf(blankFrontmatter(raw)) ?? parentDir;
 
     const specializationType = classifySpecializationType(title);
     const flavor = parseFlavor(lines);

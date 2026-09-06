@@ -1,8 +1,7 @@
 /**
  * @fileoverview Derived array of every unassigned benefit a character owes: base
  * skill picks, feature choice grants, and feat/ASI slots.
- * @description Pure derivation from the character; nothing is stored. Per Damocles
- * training rules the counts are advisory — no selector is disabled.
+ * @description Pure derivation from the character; nothing is stored.
  *
  * @module modules/character-builder/lib/utils/assignableGrants
  * @version 1.0.0
@@ -45,8 +44,7 @@ export interface ProficiencyOffer {
 }
 
 /**
- * How an assignable grant's target is chosen. Values are in the assignment
- * key-space (`skills.<camel>` / `tools.<camel>` / feat slug).
+ * How an assignable grant's target is chosen.
  *
  * @typedef {object} GrantChoice
  */
@@ -91,8 +89,7 @@ export interface UnassignedGroup {
 }
 
 /**
- * Derives the primary vocation's skill pick offer. An absent or empty list means
- * "any skill"; a non-empty list is the restricted offer.
+ * Derives the primary vocation's skill pick offer.
  *
  * @function deriveSkillOffer
  * @param {CharacterSheet} character - Character to inspect
@@ -257,9 +254,6 @@ export function collectAssignableGrants(
 
 /**
  * Counts how many of an assignable grant's `count` are already assigned.
- * Proficiency categories: skills/tools matching the choice at or above the
- * granted tier, not floored at that tier. Feats: selected feats matching the
- * choice. Capped at `grant.count`.
  *
  * @function countAssigned
  * @param {AssignableGrant} grant - The grant to check
@@ -304,8 +298,7 @@ export function countAssigned(
 }
 
 /**
- * Counts unfilled feat/ASI slots. ASI feats fill only ASI-allowed slots; other
- * feats fill ASI-denied slots first, then remaining allowed slots.
+ * Counts unfilled feat/ASI slots.
  *
  * @function unassignedFeatSlots
  * @param {AssignableGrant[]} featGrants - The character's feat-category grants
@@ -341,8 +334,7 @@ function unassignedFeatSlots(
 }
 
 /**
- * Aggregates the character's unassigned benefits by `(category, tier)`. Feats
- * are pooled via {@link unassignedFeatSlots}; other categories sum per grant.
+ * Aggregates the character's unassigned benefits by `(category, tier)`.
  *
  * @function unassignedByCategory
  * @param {CharacterSheet} character - Character to inspect

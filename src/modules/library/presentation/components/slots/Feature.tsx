@@ -4,12 +4,7 @@
  * names it, a trailing span in the heading is the tag and prints beside the
  * name, since it says what kind of block this is; the cost prints at the
  * heading's right edge the way boons print BP; the other slots print as
- * labelled slot lines, and the rest is prose. Slots arrive as attributes by
- * default or as a paragraph of slot elements; slot props derive from the slot
- * schema. The block is a plain article: its heading keeps the authored level,
- * and the section ornament belongs to the `###` group sections authors write
- * around the blocks, which sectionize builds. Trait and Curse are kind
- * wrappers.
+ * labelled slot lines, and the rest is prose.
  *
  * @module modules/library/presentation/components/slots/Feature
  * @version 0.5.0
@@ -65,8 +60,7 @@ export type FeatureProps = SlotProps<FeatureSlotName | PoolSlotName> & {
 export type FeatureMark = 'major' | 'minor' | 'deed' | 'other';
 
 /**
- * Slot names each kind accepts. A pool holds a number rather than doing
- * something, so it carries its own slots instead of the action ones.
+ * Slot names each kind accepts.
  */
 const SLOT_NAMES_BY_KIND: Record<FeatureKind, readonly SlotName[]> = {
   feature: FEATURE_SLOT_NAMES,
@@ -82,10 +76,7 @@ const SLOT_NAMES_BY_KIND: Record<FeatureKind, readonly SlotName[]> = {
 const DEED_TYPES = ['stratagem', 'act', 'resist', 'lair', 'phase'] as const;
 
 /**
- * Marks read off a cost. The cost names an action or it does not, so the
- * pattern asks for the action and not the bare word: a cost that merely
- * mentions a major threat costs no Major Action. A deed is the exception —
- * nothing else in a cost is called a deed — so the bare word is enough.
+ * Marks read off a cost.
  */
 const COST_MARKS: ReadonlyArray<readonly [RegExp, FeatureMark]> = [
   [/\bmajor\s+action\b/i, 'major'],
@@ -108,18 +99,12 @@ function markOf(explicit: FeatureMark | undefined, cost: ReactNode): FeatureMark
 }
 
 /**
- * Host heading tags by level. The title nodes arrive already rendered by the
- * registry's heading component (first letter wrapped, anchor stamped), so the
- * block re-emits them under a plain tag rather than through that component
- * again, which would wrap twice and diverge between the server and client
- * passes.
+ * Host heading tags by level.
  */
 const HEADING_TAGS = [null, 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
 
 /**
- * A slot value as the card prints it. `mastery` and `deed` declare a rule the
- * component writes out, so the authored value selects the sentence rather
- * than being the sentence; every other slot prints what was written.
+ * A slot value as the card prints it.
  *
  * @param {SlotName} name - Slot name
  * @param {ReactNode} value - Authored value
@@ -261,8 +246,7 @@ export const Curse: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
 Curse.displayName = 'Curse';
 
 /**
- * Action block: what a creature does on its turn. A monster sheet groups these
- * under `## Actions`; the block itself is a feature by another name.
+ * Action block: what a creature does on its turn.
  *
  * @param {Omit<FeatureProps, 'kind'>} props - Block props
  * @returns {JSX.Element} The action article
@@ -274,9 +258,7 @@ export const Action: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
 Action.displayName = 'Action';
 
 /**
- * Pool block: a number the host owns and its blocks spend from. Nothing about
- * it is heirloom-specific, so any host that accepts pools renders the same
- * block.
+ * Pool block: a number the host owns and its blocks spend from.
  *
  * @param {Omit<FeatureProps, 'kind'>} props - Block props
  * @returns {JSX.Element} The pool article

@@ -1,8 +1,7 @@
 /**
  * @fileoverview DiceRoll Interactive MDX Component
  * @description Inline MDX component that renders a dice expression as a
- * clickable button. On click, rolls the dice, applies special modifiers
- * (KH1, KL1, DL1, DH1), adds any flat modifier, and displays the result.
+ * clickable button.
  *
  * @module modules/library/presentation/components/DiceRoll/DiceRoll
  * @version 1.0.0
@@ -53,7 +52,6 @@ export interface DiceRollProps {
 
 /**
  * Parses dice notation "NdM" into count and faces.
- * Returns null for malformed notation.
  *
  * @param {string} notation - Dice notation, e.g. "2d20"
  * @returns {{ count: number; faces: number } | null} Parsed count and faces, or null
@@ -201,9 +199,6 @@ function chunk<T>(arr: T[], size: number): T[][] {
 
 /**
  * Interactive dice roll component for MDX content.
- * Renders a clickable dice expression that rolls and displays results
- * in a tooltip above the button. The tooltip fades after inactivity
- * and restores on hover.
  *
  * @param {DiceRollProps} props - The component props
  * @param {string} props.dice - Dice notation, e.g. "2d20"

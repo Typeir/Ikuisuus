@@ -1,9 +1,6 @@
 /**
  * @fileoverview Unit tests for the OG image renderer.
  *
- * Mocks satori and @resvg/resvg-js. Validates that `renderOgCard` pipes the
- * satori output into Resvg and returns the PNG buffer.
- *
  * @module tests/unit/src/lib/seo/og/renderer.test
  */
 

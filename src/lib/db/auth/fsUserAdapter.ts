@@ -1,7 +1,6 @@
 /**
  * @fileoverview Filesystem User Adapter
  * @description Implements the `UserAdapter` interface using a local JSON file.
- * User records are persisted as an array in `.meta/runtime/users.json`.
  *
  * @module lib/db/auth/fsUserAdapter
  * @version 1.0.0
@@ -61,8 +60,6 @@ const writeUsers = async (users: StoredUser[]): Promise<void> => {
 
 /**
  * Filesystem-backed user adapter.
- *
- * Stores user records as a JSON array in `.meta/runtime/users.json`.
  */
 export const fsUserAdapter: UserAdapter = {
   findByUsername: async (username: string): Promise<StoredUser | null> => {

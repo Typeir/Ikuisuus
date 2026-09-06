@@ -1,6 +1,5 @@
 /**
- * @fileoverview Abstract Filesystem Metadata Repository. Base class for filesystem-backed
- * repository adapters. Provides `list` and `getBySlug` backed by `readMetadataFiles`.
+ * @fileoverview Abstract Filesystem Metadata Repository.
  *
  * @module lib/db/content/adapters/fs/FsMetadataRepository
  * @version 1.0.0
@@ -18,7 +17,7 @@ import { readMetadataFiles } from './readMetadataFiles';
  *
  * @abstract
  * @class FsMetadataRepository
- * @template T - Domain metadata record type. Must expose a `slug` string field.
+ * @template T - Domain metadata record type.
  *
  * @description
  * Subclasses pass `subdir` to the constructor and may override `filter` or
@@ -46,8 +45,7 @@ export abstract class FsMetadataRepository<T extends { slug: string }> {
    * @returns {record is T} True when the record should be included.
    *
    * @description
-   * Default accepts any non-null record. Return false to exclude records of
-   * another type sharing the same content directory.
+   * Default accepts any non-null record.
    */
   protected filter(record: unknown): record is T {
     return record != null;
@@ -61,8 +59,7 @@ export abstract class FsMetadataRepository<T extends { slug: string }> {
    * @returns {boolean} True when `record` is the requested item.
    *
    * @description
-   * Default compares `record.slug` strictly. Override to match a record type's
-   * secondary slug field.
+   * Default compares `record.slug` strictly.
    */
   protected matchSlug(record: T, slug: string): boolean {
     return record.slug === slug;

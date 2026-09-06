@@ -1,8 +1,6 @@
 /**
  * @fileoverview Carrying Capacity re-exports (deprecated)
- * @description Backward-compatibility re-exports. Use direct imports from
- * `@/modules/character-builder/domain/carrying-capacity` and
- * `@/modules/character-builder/infrastructure/carrying-capacity` instead.
+ * @description Backward-compatibility re-exports.
  *
  * @module lib/data/carryingCapacity
  * @version 2.0.0

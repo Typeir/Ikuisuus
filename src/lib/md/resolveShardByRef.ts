@@ -2,13 +2,7 @@
  * @fileoverview Shard Resolution
  * @description One pipeline for every shard address: a target names a file, a
  * route, and how to derive its entries; resolution reads that one file and
- * extracts the matching sections. Nothing walks the content tree.
- *
- * A keyword reference is one kind of target: the graph's `produces` arrays say
- * which file defines the shard id, and the entry is the heading whose slug
- * matches the reference's anchor.
- *
- * Server only.
+ * extracts the matching sections.
  *
  * @module lib/md/resolveShardByRef
  * @version 2.0.0
@@ -77,9 +71,6 @@ export function shardIdOf(reference: string): string {
 /**
  * Heading text whose slug matches an anchor.
  *
- * The extractor matches on prose, not on slugs, so the anchor has to be turned
- * back into the heading that produced it.
- *
  * @param {string} body - File source
  * @param {string} anchor - Anchor slug to match
  * @returns {string | null} Heading text, or null when the file has no such heading
@@ -117,10 +108,6 @@ export interface ShardTarget {
 
 /**
  * Resolves a target's shards from its one file.
- *
- * Reads the file, derives entries, extracts the requested sections, and wraps
- * each in its identity: id, key, heading, and href. Empty extractions are
- * dropped; a trailing thematic break left by a section boundary is trimmed.
  *
  * @param {ShardTarget} target - Address to resolve
  * @param {string} locale - Content locale
@@ -177,11 +164,6 @@ export async function resolveTargetShards(
 /**
  * Target for a keyword reference: the graph names the producing file, and the
  * entry is the heading bearing the reference's term.
- *
- * The bearing heading is usually titled after the term. A `term: Heading Text`
- * declaration points elsewhere, so the entry keeps the heading's own anchor and
- * the href lands on the section a reader would scroll to, while the shard keeps
- * the id the reference computes.
  *
  * @param {string} reference - Normalised reference, `namespace;value` or a bare value
  * @param {string} locale - Content locale
@@ -245,14 +227,7 @@ export interface DocumentKeywords {
 }
 
 /**
- * Resolves every keyword a document writes. Shards are deduplicated by id, so
- * two spellings of one term carry one shard; every reference spelling still
- * receives its own resolution stamp.
- *
- * Only the references in the given source. One living inside a resolved shard
- * is left for the endpoint, requested when its card opens: following them here
- * would pull each shard's dependencies onto the page, and theirs after that,
- * until every page carried the whole corpus.
+ * Resolves every keyword a document writes.
  *
  * @param {string} source - Document source, after reusable regions are inlined
  * @param {string} locale - Content locale

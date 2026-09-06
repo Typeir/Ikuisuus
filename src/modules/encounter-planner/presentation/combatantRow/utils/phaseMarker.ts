@@ -28,13 +28,6 @@ export const PHASE_THRESHOLDS = {
 /**
  * Determines phase marker from HP percentage.
  *
- * Phase thresholds:
- * - > 75%: null (healthy)
- * - 51-75%: 'Wounded'
- * - 26-50%: 'Bloodied'
- * - ≤ 25%: 'Doomed'
- * - 0%: 'Slain'
- *
  * @function getPhaseMarker
  * @param {number} hpCurrent - Current HP value
  * @param {number} hpMax - Maximum HP value

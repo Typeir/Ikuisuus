@@ -2,7 +2,6 @@
  * storePersistentData Utility Unit Tests
  *
  * @fileoverview Tests for multi-layer persistent storage utility.
- * Validates cookie, sessionStorage, and localStorage operations.
  *
  * @module tests/unit/src/lib/utils/storePersistentData.test
  * @version 1.0.0

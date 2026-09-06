@@ -2,8 +2,7 @@
  * Combatant Main Stats Component
  *
  * @fileoverview Displays and allows inline editing of HP, AC, ability scores, initiative,
- * and slain toggle for combatants. All numeric fields support keyboard behavior:
- * Enter commits, Escape cancels, blur commits.
+ * and slain toggle for combatants.
  *
  * @module modules/encounter-planner/presentation/combatantRow/combatantMainStats
  * @version 4.0.0
@@ -18,8 +17,7 @@
  * @requires ../playMode/utils getPhaseMarker utility function
  *
  * @description
- * Renders HP, AC, initiative, and the slain checkbox. Reads state and
- * update functions from CombatantContext.
+ * Renders HP, AC, initiative, and the slain checkbox.
  */
 
 'use client';
@@ -37,7 +35,6 @@ import { useEditableField } from './utils/useEditableField';
 
 /**
  * Props for CombatantMainStats component.
- * All props are optional when used within CombatantProvider (values come from context).
  *
  * @interface CombatantMainStatsProps
  * @property {boolean} [showSlain=true] - Whether to show the slain toggle
@@ -50,9 +47,6 @@ export interface CombatantMainStatsProps {
 
 /**
  * Main stats section for Play Mode combatants.
- * Displays editable HP inputs, AC, ability scores with modifiers, initiative, and slain checkbox.
- * Supports keyboard navigation: Enter commits, Escape cancels, blur commits.
- * Uses CombatantContext for state and update functions.
  *
  * @component
  * @param {CombatantMainStatsProps} props - Component props
@@ -146,7 +140,6 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
 
   /**
    * Keyboard handler for editable fields.
-   * Enter commits, Escape cancels.
    */
   const handleKeyDown = useCallback(
     (

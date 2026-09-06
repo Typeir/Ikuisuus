@@ -1,7 +1,7 @@
 /**
  * @fileoverview Modal accessibility hook
  * @description Shared focus-trap, focus-restore, and modal-stacking behaviour
- * for `Modal` and `MobileModal`. Escape rides the shared dismissal stack.
+ * for `Modal` and `MobileModal`.
  * @module lib/components/ui/modal/useModalA11y
  * @version 1.0.0
  * @author Typeir

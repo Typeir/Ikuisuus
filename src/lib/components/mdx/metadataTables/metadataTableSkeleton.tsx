@@ -1,7 +1,6 @@
 /**
  * @fileoverview Metadata Table Skeleton Component
  * @description Skeleton loading state specifically for MetadataTable components.
- * Simple div-based placeholders with shimmer bars — no real form elements.
  *
  * @module lib/components/mdx/metadataTables/metadataTableSkeleton
  * @version 3.1.0
@@ -12,6 +11,7 @@
 import type { JSX } from 'react';
 import sk from '@/lib/components/skeleton/skeleton.module.scss';
 import { cn } from '@/lib/utils/classNameMerge';
+import { DataTable } from '../../ui/dataTable';
 import styles from './metadataTable.module.scss';
 
 /** @description Reusable skeleton shimmer bar */
@@ -82,36 +82,27 @@ export function MetadataTableSkeleton({
         <Shimmer width='150px' />
       </div>
 
-      <div className={styles.tableWrapper}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              {Array.from({ length: columns }).map((_, index) => (
-                <th key={index} className={styles.sortable}>
-                  <div className={styles.headerContent}>
-                    <Shimmer width='80px' />
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: rows }).map((_, rowIndex) => (
-              <tr key={rowIndex}>
-                {Array.from({ length: columns }).map((_, colIndex) => {
-                  const seed = (rowIndex * columns + colIndex) * 0.12345;
-                  const width = 60 + (seed % 1) * 30;
-                  return (
-                    <td key={colIndex}>
-                      <Shimmer width={`${width}%`} />
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        className={styles.table}
+        wrapperClassName={styles.tableWrapper}
+        columns={Array.from({ length: columns }, (_, index) => ({
+          key: String(index),
+          header: (
+            <span className={styles.headerContent}>
+              <Shimmer width='80px' />
+            </span>
+          ),
+          className: styles.sortable,
+        }))}
+        rows={Array.from({ length: rows }, (_, rowIndex) => ({
+          key: String(rowIndex),
+          cells: Array.from({ length: columns }, (_, colIndex) => {
+            const seed = (rowIndex * columns + colIndex) * 0.12345;
+            const width = 60 + (seed % 1) * 30;
+            return <Shimmer key={colIndex} width={`${width}%`} />;
+          }),
+        }))}
+      />
 
       <div className={styles.pagination}>
         <div className={sk.buttonPlaceholder}>

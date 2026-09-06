@@ -22,8 +22,7 @@ const log = logger.child({ module: 'API:Feats' });
 /**
  * GET /api/feats
  *
- * Returns array of feat metadata. locale defaults to 'en'.
- * Returns 500 on repository error.
+ * Returns array of feat metadata.
  *
  * @param {Request} req - Next.js request object
  * @returns {Promise<NextResponse>} JSON array of feat objects

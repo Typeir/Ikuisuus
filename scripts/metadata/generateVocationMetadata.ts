@@ -16,6 +16,8 @@ import { formatDie } from '@/lib/utils/diceUtils';
 import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
+import { progressionFromText } from './progressionText';
+import { unslotVocation } from './slotForms';
 import path from 'path';
 import {
     applyAuthoredFeatureAspects,
@@ -142,9 +144,7 @@ function parseChoiceCount(text: string): number {
 }
 
 /**
- * Parses skill proficiencies into count and choices. A missing colon marks an
- * unrestricted "any" grant, yielding the count with an empty choices list.
- * Inline markdown is stripped.
+ * Parses skill proficiencies into count and choices.
  *
  * @param {string} value - Raw skill text (e.g. "Choose 2: Animal Handling, Athletics, ...")
  * @returns {{ count: number; choices: string[] }}
@@ -183,9 +183,6 @@ function parseProficiencies(value: string): string[] {
 
 /**
  * Extracts fixed trade display names from a raw "Trade Proficiencies" cell.
- * Only link text whose href targets `/tools/<slug>` is kept. The generic
- * `[Trade](/en/library/items/tools)` wildcard and "choose one / any / or …"
- * qualifier parentheticals are excluded.
  *
  * @param {string} value - Raw Trade Proficiencies cell (markdown links intact)
  * @returns {string[]} Deduped fixed-trade display names
@@ -209,7 +206,7 @@ function parseFixedTrades(value: string): string[] {
 
 /**
  * Splits a markdown table row into cells, dropping only the empty fragments the
- * outer pipes produce. Empty interior cells are preserved.
+ * outer pipes produce.
  *
  * @param {string} line - Raw table row (starts and ends with `|`)
  * @returns {string[]} Trimmed cells with interior blanks preserved
@@ -223,11 +220,6 @@ function splitTableRow(line: string): string[] {
 
 /**
  * Parses the vocation feature table and extracts feature entries.
- *
- * Resolves the "Features" column by header name (handles "Features",
- * "Vocation Features", "Class Features"), falling back to column 2 when no
- * header matches. Interior empty cells are preserved via
- * {@link splitTableRow}.
  *
  * @param {string} raw - Full MDX file content
  * @returns {{ features: Array<{ level: number; name: string }>; hasSpellSlots: boolean; headers: string[] }}
@@ -479,7 +471,6 @@ function buildVocationTags(
 
 /**
  * Parses a single vocation main.mdx file into metadata.
- * Returns null for the root vocations/main.mdx overview page.
  *
  * @param {string} filePath - Absolute path to main.mdx
  * @param {SharedData} sharedData - Shared game data constants
@@ -499,7 +490,7 @@ async function parseVocationFile(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const body = blankFrontmatter(raw);
+    const body = unslotVocation(blankFrontmatter(raw));
     const title = parseTitle(body.split(TEXT.lineSplit).map((l) => l.trim()));
     const slug = parentDir;
 
@@ -525,7 +516,8 @@ async function parseVocationFile(
     );
     const primaryAbility = parseProficiencies(traits['Primary Ability'] || '');
 
-    const { features, hasSpellSlots, headers } = parseFeatureTable(body);
+    const { features, hasSpellSlots, headers } =
+      progressionFromText(body) ?? parseFeatureTable(body);
     const rawLines = body.split(/\r?\n/);
     const vocationFrontmatter = matter(raw).data as Record<string, unknown>;
     const vocationGrantsRaw =
@@ -618,7 +610,6 @@ async function parseVocationFile(
 
 /**
  * Resolves the output path for a vocation metadata file.
- * Uses the parent directory name (vocation slug) as the filename.
  *
  * @param {string} sourceFilePath - Absolute path to main.mdx
  * @param {string} contentType - Content type key

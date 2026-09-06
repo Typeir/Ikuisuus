@@ -1,7 +1,6 @@
 /**
  * @fileoverview Combat dice expression shapes
- * @description Shapes for combat-specific patterns. Ordered by specificity.
- * Each transform returns replacement substring + old matched substring.
+ * @description Shapes for combat-specific patterns.
  *
  * @module scripts/content/migration/shapesCombat
  * @version 1.0.0

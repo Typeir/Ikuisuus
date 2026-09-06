@@ -3,16 +3,6 @@
  * @description Category and prerequisite read as the brief; the score a feat
  * raises becomes a sentence the card writes.
  *
- * Categories are declared in the schema and labelled in the catalogue, because
- * they are expected to change: renaming one is an edit in those two places
- * rather than across every feat that carries it. A category the schema does not
- * list still prints, so an unlisted one is visible rather than lost.
- *
- * Nearly every feat in the corpus opens with the same line — "Increase your X
- * score by 1" — restated by hand each time. `ability` holds the score alone
- * and the card prints the sentence, so the one clause that varies is the only
- * one an author writes.
- *
  * @module modules/library/presentation/components/slots/Feat
  * @version 0.1.0
  * @author Typeir
@@ -42,10 +32,7 @@ export type FeatProps = SlotProps<FeatSlotName> & {
 };
 
 /**
- * A category as the card names it. A declared category takes its label from
- * the catalogue, so renaming one is an edit in two places rather than forty.
- * Anything else prints as authored, which keeps an unlisted category visible
- * instead of silently dropping it.
+ * A category as the card names it.
  *
  * @param {ReactNode} value - Category slot value
  * @param {(key: string) => string} t - Translator over `library.feat`

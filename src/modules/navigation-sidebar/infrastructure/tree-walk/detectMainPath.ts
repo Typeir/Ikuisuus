@@ -10,7 +10,6 @@ import type { Item } from '@/modules/navigation-sidebar/domain/types';
 
 /**
  * Recursively detects main.mdx in directories and returns its path.
- * Maps each folder path to its main.mdx path.
  *
  * @param {Item[]} items - Navigation items
  * @param {string} [basePath=''] - Current path prefix

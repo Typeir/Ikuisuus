@@ -2,9 +2,7 @@
  * File Length Check
  *
  * @fileoverview Scans source files for those exceeding configured line-count
- * thresholds and reports them as critical findings. Thresholds are resolved
- * via a priority chain: per-file allowlist → per-extension default → hard
- * default (250). Outputs JSON-structured results to stdout.
+ * thresholds and reports them as critical findings.
  *
  * @module .github/scripts/check-file-length
  */
@@ -85,7 +83,7 @@ async function loadAllowlist(
 
 /**
  * Load per-extension default line-count caps from the file-size-defaults
- * config. Falls back to an empty map if the file is missing or malformed.
+ * config.
  *
  * @param {string} [defaultsPath] - Path to the file-size-defaults JSON file
  * @returns Map of extension (with leading dot) → custom max lines
@@ -179,8 +177,6 @@ function countLinesFromContent(content: string): number {
 
 /**
  * Execute the file-length check and return a structured result.
- * When options.files is provided, uses those instead of self-discovering.
- * When options.readFile is provided, uses that instead of fs.readFile.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations

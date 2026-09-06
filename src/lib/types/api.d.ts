@@ -2,8 +2,7 @@
  * API Response Types
  *
  * @fileoverview Centralized API response type definitions for all client-side
- * data-fetching hooks. Re-exports existing domain types and declares
- * endpoint-specific response shapes that do not live elsewhere.
+ * data-fetching hooks.
  *
  * @module lib/types/api
  * @version 1.0.0
@@ -12,9 +11,7 @@
  *
  * @description
  * All SWR data hooks (`useFeats`, `useBloodlines`, `useVocationMetadata`,
- * etc.) import their response generics from this module. Domain entity types
- * (e.g. `BloodlineOption`) are re-exported so consumers have a single import
- * point for both the hook and its return type.
+ * etc.)
  *
  * @example
  * import type { BloodlineApiItem, FeatMetadata } from '@/lib/types/api';

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Shared PostgreSQL Connection Pool
  * @description Singleton `pg.Pool`, created on first `getPool()` call from
- * `DATABASE_URL`. `getPool()` throws if `DATABASE_URL` is unset.
+ * `DATABASE_URL`.
  *
  * @module lib/db/postgres/pool
  * @version 1.0.0
@@ -53,7 +53,7 @@ export const query = async (
 };
 
 /**
- * Shuts down the pool. Call during process cleanup.
+ * Shuts down the pool.
  *
  * @returns {Promise<void>}
  */

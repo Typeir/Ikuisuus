@@ -22,7 +22,7 @@ function hasVarMod(l: string): boolean {
   );
 }
 
-/** All exclusion rules. Lines matching ANY exclusion are skipped entirely. */
+/** All exclusion rules. */
 export const EXCLUSIONS: ExclusionRule[] = [
   { name: 'ALREADY_MIGRATED', test: (l) => isMigrated(l) },
   { name: 'HIT_DIE_DESCRIPTOR', test: (l) => /\bd\d+\s+per\s+[A-Z]/i.test(l) },

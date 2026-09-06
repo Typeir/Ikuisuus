@@ -40,7 +40,6 @@ function run(html: string, opts: RehypeAspectsOptions): Root {
 
 /**
  * Serialises a tree to a compact outline: tag names, `Aspects[key]` for rows.
- * Sectionize's stream rails are ornament and are left out.
  *
  * @param {Node} node - Tree node
  * @returns {string} Outline

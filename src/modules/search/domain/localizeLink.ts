@@ -15,9 +15,6 @@ const LEADING_LOCALE = new RegExp(`^/(?:${SUPPORTED_LOCALES.join('|')})(?=/|$)`)
 /**
  * Normalizes a content link to carry exactly one locale prefix.
  *
- * Strips any existing leading locale segment(s), drops a trailing `#undefined`
- * anchor, and prepends the requested locale. Idempotent.
- *
  * @param {string} link - Raw link from a metadata sidecar or API payload
  * @param {string} locale - Target locale code (e.g. 'en')
  * @returns {string} Localized link (e.g. `/en/library/monsters/aboleth`)

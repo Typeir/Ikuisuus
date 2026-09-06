@@ -26,8 +26,7 @@ import { BuilderSplitPane } from '../builder/builderSplitPane';
 import styles from './tabs.module.scss';
 
 /**
- * Bloodline tab content. Reads the character and edit mode from the
- * active-sheet context.
+ * Bloodline tab content.
  *
  * @component
  * @returns {JSX.Element} Rendered tab body

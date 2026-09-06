@@ -25,7 +25,7 @@ import { Collection } from '@mikro-orm/core';
 /* ─────────────────────────  Embeddable VO  ─────────────────────────── */
 
 /**
- * Optional ability-score increase value object. All fields nullable.
+ * Optional ability-score increase value object.
  */
 @OrmEmbeddable('FeatAbilityIncreaseEmbed')
 export class FeatAbilityIncreaseEmbed {
@@ -50,7 +50,7 @@ export class FeatAbilityIncreaseEmbed {
 /* ─────────────────────────  Child Entity  ──────────────────────────── */
 
 /**
- * Named feat mechanic from MDX. Foreign-keyed to `feats.id`.
+ * Named feat mechanic from MDX.
  */
 @OrmEntity('FeatFeatureEntity', { tableName: 'feat_features' })
 export class FeatFeatureEntity {

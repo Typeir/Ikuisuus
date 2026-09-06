@@ -1,6 +1,5 @@
 /**
  * @fileoverview Parsing functions for extracting structured data from MDX content.
- * Used by metadata generators for monsters, heirlooms, spells, and trinkets.
  * @module scripts/metadata/parsingUtils
  * @version 1.0.0
  * @author Typeir
@@ -38,12 +37,6 @@ export function findTitleIndex(lines: string[]): number {
 /**
  * Extracts the description from the intro region of an MDX file.
  *
- * Intro region spans from the line after the H1 title to the first
- * structural stop marker (`---`, an H2+ heading, or a `<Collapsible` JSX
- * element). Filters out empty lines, JSX, italic-only lines, headings, and
- * blockquotes. Joins remaining prose with newlines. Returns `undefined` when
- * no prose is found.
- *
  * @param {string} content - Full MDX file content
  * @returns {string | undefined} Joined prose paragraphs or undefined
  */
@@ -80,8 +73,7 @@ export function parseDescription(content: string): string | undefined {
 }
 
 /**
- * Reading speed and label templates per locale. Finnish words are long and
- * few, so its words-per-minute sits lower than English or Spanish.
+ * Reading speed and label templates per locale.
  */
 const READING_PROFILES: Record<
   string,
@@ -106,11 +98,6 @@ const READING_PROFILES: Record<
 
 /**
  * Estimates reading time of an MDX file from its prose word count.
- *
- * Excludes frontmatter, import/export statements, JSX tag lines, code fences,
- * and table rows. Speed and label localize per the file's locale; unknown
- * locales fall back to English. Formats as whole minutes ("4 min read"), or
- * seconds when under a minute ("40 sec read").
  *
  * @param {string} raw - Raw MDX file content
  * @param {string} [locale='en'] - Content locale driving speed and label
@@ -162,11 +149,6 @@ const SRC_ATTR_LINE = /^\s*src\s*=\s*['"]([^'"]+)['"]/;
 /**
  * Finds the last content image in a line range.
  *
- * Matches `<BlendedImage …>` and `<Image …>` elements, single- or
- * multi-line. Non-image JSX openings (`<ParallaxBackdrop` background layers
- * in particular) end any pending attribute scan, so their src lines are not
- * captured.
- *
  * @param {string[]} lines - File lines
  * @param {number} [start=0] - First line index to scan (inclusive)
  * @param {number} [end=lines.length] - Line index to stop before (exclusive)
@@ -212,11 +194,6 @@ export function findContentImage(
 
 /**
  * Returns the first run of consecutive prose lines anywhere in the body.
- * Unlike {@link parseDescription} it is not limited to the intro region.
- *
- * Skips a leading YAML frontmatter block. Headings, JSX, blockquotes, tables,
- * list items, imports/exports, and italic-only lines are not prose. Result is
- * markdown-stripped and truncated at a word boundary.
  *
  * @param {string[]} lines - Array of file lines
  * @param {number} [maxLength=300] - Maximum description length

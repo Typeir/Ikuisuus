@@ -40,6 +40,13 @@ describe('slotFailure', () => {
     expect(slotFailure('xp', '700 XP')).toContain('whole number');
   });
 
+  it('takes hit points grouped or not, dice optional', () => {
+    expect(slotFailure('hitPoints', '153 ([% 18d10 +54 %])')).toBeNull();
+    expect(slotFailure('hitPoints', '1,020 ([% 60d12 +600 %])')).toBeNull();
+    expect(slotFailure('hitPoints', '18')).toBeNull();
+    expect(slotFailure('hitPoints', 'lots')).not.toBeNull();
+  });
+
   it('wants a sign on a tier bonus', () => {
     expect(slotFailure('tierBonus', '+4')).toBeNull();
     expect(slotFailure('tierBonus', '-1')).toBeNull();

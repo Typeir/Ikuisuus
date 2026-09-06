@@ -1,6 +1,5 @@
 /**
  * @fileoverview Normalizes trait and action headings in monster stat block files.
- * Converts markdown headings to H4/H5.
  *
  * @module scripts/utils/standardizeTraitHeadings
  * @version 1.0.0

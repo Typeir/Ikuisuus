@@ -1,8 +1,7 @@
 /**
  * @fileoverview Shared radial glow sprite factory.
  * @description Creates additive-blended glow sprites from a procedural radial
- * gradient CanvasTexture. Texture is cached across instances. Also exports a
- * radial-gradient texture factory used by StarRenderer and GasGiantRenderer.
+ * gradient CanvasTexture.
  *
  * @module modules/world-sim/infrastructure/effects/CelestialGlow
  * @version 1.1.0
@@ -47,7 +46,6 @@ export interface GradientStop {
 
 /**
  * Create a square CanvasTexture with a customizable radial gradient.
- * Used by star corona, gas giant haze, and celestial glow sprites.
  *
  * @function createRadialGradientTexture
  * @param {number} size - Texture resolution in pixels (square)
@@ -96,7 +94,6 @@ const GLOW_STOPS: GradientStop[] = [
 
 /**
  * Create or return the cached radial gradient glow texture.
- * The texture is a white radial gradient from opaque center to transparent edge.
  *
  * @returns {CanvasTexture} Shared glow texture
  */

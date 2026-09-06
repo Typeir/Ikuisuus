@@ -16,7 +16,7 @@ import { useMemo } from 'react';
 
 /**
  * Returns the six standard spell table columns: Name, School, Casting Time,
- * Range, Duration, and Components. Memoised against the translation function.
+ * Range, Duration, and Components.
  *
  * @returns {ColumnConfig[]} Column configuration array ready for MetadataTable
  */

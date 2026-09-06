@@ -1,9 +1,6 @@
 /**
  * @fileoverview Unit tests for OG image metadata resolver.
  *
- * Covers type→subdir mapping, slug resolution, and null-safety for missing
- * records. Uses vi.mock to avoid the real filesystem.
- *
  * @module tests/unit/src/lib/seo/og/data.test
  */
 

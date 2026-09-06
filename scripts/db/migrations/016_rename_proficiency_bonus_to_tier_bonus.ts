@@ -1,8 +1,6 @@
 /**
  * @fileoverview Migration 016 — Rename proficiency_bonus → tier_bonus
  * @description Renames `monsters.proficiency_bonus` to `tier_bonus`.
- * Idempotent: skipped when the old column is absent or the new column exists.
- * Run `npm run db:seed` after to refresh `.metadata.json` sidecars.
  *
  * @module scripts/db/migrations/016_rename_proficiency_bonus_to_tier_bonus
  * @author Typeir

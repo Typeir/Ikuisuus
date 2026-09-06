@@ -1,7 +1,6 @@
 /**
  * @fileoverview Active Character Sheet Wrapper
  * @description Renders the full character sheet for the active character.
- * Returns null when no character is selected.
  *
  * @module modules/character-builder/presentation/CharacterSheet/activeCharacterSheet
  * @version 1.0.0
@@ -16,7 +15,6 @@ import { CharacterSheet } from './characterSheet';
 
 /**
  * Wrapper that reads the active character from context.
- * Renders null when no character is selected.
  *
  * @component
  * @returns {JSX.Element | null} Rendered active character sheet or null

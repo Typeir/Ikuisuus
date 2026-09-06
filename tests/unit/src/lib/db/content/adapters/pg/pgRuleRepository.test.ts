@@ -2,7 +2,6 @@
  * pgRuleRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL rule repository.
- * Verifies row-mapping from `RuleEntity` rows to `RuleMetadata` domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgRuleRepository
  */

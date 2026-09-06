@@ -26,9 +26,7 @@ const SKELETON_PROSE = ['92%', '85%', '95%', '72%'];
 
 /**
  * Page-shaped placeholder shown while an embed loads: a title line, prose
- * lines, and one rectangle. The default loading content for
- * {@link GenericEmbedPanel}; exported for hosts that render a loading state
- * outside the panel.
+ * lines, and one rectangle.
  *
  * @returns {JSX.Element} The skeleton block
  */
@@ -95,8 +93,7 @@ export interface GenericEmbedPanelProps {
 }
 
 /**
- * Draggable iframe container. Builds the embed URL via buildEmbedUrl, tracks
- * loading and close state, and fires lifecycle callbacks.
+ * Draggable iframe container.
  *
  * @component
  * @param {GenericEmbedPanelProps} props - Configuration

@@ -3,14 +3,6 @@
  * @description Scopes one page's generated metadata to the whole MDX tree so any
  * embedded component can read the current article.
  *
- * The provider receives metadata; it never loads it. Loading belongs in the
- * server component that renders the provider.
- *
- * The dev backend is a sidecar (`.metadata.json`); production runs
- * `METADATA_BACKEND=pg`. A field in the sidecar not in the pg schema is absent
- * in production, so consumers must treat every field as optional and render
- * nothing rather than assume.
- *
  * @module modules/library/application/context/ArticleMetadataContext
  * @version 1.0.0
  * @author Typeir
@@ -103,9 +95,6 @@ export const ArticleMetadataProvider: React.FC<{
 
 /**
  * Reads the metadata of the article currently being rendered.
- *
- * Outside an article: returns a null metadata record and a lookup that finds
- * nothing; components render nothing instead of throwing.
  *
  * @returns {ArticleMetadataValue} The article's metadata and section lookup
  */

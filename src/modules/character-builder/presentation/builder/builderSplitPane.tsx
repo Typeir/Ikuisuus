@@ -1,9 +1,6 @@
 /**
  * @fileoverview Builder Split Pane
  * @description Viewport-aware wrapper around the two-pane builder layout.
- * Desktop (≥768px) renders `ResizablePane`; phone (≤768px) renders one
- * pane full-width and the other in a console-skinned `MobileModal` bottom
- * sheet.
  *
  * @module modules/character-builder/presentation/builder/builderSplitPane
  * @version 1.0.0

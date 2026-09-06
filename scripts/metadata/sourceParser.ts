@@ -91,9 +91,7 @@ export function kindOfPath(filePath: string): SourceContentKind {
 }
 
 /**
- * Resolves the content kind of a source. Precedence: frontmatter
- * `extractor: <name>`, frontmatter `contentType:`, then path detection.
- * Works without a path — an unsaved buffer resolves from frontmatter alone.
+ * Resolves the content kind of a source.
  *
  * @param {string} raw - Complete file text including frontmatter
  * @param {string} [filePath] - Repo-relative content path, when known
@@ -115,8 +113,7 @@ export function kindOfSource(raw: string, filePath = ''): SourceContentKind {
 }
 
 /**
- * Parses metadata records from raw MDX source. An empty path is fine: kind
- * comes from frontmatter and a per-kind stand-in path feeds slug derivation.
+ * Parses metadata records from raw MDX source.
  *
  * @param {string} raw - Complete file text including frontmatter
  * @param {string} filePath - Path the source belongs to; '' for unsaved buffers

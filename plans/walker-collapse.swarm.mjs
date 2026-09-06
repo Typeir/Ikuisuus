@@ -1,10 +1,7 @@
 /**
  * @fileoverview Walker collapse sweep: one member per file, each replaces a
  * hand-rolled recursive directory walker with the canonical walker at
- * src/lib/utils/getMatchingFiles.ts. Behavior-identical conversions only.
- * Roster derives from .ignore/reports/duplication-inventory.md cluster 3.
- *
- *   paw swarm run plans/walker-collapse.swarm.mjs --live
+ * src/lib/utils/getMatchingFiles.ts.
  */
 
 const CANON = [

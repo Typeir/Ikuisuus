@@ -1,7 +1,6 @@
 /**
  * @fileoverview GitHub Raw Content Source Adapter
  * @description Implements ContentSourceAdapter using GitHub's raw content API.
- * Cache tags follow the format `content-{locale}-{slugPath}` for revalidation.
  *
  * @module lib/db/content/adapters/github/githubContentSource
  * @author Typeir
@@ -35,10 +34,6 @@ const GITHUB_RAW_BASE = `https://raw.githubusercontent.com/${CONTENT_REPO_OWNER}
 
 /**
  * Fetches a concrete file path from GitHub raw content.
- *
- * The response enters the Next.js Data Cache under `tag`, so the entry lives
- * until `/api/revalidate` busts that tag — never on a timer. A TTL here would
- * let a revalidated route re-render against stale prose.
  *
  * @param {string} locale - Content locale
  * @param {string} relativeFilePath - File path relative to locale root including extension
@@ -77,9 +72,6 @@ const fetchConcreteFile = async (
 
 /**
  * GitHub raw-content-backed content source.
- * Fetches from `raw.githubusercontent.com` into the Data Cache, tagged
- * `contentCacheTag(locale, slugPath)` so `/api/revalidate` busts the file
- * entry and the routes it renders into on the same event.
  */
 export const githubContentSource: ContentSourceAdapter = {
   async fetch(

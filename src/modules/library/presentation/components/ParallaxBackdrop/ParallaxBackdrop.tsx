@@ -2,7 +2,6 @@
  * @file parallaxBackdrop.tsx
  * @description
  * Fixed, uninteractable, full-viewport parallax background component.
- * Renders an image as a background layer that shifts vertically with scroll.
  *
  * @module modules/library/presentation/components/ParallaxBackdrop/ParallaxBackdrop
  * @version 1.0.0
@@ -28,8 +27,7 @@ import styles from './ParallaxBackdrop.module.scss';
  * @property {number} [maxShiftPx=48] - Maximum vertical shift in pixels.
  * @property {number} [opacity=1] - Opacity of the backdrop image (0 to 1).
  * @property {number} [blurPx=0] - CSS blur radius in pixels.
- * @property {number} [zIndex] - Explicit CSS z-index override. When omitted, stacking
- * is controlled by the stylesheet via `var(--embed-z-index, -1)`.
+ * @property {number} [zIndex] - Explicit CSS z-index override.
  * @property {boolean} [ariaHidden=true] - Whether to hide the image from assistive tech.
  * @property {string} [className] - Additional CSS classes for the container div.
  */
@@ -50,9 +48,6 @@ export interface ParallaxBackdropProps {
  * @description
  * Renders a fixed, full-viewport image behind all content, shifted vertically
  * by scroll position and clamped to {@link ParallaxBackdropProps.maxShiftPx}.
- * Non-interactive (`pointer-events: none`), out of document flow, covering the
- * viewport (100vw / 100vh). Scroll updates are throttled via
- * `requestAnimationFrame`.
  *
  * @param {ParallaxBackdropProps} props
  * @param {string} props.src - The source URL of the backdrop image.
@@ -61,8 +56,7 @@ export interface ParallaxBackdropProps {
  * @param {number} [props.maxShiftPx=48] - Maximum vertical shift in pixels.
  * @param {number} [props.opacity=1] - Opacity of the backdrop image (0 to 1).
  * @param {number} [props.blurPx=0] - CSS blur radius in pixels.
- * @param {number} [props.zIndex] - Explicit CSS z-index override. Defaults to the
- * stylesheet's `var(--embed-z-index, -1)` when omitted.
+ * @param {number} [props.zIndex] - Explicit CSS z-index override.
  * @param {boolean} [props.ariaHidden=true] - Whether to hide the image from assistive tech.
  * @param {string} [props.className] - Additional CSS classes for the container div.
  *

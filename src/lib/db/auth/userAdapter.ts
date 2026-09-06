@@ -1,7 +1,6 @@
 /**
  * @fileoverview User Storage Adapter Interface
  * @description Defines the adapter contract for user persistence.
- * Implementations plug in any backend without changing consumer code.
  *
  * @module lib/db/auth/userAdapter
  * @version 1.0.0
@@ -13,7 +12,6 @@ import type { StoredUser } from './schemas';
 
 /**
  * Adapter interface for user persistence.
- * Implementations must be safe to call when the backing store is unavailable.
  */
 export interface UserAdapter {
   /**

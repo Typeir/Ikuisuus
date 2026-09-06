@@ -16,8 +16,7 @@ import { resolveHpTerm, type HpScope } from './hpGrants';
 
 /**
  * Recomputes maximum HP from the hit dice log: the sum of `(result + conMod)`
- * across every entry that has been confirmed and added to HP. `conMod` is the
- * value frozen on each entry at creation time. Clamped at 0.
+ * across every entry that has been confirmed and added to HP.
  *
  * @function recalculateHpMax
  * @param {HitDieRollEntry[]} log - The character's hit dice roll log
@@ -32,8 +31,7 @@ export function recalculateHpMax(log: HitDieRollEntry[]): number {
 }
 
 /**
- * A character's derived hit points. `base` is the maximum from rolled dice, CON,
- * and passive `hp` grants; `effective` is `base` reduced by the grievous-wound pool.
+ * A character's derived hit points.
  *
  * @interface DerivedHitPoints
  * @property {number} base - Maximum HP from dice + CON + hp grants (>= 0)
@@ -72,7 +70,7 @@ function finiteOrZero(value: number): number {
 
 /**
  * Resolves an {@link HpScope} to its level-count multiplier against the rolled
- * dice. `once` is flat; the level scopes read the assigned-dice counts.
+ * dice.
  *
  * @function resolveHpScope
  * @param {HpScope} scope - The parsed scope
@@ -119,9 +117,7 @@ function readAssignedDice(character: CharacterSheet): {
 
 /**
  * Derives a character's hit points from the rolled hit dice, plus CON, plus every
- * active passive `hp` grant, minus the grievous-wound pool. CON contributes
- * `conMod × N` where `N` is the count of assigned dice. The aggregate is clamped
- * once at the end; individual terms may be negative.
+ * active passive `hp` grant, minus the grievous-wound pool.
  *
  * @function deriveHitPoints
  * @param {CharacterSheet} character - Character to derive from
@@ -146,7 +142,7 @@ export function deriveHitPoints(character: CharacterSheet): DerivedHitPoints {
 /**
  * The HP a single rolled die of the given vocation carries: the CON modifier
  * plus every per-level `hp` grant whose scope matches this die (`level`, or the
- * matching `level-vocation`/`level-specialization`). Flat `once` grants are excluded.
+ * matching `level-vocation`/`level-specialization`).
  *
  * @function perLevelGrantBonus
  * @param {CharacterSheet} character - Character to read grants from

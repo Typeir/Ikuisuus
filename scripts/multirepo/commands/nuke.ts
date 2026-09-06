@@ -1,7 +1,6 @@
 /**
  * @fileoverview Hard-deletes a spell row from Postgres by slug.
- * @description Accepts `ik nuke spell:<slug>`. Deletes the `spells` row; FK
- * cascade removes matching `spell_lists` rows.
+ * @description Accepts `ik nuke spell:<slug>`.
  *
  * @module scripts/multirepo/commands/nuke
  * @version 2.0.0

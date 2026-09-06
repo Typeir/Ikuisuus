@@ -1,10 +1,7 @@
 /**
  * @fileoverview Row pitch for the virtualized sidebar, resolved from the root font size
  * @description The static list spaces leaves by the `text-sm` line box (1.25rem)
- * plus the `space-y-1` gap (0.25rem). Virtualized rows are absolutely
- * positioned and never receive that margin, so the pitch must carry it — and
- * it must follow the root font size, which the reader's text-scale preference
- * multiplies at runtime. A px constant drifts the moment that multiplier moves.
+ * plus the `space-y-1` gap (0.25rem).
  *
  * @module modules/navigation-sidebar/application/hooks/useLeafRowPitch
  * @author Typeir
@@ -29,9 +26,7 @@ export const LEAF_ROW_PITCH_REM = 1.5;
 export { FALLBACK_ROOT_PX, measureRootPx };
 
 /**
- * Pixel pitch of one virtualized leaf row, tracking the root font size. The
- * text-scale preference is applied to the root by the provider's effect, which
- * runs after this component's effects, so the re-measure waits one frame.
+ * Pixel pitch of one virtualized leaf row, tracking the root font size.
  *
  * @returns {number} Row pitch in whole px
  */

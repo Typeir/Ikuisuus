@@ -20,9 +20,7 @@
  */
 
 /**
- * Converts a string to kebab-case. Splits on camelCase/PascalCase boundaries,
- * removes special characters and decimal points, collapses whitespace and
- * underscores to single hyphens, trims leading/trailing hyphens, lowercases.
+ * Converts a string to kebab-case.
  *
  * @param {string} str - The input string to convert.
  * @returns {string} The kebab-case formatted string.

@@ -4,10 +4,6 @@
  * @fileoverview Extracts the keyword join keys a content file produces from
  * its frontmatter declarations: `keywordIndex: <name>` keys every heading in
  * the file, `keywords: [<term>, ...]` keys named terms in the bare namespace.
- * Build-time generators stamp `produces` arrays with these keys; runtime
- * resolution reads them back through the keyword graph.
- *
- * Server only.
  *
  * @module lib/md/keywordIndexRegistry
  * @version 4.0.0
@@ -58,10 +54,6 @@ export interface DeclaredKeyword {
 /**
  * Reads the declared terms from a `keywords` frontmatter value.
  *
- * A term is usually its own heading. A `term: Heading Text` entry names a
- * different bearer, for a definition whose section is not titled after the term
- * — a page-wide term borne by the `H1`, say.
- *
  * @param {unknown} raw - Frontmatter value: a list, a comma-separated string, or entries mapping a term to its heading
  * @returns {DeclaredKeyword[]} Declared terms paired with their bearing heading
  *
@@ -98,9 +90,6 @@ export function declaredTerms(raw: unknown): DeclaredKeyword[] {
 /**
  * Slug of the heading bearing a term, for a reference that already resolved to
  * this document.
- *
- * Resolution addresses a shard by the term's own slug; extraction needs the
- * heading's. The two differ only for a `term: Heading Text` declaration.
  *
  * @param {string} source - Raw MDX source, frontmatter included
  * @param {string} anchor - Slug of the referenced term

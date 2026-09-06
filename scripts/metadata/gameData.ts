@@ -1,8 +1,7 @@
 /**
  * @fileoverview Game Data Static Accessors
  * @description Typed accessors for shared-data.json game rules, item data,
- * and spell data. All methods require the loaded SharedData object to be passed
- * explicitly (no side-loaded singletons).
+ * and spell data.
  *
  * @module scripts/metadata/gameData
  * @version 1.0.0

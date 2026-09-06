@@ -1,9 +1,7 @@
 /**
  * @fileoverview Cache Invalidator Port
  * @description The framework-facing half of invalidation: busting a tagged
- * Data Cache entry and re-rendering a route. Both are Next/Vercel semantics
- * today, so they live behind this port; a different deployment swaps the
- * adapter, not the routes that invalidate.
+ * Data Cache entry and re-rendering a route.
  *
  * @module lib/cache/invalidator
  * @version 1.0.0

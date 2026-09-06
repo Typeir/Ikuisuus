@@ -1,9 +1,7 @@
 /**
  * @fileoverview Character Entity Context
  * @description Holds the canonical flat {@link CharacterEntity} JSON for the
- * character on screen. The only context carrying character data. Mounted by
- * `ActiveSheetProvider` around the sheet and directly by `CharacterEntityProvider`
- * for hosts without a sheet session.
+ * character on screen.
  *
  * @module modules/character-builder/application/context/characterEntityContext
  * @version 2.0.0
@@ -67,7 +65,7 @@ export const CharacterEntityProvider: React.FC<
 };
 
 /**
- * Read the full entity context. Throws outside a provider.
+ * Read the full entity context.
  *
  * @function useCharacterEntityContext
  * @returns {CharacterEntityContextValue} Entity + patcher

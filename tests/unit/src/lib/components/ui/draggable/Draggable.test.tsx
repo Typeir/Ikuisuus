@@ -1,9 +1,6 @@
 /**
  * @fileoverview Draggable Component Tests
  * @description Unit tests for the Draggable container component.
- * Covers rendering, drag handle interaction, pointer movement, boundary
- * clamping, resize re-clamping, resize handle, close button, and
- * function-based initial positioning.
  *
  * @module tests/unit/src/lib/components/ui/draggable/Draggable.test
  */

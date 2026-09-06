@@ -90,8 +90,7 @@ export function availableAspects(
 }
 
 /**
- * Whether an item carries every selected aspect. An empty selection matches
- * everything.
+ * Whether an item carries every selected aspect.
  *
  * @param {string[] | undefined} tags - The item's aspects
  * @param {ReadonlySet<string>} selected - Required aspects

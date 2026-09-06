@@ -18,7 +18,6 @@ import { describe, expect, it } from 'vitest';
 
 /**
  * Timeout for `importAllAsync`, which loads eight ESM packages in parallel.
- * Exceeds Vitest's default 5s budget for loaded module count.
  */
 const MODULE_LOAD_TIMEOUT_MS = 30_000;
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Client-side `SWRConfig` wrapper setting project-wide SWR
- * defaults. Mounted in the provider tree in `ClientProviders.tsx`.
+ * defaults.
  *
  * @module app/[locale]/SwrProvider
  * @version 1.0.0

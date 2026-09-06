@@ -1,7 +1,6 @@
 /**
  * @fileoverview Renders the SAVES / SKILLS / ARMOR / WEAPONS / TRADES summary
- * for a vocation entry. Missing grants (or no vocation) render an em dash;
- * values are stripped of inline markdown.
+ * for a vocation entry.
  *
  * @module modules/character-builder/presentation/builder/vocationProficiencySummary
  * @version 2.0.0

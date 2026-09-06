@@ -33,7 +33,6 @@ const DEFAULT_PIXEL_COUNT_Y = 540;
 
 /**
  * Default chromatic aberration strength in canvas-pixel units.
- * Shader suppresses near-white pixels; 1.5 ≈ <1 px shift at corner.
  */
 const DEFAULT_CA_STRENGTH = 1.5;
 
@@ -127,7 +126,6 @@ export class PixelatePass {
 
   /**
    * Two-pass render: scene → render target, then quad → screen.
-   * When disabled, falls back to a direct render with no extra allocation.
    *
    * @param {WebGLRenderer} renderer - Active WebGL renderer
    * @param {Scene} scene - The main Three.js scene
@@ -149,7 +147,6 @@ export class PixelatePass {
 
   /**
    * Change the pixel grid resolution.
-   * Lower values produce coarser output.
    *
    * @param {number} x - Horizontal cell count
    * @param {number} y - Vertical cell count
@@ -161,8 +158,7 @@ export class PixelatePass {
   }
 
   /**
-   * Set chromatic aberration spread. Larger values produce more colour
-   * fringing at screen edges.
+   * Set chromatic aberration spread.
    *
    * @param {number} strength - Radial UV offset per channel
    */
@@ -172,8 +168,7 @@ export class PixelatePass {
   }
 
   /**
-   * Set unsharp-mask sharpening weight. Values above ~1.5 cause haloing;
-   * 0.5–1.0 is a natural range.
+   * Set unsharp-mask sharpening weight.
    *
    * @param {number} strength - Sharpening blend weight
    */
@@ -193,8 +188,7 @@ export class PixelatePass {
   }
 
   /**
-   * Enable or disable the pixelation effect. When disabled, the scene is
-   * rendered directly without the extra pass.
+   * Enable or disable the pixelation effect.
    *
    * @param {boolean} enabled - Whether to apply the effect
    */
@@ -213,7 +207,6 @@ export class PixelatePass {
 
   /**
    * Resize the render target to match the new canvas dimensions.
-   * Must be called whenever the canvas is resized.
    *
    * @param {number} width - New canvas width in physical pixels
    * @param {number} height - New canvas height in physical pixels
@@ -224,7 +217,7 @@ export class PixelatePass {
   }
 
   /**
-   * Release all GPU resources. Call when the pass is no longer needed.
+   * Release all GPU resources.
    */
   dispose(): void {
     this.renderTarget.dispose();

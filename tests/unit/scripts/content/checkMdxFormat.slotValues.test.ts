@@ -1,8 +1,7 @@
 /**
  * @fileoverview Tests for the gate's slot-value rule.
  * @description The cards derive from slot values without complaint, so the
- * gate is the one place a value of the wrong shape is named. These pin what it
- * names and what it lets through.
+ * gate is the one place a value of the wrong shape is named.
  *
  * @module tests/unit/scripts/content/checkMdxFormat.slotValues.test
  * @version 0.1.0

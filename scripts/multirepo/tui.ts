@@ -1,5 +1,5 @@
 /**
- * @fileoverview Interactive TUI for the ik multirepo CLI. Exports `guardCancel` (Ctrl-C handler) and `runInteractive` (arrow-key menu).
+ * @fileoverview Interactive TUI for the ik multirepo CLI.
  * @module scripts/multirepo/tui
  * @author Typeir
  * @version 2.0.0

@@ -9,7 +9,7 @@
  *
  * @route GET /api/affixes/[slug]
  * @param {string} slug - Affix slug (e.g., 'bloodthirsty')
- * @query {string} locale - Locale code (e.g., 'en'). Defaults to 'en'.
+ * @query {string} locale - Locale code (e.g., 'en').
  * @returns {Object} Affix metadata with slug, title, and link
  *
  * @example

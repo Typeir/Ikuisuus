@@ -62,7 +62,7 @@ export interface SpecializationSpellcasting {
  * @property {string} specializationType - Type classification (e.g. "Path", "Domain", "School")
  * @property {string} [flavor] - Introductory flavor text
  * @property {SpecializationSpellcasting} [spellcasting] - Own spellcasting if applicable
- * @property {AlwaysPreparedSpells[]} [preparedSpells] - Level-keyed lists of always-prepared spells. Matches `SpecializationEntity.preparedSpells` relation.
+ * @property {AlwaysPreparedSpells[]} [preparedSpells] - Level-keyed lists of always-prepared spells.
  * @property {SpecializationFeature[]} features - Level-feature list
  */
 export interface SpecializationMetadata extends BaseMetadata {

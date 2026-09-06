@@ -128,8 +128,7 @@ function rewriteClassSpellFile(
 }
 
 /**
- * Main entry point. Scans all custom spell files, cross-references with class
- * spell lists, and adds missing entries.
+ * Main entry point.
  */
 function main(): void {
   const args = process.argv.slice(2);

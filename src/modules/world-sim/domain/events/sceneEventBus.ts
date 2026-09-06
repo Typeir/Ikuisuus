@@ -89,7 +89,6 @@ export class SceneEventBus {
 
   /**
    * Remove all listeners for all events.
-   * Call during cleanup/dispose.
    */
   clear(): void {
     this.listeners.clear();

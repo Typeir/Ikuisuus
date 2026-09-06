@@ -1,8 +1,6 @@
 /**
  * @fileoverview Raycast Service — Interaction & Occlusion Raycasting
  * @description Encapsulates all Three.js raycasting logic for the World Sim.
- * Performs mouse-based body picking (click/hover) and camera-based occlusion
- * detection, and owns the Raycaster instance plus cached mesh arrays.
  *
  * @module modules/world-sim/application/services/RaycastService
  * @version 1.0.0
@@ -23,8 +21,6 @@ import { OCCLUSION_OPACITY_THRESHOLD } from '@/modules/world-sim/infrastructure/
 
 /**
  * Service responsible for all raycasting operations in the World Sim.
- * Manages cached mesh lists, mouse-based body picking, and camera-based
- * occlusion detection.
  *
  * @class RaycastService
  *
@@ -54,8 +50,6 @@ export class RaycastService {
 
   /**
    * Build cached mesh arrays from celestial root meshes.
-   * Traverses each root to collect individual meshes for raycasting.
-   * Opaque (or near-opaque) meshes are used for occlusion testing.
    *
    * @param {Iterable<Object3D>} rootMeshes - Root Object3D nodes for all celestial bodies
    */
@@ -84,7 +78,6 @@ export class RaycastService {
 
   /**
    * Perform a raycast from a mouse event and return the ID of the hit body.
-   * Walks up the scene graph from the hit mesh to find the parent with a bodyId.
    *
    * @param {MouseEvent} event - The mouse event with client coordinates
    * @param {PerspectiveCamera} camera - The scene camera
@@ -123,8 +116,7 @@ export class RaycastService {
 
   /**
    * Determine which celestial bodies are occluded (hidden behind other bodies)
-   * from the camera's perspective. Raycasts from the camera toward each body's
-   * center and checks whether the first intersection belongs to a different body.
+   * from the camera's perspective.
    *
    * @param {PerspectiveCamera} camera - The scene camera
    * @param {Map<string, { mesh: Object3D }>} entries - Map of body ID to mesh entry

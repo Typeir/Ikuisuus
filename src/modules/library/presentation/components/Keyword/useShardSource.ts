@@ -2,15 +2,6 @@
  * @fileoverview Shard Source Resolution
  * @description Answers a card's one question: what prose defines this keyword.
  *
- * A page bakes the references it writes, so those cards open from context with
- * no request. A reference living inside one of those shards is not baked —
- * following them at compile would pull each shard's dependencies onto the page,
- * and theirs after that, until every page carried the whole corpus. Those are
- * fetched here instead, on the open that needs one.
- *
- * A fetch asks for the shard's own keywords too, so the card after it opens
- * from what this request already returned rather than a second connection.
- *
  * @module modules/library/presentation/components/Keyword/useShardSource
  * @version 2.0.0
  * @author Typeir
@@ -26,9 +17,7 @@ import { useEffect, useState } from 'react';
 import { useKeywordShard } from './KeywordShardContext';
 
 /**
- * Shards already in hand, keyed by `locale:id`. Filled by a card's own request
- * and by the keywords that request carried, so a shard is fetched once per
- * session however many cards open on it.
+ * Shards already in hand, keyed by `locale:id`.
  */
 const resolved = new Map<string, ResolvedShard>();
 

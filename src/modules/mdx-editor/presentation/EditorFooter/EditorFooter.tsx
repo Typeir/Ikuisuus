@@ -39,8 +39,6 @@ interface EditorFooterProps {
 
 /**
  * Footer bar for the MDX editor.
- * Displays status messages (submitting, success, error, editing, new file)
- * and a submit button.
  *
  * @component
  * @param {EditorFooterProps} props - Component properties

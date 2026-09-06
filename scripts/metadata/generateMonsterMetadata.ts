@@ -1,7 +1,6 @@
 /**
  * @fileoverview Monster Metadata Generator
  * @description Parses monster stat blocks in MDX format and extracts metadata.
- * Supports multiple stat blocks per file and blockquote stat blocks for variants.
  *
  * @module scripts/metadata/generateMonsterMetadata
  * @version 4.0.0
@@ -13,6 +12,7 @@ import { createLogger } from '@/lib/logging/logger';
 import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
+import { unslotMonster } from './slotForms';
 import path from 'path';
 import {
   GameData,
@@ -467,9 +467,7 @@ function findStatBlockTitle(
 
 /**
  * Finds the image path closest to a stat block by scanning backwards from the
- * italic creature-type line towards the variant heading. For the first stat
- * block (index 0) also scans from the file start. Falls back to the first image
- * in the file when a variant block has no per-variant image.
+ * italic creature-type line towards the variant heading.
  *
  * @param {string[]} allLines - All file lines
  * @param {number} statBlockLineIdx - Index of the italic stat block line
@@ -526,8 +524,6 @@ function findMonsterImage(
  */
 /**
  * Extracts the lore description from a stat block section.
- * Collects prose lines between the italic creature-type line and the first table
- * row, filtering out italics, JSX elements, headings, blockquotes, and empty lines.
  *
  * @param {string[]} sectionLines - Lines extracted for this stat block
  * @returns {string | undefined} Prose description with markdown stripped, or undefined
@@ -805,7 +801,7 @@ export function parseMonsterSource(
   filePath: string,
   sharedData: SharedData,
 ): object[] {
-  const lines = readLines(blankFrontmatter(raw));
+  const lines = readLines(unslotMonster(blankFrontmatter(raw)));
   const baseSlug = filePathToSlug(filePath);
   const fileFrontmatter = matter(raw).data as Record<string, unknown>;
 
@@ -977,8 +973,7 @@ function blockquoteEnd(lines: string[], start: number): number {
 
 /**
  * Parses a quoted object block (plating, blade, drone): heading title, AC/HP/
- * damage-threshold header row, tags from the block text. Objects carry no
- * scores or challenge; `meta:content:object` marks them.
+ * damage-threshold header row, tags from the block text.
  *
  * @param {string[]} lines - All file lines
  * @param {number} start - Heading line of the block
@@ -1045,9 +1040,7 @@ function parseObjectBlock(
 }
 
 /**
- * Features of quoted blocks. Each block's own line range is de-quoted in
- * place (line numbers preserved) and run through the standard feature parser
- * with statlet rules on; only features anchored inside the block are kept.
+ * Features of quoted blocks.
  *
  * @param {string[]} lines - All file lines
  * @param {Record<string, unknown>[]} blocks - Records with blockStart/blockEnd
@@ -1099,8 +1092,7 @@ function dedupeFeatures(features: MonsterFeature[]): MonsterFeature[] {
 
 /**
  * Unions every sub-record's tags into the file's parent record so a sheet
- * is findable by anything its statlets carry. Sub-records keep their own
- * tags. The parent is the first non-object record.
+ * is findable by anything its statlets carry.
  *
  * @param {Record<string, unknown>[]} results - All records of the file
  */

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Content file-tree API.
- * @description GET handler. Reads query params into TreeQueryParams and returns `{ entries, total, nextCursor }`.
+ * @description GET handler.
  * @module app/api/content/tree/route
  * @version 1.0.0
  * @author Typeir

@@ -16,8 +16,6 @@ import type { CharacterSheet } from '@/lib/types/character';
 
 /**
  * Storage key used by fetchPersistentData / storePersistentData for the character array.
- * Reads fall through cookie → sessionStorage → localStorage; the cookie layer rejects
- * data too large for it.
  *
  * @constant CHARACTER_SHEET_STORAGE_KEY
  */
@@ -52,8 +50,6 @@ export interface CharacterSheetState {
 
 /**
  * Action to add or replace a character by ID.
- * If a character with the same ID exists it is replaced; otherwise appended.
- * The updatedAt timestamp is set to now on every upsert.
  *
  * @interface UpsertCharacterAction
  * @property {typeof CHARACTER_SHEET_ACTION_TYPES.UPSERT_CHARACTER} type - Action type identifier
@@ -66,7 +62,6 @@ export interface UpsertCharacterAction {
 
 /**
  * Action to remove a character by ID.
- * If activeId matches the deleted character, activeId is set to null.
  *
  * @interface DeleteCharacterAction
  * @property {typeof CHARACTER_SHEET_ACTION_TYPES.DELETE_CHARACTER} type - Action type identifier
@@ -101,7 +96,6 @@ export interface ResetCharacterSheetAction {
 
 /**
  * Action to hydrate state from persistent storage.
- * Fires once client-side, replacing the initial SSR state with stored data.
  *
  * @interface HydrateCharacterSheetAction
  * @property {typeof CHARACTER_SHEET_ACTION_TYPES.HYDRATE} type - Action type identifier

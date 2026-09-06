@@ -1,8 +1,6 @@
 /**
  * @fileoverview Affix List Editor Component
  * @description Reusable component for managing affix lists with optional source links.
- * Tracks affixes as "not found" if no source link is available (dashed border styling).
- * Used in both CreatureRow (design mode) and PlayModeCombatantRow (play mode).
  *
  * @module modules/encounter-planner/presentation/listEditors/affixListEditor
  * @version 1.0.0
@@ -48,8 +46,6 @@ interface AffixListEditorProps {
 
 /**
  * Affix list editor with combobox and "not found" tracking.
- * Displays affix chips with optional links, applies .chipNotFound styling
- * (dashed border) when source link is missing.
  *
  * @component
  * @param {AffixListEditorProps} props - Component props

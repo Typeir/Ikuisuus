@@ -2,7 +2,6 @@
  * className merge utility
  *
  * @fileoverview Combines class inputs into a single className string.
- * Handles strings, objects with conditional keys, and arrays. Filters out falsy values.
  *
  * @module lib/utils/classNameMerge
  * @version 1.0.0
@@ -11,7 +10,6 @@
  *
  * @description
  * Combines multiple class inputs into a single className string.
- * Zero dependencies. Filters falsy values automatically.
  *
  * @example
  * ```ts

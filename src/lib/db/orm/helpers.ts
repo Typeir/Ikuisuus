@@ -1,7 +1,6 @@
 /**
  * @fileoverview Row Mapping Utilities
- * @description Helpers mapping DB entity rows to domain objects. Normalise
- * `null` DB column values to `undefined`.
+ * @description Helpers mapping DB entity rows to domain objects.
  *
  * @module lib/db/orm/helpers
  * @version 1.0.0
@@ -20,7 +19,6 @@ export const orUndef = <T>(val: T | null | undefined): T | undefined =>
 
 /**
  * Returns the array when it has entries, otherwise `undefined`.
- * Converts empty arrays to `undefined` for optional domain fields.
  *
  * @param {T[]} arr - Array column value
  * @returns {T[] | undefined} Non-empty array or undefined

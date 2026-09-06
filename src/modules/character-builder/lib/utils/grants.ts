@@ -1,8 +1,7 @@
 /**
  * @fileoverview Feature Grant Utilities
  * @description Parses `grants: string[]` tags of the form `category:value[:tier]`
- * and derives the proficiencies a set of features confers. Tags are flat
- * strings; no rule-specific DB relations.
+ * and derives the proficiencies a set of features confers.
  *
  * @module modules/character-builder/lib/utils/grants
  * @version 1.0.0
@@ -20,8 +19,7 @@ import { TIER_CYCLE } from './characterStorage';
 import { parseHpGrant, type HpValueGrant } from './hpGrants';
 
 /**
- * Kinds of benefit a grant tag confers. `feat` is assignable-only; the five
- * proficiency kinds also drive floors.
+ * Kinds of benefit a grant tag confers.
  *
  * @typedef {'skill' | 'trade' | 'saving_throw' | 'armor' | 'weapon' | 'feat'} GrantCategory
  */
@@ -34,13 +32,7 @@ export type GrantCategory =
   | 'feat';
 
 /**
- * A parsed grant tag, discriminated by target choice. `specific` grants are
- * auto-applied as floors; `oneOf` / `any` / `anyExcept` require player assignment.
- *
- * Tag grammar (`category:value[:tier][:count]`): `skill:arcana:expertise`
- * (specific), `skill:[arcana,history]:expertise` (oneOf), `skill:*:familiarity`
- * (all), `feat:any` (any), `feat:!ability-score-improvement` (anyExcept). A
- * trailing numeric segment sets the pick count (`skill:any:expertise:2`).
+ * A parsed grant tag, discriminated by target choice.
  *
  * @typedef {object} ParsedGrant
  * @property {'specific'|'all'|'oneOf'|'any'|'anyExcept'} kind - How the target is chosen
@@ -136,11 +128,7 @@ function parseGrantList(raw: string): string[] {
 }
 
 /**
- * Parses a single grant tag into a discriminated {@link ParsedGrant}. `hp`
- * parses positionally (`hp:<term>:<scope>`); other categories use
- * `category:value[:tier][:count]`, where `value` selects the kind: `any`,
- * `!x`/`![x,y]` (anyExcept), `[a,b,c]` (oneOf), `*` (all), or a bare token
- * (specific).
+ * Parses a single grant tag into a discriminated {@link ParsedGrant}.
  *
  * @function parseGrant
  * @param {string} tag - Raw grant tag
@@ -193,8 +181,7 @@ export function higherTier(a: TierLevel, b: TierLevel): TierLevel {
 
 /**
  * Reduces grant tags to the proficiencies they confer: highest tier per
- * skill/trade/save, deduped armor/weapon grants. Only `specific` grants
- * contribute; choice grants (`oneOf` / `any` / `anyExcept`) are skipped.
+ * skill/trade/save, deduped armor/weapon grants.
  *
  * @function deriveGrants
  * @param {string[]} tags - Grant tags from one or more features
@@ -233,7 +220,7 @@ export function deriveGrants(tags: string[]): DerivedGrants {
 /**
  * Collects every grant tag from a character's active features: vocation and
  * specialization shards unlocked at or below vocation level, plus selected
- * feats. Boons excluded.
+ * feats.
  *
  * @function collectActiveGrants
  * @param {CharacterSheet} character - Character to inspect
@@ -248,8 +235,7 @@ export function collectActiveGrants(character: CharacterSheet): string[] {
 /**
  * Collects the grant-bearing shards of a character's active features and
  * selected feats: vocation and specialization feature shards unlocked at or
- * below vocation level, plus every selected feat. Preserves the shard (heading,
- * id, grants) so callers can attribute a grant to its source feature.
+ * below vocation level, plus every selected feat.
  *
  * @function collectActiveGrantShards
  * @param {CharacterSheet} character - Character to inspect
@@ -271,7 +257,6 @@ export function collectActiveGrantShards(
 
 /**
  * Derives the proficiencies a character's currently-active features confer.
- * Convenience wrapper over {@link collectActiveGrants} + {@link deriveGrants}.
  *
  * @function deriveActiveGrants
  * @param {CharacterSheet} character - Character to inspect
@@ -294,9 +279,7 @@ export function kebabToCamel(value: string): string {
 }
 
 /**
- * Auto-apply floors keyed to match the editable tables. Skill and tool tiers are
- * keyed by their i18n name (`skills.persuasion`, `tools.smithing`); saving
- * throws stay keyed by ability.
+ * Auto-apply floors keyed to match the editable tables.
  *
  * @interface GrantFloors
  * @property {Record<string, TierLevel>} skills - Skill i18n name → granted floor tier
@@ -316,10 +299,7 @@ export interface GrantFloors {
 /**
  * Builds the {@link GrantFloors} a character confers, remapping skill/trade grant
  * values to i18n table names and folding the primary (`vocations[0]`) vocation's
- * base saves and fixed trades (`proficient`) into the floors. Only the primary
- * vocation grants base proficiencies. Reads `vocations[0]` live, so reordering/
- * removing it recalculates. `all` grants (`skill:*:familiarity`) floor every row
- * in their category at the tier.
+ * base saves and fixed trades (`proficient`) into the floors.
  *
  * @function deriveGrantFloors
  * @param {CharacterSheet} character - Character to inspect

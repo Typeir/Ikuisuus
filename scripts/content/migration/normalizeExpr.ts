@@ -11,8 +11,6 @@
 
 /**
  * Normalizes a dice expression into canonical `[% NdM + static type %]` form.
- * Dice notation always first, static modifier second, damage type last.
- * Strips trailing " damage" suffix from type string.
  *
  * @param {string} dice - Dice notation, e.g. "2d20"
  * @param {string | null} modifier - Signed numeric modifier or null

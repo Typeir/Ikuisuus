@@ -1,9 +1,7 @@
 /**
  * Directory Walker
  *
- * @fileoverview The one recursive directory walker. Every file-listing sweep
- * (generators, checks, indexers) goes through these instead of hand-rolling
- * traversal. Server only.
+ * @fileoverview The one recursive directory walker.
  *
  * @module lib/utils/getMatchingFiles
  * @version 1.0.0
@@ -19,7 +17,6 @@ const log = createLogger({ component: 'walk-directory' });
 
 /**
  * Recursively walks a directory, pushing files matching a pattern to results.
- * Unreadable directories are logged and skipped.
  *
  * @param {string} dir - Directory to walk
  * @param {RegExp} pattern - Pattern to match filenames against
@@ -50,8 +47,6 @@ export async function walkDirectory(
 
 /**
  * Returns paths of files matching a pattern in a directory.
- * When `recursive` is true, walks subdirectories and does not exclude
- * `main.mdx`. Non-recursive mode excludes `main.mdx`.
  *
  * @param {string} directory - Directory to search
  * @param {RegExp} pattern - Pattern to match filenames against

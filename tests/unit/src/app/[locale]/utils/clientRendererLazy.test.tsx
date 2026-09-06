@@ -1,8 +1,6 @@
 /**
  * @fileoverview Lazy Client MDX Fallback Tests
  * @description Tests ClientRendererLazy with a mocked next/dynamic loader.
- * Asserts the loaded renderer receives locale and slug props and loads with
- * ssr disabled.
  *
  * @module tests/unit/src/app/[locale]/utils/clientRendererLazy.test
  * @version 1.0.0

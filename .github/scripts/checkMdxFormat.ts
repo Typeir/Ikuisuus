@@ -121,9 +121,7 @@ const ATTRIBUTE = /([A-Za-z]\w*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
 
 /**
  * Every slot attribute whose value fails its shape rule, and every monster
- * whose written XP disagrees with the XP table for its rating. The cards derive
- * from these values without complaint — a rating that will not parse simply
- * drops its tier — so this is the one place the typo is named.
+ * whose written XP disagrees with the XP table for its rating.
  *
  * @param {string} content - MDX file content
  * @returns {string | false} The failures joined, or false when every value passes
@@ -291,20 +289,18 @@ const RULES: FormatRule[] = [
   },
   {
     name: 'spell-missing-blockquote-stat-block',
-    check: (content: string) => !content.match(/^>\s+\*\*/m),
-    message: 'Spell file missing blockquote stat block (> **Spell Name**)',
+    check: (content: string) =>
+      !content.match(/^>\s+\*\*/m) && !/<Spell\b/.test(content),
+    message: 'Spell file missing its stat block (> **Spell Name** or <Spell …>)',
     suggestion:
-      'Spell files should contain a blockquote (>) section with the spell stat block',
+      'Spell files should carry the stat block as a blockquote or as a <Spell> tag',
     severity: 'warning',
     appliesTo: ['spells'],
   },
 ];
 
 /**
- * Component names the slot schema generates. The registry spreads
- * `slotComponents`, whose keys are derived from the slot tables at runtime, so
- * a regex over the registry cannot see them. Reading the schema is how those
- * names become visible to a static check.
+ * Component names the slot schema generates.
  *
  * @param {string} schemaFile - Path to the slot schema
  * @param {string} registryFile - Path to the slot component registry
@@ -358,8 +354,6 @@ async function loadSlotComponents(
  * Load registered MDX component names from `export const components = { ... }`
  * in the live registry.
  *
- * Throws when the registry cannot be read or yields nothing.
- *
  * @param {string} indexFile - Path to the registry index.tsx
  * @returns Set of registered component names that can appear as MDX tags
  * @throws {Error} When the registry is missing, moved, or parses to no components
@@ -408,8 +402,6 @@ async function loadRegisteredComponents(
 /**
  * Derive content type from a relative file path.
  *
- * Matches on path segments (e.g. `/spells/`), not basenames.
- *
  * @param relPath Relative path from project root
  * @returns Content type identifier string
  */
@@ -425,11 +417,6 @@ function getContentType(relPath: string): string {
 
 /**
  * Parse health-check ignore directives from the first 20 lines of a file.
- *
- * Recognizes three directive formats:
- *   <!-- health:check-ignore <rule> -->
- *   {/* health:check-ignore <rule> *\/}
- *   {/* paw:gate:content-format:<rule-key> ignore *\/}
  *
  * @param content MDX file content
  * @returns Set of rule names that should be ignored
@@ -524,8 +511,6 @@ function checkFile(
 
 /**
  * Execute the mdx-format check and return a structured result.
- * When options.rootDir is provided, uses that instead of auto-detected ROOT.
- * When options.readFile is provided, uses that instead of fs.readFile.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations

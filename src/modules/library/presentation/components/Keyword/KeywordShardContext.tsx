@@ -1,8 +1,7 @@
 /**
  * @fileoverview Keyword Shard Context
  * @description Carries the shard source a page references down to its keyword
- * cards. Source rather than rendered HTML, so the card compiles it and the
- * project's own syntax stays live.
+ * cards.
  *
  * @module modules/library/presentation/components/Keyword/KeywordShardContext
  * @version 1.0.0

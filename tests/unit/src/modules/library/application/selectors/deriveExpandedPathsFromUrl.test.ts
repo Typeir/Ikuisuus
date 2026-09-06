@@ -2,7 +2,6 @@
  * Tests for deriveExpandedPathsFromUrl utility
  *
  * @fileoverview Unit tests for URL-based sidebar expansion derivation.
- * Tests pathname parsing and ancestor path generation.
  */
 
 import { deriveExpandedPathsFromUrl } from '@/modules/library/application/selectors/deriveExpandedPathsFromUrl';

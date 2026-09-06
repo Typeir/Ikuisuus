@@ -1,8 +1,7 @@
 /**
  * Keyword Index
  *
- * @fileoverview Keyword template id derivation. Pure, with no filesystem
- * access, so the remark plugin stays safe to bundle for the client.
+ * @fileoverview Keyword template id derivation.
  *
  * @module lib/md/keywordIndex
  * @version 2.0.0
@@ -14,9 +13,7 @@
 export const BARE_NAMESPACE = '';
 
 /**
- * DOM id of the baked `<template>` holding a reference's shard prose. The
- * namespace segment is always present, so a bare term yields `kw--accuracy`
- * and cannot collide with a namespaced one.
+ * DOM id of the baked `<template>` holding a reference's shard prose.
  *
  * @param {string | undefined} namespace - Reference namespace, or undefined when bare
  * @param {string} anchor - Slug of the defining heading

@@ -1,9 +1,6 @@
 /**
  * @fileoverview Content Expand Body
  * @description Renders the prose body of a content item (feat, boon, etc.)
- * inline below its picker row. Fetches the heading block via the DB-backed
- * `/api/content-shards/[type]/[slug]` endpoint lazily on mount and compiles it
- * with the runtime MDX compiler, so units, dice and keywords stay live.
  * @module modules/character-builder/presentation/builder/contentExpandBody
  * @version 1.0.0
  * @author Typeir

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Compiles MDX with file-scoped imports. Async. Used by library route.
+ * @fileoverview Compiles MDX with file-scoped imports.
  *
  * @module src/modules/library/infrastructure/compile/compileStatic
  *

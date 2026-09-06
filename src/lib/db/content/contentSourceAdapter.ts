@@ -23,7 +23,6 @@ export interface ContentFetchResult {
 
 /**
  * Adapter interface for raw content fetching.
- * Implementations MUST return null when the content cannot be found rather than throwing.
  */
 export interface ContentSourceAdapter {
   /**

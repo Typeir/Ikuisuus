@@ -1,8 +1,7 @@
 /**
  * @fileoverview Overview Tab
  * @description Two-column overview: granted proficiencies, skills and trades on
- * the left; attacks, selected shard chips, and notes on the right. Phone
- * viewports use the tab strip layout in {@link MobileOverviewTab}.
+ * the left; attacks, selected shard chips, and notes on the right.
  *
  * @module modules/character-builder/presentation/tabs/overviewTab
  * @version 3.0.0
@@ -27,7 +26,7 @@ import {
 import styles from './tabs.module.scss';
 
 /**
- * Overview tab content. Switches to the phone layout on narrow viewports.
+ * Overview tab content.
  *
  * @component
  * @returns {JSX.Element} Rendered tab body

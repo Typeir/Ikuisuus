@@ -4,7 +4,6 @@
  * @description
  * Generates an ASCII tree of the repository and writes it to
  * `.ignore/architecture-tree.md` (or a path supplied as the second arg).
- * Implements TypeScript types and JSDoc to satisfy project PAW gates.
  * @author Typeir
  * @version 1.0.0
  * @since 2026-04-28

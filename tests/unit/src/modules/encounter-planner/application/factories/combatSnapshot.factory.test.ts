@@ -1,7 +1,6 @@
 /**
  * @fileoverview Unit tests for In-Progress Combat Storage Utilities
  * @description Tests for combat snapshot management and Play Mode operations.
- * Tests pure functions directly and localStorage operations with mocked storage.
  *
  * @version 1.0.0
  * @author Typeir

@@ -10,7 +10,6 @@ import { resolve } from 'path';
 
 /**
  * Runs a git command in a repo directory with git env-vars unset.
- * Returns the process exit status.
  * @param repo - Absolute path to the repository root.
  * @param args - Git subcommand and flags.
  */
@@ -39,7 +38,7 @@ function isDirty(repo: string): boolean {
 }
 
 /**
- * Entry point. Exits 0 in all cases; the hook only warns, never blocks.
+ * Entry point.
  */
 function main(): void {
   if (process.env['IK_RUNNING'] === '1') {

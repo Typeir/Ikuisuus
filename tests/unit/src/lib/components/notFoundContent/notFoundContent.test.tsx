@@ -2,11 +2,10 @@
  * @fileoverview Unit tests for Not Found Content component
  * @module tests/unit/src/lib/components/notFoundContent/notFoundContent.test
  * @description Validates NotFoundContent export and component signature.
- * Tests presentational component for 404 error pages.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @/lib/components/notFoundContent/notFoundContent
  */

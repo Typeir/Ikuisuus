@@ -1,8 +1,6 @@
 /**
  * @fileoverview Type Sigil Atom
  * @description Per-content-type Lucide icon in an accent-tinted badge.
- * Maps the domain `SearchContentType` to the appropriate Lucide icon
- * component and CSS `--search-type-*` token.
  *
  * @module modules/search/presentation/atoms/TypeSigil
  * @version 1.0.0

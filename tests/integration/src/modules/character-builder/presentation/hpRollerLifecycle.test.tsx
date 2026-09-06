@@ -63,8 +63,7 @@ const makeChar = (
 
 /**
  * Reads the character from the sheet context, runs `syncHitDiceLog` in an
- * effect, and renders only `CombatStatChips`. Test buttons bump the first
- * vocation's level and drop CON.
+ * effect, and renders only `CombatStatChips`.
  *
  * @function Harness
  * @returns {JSX.Element} The harness element

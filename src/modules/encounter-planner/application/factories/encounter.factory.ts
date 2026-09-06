@@ -16,7 +16,7 @@ import type {
 import { calculateInitiativeMod, generateId } from '../../domain/shared/utils';
 
 /**
- * Partial shape for monster metadata as provided by the content API. Only fields used by the factory.
+ * Partial shape for monster metadata as provided by the content API.
  */
 type MonsterLibraryData = {
   hp?: { average?: number; formula?: string } | null;
@@ -82,7 +82,7 @@ export const createEmptyCreature = (): CreatureEntry => {
 };
 
 /**
- * Creates an empty encounter with default name and no creatures. Sets creation and update timestamps to the current ISO time.
+ * Creates an empty encounter with default name and no creatures.
  *
  * @function createEmptyEncounter
  * @returns {Encounter} Newly created encounter
@@ -102,7 +102,7 @@ export const createEmptyEncounter = (): Encounter => {
 };
 
 /**
- * Creates a creature entry from monster library metadata. Generates a new runtime ID per call.
+ * Creates a creature entry from monster library metadata.
  *
  * @function createCreatureFromMonster
  * @param {any} monsterData - Full monster metadata object from library
@@ -169,7 +169,7 @@ export const createCreatureFromMonster = (
 };
 
 /**
- * Creates creature entries from monster library metadata. Quantity is clamped to 1..20.
+ * Creates creature entries from monster library metadata.
  *
  * @function createMultipleCreaturesFromMonster
  * @param {any} monsterData - Full monster metadata object from library

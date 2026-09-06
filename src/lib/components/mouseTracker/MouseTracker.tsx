@@ -11,7 +11,7 @@
 import { useEffect } from 'react';
 
 type Props = {
-  /** Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement */
+  /** Optional ref to the element that should receive the CSS vars. */
   targetRef?: React.RefObject<HTMLElement | null>;
   /** Optional callback fired on first mouse movement */
   onFirstMove?: () => void;
@@ -19,9 +19,6 @@ type Props = {
 
 /**
  * Write mouse coordinates to CSS variables on the target element.
- * Emits percentage vars (--mouse-x/--mouse-y, for gradient positions) and
- * pixel vars (--mouse-px/--mouse-py, for transforms; percentages in
- * translate() resolve against the element's own box, not the viewport).
  * @param {number} clientX
  * @param {number} clientY
  */
@@ -42,12 +39,9 @@ function setMouseVars(
 
 /**
  * Client component that tracks pointer movement and updates CSS variables.
- * Stateless — does not cause React re-renders on movement.
- * Respects user preferences for reduced motion and coarse pointers by disabling tracking.
- * Coalesces updates to one write per animation frame.
  *
  * @param {Props} props
- * @param {React.RefObject<HTMLElement | null>} props.targetRef - Optional ref to the element that should receive the CSS vars. If omitted, falls back to document.documentElement
+ * @param {React.RefObject<HTMLElement | null>} props.targetRef - Optional ref to the element that should receive the CSS vars.
  * @param {() => void} props.onFirstMove - Optional callback fired once on first mouse movement
  *
  * @returns {null}

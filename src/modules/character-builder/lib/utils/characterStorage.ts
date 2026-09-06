@@ -1,8 +1,6 @@
 /**
  * @fileoverview Character Sheet Pure Helpers
  * @description Pure factory and math utilities for character sheets.
- * CRUD persistence is handled by CharacterSheetContext via the
- * fetchPersistentData / storePersistentData abstraction layer.
  *
  * @module modules/character-builder/lib/utils/characterStorage
  * @version 2.0.0
@@ -37,7 +35,7 @@ export const TIER_CYCLE: (
 )[] = ['none', 'familiarity', 'proficient', 'expertise', 'savanthood'];
 
 /**
- * Proficiency pip levels (excludes 'none'). Use for rendering 4 pips.
+ * Proficiency pip levels (excludes 'none').
  *
  * @constant TIER_LEVELS
  * @type {Exclude<TierLevel, 'none'>[]}
@@ -146,7 +144,7 @@ const DEFAULT_SAVES: Record<AbilityKey, 'none'> = {
 };
 
 /**
- * Compute tier bonus from level: `⌈level / 3⌉`. Yields +10 at level 30.
+ * Compute tier bonus from level: `⌈level / 3⌉`.
  *
  * @function computeTierBonus
  * @param {number} level - Character level (1–30)

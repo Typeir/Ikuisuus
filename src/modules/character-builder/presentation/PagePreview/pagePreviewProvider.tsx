@@ -1,9 +1,7 @@
 /**
  * @fileoverview Page Preview Provider
  * @description Context provider that tracks open `<Draggable>` library-page
- * previews keyed by `kind+slug`. Allows `PagePreviewTooltip` instances scattered
- * across the character sheet to share preview state so the same library page
- * is never opened twice and previews persist across tab switches.
+ * previews keyed by `kind+slug`.
  *
  * @module modules/character-builder/presentation/PagePreview/pagePreviewProvider
  * @version 1.0.0
@@ -23,8 +21,7 @@ import {
 } from 'react';
 
 /**
- * Library page kind. Maps to a path segment under
- * `/{locale}/library/character-creation/{kind}/{slug}`.
+ * Library page kind.
  *
  * @typedef {'bloodlines'|'vocations'|'specializations'|'feats'} PreviewKind
  */
@@ -138,8 +135,7 @@ export const PagePreviewProvider: React.FC<PagePreviewProviderProps> = ({
 };
 
 /**
- * Read the page-preview context. Returns a no-op fallback when used outside
- * a provider.
+ * Read the page-preview context.
  *
  * @function usePagePreview
  * @returns {PagePreviewContextValue} Context value or a no-op stub

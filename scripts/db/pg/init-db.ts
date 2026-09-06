@@ -5,8 +5,6 @@
  * via `@Index` decorators (COALESCE expressions, GIN array indexes, child-table
  * FK/composite indexes).
  *
- * Safe to run multiple times — all statements use IF NOT EXISTS.
- *
  * @module scripts/db/pg/init-db
  * @author Typeir
  * @version 1.0.0

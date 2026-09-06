@@ -1,7 +1,6 @@
 /**
  * @fileoverview Extracts MonsterFeature records from legendary deed sections
- * (Act, Stratagem, Lair, Phase) of monster `.sheet.mdx` files. Parses deed
- * costs, phase HP thresholds, and phase-added features.
+ * (Act, Stratagem, Lair, Phase) of monster `.sheet.mdx` files.
  *
  * @version 1.0.0
  * @author Typeir
@@ -279,7 +278,6 @@ interface PhaseBlock {
 
 /**
  * Splits lines by phase-threshold headings (Bloodied, Doomed, Wounded, Slain).
- * Sub-headings within a phase are kept as body content, not split further.
  *
  * @param {string[]} lines - Section content lines
  * @returns {PhaseBlock[]} Phase blocks with offset tracking

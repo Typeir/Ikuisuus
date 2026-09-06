@@ -10,11 +10,7 @@
  * @since 1.0.0
  *
  * @description
- * Sidebar open/close state persists via PersistentUiContext. Renders within
- * NotificationProvider for toast messages. Below `lg` the fixed title bar
- * paints behind the status bar / display cutout and pads its controls clear
- * with the `--safe-area-*` tokens, and an always-mounted scrim dims the page
- * while the menu is open.
+ * Sidebar open/close state persists via PersistentUiContext.
  */
 
 'use client';
@@ -67,9 +63,6 @@ type Item = {
 /**
  * Responsive layout shell wrapping the application content.
  *
- * Provides a 3-region sidebar: header (logo+theme), scrollable library navigation, and tools footer.
- * Sidebar open/close state persists via PersistentUiContext.
- *
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - The main content to render
  * @param {Item[]} props.tree - Navigation tree items for sidebar
@@ -98,7 +91,6 @@ function BaseResponsiveLayoutShell({
 
   /**
    * In embed mode, render only the bare page content — no sidebar, no header.
-   * `<EmbedLinkBridge>` handles navigation out of the frame.
    */
   if (isEmbed) {
     return (

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Result Thumb Atom
  * @description Renders the result thumbnail image with a grain/vignette
- * overlay. Falls back to the TypeSigil when image is absent.
+ * overlay.
  *
  * @module modules/search/presentation/atoms/ResultThumb
  * @version 1.0.0

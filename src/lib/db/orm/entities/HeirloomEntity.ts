@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Heirloom
  * @description Decorator-based entity for the `heirlooms` table.
- * Charges map via `@Embedded` with `prefix`; weapon damage fields stay flat.
  *
  * @module lib/db/orm/entities/HeirloomEntity
  * @version 3.0.0

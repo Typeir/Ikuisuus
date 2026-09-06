@@ -1,7 +1,6 @@
 /**
  * @fileoverview Unit tests for resolveStreamText.
- * @description Mocks the six repository adapters and fnv1a32. Asserts domain
- * fields appear in the output as one whitespace-normalised copy.
+ * @description Mocks the six repository adapters and fnv1a32.
  *
  * @module tests/unit/src/modules/library/presentation/components/utils/index.test
  * @version 1.0.0

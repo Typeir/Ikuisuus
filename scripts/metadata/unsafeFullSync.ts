@@ -1,7 +1,5 @@
 /**
  * @fileoverview Reconciles local `.metadata.json` sidecars into PostgreSQL.
- * Deletes DB rows with no sidecar. Run after full `pre-init`, never against a
- * partial tree.
  *
  * @module scripts/metadata/unsafeFullSync
  * @version 1.0.0

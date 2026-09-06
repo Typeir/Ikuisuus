@@ -1,7 +1,6 @@
 /**
  * @fileoverview Aspect Domain
- * @description Parsing, ordering and glyph selection for aspects. An aspect is
- * a `group:value` token split on the last colon.
+ * @description Parsing, ordering and glyph selection for aspects.
  *
  * @module modules/library/domain/aspects
  * @version 1.0.0
@@ -222,8 +221,6 @@ export function aspectColour(aspect: ParsedAspect): string {
 
 /**
  * Parses, filters and orders a raw tag list for display.
- *
- * Internal (`meta:`) aspects are dropped.
  *
  * @param {string[] | undefined} tags - Raw tag list from generated metadata
  * @returns {ParsedAspect[]} Display-ordered aspects

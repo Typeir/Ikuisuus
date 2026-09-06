@@ -1,9 +1,7 @@
 /**
  * @fileoverview Serves trinket item metadata as JSON.
  * @description Next.js API route returning trinket item metadata from the content
- * adapter. Supports ?locale query parameter (defaults to 'en'). Returns array of
- * trinket objects with item type, damage, properties, range, weight, and special
- * effects.
+ * adapter.
  *
  * @version 2.0.0
  * @author Typeir
@@ -30,7 +28,6 @@ const log = logger.child({ module: 'API:Trinkets' });
  * GET /api/trinkets
  *
  * Returns array of trinket item metadata from the content repository.
- * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of trinket objects

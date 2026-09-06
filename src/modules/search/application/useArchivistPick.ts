@@ -16,8 +16,6 @@ import { pickFeaturedPage, type FeaturedPage } from '../domain/featuredPages';
 
 /**
  * Returns the currently displayed featured page.
- * Pick changes every hour based on unix hour seed.
- * Computed after mount; returns `null` until mounted.
  *
  * @returns {FeaturedPage | null} The selected page, or null before mount
  */

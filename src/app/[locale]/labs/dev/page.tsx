@@ -1,9 +1,6 @@
 /**
  * @fileoverview Dev scratch canvas at /[locale]/labs/dev.
  * @description Full-bleed surface for throwing components at while debugging.
- * Mount whatever is under test inside `<main>`; nothing here is shipped, since the
- * `labs` segment layout 404s outside development. Currently mounts the slot card
- * fixture preview while the heirloom page structure is worked on.
  *
  * @module app/[locale]/labs/dev/page
  * @version 1.1.0

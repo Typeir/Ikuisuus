@@ -1,7 +1,6 @@
 /**
  * @fileoverview Equipment Tab.
  * @description Edits the equipment table (name, quantity, weight lb) and notes.
- * Provides `EquipmentProvider` with derived `totalWeight` and `totalCount`.
  *
  * @module modules/character-builder/presentation/tabs/equipmentTab
  * @version 2.0.0
@@ -34,9 +33,7 @@ import tbl from '@/styles/tables.module.scss';
 import styles from './tabs.module.scss';
 
 /**
- * Equipment tab content. Renders Name / Units / Weight (lb) columns and passes
- * derived totals to {@link EquipmentProvider}. Reads character data and edit
- * mode from the active-sheet context.
+ * Equipment tab content.
  *
  * @component
  * @returns {JSX.Element} Rendered tab body

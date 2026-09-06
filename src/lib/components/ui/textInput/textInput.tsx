@@ -1,7 +1,6 @@
 /**
  * @fileoverview Text Input Component
  * @description Styled text input over `<input type="text">`.
- * Supports size variants and forwards all standard input attributes.
  *
  * @module lib/components/ui/textInput/textInput
  * @version 1.0.0

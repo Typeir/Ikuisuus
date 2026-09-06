@@ -3,8 +3,6 @@
  *
  * @fileoverview Remark plugin that finds `[% ... %]` dice expressions in text nodes
  * and replaces them with MDX JSX elements (`<DiceRoll>` component).
- * Handles mixed text + expression nodes by splitting into sequences.
- * Malformed expressions are left as plain text (fail-safe).
  *
  * @module lib/md/remarkDiceRoll
  * @version 1.0.0
@@ -67,7 +65,6 @@ function textNode(value: string): TextNode {
 
 /**
  * Builds an MDAST mdxJsxTextElement node for the `<DiceRoll>` component.
- * All props are passed as string attributes; specials are comma-joined.
  *
  * @param {string} dice - Dice notation, e.g. "2d20"
  * @param {string[]} specials - Array of special roll types
@@ -120,8 +117,6 @@ function attributeNode(name: string, value: string): MdxJsxAttributeNode {
 
 /**
  * Processes a single text node, replacing dice expressions with JSX elements.
- * Modifies the parent's children array in place. Handles mixed text by
- * splitting into sequences of text and element nodes.
  *
  * @param {TextNode} node - The text node to process
  * @param {number | null} index - The node's index in its parent

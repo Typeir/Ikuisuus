@@ -1,8 +1,6 @@
 /**
  * @fileoverview Maps a vocation skill/trade grant name to the i18n row key
- * (`skills.<camel>` / `tools.<camel>`) the skills/tools tables use. Output is
- * byte-identical to `deriveGrantFloors` keys. Wildcard/category tokens resolve
- * to `null`.
+ * (`skills.<camel>` / `tools.<camel>`) the skills/tools tables use.
  *
  * @module modules/character-builder/lib/utils/proficiencyRowKey
  * @version 1.0.0

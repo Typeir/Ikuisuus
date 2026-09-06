@@ -1,12 +1,6 @@
 /**
  * @fileoverview Rewrites curly quotes used as JSX attribute delimiters back to
- * ASCII. Only a quote pair that opens immediately after `=` is touched, so
- * curly quotes in prose and in blockquotes are left alone. Language models
- * emit these sporadically and no prompt reliably stops them, so this runs as a
- * post-step over generated MDX.
- *
- *   node scripts/content/normalize-jsx-quotes.mjs <glob-or-path>...
- *   node scripts/content/normalize-jsx-quotes.mjs --check <glob-or-path>...
+ * ASCII.
  */
 
 import { globSync } from 'node:fs';

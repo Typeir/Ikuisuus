@@ -1,8 +1,6 @@
 #!/usr/bin/env tsx
 /**
  * @fileoverview Runs `next dev` with a metadata backend (default fs).
- * Flags: --pg (pg backend), --fs (fs backend), --no-preinit (skip pre-init),
- * --no-replace (keep existing Next dev process). Other args pass to `next dev`.
  *
  * @module scripts/dev/runDev
  * @version 1.1.1

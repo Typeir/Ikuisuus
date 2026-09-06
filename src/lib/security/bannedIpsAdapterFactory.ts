@@ -1,12 +1,7 @@
 /**
  * @fileoverview Banned IP Adapter Factory
  * @description Resolves the banned IP persistence adapter based on `METADATA_BACKEND`
- * env var. Mirrors the same factory pattern used by the content repositories and
- * auth/audit systems.
- *
- * Supported backends:
- * - `fs` → Filesystem JSON file (default for local development)
- * - `pg` → PostgreSQL via MikroORM
+ * env var.
  *
  * @module lib/security/bannedIpsAdapterFactory
  * @version 1.0.0

@@ -1,11 +1,7 @@
 /**
  * Reusable Region Parser
  *
- * @fileoverview Parses reusable MDX regions. A file opts in with
- * `reusable: true` in frontmatter, then marks named regions with paired
- * `reusable:start <name>` and `reusable:end` MDX comments, or exposes its
- * whole body with the title heading and lede removed. Headings are
- * normalised to start at level 1, then shifted by the heading offset.
+ * @fileoverview Parses reusable MDX regions.
  *
  * @module lib/content/reusable/parseReusableRegions
  * @version 1.0.0
@@ -110,8 +106,6 @@ function stripTitleAndLede(body: string): string {
 
 /**
  * Extracts every named region delimited by start and end markers.
- * An unterminated region is ignored rather than swallowing the rest of the
- * file.
  *
  * @param {string} body - Document body with frontmatter already removed
  * @returns {Record<string, string>} Region sources keyed by name
@@ -144,8 +138,6 @@ function extractNamedRegions(body: string): Record<string, string> {
 
 /**
  * Normalises heading levels within a region and applies an embedding offset.
- * The shallowest heading becomes level 1 before the offset is added; relative
- * structure between headings is preserved.
  *
  * @param {string} source - Region source
  * @param {number} offset - Levels to shift down once normalised

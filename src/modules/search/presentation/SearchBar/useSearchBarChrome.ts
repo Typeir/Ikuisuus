@@ -1,7 +1,6 @@
 /**
  * @fileoverview Search bar chrome effects.
- * @description The global Cmd/Ctrl-K focus shortcut. Outside-click and
- * dropdown-room measurement live in `@/lib/hooks`.
+ * @description The global Cmd/Ctrl-K focus shortcut.
  *
  * @module modules/search/presentation/SearchBar/useSearchBarChrome
  * @version 2.0.0

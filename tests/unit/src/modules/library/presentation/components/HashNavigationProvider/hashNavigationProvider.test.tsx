@@ -2,11 +2,10 @@
  * @fileoverview Unit tests for Hash Navigation Provider component
  * @module tests/unit/src/modules/library/presentation/components/HashNavigationProvider/hashNavigationProvider.test
  * @description Validates HashNavigationProvider export and component signature.
- * Tests context provider for hash-based navigation state.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @/modules/library/presentation/components/HashNavigationProvider
  */

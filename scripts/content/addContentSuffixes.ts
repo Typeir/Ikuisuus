@@ -14,7 +14,6 @@
  *   4. World lore files → `.lore`
  *
  * Skips `main.mdx` files and any file already carrying a double extension.
- * Also renames co-located `.metadata.json` sidecars when present.
  *
  * @module scripts/content/addContentSuffixes
  * @author Typeir
@@ -77,7 +76,6 @@ function insertSuffix(filePath: string, suffix: string): string {
 
 /**
  * Collects rename entries for all vocation subfiles in a locale directory.
- * Assigns `.list` or `.specialization` based on file identity.
  *
  * @param {string} localeDir - Absolute path to a locale content root (e.g. `src/content/en`)
  * @param {RenameEntry[]} results - Accumulator array for rename entries

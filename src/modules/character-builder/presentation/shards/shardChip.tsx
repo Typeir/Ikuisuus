@@ -1,10 +1,7 @@
 /**
  * @fileoverview Shard Chip Component
  * @description Chip with a lazily-loaded async tooltip showing a compiled MDX
- * preview of the shard's description. Fetches content from
- * `/api/content-shards/{kind}/{slug}` on first hover; uses `cachedText` if
- * already available. Integrates `usePagePreview` so clicking the tooltip opens
- * the draggable library page panel.
+ * preview of the shard's description.
  *
  * @module modules/character-builder/presentation/shards/shardChip
  * @version 1.0.0
@@ -33,10 +30,7 @@ import { unstable_serialize, useSWRConfig } from 'swr';
 import { usePagePreview } from '../PagePreview/pagePreviewProvider';
 
 /**
- * Color tier for the shard chip border. Maps to existing CSS variable tokens.
- * - `primary` → `--color-accent` (boon tint)
- * - `secondary` → `--color-emphasis` (vocation tint)
- * - `tertiary` → `--color-actionable` (specialization tint)
+ * Color tier for the shard chip border.
  *
  * @typedef {'primary' | 'secondary' | 'tertiary'} ShardChipColor
  */

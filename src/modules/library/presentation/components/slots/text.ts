@@ -31,9 +31,7 @@ export function lowerFirst(text: string): string {
 }
 
 /**
- * Reads a slot written as a flag. MDX hands a bare attribute
- * (`<Feat repeatable>`) to the card as the boolean `true` and a quoted one as
- * a string, so both spellings have to mean the same thing.
+ * Reads a slot written as a flag.
  *
  * @param {unknown} value - Slot value as MDX delivered it
  * @returns {boolean | unknown} `true` when the flag is set with nothing more to

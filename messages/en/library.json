@@ -46,12 +46,14 @@
     "saves": "Saving Throws",
     "skills": "Skills",
     "resistances": "Resistances",
+    "vulnerabilities": "Vulnerabilities",
     "immunities": "Immunities",
     "conditionImmunities": "Condition Immunities",
     "senses": "Senses",
     "languages": "Languages",
     "challenge": "Challenge",
     "tierBonus": "Tier Bonus",
+    "vocation": "Vocation",
     "primaryAbility": "Primary Ability",
     "hitDie": "Hit Point Die",
     "trades": "Trades",
@@ -88,6 +90,14 @@
     "kind": "spell",
     "cantrip": "Cantrip",
     "ritual": "Ritual"
+  },
+  "progression": {
+    "level": "Level",
+    "tierBonus": "Tier Bonus",
+    "features": "Features",
+    "feat": "Feat",
+    "specializationFeature": "{label} Feature",
+    "none": "—"
   },
   "monster": {
     "size": "Medium",

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Orbital Mechanics — Keplerian Ellipse Computations
  * @description Computes orbital positions for celestial bodies using Keplerian elements.
- * Supports elliptical orbits with inclination and eccentricity.
  *
  * @module modules/world-sim/domain/celestials/orbitalMechanics
  * @version 1.0.0
@@ -18,9 +17,6 @@ export const DEG_TO_RAD = Math.PI / 180;
 
 /**
  * Compute the 3D world position of a body in its Keplerian orbit at a given time.
- *
- * Uses mean anomaly → eccentric anomaly (Newton-Raphson) → true anomaly → position.
- * Inclination is applied as a rotation about the X-axis.
  *
  * @function computeOrbitalPosition
  * @param {OrbitalParameters} orbit - The orbital parameters

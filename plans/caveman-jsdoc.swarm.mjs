@@ -2,11 +2,7 @@
  * @fileoverview Caveman JSDoc sweep for Ikuisuus: one member per tracked
  * .ts/.tsx file, each rewrites the file's JSDoc to the dry caveman spec in
  * .github/docs/jsdoc.md — technical core only, no flowery prose, no
- * implementation rationale. File roster comes from PAW_SWEEP_FILES, default
- * .ignore/sweep/caveman-files.txt (git ls-files, .d.ts excluded). Resume keys
- * are the file paths.
- *
- *   paw swarm run plans/caveman-jsdoc.swarm.mjs --live
+ * implementation rationale.
  */
 
 import { readFileSync } from 'node:fs';

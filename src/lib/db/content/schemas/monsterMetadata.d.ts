@@ -59,7 +59,6 @@ export interface MonsterSpeed {
 
 /**
  * Flat ability score set matching `MonsterScoreEmbed` property names.
- * Modifiers are not stored — always derived as `floor((score - 10) / 2)`.
  *
  * @interface MonsterScores
  * @property {number} [str] - Strength score (3–30)
@@ -121,9 +120,6 @@ export interface MonsterSenses {
 /**
  * Complete monster metadata record as emitted by the generator.
  *
- * Derived from `parseStatBlockSection()` output in
- * `scripts/metadata/generateMonsterMetadata.ts`.
- *
  * @interface MonsterMetadata
  * @property {string} [subSlug] - Variant identifier for multi-stat-block files (e.g. "albedo", "petal")
  * @property {string} [size] - Creature size (lowercase: "tiny" | "small" | "medium" | "large" | "huge" | "gargantuan")
@@ -177,10 +173,6 @@ export interface MonsterMetadata extends BaseMetadata {
 /**
  * The parts of an extracted feature shard the presentation layer reads.
  *
- * Aspects are derived per feature as well as per stat block, because "does this
- * creature deal force damage anywhere" is the wrong grain for the question a
- * reader has — the useful fact is which feature does it.
- *
  * @interface MonsterFeatureSummary
  * @property {string} id - Stable feature identifier, e.g. `mucklord/garbage-communion`
  * @property {string} name - Feature name as written in the stat block
@@ -199,7 +191,6 @@ export interface MonsterFeatureSummary {
 
 /**
  * Lightweight projection for combobox / dropdown search.
- * Corresponds to the fields returned by `/api/monsters/index`.
  *
  * @interface MonsterIndexEntry
  * @property {string} [cr] - Challenge rating

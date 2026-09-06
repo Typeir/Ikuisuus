@@ -82,7 +82,6 @@ function WorldSimPageInner(): React.ReactElement {
 
 /**
  * World Sim page component.
- * Renders the world sim composition.
  *
  * @function WorldSimPage
  * @returns {React.ReactElement} Rendered page with world sim.

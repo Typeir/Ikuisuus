@@ -2,7 +2,7 @@
  * @fileoverview Native Measure Normalisation
  * @description Rewrites authoring syntax `[= 12 stride =]` to the bare form
  * `12 stride` that `parseUnitExpression` accepts, and splits that form back into
- * prose and measure segments for display. Prose outside measures is kept as-is.
+ * prose and measure segments for display.
  *
  * @module lib/units/nativeMeasure
  * @version 1.0.0
@@ -30,8 +30,7 @@ const IMPERIAL: Array<{ pattern: RegExp; unit: UnitName; per: number }> = [
 ];
 
 /**
- * A bare native measure inside an already-normalised string. Matches the
- * grammar `parseUnitExpression` accepts.
+ * A bare native measure inside an already-normalised string.
  *
  * @constant
  */
@@ -40,8 +39,6 @@ export const NATIVE_MEASURE =
 
 /**
  * Renders a parsed quantity back into the bare expression.
- *
- * Flags are kept.
  *
  * @param {number} numerator - Quantity numerator
  * @param {number} denominator - Quantity denominator, 1 when whole
@@ -75,8 +72,6 @@ function reduce(numerator: number, denominator: number): [number, number] {
 
 /**
  * Rewrites every measurement in a string into its bare native form.
- *
- * Idempotent: a string that already holds bare measures is returned unchanged.
  *
  * @param {string} text - Measurement text as written in the source
  * @returns {string} The same text with native measures in place of authoring syntax
@@ -177,10 +172,6 @@ export function splitMeasures(text: string): MeasureSegment[] {
 
 /**
  * Rewrites every measurement into a form fit for an atomic plaintext field.
- *
- * Same as `toNativeMeasure` except flags are dropped, removing `;ADJ` tokens
- * from the output. Measurement fields use `toNativeMeasure`, which preserves
- * the flag.
  *
  * @param {string} text - Text destined for an atomic plaintext field
  * @returns {string} The same text with plain native measures and no flags

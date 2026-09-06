@@ -1,9 +1,7 @@
 /**
  * @fileoverview Segment guard for the `/[locale]/labs/dev` route family.
  * @description Renders dev labs pages only while `NODE_ENV` is `development`; any
- * other mode returns 404. The guard sits on `dev` rather than `labs` so sibling
- * `labs` routes can ship to production. New scratch routes inherit it by living
- * under this segment.
+ * other mode returns 404.
  *
  * @module app/[locale]/labs/dev/layout
  * @version 1.0.0

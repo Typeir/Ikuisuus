@@ -18,9 +18,6 @@ import type { SpecializationMetadata } from '../schemas/specializationMetadata';
 
 /**
  * Repository contract for specialization metadata.
- *
- * Implementations MUST be safe to call even when the backing store is
- * unavailable — return empty arrays or null rather than throwing.
  */
 export interface SpecializationRepository {
   /**

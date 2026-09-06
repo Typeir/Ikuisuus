@@ -2,8 +2,7 @@
  * @fileoverview Skill proficiency counter & hint helpers.
  * @description Adapter over {@link module:modules/character-builder/lib/utils/assignableGrants}
  * providing the free-pick counter (via `unassignedByCategory`, skill/proficient
- * group) and per-table hint sets. Re-exports `deriveSkillOffer` /
- * `ProficiencyOffer`.
+ * group) and per-table hint sets.
  *
  * @module modules/character-builder/lib/utils/proficiencyBudget
  * @version 3.0.0
@@ -82,8 +81,7 @@ export function countSpentSkillProficiencies(
 
 /**
  * Row-keys per table to hint — the options of every `oneOf` grant in the
- * character's assignable grants, unioned per table. `any` grants contribute
- * no hint.
+ * character's assignable grants, unioned per table.
  *
  * @function deriveProficiencyHints
  * @param {CharacterSheet} character - Character to inspect

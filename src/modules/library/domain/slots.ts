@@ -1,15 +1,7 @@
 /**
  * @fileoverview Slot schema for the library's card components.
  * @description One table per parent component: slot name → authored element
- * name. The parents' prop types, the generated slot elements, the message
- * keys, and the metadata extractor all derive from these tables, so a slot is
- * added by adding one row. Attributes are the default spelling
- * (`<Feature cost="…">`); the element form (`<Cost>…</Cost>`) exists for a
- * value that carries markup or a literal quote.
- *
- * The heirloom's header slots feed two renderings, never a label list: the
- * identity slots become the three-line italic brief under the title, and the
- * number slots become the stats row at the `---` position.
+ * name.
  *
  * @module modules/library/domain/slots
  * @version 0.3.0
@@ -62,15 +54,6 @@ export const BLOCK_COMPONENTS = [
  * Slots of a feature, trait, or curse, in display order: whether it is
  * available at all, what a use costs, what opens the window, how many uses
  * there are, how they come back, when the use resolves, and who it reaches.
- * Charges sits next to recharge because the two read together. Charges and
- * recharge stay separate because a thing can have uses that never come back,
- * and a thing that recharges need not count charges.
- *
- * `cost` prints at the heading's right edge rather than in the slot line, and
- * carries the token spent and nothing else, so the right edge of every card
- * reads as one column. A block that costs no token and waits on something
- * carries `trigger` alone, which leads the rendered row: trigger, charges,
- * recharge, deed, targets.
  */
 export const FEATURE_SLOTS = {
   level: 'Level',
@@ -84,9 +67,7 @@ export const FEATURE_SLOTS = {
 } as const;
 
 /**
- * Slots of a pool: how much it holds and how it refills. A pool is a number
- * the host owns and its blocks spend from, so it belongs to no one host —
- * trinkets, monsters and vocations can carry one on the same terms.
+ * Slots of a pool: how much it holds and how it refills.
  */
 export const POOL_SLOTS = {
   max: 'Max',
@@ -94,13 +75,11 @@ export const POOL_SLOTS = {
 } as const;
 
 /**
- * Header slots of a spell. Casting time is the tempo currency a cast spends,
- * so it is the same `cost` slot a feature carries and takes the same values —
- * `1 Major Action`, `1 Reaction`, `1 Reflex`. A spell that waits on something
- * carries `trigger` beside it, exactly as a reaction feature does.
+ * Header slots of a spell.
  */
 export const SPELL_SLOTS = {
   level: 'Level',
+  rarity: 'Rarity',
   school: 'School',
   ritual: 'Ritual',
   cost: 'Cost',
@@ -113,19 +92,12 @@ export const SPELL_SLOTS = {
 } as const;
 
 /**
- * Header slots of a trinket. A trinket is an item, and the item card carries
- * every slot either kind uses, so both draw from one table and a slot cannot
- * mean two things depending on which tag wrote it.
+ * Header slots of a trinket.
  */
 export const TRINKET_SLOTS = HEIRLOOM_SLOTS;
 
 /**
- * Header slots of a monster. The six ability scores are written as scores
- * alone; the card derives each modifier, so no sheet hand-maintains a number
- * arithmetic already knows. `tierBonus` derives from `challenge` on the same
- * principle and is written only where a sheet overrides it. `saveDc` is the
- * one fixed DC a sheet's effects share, and it is a number: a DC that is a
- * formula belongs in the prose of the block that uses it.
+ * Header slots of a monster.
  */
 export const MONSTER_SLOTS = {
   size: 'Size',
@@ -143,6 +115,7 @@ export const MONSTER_SLOTS = {
   saves: 'Saves',
   skills: 'Skills',
   resistances: 'Resistances',
+  vulnerabilities: 'Vulnerabilities',
   immunities: 'Immunities',
   conditionImmunities: 'ConditionImmunities',
   senses: 'Senses',
@@ -154,9 +127,11 @@ export const MONSTER_SLOTS = {
 } as const;
 
 /**
- * Header slots of a vocation: the core traits table, one row per slot.
+ * Header slots of a vocation: the core traits table, one row per slot, and
+ * `vocation`, the parent a specialization names by slug.
  */
 export const VOCATION_SLOTS = {
+  vocation: 'Parent',
   primaryAbility: 'PrimaryAbility',
   hitDie: 'HitDie',
   saves: 'Saves',
@@ -168,8 +143,13 @@ export const VOCATION_SLOTS = {
 } as const;
 
 /**
- * Feat categories. Expected to change: this is the one place a name lives, so
- * renaming one is a single edit here plus its label in the catalogue.
+ * Header slots of a specialization: the vocation's table, of which a
+ * specialization writes the parent alone.
+ */
+export const SPECIALIZATION_SLOTS = VOCATION_SLOTS;
+
+/**
+ * Feat categories.
  */
 export const FEAT_CATEGORIES = ['general', 'origin', 'epic boon'] as const;
 
@@ -179,9 +159,7 @@ export const FEAT_CATEGORIES = ['general', 'origin', 'epic boon'] as const;
 export type FeatCategory = (typeof FEAT_CATEGORIES)[number];
 
 /**
- * Catalogue key for a feat category. Authors write the category the way it
- * reads — `epic boon` — and the label lives under a key with no space in it,
- * because a message path is dot-separated.
+ * Catalogue key for a feat category.
  *
  * @param {string} category - Authored category, any casing
  * @returns {string} Catalogue key under `library.feat.category`
@@ -195,9 +173,7 @@ export function featCategoryKey(category: string): string {
 }
 
 /**
- * Header slots of a feat. `ability` names the score a feat raises, which the
- * card writes out as its own sentence. `prerequisite` is free text and takes
- * any condition an author can state, including a boolean expression.
+ * Header slots of a feat.
  */
 export const FEAT_SLOTS = {
   category: 'Category',
@@ -240,6 +216,11 @@ export type MonsterSlotName = keyof typeof MONSTER_SLOTS;
  * Vocation slot names.
  */
 export type VocationSlotName = keyof typeof VOCATION_SLOTS;
+
+/**
+ * Specialization slot names.
+ */
+export type SpecializationSlotName = VocationSlotName;
 
 /**
  * Feat slot names.
@@ -340,6 +321,12 @@ export const VOCATION_SLOT_NAMES = Object.keys(
 ) as VocationSlotName[];
 
 /**
+ * Specialization slot names in display order; the vocation card's own list.
+ */
+export const SPECIALIZATION_SLOT_NAMES: readonly SpecializationSlotName[] =
+  VOCATION_SLOT_NAMES;
+
+/**
  * Feat slot names in display order.
  */
 export const FEAT_SLOT_NAMES = Object.keys(FEAT_SLOTS) as FeatSlotName[];
@@ -358,12 +345,12 @@ export const ABILITY_SLOTS: readonly MonsterSlotName[] = [
 
 /**
  * Monster slots that print as the labelled list under the tables, in order.
- * The tables above take the rest.
  */
 export const MONSTER_LIST_SLOTS: readonly MonsterSlotName[] = [
   'saves',
   'skills',
   'resistances',
+  'vulnerabilities',
   'immunities',
   'conditionImmunities',
   'senses',
@@ -375,9 +362,7 @@ export const MONSTER_LIST_SLOTS: readonly MonsterSlotName[] = [
 ];
 
 /**
- * Every slot name, heirloom slots first. A name both hosts accept, such as
- * `charges`, is listed once: it carries one label and one element wherever it
- * is written, and only the host decides where the value lands.
+ * Every slot name, heirloom slots first.
  */
 export const SLOT_NAMES: SlotName[] = [
   ...new Set<SlotName>([
@@ -403,8 +388,6 @@ export { ITEM_BRIEF_SLOTS, ITEM_ROW_SLOTS, STAT_SLOTS } from './itemLayout';
 
 /**
  * Which slots each component accepts, as slot name to authored element name.
- * The compile pipeline reads this to move a slot attribute that carries
- * markup into its element form.
  */
 export const SLOT_HOSTS: Readonly<
   Record<string, Readonly<Record<string, string>>>
@@ -419,13 +402,12 @@ export const SLOT_HOSTS: Readonly<
   Trinket: TRINKET_SLOTS,
   Monster: MONSTER_SLOTS,
   Vocation: VOCATION_SLOTS,
+  Specialization: SPECIALIZATION_SLOTS,
   Feat: FEAT_SLOTS,
 };
 
 /**
- * A host's own word for a shared slot. A spell spends the same tempo currency
- * a feature does, so it carries the same `cost` slot; it just calls the line
- * Casting Time. The value and its meaning are shared, the label is not.
+ * A host's own word for a shared slot.
  */
 export const SLOT_LABEL_OVERRIDES: Readonly<
   Record<string, Readonly<Partial<Record<SlotName, string>>>>

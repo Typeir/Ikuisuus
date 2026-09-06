@@ -1,17 +1,16 @@
 /**
  * @fileoverview Affixes Index API Route
  * @description Returns a lightweight index of all heroic awakening affixes with their wiki links.
- * Maps HeroicAffix enum values to wiki routes based on locale.
- * 
+ *
  * @module app/api/affixes/index/route
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @route GET /api/affixes/index
- * @query locale {string} - Locale code (e.g., 'en'). Defaults to 'en'.
+ * @query locale {string} - Locale code (e.g., 'en').
  * @returns {Object[]} Array of affix entries with slug, title, and link
- * 
+ *
  * @example
  * // Request: GET /api/affixes/index?locale=en
  * // Response:

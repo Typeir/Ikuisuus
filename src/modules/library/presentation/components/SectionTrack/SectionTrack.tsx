@@ -1,8 +1,5 @@
 /**
  * @fileoverview Section Track — vertical navigation widget for library content pages.
- * Renders clickable horizontal bars for each heading anchor, proportional to
- * scroll position, with center-scaling, mobile auto-hide, hover-expand
- * animation, and minimum inter-bar spacing.
  * @module modules/library/presentation/components/SectionTrack/SectionTrack
  * @author Typeir
  * @version 1.2.0
@@ -24,13 +21,12 @@ import styles from './SectionTrack.module.scss';
 const SMALL_SCREEN_BP = 1024;
 
 /**
- * Bar width base (rem) for heading level 1. Deeper levels are narrower.
+ * Bar width base (rem) for heading level 1.
  */
 const BAR_WIDTH_BASE = 5;
 
 /**
  * Bar thickness range by heading level: h1 (thickest) → h6 (thinnest).
- * Values in px.
  */
 const BAR_THICKNESS: Record<number, number> = {
   1: 5,
@@ -50,9 +46,6 @@ const TRACK_HEIGHT_RATIO = 0.8;
 /**
  * Computes adjusted top percentages for bars so that no two bars are
  * closer than {@link MIN_BAR_GAP_PX}.
- *
- * Raw proportional positions are pushed downward when they would
- * otherwise overlap or sit too close to the previous bar.
  *
  * @param {SectionTrackItem[]} items - Ordered heading items.
  * @param {number} docH - Total document height (px).
@@ -91,12 +84,6 @@ function computeSpacedTopPercents(
 
 /**
  * Vertical navigation track that floats alongside library content.
- *
- * Scans all `[data-anchor]` headings, renders proportional horizontal bars
- * on a fixed-position track. Bars near the viewport center are scaled up
- * and more opaque. On mobile viewports, auto-hides after idle timeout.
- * Bars shrink when the track is not hovered and expand on hover.
- * Each bar has a tooltip showing the heading label.
  *
  * @returns {JSX.Element | null} The track element, or null if no headings found.
  */
@@ -170,11 +157,6 @@ interface SectionTrackBarProps {
 
 /**
  * A single horizontal bar in the section track.
- *
- * Width and thickness scale down with heading level.
- * Vertical position is proportional to the heading's position in the document.
- * Scale and opacity increase as the bar approaches the viewport center.
- * Clicking scrolls to the heading via hash navigation.
  *
  * @param {SectionTrackBarProps} props - Bar props.
  * @returns {JSX.Element} The bar button.

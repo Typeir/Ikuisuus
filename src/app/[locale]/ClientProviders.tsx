@@ -51,10 +51,6 @@ interface ClientProvidersProps {
  * @description
  * Nests providers outermost-to-innermost: NextIntlClientProvider, SwrProvider,
  * PersistentUiProvider, CharacterSheetProvider, ResponsiveLayoutShell.
- * ThemeColorSync sits inside PersistentUiProvider so the UA chrome colour
- * follows the reader's theme.
- * PersistentUiProvider falls back to localStorage then URL-derived ancestors when
- * initialExpandedPaths is absent.
  */
 export default function ClientProviders({
   locale,

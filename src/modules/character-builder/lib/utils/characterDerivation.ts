@@ -1,8 +1,6 @@
 /**
  * @fileoverview Derives a character's level, tier bonus, and XP progress block.
  * @description `character.level` and `character.tierBonus` are derived caches.
- * {@link getTotalCharacterLevel} and {@link getCharacterTierBonus} produce them;
- * all writers recompute through these two functions.
  *
  * @module modules/character-builder/lib/utils/characterDerivation
  * @version 2.0.0
@@ -106,7 +104,7 @@ export function getVocationLevelSum(character: CharacterSheet): number {
 }
 
 /**
- * Returns the XP / level display block for a character. Does not mutate input.
+ * Returns the XP / level display block for a character.
  *
  * @function getCharacterDerived
  * @param {CharacterSheet} character - Character sheet to inspect
@@ -158,8 +156,7 @@ export function getCharacterDerived(
 }
 
 /**
- * Returns the level for the given XP via {@link getLevelFromXP}. Wrapper used
- * by the header XP input.
+ * Returns the level for the given XP via {@link getLevelFromXP}.
  *
  * @function getLevelFromXpInput
  * @param {number} xp - Total accumulated experience points

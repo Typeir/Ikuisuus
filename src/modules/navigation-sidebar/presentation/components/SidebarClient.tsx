@@ -1,6 +1,5 @@
 /**
- * @fileoverview Interactive sidebar client entry. Exports the Sidebar component
- * as the default export so it can be lazily loaded via next/dynamic from SidebarShell.
+ * @fileoverview Interactive sidebar client entry.
  *
  * @module modules/navigation-sidebar/presentation/components/SidebarClient
  * @author Typeir

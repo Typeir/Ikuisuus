@@ -21,7 +21,6 @@ export const meta: CommandMeta = {
 
 /**
  * Commits the content repo, then the main repo.
- * Re-stages the submodule ref in main after a successful content commit.
  * @param {string[]} args - Arguments forwarded verbatim to `git commit`.
  * @returns {Promise<void>}
  */

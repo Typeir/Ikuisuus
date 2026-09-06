@@ -11,7 +11,7 @@ import { fetcher } from '@/lib/fetch/fetcher';
 import type { AspectVocabularyGroup } from '@/lib/metadata/aspectVocabulary';
 
 /**
- * Fetch vocabulary. Null on failure.
+ * Fetch vocabulary.
  *
  * @returns {Promise<AspectVocabularyGroup[] | null>} Groups with values
  */

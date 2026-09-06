@@ -1,7 +1,6 @@
 /**
  * @fileoverview Party Editor Component
  * @description Table-based editor for party name and member list.
- * Each member renders as a table row with name, optional character link, and delete button.
  *
  * @module modules/encounter-planner/presentation/partyManager/partyEditor
  * @version 2.1.0
@@ -36,7 +35,6 @@ export interface PartyEditorProps {
 
 /**
  * Party editor with name input and table-based member list.
- * Each member is a table row with an editable name, a character link dropdown, and a delete button.
  *
  * @component
  * @param {PartyEditorProps} props - Component props

@@ -29,7 +29,7 @@ const forceTheme = (newTheme: Theme) => {
 };
 
 /**
- * Wraps {@link ThemeSelector}. Reads the persisted theme, applies it on mount, and saves changes via {@link storePersistentData}.
+ * Wraps {@link ThemeSelector}.
  *
  * @param {ThemeSelectorProps} props - The props for the layout.
  * @param {Theme} props.defaultTheme - The initial theme to use.

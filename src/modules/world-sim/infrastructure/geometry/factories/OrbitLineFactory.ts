@@ -1,8 +1,7 @@
 /**
  * @fileoverview Orbit Line Factory — Generates Elliptical Orbit Ring Meshes
  * @description Builds orbit ring meshes by extruding `TubeGeometry` along an
- * `EllipseCurve` per celestial body. Supports inclined orbits and parent-relative
- * parenting.
+ * `EllipseCurve` per celestial body.
  *
  * @module modules/world-sim/infrastructure/geometry/factories/OrbitLineFactory
  * @version 2.0.0
@@ -38,8 +37,7 @@ const ORBIT_LINE_OPACITY = 0.45;
 const ORBIT_LINE_COLOR = 0x8fd3a1;
 
 /**
- * 3D curve adaptor wrapping a 2D `EllipseCurve`. The ellipse lies in the XZ
- * plane and is tilted around the X axis by the inclination angle.
+ * 3D curve adaptor wrapping a 2D `EllipseCurve`.
  *
  * @class OrbitCurve3D
  * @extends {Curve<Vector3>}
@@ -143,8 +141,6 @@ export function createOrbitRing(
 
 /**
  * Creates orbit ring meshes for all bodies that have orbital parameters.
- * Bodies with a parentBodyId have their ring added as a child of the parent
- * mesh.
  *
  * @function createAllOrbitLines
  * @param {Array<{ id: string; orbit: OrbitalParameters | null; parentBodyId?: string }>} bodies - Body definitions

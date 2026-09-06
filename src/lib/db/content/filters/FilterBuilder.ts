@@ -1,8 +1,7 @@
 /**
  * @fileoverview JSON-serializable filter DSL producing MikroORM-compatible query objects.
  * @description Converts filter expressions into a query object usable by
- * repository adapters. Supports operators `eq`, `neq`, `in`, `nin`; multiple
- * expressions on the same field are merged into a single operator object.
+ * repository adapters.
  *
  * @module lib/db/content/filters/FilterBuilder
  * @version 1.0.0
@@ -33,7 +32,7 @@ export type FilterOperator = 'eq' | 'neq' | 'in' | 'nin';
  * @interface FilterExpression
  * @property {string} field - Entity field name to filter on.
  * @property {FilterOperator} operator - Comparison operator.
- * @property {unknown} value - Comparison value. Must be an array for `in` / `nin`.
+ * @property {unknown} value - Comparison value.
  */
 export interface FilterExpression {
   field: string;
@@ -42,8 +41,7 @@ export interface FilterExpression {
 }
 
 /**
- * Type guard for `FilterExpression`. Validates shape, operator, and the
- * array constraint for `in` / `nin`.
+ * Type guard for `FilterExpression`.
  *
  * @param {unknown} candidate - Untrusted value to test.
  * @returns {candidate is FilterExpression} True when the candidate is a valid expression.
@@ -100,10 +98,6 @@ const toOperatorClause = (expr: FilterExpression): unknown => {
 /**
  * Builds a MikroORM-compatible filter query object from a list of expressions.
  *
- * Multiple expressions on the same field are merged into a single operator
- * object. A bare-value `eq` followed by another operator on the same field
- * is promoted to `{ $eq: value, $op: value }`.
- *
  * @param {FilterExpression[]} filters - Expressions to compose.
  * @returns {Record<string, unknown>} Plain object suitable for `em.find`.
  * @throws {Error} When an expression uses an unsupported operator.
@@ -136,10 +130,6 @@ export const buildFilterQuery = (
 
 /**
  * Applies a filter expression list against an in-memory record set.
- *
- * Records whose fields are missing are excluded from `eq` / `in` matches and
- * included by `neq` / `nin` matches (mirroring SQL `IS NULL` semantics with
- * non-strict equality).
  *
  * @template T
  * @param {T[]} records - Records to filter.

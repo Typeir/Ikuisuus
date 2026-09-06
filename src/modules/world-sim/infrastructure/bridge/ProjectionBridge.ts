@@ -26,7 +26,6 @@ type GlobalPositionSubscriber = (
 
 /**
  * Projects 3D world-space points to 2D screen coordinates.
- * Manages tracked points and notifies subscribers of position changes each frame.
  *
  * @class ProjectionBridge
  *
@@ -105,7 +104,7 @@ export class ProjectionBridge {
   }
 
   /**
-   * Bind a DOM element to a tracked point. update() applies CSS transforms to it.
+   * Bind a DOM element to a tracked point.
    *
    * @param {string} id - Identifier matching a tracked point
    * @param {HTMLElement} element - DOM element to position
@@ -138,7 +137,7 @@ export class ProjectionBridge {
 
   /**
    * Project all tracked points, apply transforms to bound DOM elements,
-   * and notify subscribers. Called once per frame from the animation loop.
+   * and notify subscribers.
    *
    * @param {PerspectiveCamera} camera - The scene camera
    * @param {DOMRect} canvasRect - Bounding rect of the Three.js canvas element
@@ -198,7 +197,7 @@ export class ProjectionBridge {
   }
 
   /**
-   * Remove all tracked points and subscribers. Call during dispose.
+   * Remove all tracked points and subscribers.
    */
   clear(): void {
     this.trackedPoints.clear();

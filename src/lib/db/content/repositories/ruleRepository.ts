@@ -17,9 +17,6 @@ import type { RuleMetadata } from '../schemas/ruleMetadata';
 
 /**
  * Repository contract for rules metadata.
- *
- * Implementations MUST be safe to call even when the backing store is
- * unavailable — return empty arrays or null rather than throwing.
  */
 export interface RuleRepository {
   /**

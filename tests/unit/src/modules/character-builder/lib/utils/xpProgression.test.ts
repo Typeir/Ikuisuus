@@ -1,7 +1,6 @@
 /**
  * @fileoverview Tests for xpProgression utilities
  * @description Unit tests for getLevelFromXP, getXPForLevel, and getXPProgressPercent.
- * Covers levels 1–30 including epic levels 21–30.
  *
  * @module tests/unit/src/modules/character-builder/lib/utils/xpProgression.test
  */

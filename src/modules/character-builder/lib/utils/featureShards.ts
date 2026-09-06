@@ -33,8 +33,6 @@ function stripContentPrefix(file: string): string {
  * `/api/content-shards/{endpoint}/{slug}` and assembles them into
  * {@link CharacterShard} objects.
  *
- * Returns an empty array on fetch or parse failure.
- *
  * @async
  * @function fetchFeatureShards
  * @param {string} slug - Vocation or specialization slug (used in the URL and shard `id`)

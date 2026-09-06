@@ -1,10 +1,7 @@
 /**
  * @fileoverview Hook call-site sweep: one member per file, replacing inline
  * mounted-guard and outside-click implementations with the canonical hooks in
- * src/lib/hooks. Roster derives from
- * .ignore/reports/duplication-inventory.md cluster 4.
- *
- *   paw swarm run plans/hook-callsites.swarm.mjs --live
+ * src/lib/hooks.
  */
 
 const CANON = [

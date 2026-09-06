@@ -1,10 +1,6 @@
 /**
  * @fileoverview PostgreSQL User Adapter (MikroORM)
  * @description Implements the `UserAdapter` interface using MikroORM.
- * Queries the `corrections_users` table via the shared ORM singleton.
- *
- * Required environment variables:
- *   - `DATABASE_URL` — PostgreSQL connection string
  *
  * @module lib/db/auth/postgresUserAdapter
  * @version 4.0.0

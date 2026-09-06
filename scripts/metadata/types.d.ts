@@ -51,7 +51,6 @@ export interface GeneratorResult {
 
 /**
  * Contract for a metadata generator module.
- * Each content type implements this interface.
  *
  * @property {Function} main - Orchestrates full generation for the content type
  * @property {Function} parseFile - Parses a single file into metadata
@@ -111,7 +110,6 @@ export interface ContentTypeConfig {
 
 /**
  * Storage adapter for persisting metadata to a database.
- * Used by generators and the sync service.
  *
  * @property {Function} upsert - Insert or update a metadata record
  * @property {Function} close - Close the storage connection

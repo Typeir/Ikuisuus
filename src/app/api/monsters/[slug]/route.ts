@@ -1,7 +1,6 @@
 /**
  * @fileoverview Single Monster API Route - Fetch individual monster metadata by slug
  * @description Returns full monster metadata for a specific creature by slug/subSlug.
- * Uses the monster repository for typed, adapter-agnostic data access.
  *
  * @version 2.0.0
  * @author Typeir

@@ -1,13 +1,12 @@
 /**
  * @fileoverview Heroic Awakening Styling Utilities
  * @description Utilities for determining CSS classes and styling for Heroic Awakening combatants.
- * Maps affix text to CSS class names for visual styling in PlayMode.
- * 
+ *
  * @module modules/encounter-planner/presentation/utils/heroicAwakeningStyles
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires @/lib/utils/classNameMerge
  * @requires @/modules/encounter-planner/domain/combat/inProgressCombat.types
  * @requires @/modules/encounter-planner/domain/storage/encounterStorageKeys
@@ -19,7 +18,6 @@ import { HeroicAffix } from '@/modules/encounter-planner/domain/storage/encounte
 
 /**
  * Valid affix keys for CSS class generation.
- * Keys are lowercase.
  * @type {string}
  */
 export type AffixKey = 
@@ -65,12 +63,11 @@ const VALID_AFFIXES = new Set<string>(
 
 /**
  * Converts affix text to a valid CSS class key.
- * Returns null if the affix is not recognized.
- * 
+ *
  * @function normalizeAffixToKey
  * @param {string} affixText - The affix text from AffixEntry
  * @returns {AffixKey | null} Normalized affix key or null if invalid
- * 
+ *
  * @example
  * normalizeAffixToKey('Bloodthirsty'); // 'bloodthirsty'
  * normalizeAffixToKey('STORMBOUND'); // 'stormbound'

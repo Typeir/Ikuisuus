@@ -2,8 +2,7 @@
  * @fileoverview Boon Picker Component
  * @description Fetches the bloodline's boon list from `/api/bloodlines` and renders
  * selectable boon cards with BP cost badges, a BP budget meter, and search
- * filtering. On toggle, fetches the boon's full body from
- * `/api/content-shards/bloodlines/[slug]`.
+ * filtering.
  *
  * @module modules/character-builder/presentation/builder/boonPicker
  * @version 1.2.0
@@ -51,8 +50,7 @@ export interface BoonPickerProps {
 }
 
 /**
- * Boon picker panel. Fetches available boons for the bloodline and renders them
- * as selectable cards with BP budget meter and search filtering.
+ * Boon picker panel.
  *
  * @component
  * @param {BoonPickerProps} props - Component props

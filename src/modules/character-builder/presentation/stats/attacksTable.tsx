@@ -1,8 +1,6 @@
 /**
  * @fileoverview Attacks Table Component
- * @description Renders the character's attack entries in a table. Supports
- * adding, editing, and removing individual attacks. Each row shows name,
- * to-hit bonus, damage, and notes.
+ * @description Renders the character's attack entries in a table.
  *
  * @module modules/character-builder/presentation/stats/attacksTable
  * @version 1.0.0
@@ -37,7 +35,6 @@ export interface AttacksTableProps {
 
 /**
  * Attacks table with editable name, to-hit, damage, and notes fields.
- * Supports adding new rows and removing existing ones.
  *
  * @component
  * @param {AttacksTableProps} props - Component props
@@ -172,7 +169,6 @@ export const AttacksTableImpl: React.FC<AttacksTableProps> = ({
 };
 
 /**
- * Memoized `AttacksTable` export. Re-renders only when `attacks`, `onChange`,
- * or `readOnly` changes by reference.
+ * Memoized `AttacksTable` export.
  */
 export const AttacksTable = memo(AttacksTableImpl);

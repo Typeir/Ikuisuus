@@ -1,7 +1,6 @@
 /**
  * @fileoverview MDX Editor tool page.
- * @description Creates and edits MDX content files. With `?slug=...&locale=...`
- * query params, pre-loads a file for editing; without them, shows a blank editor for new files.
+ * @description Creates and edits MDX content files.
  *
  * @module app/[locale]/utils/mdx-editor/page
  * @version 1.0.0
@@ -43,7 +42,6 @@ export const generateMetadata = (): Metadata => ({
 
 /**
  * MDX Editor page component.
- * Renders MdxEditor with locale from route params.
  *
  * @async
  * @param {PageProps} props - Page props with locale parameter

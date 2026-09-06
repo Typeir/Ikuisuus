@@ -1,8 +1,7 @@
 /**
  * @fileoverview End-to-end tests for the tools-menu module.
  * @description Verifies the tools menu lists the shipped tools plus the dev-only Labs
- * entry, opens and closes, and navigates to the correct routes. The Playwright web
- * server runs `npm run dev`, so `devOnly` registry entries are listed here.
+ * entry, opens and closes, and navigates to the correct routes.
  *
  * @module tests/e2e/specs/tools-menu
  * @version 1.0.0

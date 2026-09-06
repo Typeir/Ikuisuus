@@ -2,7 +2,6 @@
  * pgHeirloomRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL heirloom repository.
- * Verifies `HeirloomEntity` row-mapping (with embedded charges) to `HeirloomMetadata`.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgHeirloomRepository
  */

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Asteroid Belt Renderer — Procedural Particle Ring
  * @description Renders the Opaline Belt as a scattered ring of point particles
- * orbiting Kultharja. Uses instanced points with varying sizes and a slow
- * collective rotation.
+ * orbiting Kultharja.
  *
  * @module modules/world-sim/infrastructure/renderers/AsteroidBeltRenderer
  * @version 1.0.0

@@ -1,9 +1,7 @@
 /**
  * @fileoverview Pagefind → SearchResult Mapper
  * @description Maps raw Pagefind result fragments into the domain
- * `SearchResult` shape (T3). Extracts the content type from filters,
- * preserves `<mark>` highlight tags in the snippet, and pulls display
- * metadata fields.
+ * `SearchResult` shape (T3).
  *
  * @module modules/search/infrastructure/mapRecord
  * @version 1.0.0
@@ -31,7 +29,6 @@ export function slugOfFragment(fragment: PagefindFragment): string {
 
 /**
  * Maps a resolved Pagefind fragment into a domain `SearchResult`.
- * Content type comes from `filters.type[0]`; `meta` maps to the flat shape.
  *
  * @param {PagefindFragment} fragment - Resolved Pagefind fragment
  * @param {string} locale - Locale code for id construction

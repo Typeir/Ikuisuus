@@ -1,9 +1,7 @@
 /**
  * @fileoverview Browse Search API Route
  * @description Fuzzy search over content metadata as JSON, for agents and
- * external API consumers. Ranks every record's slug and title against the
- * query with the same similarity scoring the 404 recovery uses; substring
- * hits rank above pure edit-distance matches.
+ * external API consumers.
  *
  * @module app/api/browse/search/route
  * @version 1.0.0

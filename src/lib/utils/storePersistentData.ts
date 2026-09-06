@@ -10,12 +10,10 @@
  *
  * @description
  * Cookies are the authoritative layer; sessionStorage and localStorage are fallbacks.
- * All functions return null or no-op when `window` is unavailable.
  */
 
 /**
  * Prefix used in cookie values to identify a large-volume data reference.
- * The cookie stores `ref:<hash>` rather than the raw payload.
  *
  * @constant LARGE_VOLUME_REF_PREFIX
  */
@@ -23,7 +21,6 @@ const LARGE_VOLUME_REF_PREFIX = 'ref:' as const;
 
 /**
  * Produces a compact 8-character hex content hash using the djb2 algorithm.
- * Not cryptographically secure — used only for integrity checking.
  *
  * @function djb2Hash
  * @param {string} value - The string to hash
@@ -151,8 +148,7 @@ export const storePersistentDataCookieFirst = (
  * @returns {void}
  *
  * @description
- * Writes to sessionStorage and localStorage only; cookies unchanged. For
- * values too large for the cookie size limit.
+ * Writes to sessionStorage and localStorage only; cookies unchanged.
  */
 export const storePersistentDataFallbackOnly = (
   key: string,
@@ -216,9 +212,7 @@ export const storePersistentDataRef = (key: string, value: string): void => {
  * or the hash verification fails
  *
  * @description
- * Reads the payload whose cookie pointer is `ref:<hash>`. Payload read from
- * sessionStorage first, then localStorage. Returns the payload only when its
- * hash matches the cookie pointer.
+ * Reads the payload whose cookie pointer is `ref:<hash>`.
  */
 export const fetchPersistentDataRef = (key: string): string | null => {
   if (typeof window === 'undefined') return null;
@@ -250,8 +244,7 @@ export const fetchPersistentDataRef = (key: string): string | null => {
  *
  * @description
  * Removes the entry from cookies (by expiring with Max-Age=0),
- * sessionStorage, and localStorage. Safe to call when key is absent.
- * SSR-safe: no-ops when `document`/`window` is unavailable.
+ * sessionStorage, and localStorage.
  *
  * @example
  * removePersistentData('ikuisuus-active-encounter');

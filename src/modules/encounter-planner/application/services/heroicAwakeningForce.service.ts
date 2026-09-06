@@ -88,7 +88,6 @@ const parseCr = (crText: string): number => {
 
 /**
  * Force a specific heroic awakening tier on a combatant.
- * Undoes previous awakening bonuses.
  *
  * @function forceHeroicAwakening
  * @param {InProgressCombatant} combatant - The combatant to awaken (mutated in place)
@@ -144,8 +143,6 @@ const getTierFromAffixCount = (
 
 /**
  * Force heroic awakening with explicit user-selected affixes.
- * Tier is inferred from the number of affixes.
- * No affixes removes the awakening entirely.
  *
  * @function forceHeroicAwakeningWithAffixes
  * @param {InProgressCombatant} combatant - The combatant to awaken (mutated in place)

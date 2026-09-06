@@ -1,7 +1,6 @@
 /**
  * @fileoverview Encounter Selector Combobox
  * @description Searchable dropdown for switching between saved encounters.
- * Wraps GenericCombobox and keeps the input label in sync with the active encounter.
  *
  * @module modules/encounter-planner/presentation/comboboxes/encounterCombobox
  * @version 1.0.0
@@ -55,8 +54,7 @@ interface EncounterComboboxProps {
 }
 
 /**
- * Encounter selector combobox. Shows the active encounter name in the input
- * and keeps it in sync when the active encounter changes externally.
+ * Encounter selector combobox.
  *
  * @component
  * @param {EncounterComboboxProps} props - Component props

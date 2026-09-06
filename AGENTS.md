@@ -42,6 +42,7 @@ npm test
 | Foundry Export   | MonsterMetadata → d20 NPC JSON, images, tokens, LevelDB packs.                                   | [Foundry](.github/docs/foundry-module.md)               |
 | tools-menu DDD   | Moved to `src/modules/tools-menu/`. Domain types, registry, hook, tests.                         | [tools-menu](src/modules/tools-menu/README.md)          |
 | Sidebar Scaling  | Wide folders stub at 50. 497 MB → 328 MB. Slots remount — never hold state in one.                | [Sidebar](.github/docs/navigation-sidebar-scaling.md)   |
+| JSDoc Nuke       | One sentence per member, every tag. `npm run jsdoc:nuke -- --write` cuts the corpus.             | [JSDoc](.github/docs/jsdoc.md)                          |
 
 ### 2025
 

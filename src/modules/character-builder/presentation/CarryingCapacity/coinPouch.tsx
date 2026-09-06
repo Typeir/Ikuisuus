@@ -1,9 +1,7 @@
 /**
  * @fileoverview Coin Pouch Component
  * @description Renders the character's coin holdings across currency systems,
- * keyed by `systemName` on `CharacterSheet.coinHoldings`. Built-in systems are
- * structurally read-only; custom systems allow editing of denominations.
- * Falls back to a single `Gold Standard` row when no holdings are present.
+ * keyed by `systemName` on `CharacterSheet.coinHoldings`.
  *
  * @module modules/character-builder/presentation/CarryingCapacity/coinPouch
  * @version 1.0.0
@@ -44,8 +42,7 @@ import {
 import styles from './coinPouch.module.scss';
 
 /**
- * Coin pouch panel. Reads the character and edit mode from the active-sheet
- * context.
+ * Coin pouch panel.
  *
  * @component
  * @returns {JSX.Element} Rendered pouch

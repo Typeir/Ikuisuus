@@ -1,8 +1,7 @@
 /**
  * @fileoverview Migration 014 — Create feat_features table
  * @description Creates the `feat_features` child table storing named mechanics
- * (bold bullet items) parsed from feat MDX files. Rows reference a parent feat
- * via a cascading foreign key.
+ * (bold bullet items) parsed from feat MDX files.
  *
  * @module scripts/db/migrations/015_create_feat_features_table
  * @author Typeir

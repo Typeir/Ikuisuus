@@ -3,7 +3,6 @@
 /**
  * @fileoverview Capability Token Generator CLI
  * @description Generates HMAC-signed capability tokens for the Corrections module.
- * Reads CORRECTIONS_SECRET from the environment (or .env.local).
  *
  * @module scripts/auth/generateToken
  * @version 1.0.0

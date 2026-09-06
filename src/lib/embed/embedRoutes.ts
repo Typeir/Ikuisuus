@@ -12,7 +12,6 @@
 
 /**
  * Matches the leading `/{locale}/library` of a pathname, capturing the locale.
- * The lookahead keeps `/en/libraryish` from matching.
  */
 const LIBRARY_ROUTE = /^\/([^/]+)\/library(?=\/|$)/;
 
@@ -41,8 +40,7 @@ export const isLibraryPathname = (pathname: string): boolean =>
 
 /**
  * Rewrites a library pathname onto the embed route tree, leaving the locale and
- * every following segment untouched. Pathnames that are already embed routes,
- * and pathnames belonging to neither tree, are returned unchanged.
+ * every following segment untouched.
  *
  * @param {string} pathname - Pathname to rewrite, without origin
  * @returns {string} Equivalent pathname inside the embed tree

@@ -1,7 +1,5 @@
 /**
  * @fileoverview Hash navigation hook with collapsible-aware scrolling.
- * Opens closed {@code <details>} ancestors and scrolls targets to ~40% from
- * the viewport top.
  *
  * @module src/modules/library/application/hooks/useHashNavigation
  * @version 1.2.0
@@ -21,8 +19,6 @@ const DETAILS_OPENED_EVENT = 'ik:details-opened';
 /**
  * Opens the nearest closed ancestor {@link HTMLDetailsElement} of
  * {@link element}.
- *
- * Dispatches {@link DETAILS_OPENED_EVENT} on {@link window} after opening.
  *
  * @param {Element} element - The scroll target element.
  * @returns {HTMLDetailsElement | null} The opened details element, or null
@@ -60,14 +56,8 @@ function scrollToElementAtReadingPosition(element: Element): void {
 /**
  * Enables automatic hash navigation for elements with `data-anchor` attributes.
  *
- * On hash changes, scrolls to the first element with a matching `data-anchor`
- * attribute. If the target is inside a collapsed {@code <details>} ancestor,
- * that ancestor is opened and scrolling targets the stable container element
- * at ~40% from the viewport top.
- *
  * @remarks
- * This hook must be used in a client component. It sets up event listeners
- * for the `hashchange` event and cleans them up on unmount.
+ * This hook must be used in a client component.
  *
  * @example
  * // In a client component:

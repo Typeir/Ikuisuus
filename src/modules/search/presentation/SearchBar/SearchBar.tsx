@@ -1,8 +1,7 @@
 /**
  * @fileoverview Search Bar Component
  * @description Always-visible search input mounted under the sidebar heading
- * in `responsiveLayoutShell.tsx`. Cmd/Ctrl-K shortcut, ARIA combobox pattern,
- * locale from route params. Delegates dropdown rendering to SearchDropdown.
+ * in `responsiveLayoutShell.tsx`.
  *
  * @module modules/search/presentation/SearchBar/SearchBar
  * @version 1.0.0
@@ -23,7 +22,6 @@ import { AspectSuggestions } from './AspectSuggestions';
 import { useAspectSuggestions } from './useAspectSuggestions';
 import { SearchField } from '../SearchField/SearchField';
 import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
-import { useRoomBelow } from '@/lib/hooks/useRoomBelow';
 import { useFocusShortcut } from './useSearchBarChrome';
 import { MAX_DROPDOWN_RESULTS, SearchDropdown } from './SearchDropdown';
 import styles from './searchBar.module.scss';
@@ -83,6 +81,7 @@ export function SearchBar({
   const suggesting = suggestions.length > 0;
   const [isMac, setIsMac] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   /* The dropdown never shows more than its cap, so nothing past it is worth
@@ -226,14 +225,9 @@ export function SearchBar({
 
   useFocusShortcut(inputRef);
   const closeDropdown = useCallback(() => setOpen(false), []);
-  useOutsideClick([dropdownRef, inputRef], closeDropdown);
+  useOutsideClick([barRef, dropdownRef], closeDropdown);
 
   const showDropdown = open && query.length >= 2 && !debouncing && !suggesting;
-
-  const dropdownMax = useRoomBelow(dropdownRef, {
-    min: 160,
-    active: showDropdown,
-  });
 
   return (
     <div
@@ -242,12 +236,7 @@ export function SearchBar({
         variant === 'hero' && styles.hero,
         className,
       )}
-      style={
-        dropdownMax !== null
-          ? ({ '--search-dropdown-max': `${dropdownMax}px` } as React.CSSProperties)
-          : undefined
-      }
-      ref={dropdownRef}>
+      ref={barRef}>
       <form onSubmit={handleSubmit} role='search'>
         <SearchField
           value={query}
@@ -289,6 +278,9 @@ export function SearchBar({
 
       {showDropdown && (
         <SearchDropdown
+          ref={dropdownRef}
+          anchorRef={barRef}
+          variant={variant === 'hero' ? 'hero' : 'bar'}
           results={results}
           loading={loading}
           activeIndex={activeIndex}

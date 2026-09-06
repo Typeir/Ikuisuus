@@ -1,10 +1,7 @@
 /**
  * @fileoverview Lab route discovery.
  * @description Walks the `labs` segment for `page.tsx` files and turns each
- * into a route. Reading the filesystem rather than keeping a list means a new
- * lab appears the moment its page exists, which is the only way an index of
- * scratch routes stays true — a hand-maintained one is stale by the second
- * lab nobody remembered to add.
+ * into a route.
  *
  * @module app/[locale]/labs/labIndex
  * @version 0.1.0

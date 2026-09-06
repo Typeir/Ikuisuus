@@ -1,9 +1,7 @@
 /**
  * @fileoverview Unit Inline MDX Component
  * @description Inline MDX component that renders a Damocles measure in the
- * reader's chosen display system. Renders the native stride form on the server;
- * the stored preference takes over after hydration. Links to the Measures rule
- * page; all three systems are shown in the mounted tooltip.
+ * reader's chosen display system.
  *
  * @module modules/library/presentation/components/Unit/Unit
  * @version 1.0.0
@@ -69,8 +67,7 @@ function formatFraction(
 }
 
 /**
- * Props for the Unit component. All values arrive as strings from the MDX
- * attribute layer.
+ * Props for the Unit component.
  *
  * @typedef {object} UnitProps
  * @property {string} value - Whole-number quantity, or fraction numerator

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Aspect Domain Tests
  * @description Guards parsing, display ordering and glyph selection for the
- * faceted aspect vocabulary. These decide what a reader sees on a pill, so a
- * mistake here is silent — a wrong aspect looks exactly like a right one.
+ * faceted aspect vocabulary.
  *
  * @module tests/unit/src/modules/library/domain/aspects.test
  * @version 1.0.0
@@ -173,9 +172,7 @@ describe('aspectMark', () => {
 });
 
 /**
- * The 23 conditions and the defences scoped over them. These are the groups whose
- * values have been drawn; every other group still falls back to one glyph for the
- * whole group, which is graceful degradation rather than a finished mapping.
+ * The 23 conditions and the defences scoped over them.
  */
 describe('drawn groups render a distinguishable mark per value', () => {
   const CONDITIONS = [
@@ -193,11 +190,7 @@ describe('drawn groups render a distinguishable mark per value', () => {
   ];
 
   /**
-   * A mark is the glyphs *and* the badge's hue. `immunity:fire` and
-   * `immunity:burning` both draw a flame under a Ban, and they are still
-   * distinguishable because one is tinted with the fire hue and the other with
-   * the condition hue — colour carries the group, which is what lets glyphs be
-   * reused across vocabularies at all.
+   * A mark is the glyphs *and* the badge's hue.
    *
    * @param {string} group - Aspect group
    * @param {string} value - Aspect value
@@ -259,7 +252,7 @@ describe('drawn groups render a distinguishable mark per value', () => {
 
   /**
    * `staggered` only forbids reactions; `slowed` forbids reactions and halves
-   * speed and caps attacks. The lighter of the two is the one that looks heavier.
+   * speed and caps attacks.
    */
   it('should mark the heavier member of a family with a chevron', () => {
     expect(aspectMark(parseAspect('condition:staggered')!).Badge).toBeUndefined();
@@ -320,8 +313,7 @@ describe('damage strata', () => {
   });
 
   /**
-   * The chip stays neutral so its three member hues read. A fourth colour on the
-   * carrier would compete with the thing it is carrying.
+   * The chip stays neutral so its three member hues read.
    */
   it('should colour a stratum neutrally on every group it appears in', () => {
     for (const aspect of [

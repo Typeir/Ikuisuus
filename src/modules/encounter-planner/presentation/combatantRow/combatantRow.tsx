@@ -1,6 +1,5 @@
 /**
- * @fileoverview Renders a combatant row for design and play mode. Wraps children in
- * CombatantProvider to supply shared state via React Context.
+ * @fileoverview Renders a combatant row for design and play mode.
  *
  * @module modules/encounter-planner/presentation/combatantRow/combatantRow
  * @version 3.0.0
@@ -22,8 +21,6 @@
  *
  * @description
  * Applies awakening CSS classes and .slain class when combatant.slain is true.
- * Renders details section (heroic section, buffs, items, spells, affixes, conditions)
- * only when detailsExpanded is true.
  */
 
 'use client';

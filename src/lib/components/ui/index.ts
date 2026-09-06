@@ -8,6 +8,16 @@
  * @since 2.0.0
  */
 
+/** DataTable — presentational table, columns and rows in, styled by its context */
+export { DataTable } from './dataTable';
+export type {
+  DataTableCell,
+  DataTableCellSpec,
+  DataTableColumn,
+  DataTableProps,
+  DataTableRow,
+} from './dataTable';
+
 /** FilterSelect — dropdown with mobile modal & virtualization */
 export { FilterSelect } from './filterSelect';
 export type { FilterSelectOption, FilterSelectProps } from './filterSelect';

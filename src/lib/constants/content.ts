@@ -17,7 +17,6 @@ export const REGEX_SHEET_SUFFIX = /\.sheet$/;
 
 /**
  * All recognized content-type suffixes following the double-extension convention.
- * Each content file uses `basename.{suffix}.mdx` to declare its type.
  */
 export const CONTENT_SUFFIXES = [
   '.sheet',
@@ -147,8 +146,6 @@ export function stripContentSuffix(slug: string): string {
 
 /**
  * Patterns for entries to ignore during directory traversal.
- * Any entry whose name matches at least one pattern is excluded.
- * Covers dot-prefixed folders/files and known tooling directories.
  */
 export const IGNORED_FOLDERS: RegExp[] = [
   /^\./,

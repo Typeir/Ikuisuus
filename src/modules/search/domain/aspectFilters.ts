@@ -2,9 +2,6 @@
  * @fileoverview Aspect Query Parameters
  * @description Translates `?aspect=` parameters into Pagefind filters.
  *
- * Colons in aspects are flattened to dashes in filter keys; splitting on the
- * last colon preserves nested group and value shapes.
- *
  * @module modules/search/domain/aspectFilters
  * @version 1.0.0
  * @author Typeir

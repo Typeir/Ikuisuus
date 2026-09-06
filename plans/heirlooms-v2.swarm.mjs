@@ -1,17 +1,6 @@
 /**
  * @fileoverview Heirlooms v2 migration: one member per heirloom, each
- * rewriting its file in place into the v2 card format. Shared canon is the
- * migration guide plus the two rules pages the quality derivation reads. Each
- * member also gets its own survey answers, which already list that item's
- * header slots, blocks, flagged numbers and legacy phrasings. Resume keys are
- * the file paths.
- *
- * Requires four component changes before the output renders: `mastery` and
- * `deed` on FEATURE_SLOTS, a `<Pool>` block, and `saveDc` on HEIRLOOM_SLOTS.
- *
- * Set PAW_HEIRLOOM_FILES to a newline-separated roster to run a slice.
- *
- *   paw swarm run plans/heirlooms-v2.swarm.mjs --live
+ * rewriting its file in place into the v2 card format.
  */
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -20,10 +9,7 @@ const ITEMS = 'src/content/en/items/heirlooms';
 const ANSWERS = '.ignore/reports/heirlooms-v2/answers';
 
 /**
- * The canon every member reads. The heirloom guide is the card's structure;
- * the spell migration guide is normative for every rules sentence; the two
- * rules pages are what the quality derivation cross-references; the fixture
- * is the worked example of a finished card.
+ * The canon every member reads.
  */
 const CANON = [
   '.ignore/reports/heirlooms-v2/migration-guide.md',

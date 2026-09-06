@@ -1,8 +1,7 @@
 /**
  * @fileoverview Ability Score Block Component
  * @description Renders a single ability score with its modifier and saving
- * throw. In edit mode exposes a {@link NumericInput}, a 4d6-drop-lowest roll
- * button via {@link rollAbilityScore}, and clickable save pips.
+ * throw.
  *
  * @module modules/character-builder/presentation/stats/abilityScoreBlock
  * @version 3.0.0
@@ -53,9 +52,6 @@ export interface AbilityScoreBlockProps {
 
 /**
  * Renders a single ability score with its computed modifier and saving throw.
- * Shows label, modifier (large), raw score, and a save row (pip track +
- * computed bonus). In edit mode the score becomes a numeric input with a
- * 4d6-drop-lowest roll button and the save pips become clickable.
  *
  * @component
  * @param {AbilityScoreBlockProps} props - Component props

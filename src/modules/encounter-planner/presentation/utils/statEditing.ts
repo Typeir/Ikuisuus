@@ -1,7 +1,6 @@
 /**
  * @fileoverview Stat Editing Utilities
  * @description Shared utilities for parsing and formatting combat stat values.
- * Used by combatant stat editors across the encounter planner.
  *
  * @module modules/encounter-planner/presentation/utils/statEditing
  * @version 1.0.0
@@ -11,7 +10,6 @@
 
 /**
  * Parses a string to an integer with validation.
- * Returns null for empty strings when allowEmpty is true, 0 for NaN results.
  *
  * @function parseIntSafe
  * @param {string} value - String to parse

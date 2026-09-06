@@ -1,7 +1,6 @@
 /**
  * @fileoverview Embed Link Classifier
  * @description Decides what an embedded frame should do with a clicked link.
- * A pure function; its caller owns the side effects.
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
@@ -17,9 +16,6 @@ import {
 
 /**
  * What the embed should do with a clicked link.
- *
- * `ignore` does nothing. `internal` navigates within the frame. `bubble`
- * opens a new top-level window.
  */
 export type EmbedLinkAction =
   | { kind: 'ignore' }
@@ -39,9 +35,6 @@ const PASSTHROUGH_PROTOCOLS = new Set([
 
 /**
  * Classifies a link clicked inside an embedded frame.
- *
- * Same-origin library and embed routes return `internal`, rewritten onto the
- * embed tree. Every other navigable target returns `bubble`.
  *
  * @param {string | null | undefined} rawHref - The anchor's `href` attribute, as authored
  * @param {string} origin - The frame's own origin (e.g. `"https://example.com"`)

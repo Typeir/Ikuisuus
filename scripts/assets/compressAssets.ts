@@ -1,7 +1,6 @@
 /**
  * @fileoverview Compresses images from `public/full-size` into `.webp`,
- * writing mirrored files under `public/library`. Supports .png, .jpg, .jpeg.
- * Originals kept untouched.
+ * writing mirrored files under `public/library`.
  *
  * @module scripts/assets/compressAssets
  * @version 1.0.0

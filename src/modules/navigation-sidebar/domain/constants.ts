@@ -24,7 +24,6 @@ export const SIDEBAR_CLOSE_ANIMATION_MS = 500;
 
 /**
  * Threshold for virtualization in sidebar rendering.
- * When the number of items exceeds this, virtualization is applied.
  *
  * @constant
  * @type {number}

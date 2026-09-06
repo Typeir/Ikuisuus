@@ -1,7 +1,6 @@
 /**
  * @fileoverview Directory Source Adapter Interface
- * @description Port contract for listing directory contents. Consumers
- * switch between filesystem and GitHub Git Trees API implementations unchanged.
+ * @description Port contract for listing directory contents.
  *
  * @module lib/db/content/directorySourceAdapter
  * @author Typeir
@@ -24,8 +23,6 @@ export interface DirectoryEntry {
 
 /**
  * Adapter interface for listing directory contents.
- * Implementations MUST return an empty array when the path does not exist
- * rather than throwing.
  */
 export interface DirectorySourceAdapter {
   /**

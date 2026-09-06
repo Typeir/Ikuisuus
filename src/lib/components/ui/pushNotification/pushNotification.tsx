@@ -1,6 +1,5 @@
 /**
  * @fileoverview Singleton notification manager with toast-style notifications.
- * Supports types (info/success/warning/error), auto-dismiss, stacking, live regions.
  *
  * @module lib/components/ui/pushNotification/pushNotification
  * @version 1.1.0
@@ -56,7 +55,6 @@ const log = logger.child({ module: 'PushNotification' });
 
 /**
  * Exit animation duration in milliseconds.
- * Must match the CSS animation duration in pushNotification.module.scss.
  *
  * @constant {number}
  * @default 200
@@ -66,7 +64,6 @@ export const NOTIFICATION_EXIT_ANIMATION_MS = 200;
 
 /**
  * Default auto-dismiss durations by notification type (milliseconds).
- * A value of 0 disables auto-dismiss for that type.
  *
  * @constant {Record<NotificationType, number>}
  * @property {number} info - 5000ms
@@ -84,8 +81,7 @@ export const NOTIFICATION_DEFAULT_DURATIONS: Record<NotificationType, number> =
   };
 
 /**
- * Maximum number of notifications visible simultaneously. Dismisses the oldest
- * when the limit is exceeded.
+ * Maximum number of notifications visible simultaneously.
  *
  * @constant {number}
  * @default 5
@@ -94,8 +90,7 @@ export const NOTIFICATION_DEFAULT_DURATIONS: Record<NotificationType, number> =
 export const NOTIFICATION_MAX_VISIBLE = 5;
 
 /**
- * Notification types with semantic meaning. Each type has distinct styling
- * and default duration.
+ * Notification types with semantic meaning.
  *
  * @typedef {'info' | 'success' | 'warning' | 'error'} NotificationType
  * @property {string} info - Informational messages (blue accent)
@@ -117,8 +112,7 @@ const LEVEL_KEYS: Record<NotificationType, string> = {
 };
 
 /**
- * Position where notifications appear on screen. Affects entrance animation
- * direction and stacking order.
+ * Position where notifications appear on screen.
  *
  * @typedef {string} NotificationPosition
  * @since 1.0.0
@@ -202,7 +196,6 @@ interface NotificationContextValue {
 
 /**
  * Default context value for when provider is missing.
- * All methods are no-ops that log warnings via useNotifications hook.
  *
  * @constant {NotificationContextValue}
  * @since 1.0.0
@@ -248,7 +241,6 @@ export interface NotificationProviderProps {
 
 /**
  * Provider component that manages notification state and renders the portal.
- * Must wrap any components that use the useNotifications hook.
  *
  * @component NotificationProvider
  * @param {NotificationProviderProps} props - Provider configuration
@@ -291,7 +283,6 @@ export const NotificationProvider = memo(function NotificationProvider({
 
   /**
    * Dismiss a notification by ID.
-   * Clears any pending auto-dismiss timer for this notification.
    */
   const dismiss = useCallback((id: string) => {
     const existingTimer = timerMapRef.current.get(id);
@@ -311,7 +302,6 @@ export const NotificationProvider = memo(function NotificationProvider({
 
   /**
    * Dismiss all notifications.
-   * Clears all pending auto-dismiss timers.
    */
   const dismissAll = useCallback(() => {
     timerMapRef.current.forEach((timerId) => clearTimeout(timerId));
@@ -325,7 +315,6 @@ export const NotificationProvider = memo(function NotificationProvider({
 
   /**
    * Push a new notification.
-   * Sets up auto-dismiss timer if duration > 0.
    *
    * @param {NotificationConfig} config - Notification configuration
    * @returns {string} The notification ID (auto-generated if not provided)

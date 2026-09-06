@@ -22,9 +22,6 @@ export type OutsideClickTargets =
 /**
  * Calls `onOutside` on a pointerdown outside every target element.
  *
- * Listens on `pointerdown`, so touch and pen behave like mouse. Targets and
- * callback are read through refs; only `active` re-attaches the listener.
- *
  * @param {OutsideClickTargets} targets - Element ref or refs that count as inside
  * @param {() => void} onOutside - Called when the press lands outside all targets
  * @param {boolean} [active] - Attach the listener (default `true`)

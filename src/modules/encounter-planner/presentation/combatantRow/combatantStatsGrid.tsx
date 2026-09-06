@@ -35,8 +35,6 @@ export interface CombatantStatsGridProps {
 
 /**
  * Editable ability score grid for combatants.
- * Displays six ability scores with inline editing, Enter/Escape keyboard support,
- * and modifier display beneath each score.
  *
  * @component
  * @param {CombatantStatsGridProps} props - Component props

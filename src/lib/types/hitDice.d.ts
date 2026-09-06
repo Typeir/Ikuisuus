@@ -1,8 +1,7 @@
 /**
  * @fileoverview Hit Dice Types
  * @description Interfaces for the per-level hit die roll log stored on a
- * character sheet. Each entry tracks a single die roll for one vocation level
- * and whether it has been confirmed and added to the character's max HP.
+ * character sheet.
  *
  * @module src/lib/types/hitDice
  * @version 1.0.0
@@ -11,16 +10,13 @@
  */
 
 /**
- * A single hit die roll entry for one vocation level. Entries are appended
- * automatically when a new vocation level is detected, with `result: null`
- * until the player chooses to roll. Once confirmed, `addedToHp` is set to
- * `true` and the entry becomes read-only in the UI.
+ * A single hit die roll entry for one vocation level.
  *
  * @interface HitDieRollEntry
  * @property {string} id - Unique entry identifier (e.g. `"warrior-3"`)
  * @property {string} vocSlug - Vocation slug this entry belongs to
  * @property {string} vocTitle - Vocation display name (e.g. `"Berserker"`)
- * @property {number} dieType - Hit die face count: `12`, `10`, `8`, etc. `0` when the vocation has no usable die. Render with `formatDie`; never parse it.
+ * @property {number} dieType - Hit die face count: `12`, `10`, `8`, etc.
  * @property {number} levelIndex - 1-indexed level within this vocation for this roll
  * @property {number | null} result - The raw die result (1–N), or `null` if not yet rolled
  * @property {number} conMod - CON modifier captured at the time this entry was created

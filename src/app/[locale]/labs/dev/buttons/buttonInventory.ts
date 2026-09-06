@@ -2,8 +2,7 @@
  * @fileoverview Finds every class applied to a `<button>` element in the source tree.
  * @description Parses TSX for `<button>` open tags, reads the `className` expression,
  * and resolves each `styles.foo` reference back to the stylesheet it was imported
- * from. Membership comes from real `<button>` usage, so classes named `trigger` or
- * `chevron` are found and containers named `buttonRow` are not.
+ * from.
  *
  * @module app/[locale]/labs/dev/buttons/buttonInventory
  * @version 1.0.0

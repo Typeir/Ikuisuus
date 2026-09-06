@@ -2,7 +2,6 @@
  * pgWorldRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL world repository.
- * Verifies row-mapping from `WorldEntity` rows to `WorldMetadata` domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgWorldRepository
  */

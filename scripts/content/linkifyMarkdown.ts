@@ -2,8 +2,6 @@
  * Converts plain text references to markdown links in MDX content.
  *
  * @fileoverview Converts plain text references to markdown links in MDX content.
- * Skips self-links when `opts.selfPath` is provided.
- * Supports multiple terms per path (use array for term field).
  *
  * @module linkifyMarkdown
  * @author Typeir
@@ -27,7 +25,6 @@ interface LinkifyOptions {
 
 /**
  * Applies link specs to markdown text, converting plain text references to markdown links.
- * Skips self-links and existing links; supports bold-wrapped terms.
  *
  * @param {string} markdown - Source markdown text
  * @param {LinkSpec[]} specs - Array of link specifications

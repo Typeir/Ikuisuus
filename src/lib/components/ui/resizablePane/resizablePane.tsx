@@ -1,9 +1,6 @@
 /**
  * @fileoverview Resizable Pane Component
- * @description Two-pane horizontal split. Left pane width is a percentage of
- * the wrapper, persisted to `localStorage` under the consumer-provided `id`,
- * and stacks vertically below 900px. Handle keyboard: ArrowLeft/ArrowRight
- * shift by ±2%, Home/End jump to min/max.
+ * @description Two-pane horizontal split.
  *
  * @module lib/components/ui/resizablePane/resizablePane
  * @author Typeir
@@ -70,8 +67,7 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 /**
- * Read a persisted percentage. Returns null when the value is missing,
- * malformed, or out of range.
+ * Read a persisted percentage.
  *
  * @function readStoredPercent
  * @param {string} key - Storage key
@@ -97,8 +93,7 @@ function readStoredPercent(
 }
 
 /**
- * Persist a percentage through the cookie-free storage tier. Failures are
- * swallowed (e.g. quota, privacy mode).
+ * Persist a percentage through the cookie-free storage tier.
  *
  * @function writeStoredPercent
  * @param {string} key - Storage key

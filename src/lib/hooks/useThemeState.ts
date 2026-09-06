@@ -2,7 +2,6 @@
  * Theme State Hooks
  *
  * @fileoverview React hooks for theme state and actions.
- * Provides access to current theme value and toggle functionality.
  *
  * @module lib/hooks/useThemeState
  * @version 1.0.0

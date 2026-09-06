@@ -66,8 +66,7 @@ function makePostRequest(
 }
 
 /**
- * Sets METADATA_BACKEND=pg so the route reaches the repository. On `fs` the
- * route short-circuits before the repository call.
+ * Sets METADATA_BACKEND=pg so the route reaches the repository.
  */
 beforeEach(() => {
   process.env.METADATA_BACKEND = 'pg';

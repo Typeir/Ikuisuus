@@ -1,8 +1,6 @@
 /**
  * @fileoverview Featured Discovery Grid
- * @description Home-page featured area. Fetches the daily discovery set from
- * `/api/discovery` client-side after mount and renders one featured card per
- * content type.
+ * @description Home-page featured area.
  *
  * @module modules/search/presentation/FeaturedGrid/FeaturedGrid
  * @version 1.0.0

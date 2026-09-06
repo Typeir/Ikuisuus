@@ -2,7 +2,6 @@
  * Icon Component
  *
  * @fileoverview Generic SVG icon wrapper with type-safe icon selection.
- * Maps icon type strings to imported SVG components.
  *
  * @module lib/components/icon/icon
  * @version 1.0.0

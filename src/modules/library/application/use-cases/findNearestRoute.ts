@@ -138,10 +138,6 @@ function buildTitle(routePath: string): string | undefined {
 /**
  * Ranks every library route against a slug query, best first.
  *
- * Similarity is taken against the route's final content segment, falling back
- * to the full path when that scores higher, so `gobli` finds
- * `/library/monsters/goblin` without the caller knowing the folder.
- *
  * @param {string} query - Fuzzy slug or path fragment, e.g. `gobli`
  * @param {number} [limit] - Maximum matches returned (default 5)
  * @returns {RouteMatch[]} Ranked locale-less matches; empty when no routes exist

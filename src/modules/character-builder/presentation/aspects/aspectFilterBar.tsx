@@ -1,7 +1,6 @@
 /**
  * @fileoverview Aspect Filter Bar
  * @description Toggle row of the aspects present in a picker's items.
- * Selected aspects are ANDed by the caller via `matchesAspects`.
  *
  * @module modules/character-builder/presentation/aspects/aspectFilterBar
  * @version 1.0.0
@@ -42,8 +41,7 @@ export interface AspectFilterBarProps {
 const COLLAPSED_LIMIT = 12;
 
 /**
- * Renders the filterable aspects as pressable pills. Nothing when the items
- * carry no aspects.
+ * Renders the filterable aspects as pressable pills.
  *
  * @component
  * @param {AspectFilterBarProps} props - Component props

@@ -9,8 +9,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 /**
- * Imports calculatePosition from the source module. Depends on
- * window.innerWidth/innerHeight, stubbed in beforeEach.
+ * Imports calculatePosition from the source module.
  */
 const { calculatePosition } = await vi.importActual<{
   calculatePosition: (

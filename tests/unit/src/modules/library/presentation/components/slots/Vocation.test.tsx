@@ -10,7 +10,9 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
-import Vocation from '@/modules/library/presentation/components/slots/Vocation';
+import Vocation, {
+  Specialization,
+} from '@/modules/library/presentation/components/slots/Vocation';
 import {
   HitDie,
   PrimaryAbility,
@@ -52,5 +54,33 @@ describe('Vocation', () => {
     );
     expect(document.querySelector('[data-slot-grid]')).toBeNull();
     expect(screen.getByText('Body only.')).toBeInTheDocument();
+  });
+});
+
+describe('Specialization', () => {
+  it('is the vocation card under its own tag, with the parent as a link', () => {
+    render(
+      <Specialization vocation='revenant'>
+        <p>Oath prose.</p>
+      </Specialization>,
+    );
+    expect(document.querySelector('[data-vocation][data-kind="specialization"]')).not.toBeNull();
+    expect(printed()).toEqual(['vocation']);
+    const link = document.querySelector('[data-slot="vocation"] a');
+    expect(link?.getAttribute('href')).toBe('/en/library/character-creation/vocations/revenant');
+    expect(link?.textContent).toBe('Revenant');
+    expect(screen.getByText('Oath prose.')).toBeInTheDocument();
+  });
+
+  it('prints a parent that is not a slug as written, and a vocation writes no parent', () => {
+    render(<Specialization vocation='Sword Saint of Ikuisuus' />);
+    expect(document.querySelector('[data-slot="vocation"] a')).toBeNull();
+    expect(document.querySelector('[data-slot="vocation"] [data-slot-value]')?.textContent).toBe(
+      'Sword Saint of Ikuisuus',
+    );
+    document.body.innerHTML = '';
+
+    render(<Vocation hitDie='d8 per Rogue level' />);
+    expect(printed()).toEqual(['hitDie']);
   });
 });

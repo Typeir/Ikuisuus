@@ -1,10 +1,6 @@
 /**
  * @fileoverview Resolves the OG image path for a content page.
  *
- * Priority chain: explicit frontmatter path → slug-derived public file across
- * multiple extensions → slug-derived `.webp` candidate for CDN-served images.
- * Performs filesystem checks only.
- *
  * @module lib/seo/resolvePageImage
  * @version 1.0.0
  * @author Typeir
@@ -20,7 +16,6 @@ const IMAGE_EXTENSIONS = ['.webp', '.png', '.jpg', '.jpeg'] as const;
 
 /**
  * Checks whether a root-relative path exists under the `public/` directory.
- * Returns false on filesystem error.
  *
  * @param {string} relativePath - Root-relative path starting with `/`.
  * @returns {boolean} True when the file exists on the local filesystem.
@@ -39,9 +34,6 @@ function publicFileExists(relativePath: string): boolean {
 
 /**
  * Derives the content-type image folder from a slug path.
- *
- * The type folder is the directory immediately containing the file, e.g.
- * `"items/heirlooms/dreaded-defender"` → `"heirlooms"`.
  *
  * @param {string} slugPath - Slash-separated content path.
  * @returns {string} Inferred image type folder name.
@@ -81,12 +73,6 @@ function findFirstExistingImage(basePath: string): string | null {
 
 /**
  * Resolves the OG image path for a content page.
- *
- * Priority order:
- * 1. Explicit frontmatter `image` value.
- * 2. First matching extension found under `public/library/images/`.
- * 3. Slug-derived `.webp` candidate path (assumed to be served from CDN
- *    when not present on the local build filesystem).
  *
  * @param {string | undefined} frontmatterImage - Image path from MDX frontmatter, if any.
  * @param {string} slugPath - Slash-separated content path.

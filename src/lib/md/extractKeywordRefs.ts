@@ -2,8 +2,7 @@
  * @fileoverview Collects `[# kw:… #]` references from MDX source.
  * @description Unlike `parseKeywordExpression`, this reports unregistered and
  * unresolvable references too, so validation can find references that point at
- * nothing. Namespaced references keep their `namespace;value` form; resolution to
- * a file and anchor happens against the namespace index.
+ * nothing.
  *
  * @module lib/md/extractKeywordRefs
  * @version 2.0.0
@@ -23,8 +22,6 @@ const CODE_SPANS = /(```[\s\S]*?```|~~~[\s\S]*?~~~|`[^`\n]*`)/g;
 
 /**
  * Blanks out code so a reference quoted as an example is not collected.
- * `remarkKeyword` only rewrites text nodes, so anything in code renders
- * literally; collecting it would bake a shard nothing ever clones.
  *
  * @param {string} source - Raw MDX source
  * @returns {string} Source with code spans replaced by blanks of equal length
@@ -35,9 +32,6 @@ function maskCode(source: string): string {
 
 /**
  * Collects every keyword reference in a source document.
- *
- * A namespaced reference is normalised to `namespace;value`. A bare reference is
- * normalised to its value.
  *
  * @param {string} source - Raw MDX source
  * @returns {string[]} Normalised references, deduplicated and sorted
@@ -67,11 +61,6 @@ export function extractKeywordRefs(source: string): string[] {
 
 /**
  * Collects the join keys for every keyword a document ingests.
- *
- * The key is the shard id the bake dedupes on, so a producer's `produces` and a
- * consumer's `consumes` meet on the same string without either side loading the
- * namespace index. Casing and separator noise collapse into it, so
- * `Two-Weapon Fighting` and `two-weapon-fighting` yield one key.
  *
  * @param {string} source - Raw MDX source
  * @returns {string[]} Shard ids, deduplicated and sorted

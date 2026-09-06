@@ -2,7 +2,7 @@
  * @fileoverview Roster Write-Back Integration Test
  * @description Exercises the full write-back round trip: sheet write, provider
  * push to roster context, roster rebuild to a fresh object, and flow back as the
- * `character` prop. Mounts the real `CharacterRoster` over a persisted character.
+ * `character` prop.
  *
  * @module tests/integration/character-builder/presentation/rosterWriteBack
  * @version 1.0.0
@@ -58,8 +58,6 @@ const SEED: CharacterSheet = {
 
 /**
  * Persists the seed character to storage so the provider hydrates it.
- * Seeding through storage avoids `CharacterRoster` auto-creating a character
- * when it finds the roster empty at hydration.
  *
  * @function persistSeed
  * @returns {void}

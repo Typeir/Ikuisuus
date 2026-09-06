@@ -1,11 +1,7 @@
 /**
  * @fileoverview Migration 006 — Add draft_status enum
  * @description Converts `drafts.status` from `text` to the `draft_status`
- * enum type and adds the `pending` status. Post-migration statuses: active is
- * the editing candidate; pending is a non-admin submission awaiting review;
- * archived is retired after revalidation or rejection. The unique index on
- * `(locale, slug)` stays scoped to `status = 'active'`; `pending` rows are
- * not unique per slug.
+ * enum type and adds the `pending` status.
  *
  * @module scripts/db/migrations/006_add_draft_status_enum
  * @author Typeir

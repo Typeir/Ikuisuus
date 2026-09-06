@@ -14,13 +14,6 @@ import type {
 
 /**
  * Recursively calculates collapsed and expanded heights for each sidebar item.
- * Sorts items by folder status (folders last), then alphabetically.
- *
- * A stub carries `children: []` until its contents are fetched, so folder status
- * reads `isStub` as well as child count. Counting only children put stubs in the
- * leaf group, which sorted them above every real folder and — worse — moved them
- * across the group boundary the moment their children arrived, reordering the
- * tree under the pointer that had just expanded them.
  *
  * @param {Item[]} items - The sidebar items to process
  * @returns {LayoutItem[]} Sidebar items with calculated height metadata

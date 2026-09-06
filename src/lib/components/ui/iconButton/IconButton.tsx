@@ -1,10 +1,7 @@
 /**
  * @fileoverview IconButton atom — the one close / delete / add control.
  * @description Owns the glyph, its size and weight, the hover glow and the
- * permitted shapes. Icon-only it is a plain glyph, a bordered square or a
- * bordered rhombus; with children it becomes the square labelled control
- * (border, text, glyph on either side). Five sizes; the tone is the kind's
- * unless the call site inherits it from `--icon-btn-tone` on an ancestor.
+ * permitted shapes.
  *
  * @module lib/components/ui/iconButton/IconButton
  * @version 1.5.0
@@ -39,9 +36,7 @@ import {
 import styles from './iconButton.module.scss';
 
 /**
- * Glyph and default tone. `close` and `delete` glow danger; every other kind
- * glows accent. Toggle sites swap the kind (`preview`/`previewOff`,
- * `lock`/`unlock`, `meta`/`file`).
+ * Glyph and default tone.
  *
  * @typedef {'close'|'delete'|'add'|'edit'|'roll'|'avg'|'preview'|'previewOff'|'refresh'|'meta'|'file'|'lock'|'unlock'} IconButtonKind
  */
@@ -61,30 +56,28 @@ export type IconButtonKind =
   | 'unlock';
 
 /**
- * Icon-only box. `plain` is the bare glyph; `square` and `rhombus` add the
- * 1px border and surface fill.
+ * Icon-only box.
  *
  * @typedef {'plain'|'square'|'rhombus'} IconButtonShape
  */
 export type IconButtonShape = 'plain' | 'square' | 'rhombus';
 
 /**
- * Glyph scale. `m` is the default 16px glyph in a 24px box.
+ * Glyph scale.
  *
  * @typedef {'xs'|'s'|'m'|'l'|'xl'} IconButtonSize
  */
 export type IconButtonSize = 'xs' | 's' | 'm' | 'l' | 'xl';
 
 /**
- * Hover/focus colour. `inherit` reads `--icon-btn-tone` from an ancestor —
- * for pills and toasts that carry their own hue.
+ * Hover/focus colour.
  *
  * @typedef {'danger'|'accent'|'inherit'} IconButtonTone
  */
 export type IconButtonTone = 'danger' | 'accent' | 'inherit';
 
 /**
- * Side of the label the glyph sits on. Labelled form only.
+ * Side of the label the glyph sits on.
  *
  * @typedef {'left'|'right'} IconButtonGlyphSide
  */
@@ -136,7 +129,7 @@ const SHAPES: Record<IconButtonShape, string> = {
 
 /**
  * Lucide glyph px per size, with the stroke thickened where the 24-unit grid
- * would render it under 1.5px. Box and rhombus sides live in the stylesheet.
+ * would render it under 1.5px.
  */
 const GLYPH: Record<IconButtonSize, { size: number; stroke: number }> = {
   xs: { size: 10, stroke: 3 },
@@ -156,8 +149,7 @@ const SIZES: Record<IconButtonSize, string> = {
 
 /**
  * Native button attributes the atom lets through: ARIA state and
- * relationships, identity, focus order and focus/pointer events. Presentation
- * attributes (`className`, `style`) are deliberately excluded.
+ * relationships, identity, focus order and focus/pointer events.
  *
  * @typedef {object} IconButtonPassthrough
  */
@@ -209,7 +201,7 @@ interface IconButtonBaseProps extends IconButtonPassthrough {
 }
 
 /**
- * Icon-only form. The glyph is the whole control, so an accessible name is required.
+ * Icon-only form.
  *
  * @interface IconOnlyProps
  * @property {string} label - Accessible name
@@ -223,7 +215,7 @@ interface IconOnlyProps extends IconButtonBaseProps {
 }
 
 /**
- * Labelled form. Square bordered control with visible text; the text names it.
+ * Labelled form.
  *
  * @interface LabelledProps
  * @property {ReactNode} children - Visible label
@@ -246,8 +238,7 @@ interface LabelledProps extends IconButtonBaseProps {
 export type IconButtonProps = IconOnlyProps | LabelledProps;
 
 /**
- * Icon button with a fixed glyph. Icon-only: plain, square or rhombus. With
- * children: square labelled control, glyph left or right of the text.
+ * Icon button with a fixed glyph.
  *
  * @component
  * @param {IconButtonProps} props - Component props

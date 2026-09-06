@@ -1,9 +1,6 @@
 /**
  * @fileoverview SEO module shared types.
  *
- * Defines the input contract for the SEO metadata builder used across all
- * library content pages.
- *
  * @module lib/seo/types
  * @version 1.0.0
  * @author Typeir

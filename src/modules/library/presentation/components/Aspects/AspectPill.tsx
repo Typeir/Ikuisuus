@@ -24,13 +24,12 @@ import styles from './Aspects.module.scss';
 const STRATUM_SLOTS = ['top', 'left', 'right'] as const;
 
 /**
- * Pill/glyph size step. `m` is the baseline; `s` shrinks the badge ~30% and
- * the mark ~20%, `l` grows them by the same ratios.
+ * Pill/glyph size step.
  */
 export type AspectSize = 's' | 'm' | 'l';
 
 /**
- * Aspect pill: icon mark plus label. Link by default, button with onSelect.
+ * Aspect pill: icon mark plus label.
  *
  * @param {object} props - Component properties
  * @param {ParsedAspect} props.aspect - The aspect to render

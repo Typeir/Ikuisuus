@@ -2,8 +2,7 @@
  * Aspect Vocabulary Check
  *
  * @fileoverview Validates every aspect emitted into generated metadata against the
- * closed vocabulary in `scripts/core/shared-data.json`. Reads generated
- * `*.metadata.json` sidecars.
+ * closed vocabulary in `scripts/core/shared-data.json`.
  *
  * @module .github/scripts/check-aspects
  */
@@ -70,8 +69,6 @@ function parseAspect(
 /**
  * Resolves a group's accepted values, following `valuesFrom` one level.
  *
- * Borrowed values are trimmed, lowercased, and spaces replaced with hyphens.
- *
  * @param {SharedDataShape} shared - Parsed shared data
  * @param {string} group - Group name without its trailing colon
  * @returns {Set<string>} Accepted values, empty for an open or unknown group
@@ -132,8 +129,6 @@ const ASPECT_TOKEN = /^[a-z][a-z0-9-]*(:[a-z0-9-]+)+$/;
 
 /**
  * Pulls every aspect out of a parsed metadata document.
- *
- * Collects all string values in `tags` keys at any depth, skipping nested keys.
  *
  * @param {unknown} node - Any node of the parsed document
  * @param {Set<string>} found - Accumulator

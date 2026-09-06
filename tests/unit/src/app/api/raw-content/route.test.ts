@@ -1,7 +1,6 @@
 /**
  * @fileoverview Raw Content API Route Unit Tests
- * @description Tests for POST /api/raw-content. Covers validation, type→dir
- * mapping, frontmatter stripping, 404 handling, and error handling.
+ * @description Tests for POST /api/raw-content.
  *
  * @module tests/unit/src/app/api/raw-content/route.test
  * @version 1.0.0

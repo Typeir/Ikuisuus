@@ -3,15 +3,6 @@
  *
  * Walks every spell .mdx file and extracts the upcasting block — the
  * "At Higher Levels" heading and its body, or inline bullet variants.
- * Classifies each into one of several structural patterns and writes a
- * JSON catalogue so the editorial team can analyse repetition, derive a
- * leaner convention, and spot outliers.
- *
- * Usage:
- *   node scripts/content/catalog-upcast-patterns.mjs
- *
- * Output:
- *   .ignore/reports/upcast-patterns.json
  *
  * @module scripts/content/catalog-upcast-patterns
  * @version 1.0.0
@@ -84,8 +75,6 @@ function collectSpellFiles() {
 
 /**
  * Slice out the upcast block from file content.
- * Starts at the "At Higher Levels" heading (or inline bullet) and ends at
- * the next `---` divider, `#### Spell Lists` heading, or EOF.
  *
  * @param {string} content
  * @returns {string|null}

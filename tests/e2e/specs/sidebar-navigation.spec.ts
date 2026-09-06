@@ -1,6 +1,5 @@
 /**
- * @fileoverview E2E tests for sidebar layout and locale switching. Verifies the
- * 3-region layout and tools menu navigation.
+ * @fileoverview E2E tests for sidebar layout and locale switching.
  */
 
 import { expect, test } from '@playwright/test';

@@ -1,9 +1,7 @@
 /**
  * @fileoverview Fixed-position flashlight reveal, scoped to its container.
  * @description Renders the same reveal layer as {@link FlashlightLayer} with
- * the aperture parked at one corner instead of following the pointer. The
- * pattern, mask, glow and scanlines come from the shared stylesheet, so the
- * two stay identical by construction rather than by matching values.
+ * the aperture parked at one corner instead of following the pointer.
  *
  * @module lib/components/flashlight/StaticFlashlight
  * @author Typeir
@@ -44,9 +42,6 @@ export interface StaticFlashlightProps {
 
 /**
  * Radius whose quarter-disc covers `coverage` of a `width` x `height` box.
- *
- * The aperture sits on the bottom-left corner, so one quadrant of the circle
- * falls inside the container: `pi * r^2 / 4 = coverage * w * h`.
  *
  * @function cornerRadiusForCoverage
  * @param {number} width - Container width in px

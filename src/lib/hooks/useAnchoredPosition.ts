@@ -1,7 +1,7 @@
 /**
  * @fileoverview Anchored position hook.
  * @description Positions a floating element against an anchor element on scroll
- * and resize. Writes `transform` directly to the DOM node.
+ * and resize.
  *
  * @module lib/hooks/useAnchoredPosition
  * @version 1.0.0
@@ -11,13 +11,18 @@
 
 'use client';
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from 'react';
 
 /**
  * Reports whether the browser supports CSS anchor positioning.
- *
- * Returns false during SSR and on browsers without support, which is the signal
- * to run the JavaScript positioning fallback.
  *
  * @returns {boolean} True when `anchor-name` is supported
  */
@@ -39,6 +44,49 @@ export function useCssAnchorSupport(): boolean {
  */
 export function toAnchorName(id: string): string {
   return `--ik-anchor-${id.replace(/[^a-zA-Z0-9]/g, '')}`;
+}
+
+/**
+ * Result of useAnchorName.
+ *
+ * @interface AnchorNameResult
+ * @property {string} anchorName - Dashed-ident for the floating element's `position-anchor`
+ * @property {boolean} cssAnchored - True when the engine honours CSS anchor positioning
+ */
+export interface AnchorNameResult {
+  anchorName: string;
+  cssAnchored: boolean;
+}
+
+/**
+ * Names an anchor element for CSS anchor positioning while active.
+ *
+ * @param {RefObject<HTMLElement | null>} anchorRef - Element that receives `anchor-name`
+ * @param {boolean} [active] - Write the name only while true (default `true`)
+ * @returns {AnchorNameResult} The name and whether the engine supports it
+ * @example
+ * ```tsx
+ * const { anchorName, cssAnchored } = useAnchorName(triggerRef, open);
+ * <div style={{ positionAnchor: anchorName }} />
+ * ```
+ */
+export function useAnchorName(
+  anchorRef: RefObject<HTMLElement | null>,
+  active: boolean = true,
+): AnchorNameResult {
+  const cssAnchored = useCssAnchorSupport();
+  const anchorName = toAnchorName(useId());
+
+  useLayoutEffect(() => {
+    const el = anchorRef.current;
+    if (!cssAnchored || !active || !el) return;
+    el.style.setProperty('anchor-name', anchorName);
+    return () => {
+      el.style.removeProperty('anchor-name');
+    };
+  }, [anchorRef, anchorName, cssAnchored, active]);
+
+  return { anchorName, cssAnchored };
 }
 
 /**
@@ -94,20 +142,6 @@ export interface AnchoredPositionResult {
 
 /**
  * Keeps a floating element aligned to an anchor element.
- *
- * Reads the anchor rect, applies `compute`, and writes the result as
- * `translate3d` on the floating element. Scroll and resize listeners are
- * passive and coalesced to one write per frame. The position never enters React
- * state, so scrolling triggers no re-render.
- *
- * The element stays `visibility: hidden` until the first position is written,
- * so it never paints at the viewport origin. Repositioning runs after every
- * render, which covers a floating element that mounts after activation and any
- * change to its size.
- *
- * The floating element must be laid out at the viewport origin
- * (`position: fixed; top: 0; left: 0`) and must not receive `transform` from any
- * other source.
  *
  * @param {RefObject<HTMLElement | null>} anchorRef - Element to align against
  * @param {RefObject<HTMLElement | null>} floatRef - Element to position

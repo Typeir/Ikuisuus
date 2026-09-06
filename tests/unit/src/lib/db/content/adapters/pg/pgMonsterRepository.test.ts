@@ -2,8 +2,6 @@
  * pgMonsterRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL monster repository.
- * Verifies row-mapping from `MonsterEntity` rows to `MonsterMetadata`
- * domain objects and that the correct MikroORM queries are used.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgMonsterRepository
  */

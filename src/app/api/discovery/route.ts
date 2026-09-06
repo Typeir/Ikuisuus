@@ -1,8 +1,7 @@
 /**
  * @fileoverview Discovery API Route
  * @description Returns deterministic daily-featured + random entries per
- * content type. Query params: `locale` (default 'en'), `type` (optional,
- * returns all types when omitted).
+ * content type.
  *
  * @module app/api/discovery/route
  * @version 1.0.0
@@ -55,8 +54,7 @@ function dailyIndex(
 /**
  * GET /api/discovery
  *
- * Returns daily-featured + random entries per content type. Backed by
- * filesystem metadata sidecar reads.
+ * Returns daily-featured + random entries per content type.
  *
  * @param {Request} req - Next.js request
  * @returns {NextResponse} JSON discovery set

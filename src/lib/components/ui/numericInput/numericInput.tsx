@@ -1,26 +1,17 @@
 /**
  * Numeric Input Component
- * 
- * @fileoverview Controlled numeric input. Clamps to min/max on blur; empties on non-finite
- * values; optional step buttons and clear button.
- * 
+ *
+ * @fileoverview Controlled numeric input.
+ *
  * @module lib/components/ui/numericInput/numericInput
  * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @description
  * Controlled numeric input with on-blur clamping, optional step buttons, clear button,
- * and role="spinbutton" ARIA. Supports size variants and optional decimals.
- * 
- * Value Handling:
- * - null, undefined, NaN, and non-finite values render as empty input ("").
- * - Empty input produces `undefined` in onChange callback.
- * - Valid finite numbers are displayed as-is.
- * - The component never renders literal "null", "undefined", or "NaN" strings.
- * - Edited text is held as a draft; in-bounds values commit live, invalid drafts
- *   commit on blur after parsing and clamping.
- * 
+ * and role="spinbutton" ARIA.
+ *
  * @example
  * // Basic usage
  * <NumericInput
@@ -30,7 +21,7 @@
  *   max={999}
  *   ariaLabel="Hit points"
  * />
- * 
+ *
  * @example
  * // With step buttons and clear
  * <NumericInput
@@ -59,8 +50,7 @@ import styles from './numericInput.module.scss';
 
 /**
  * Checks if a value is a valid, displayable number.
- * Returns false for null, undefined, NaN, Infinity, and -Infinity.
- * 
+ *
  * @function isValidDisplayNumber
  * @param {number | null | undefined} value - The value to check
  * @returns {boolean} True if value is a finite number that can be displayed

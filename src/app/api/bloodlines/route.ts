@@ -1,8 +1,6 @@
 /**
  * @fileoverview Bloodlines API route.
- * @description Serves bloodline metadata via the content adapter layer. Supports
- * ?locale query parameter for locale-aware content. Returns array of bloodline
- * objects with core features, boons, and gameplay tags.
+ * @description Serves bloodline metadata via the content adapter layer.
  *
  * @version 1.0.0
  * @author Typeir
@@ -28,7 +26,6 @@ const log = logger.child({ module: 'API:Bloodlines' });
  * GET /api/bloodlines
  *
  * Returns array of bloodline metadata from the active content repository.
- * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of bloodline objects

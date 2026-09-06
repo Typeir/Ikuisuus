@@ -39,7 +39,7 @@ export const MOVEMENT: Record<string, RegExp> = {
 };
 
 /**
- * Monster mechanic detection patterns. Each key maps to a tag suffix.
+ * Monster mechanic detection patterns.
  *
  * @property {RegExp} legendaryDeed - Any mention of legendary deeds, including the bare section heading
  * @property {RegExp} deedResist - Legendary Deed: Resist
@@ -91,7 +91,7 @@ export const MONSTER_MECHANICS = {
 } as const;
 
 /**
- * Item mechanic detection patterns. Each key maps to a tag suffix.
+ * Item mechanic detection patterns.
  *
  * @property {RegExp} accuracyBonus - "+N to attack/hit", or an accuracy bonus in canonical wording
  * @property {RegExp} damageBonus - "+N to damage/AC", or a damage bonus in canonical wording

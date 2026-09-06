@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests that cut across the content-v2 card hosts.
  * @description The trinket kind of the item card, deed-costed blocks, and the
- * item slot layout. Each host's own behaviour lives in its own test file.
+ * item slot layout.
  *
  * @module tests/unit/src/modules/library/presentation/components/slots/contentv2.test
  * @version 0.2.0

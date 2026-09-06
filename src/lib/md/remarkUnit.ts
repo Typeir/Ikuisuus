@@ -2,7 +2,7 @@
  * Remark Unit Plugin
  *
  * @fileoverview Remark plugin replacing `[= ... =]` unit expressions in text
- * nodes with `<Unit>` MDX JSX elements. Malformed expressions stay as plain text.
+ * nodes with `<Unit>` MDX JSX elements.
  *
  * @module lib/md/remarkUnit
  * @version 1.0.0
@@ -87,7 +87,6 @@ function attributeNode(name: string, value: string): MdxJsxAttributeNode {
 
 /**
  * Builds an MDAST mdxJsxTextElement node for the `<Unit>` component.
- * Props are string attributes; flags comma-joined; denominator omitted when 1.
  *
  * @param {number} numerator - Quantity numerator
  * @param {number} denominator - Quantity denominator, 1 for whole quantities
@@ -124,8 +123,6 @@ function unitNode(
 
 /**
  * Processes a single text node, replacing unit expressions with JSX elements.
- * Modifies the parent's children array in place. Handles mixed text by
- * splitting into sequences of text and element nodes.
  *
  * @param {TextNode} node - The text node to process
  * @param {number | null} index - The node's index in its parent

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Theme Selector Component
  * @description Client-side component that cycles through available themes
- * (dark/light). Uses rangeWrap to wrap the theme index within bounds.
- * Invokes onThemeChange with the next theme on click.
+ * (dark/light).
  *
  * @version 1.0.0
  * @author Typeir
@@ -48,9 +47,6 @@ export type ThemeSelectorProps = {
 
 /**
  * React client component that cycles through predefined themes via a button.
- *
- * Increments the current theme index with wrap-around and calls onThemeChange
- * with the next theme.
  *
  * @param {ThemeSelectorProps} props - The component props.
  * @property {Theme} props.onThemeChange - callback for when theme changes

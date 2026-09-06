@@ -2,10 +2,6 @@
  * @fileoverview Audit Adapter Factory
  * @description Resolves the audit storage adapter based on `METADATA_BACKEND` env var.
  *
- * Supported backends:
- * - `fs` → Filesystem JSON file (default for local development)
- * - `pg` → PostgreSQL via MikroORM
- *
  * @module lib/db/auditAdapterFactory
  * @version 1.0.0
  * @author Typeir

@@ -25,12 +25,6 @@ const getMetaFolder = (locale: string): string => {
 /**
  * Reads and parses all `.metadata.json` files from a content subdirectory.
  *
- * Reads `.meta/{locale}/{subdir}`, falling back to
- * `src/content/{locale}/{subdir}` when the mirror tree is absent.
- *
- * Returns an empty array if neither directory exists or cannot be read.
- * Multi-record files (arrays) are flattened.
- *
  * @template T - The expected metadata record type
  * @param {string} locale - Locale code (e.g. 'en', 'es')
  * @param {string} subdir - Relative subdirectory inside `src/content/{locale}/`

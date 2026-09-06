@@ -1,8 +1,6 @@
 /**
  * @fileoverview GradientTabs Component
- * @description Tabbed container. Renders a scrollable tab strip above a surface
- * panel. DOM and CSS copied from SpellTable. `compact` variant tightens
- * paddings and sizes tabs for touch.
+ * @description Tabbed container.
  *
  * @module lib/components/ui/gradientTabs/gradientTabs
  * @author Typeir
@@ -56,8 +54,7 @@ export interface GradientTabsProps {
 }
 
 /**
- * Renders a scrollable row of tab buttons above a surface panel. Scrolls the
- * active tab into view when the strip overflows horizontally.
+ * Renders a scrollable row of tab buttons above a surface panel.
  *
  * @component
  * @param {GradientTabsProps} props - Component props

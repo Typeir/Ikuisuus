@@ -1,7 +1,6 @@
 /**
  * @fileoverview Encounter Planner Page
- * @description Page component for /[locale]/utils/encounter-planner. Renders encounter
- * management, creature import, and combat tracking UI from encounter planner module parts.
+ * @description Page component for /[locale]/utils/encounter-planner.
  *
  * @module app/[locale]/utils/encounter-planner/page
  * @version 1.0.0
@@ -36,7 +35,6 @@ import React from 'react';
 
 /**
  * Encounter Planner page component.
- * Implements the route UI directly from encounter planner module parts.
  *
  * @function EncounterPlannerPage
  * @returns {JSX.Element} Rendered page with encounter planner

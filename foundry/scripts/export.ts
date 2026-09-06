@@ -4,8 +4,6 @@
  * directory, transforms each monster into a dnd5e NPC Actor JSON document, and
  * writes the results to foundry/packs/_source/monsters/.
  *
- * Run via: npx tsx --tsconfig tsconfig.scripts.json foundry/scripts/export.ts
- *
  * @module foundry/scripts/export
  * @version 1.0.0
  * @author Typeir
@@ -84,8 +82,7 @@ function discoverMetadataFiles(): string[] {
 }
 
 /**
- * Rewrites image paths to module-relative Foundry paths. Uses only the
- * filename.
+ * Rewrites image paths to module-relative Foundry paths.
  *
  * @param {string} imgPath - Original image path from metadata (e.g. /library/images/monsters/foo.webp)
  * @returns {string} Module-relative path
@@ -96,7 +93,6 @@ function toModuleImgPath(imgPath: string): string {
 
 /**
  * Rewrites all `/library/images/...` references in HTML to module-relative flat paths.
- * Strips any subdirectory.
  *
  * @param {string} html - Biography HTML string
  * @returns {string} HTML with rewritten image paths

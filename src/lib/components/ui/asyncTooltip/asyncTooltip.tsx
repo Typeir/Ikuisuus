@@ -1,6 +1,5 @@
 /**
  * @fileoverview Tooltip that lazily fetches its content on first hover.
- * Content is fetched exactly once; subsequent hovers use the cached result.
  *
  * @module lib/components/ui/asyncTooltip/asyncTooltip
  * @version 1.0.0
@@ -53,8 +52,7 @@ export interface AsyncTooltipProps {
 }
 
 /**
- * Tooltip that defers content loading until first hover. Subsequent hovers
- * use the already-loaded content without re-fetching.
+ * Tooltip that defers content loading until first hover.
  *
  * @component
  * @param {AsyncTooltipProps} props - Component props

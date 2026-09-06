@@ -3,8 +3,6 @@
  * @description Returns dnd5e 5.3.0 Activity-model overrides; each handler
  * provides an `activities` map containing Save or Utility activities
  * replacing the generic transformer's auto-generated ones.
- * Handled features: Faterender Railgun, Arms Race, Tides of Ruin, Missile
- * Batteries, Warlings, Protected Air space.
  *
  * @module foundry/scripts/handlers/yskeiaParser
  * @version 3.0.0
@@ -27,7 +25,6 @@ import type { FoundryItemOverrides } from '../handlers/types';
 
 /**
  * Feature parser for the War Goddess Yskeia monster sheet.
- * All values are hardcoded from the canonical stat block.
  *
  * @class YskeiaParser
  *
@@ -40,11 +37,6 @@ class YskeiaParser {
 
   /**
    * Faterender Railgun (Recharge 6) — Costs 1 Deed.
-   * 10-ft-wide, 3000-ft-long line. DC 35 Dex save.
-   * Damage = sum of target's ability scores (force).
-   * Instant death if no score >= 20 on fail; HP reduced to 1 on success.
-   * Sequential targeting; disintegrates creatures reduced to 0 HP.
-   * Objects take 200 damage. Double damage vs Marked for Decommission.
    *
    * @returns {FoundryItemOverrides} Foundry item overrides with Save Activity
    */
@@ -97,11 +89,6 @@ class YskeiaParser {
 
   /**
    * Arms Race — Lair Deed.
-   * Deploys 2 ordinance maelstroms at targets within 1 mile.
-   * 5-ft-thick, 5-ft-radius rings expanding +5 ft/turn to max 60 ft.
-   * DC 25 Dex save: 30 (6d10) fire + 30 (6d10) piercing.
-   * Collision resonance: 100 force damage in 300-ft radius (DC 25 Dex).
-   * Maelstroms are hollow; damage affects Yskeia.
    *
    * @returns {FoundryItemOverrides} Foundry item overrides with Save Activity
    */
@@ -154,12 +141,6 @@ class YskeiaParser {
 
   /**
    * Tides of Ruin — Lair Deed.
-   * 10-ft-thick wall spanning the battlefield, advances 5 ft/turn.
-   * Up to 4 tides active simultaneously.
-   * DC 30 Str save: 300 (60d10) bludgeoning; restrained on fail.
-   * Escape DC 28 Strength check. Pushed 30 ft on success.
-   * Shrapnel collapse: 200 (40d10) piercing in 40-ft radius (DC 25 Dex).
-   * Destroys nonmagical terrain; crushes Huge-or-smaller objects.
    *
    * @returns {FoundryItemOverrides} Foundry item overrides with Save Activity
    */
@@ -211,9 +192,6 @@ class YskeiaParser {
 
   /**
    * Missile Batteries (4 charges, Recharge 4–6) — Action.
-   * Auto-hit 1-mile range, 23 force damage per charge.
-   * Ignores cover, resistance, and magical barriers.
-   * Only blocked by the shield spell.
    *
    * @returns {FoundryItemOverrides} Foundry item overrides with Utility Activity
    */
@@ -255,8 +233,6 @@ class YskeiaParser {
 
   /**
    * Warlings (Recharge 5–6) — Action.
-   * Deploys up to 4 Warling constructs within 30 ft.
-   * Medium constructs: AC 18, 50 HP, 40/fly 60 ft.
    *
    * @returns {FoundryItemOverrides} Foundry item overrides with Utility Activity
    */
@@ -291,9 +267,6 @@ class YskeiaParser {
 
   /**
    * Protected Air space — Reaction.
-   * DC 35 Dex save vs flying creature within lair.
-   * 243 flat force damage on fail; stunned until start of next turn.
-   * Forced 10 ft toward ground on success; no damage.
    *
    * @returns {FoundryItemOverrides} Foundry item overrides with Save Activity
    */

@@ -28,9 +28,7 @@ export interface SidebarExpansionActions {
 }
 
 /**
- * Write half of the expansion actions. Reads no state, so a consumer that
- * only writes re-renders on nothing but its own props; pair with
- * `useIsPathExpanded` for a per-path read.
+ * Write half of the expansion actions.
  *
  * @type {Pick<SidebarExpansionActions, 'setExpanded' | 'togglePath'>}
  */

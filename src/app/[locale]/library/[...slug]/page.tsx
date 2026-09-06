@@ -42,10 +42,6 @@ type PageProps = {
 /**
  * Generates full SEO metadata for the page.
  *
- * Title resolution order: frontmatter `title` → first MDX H1 → slug-derived title.
- * Description resolution order: frontmatter `description` → first prose paragraph.
- * Image resolution order: frontmatter `image` → slug-derived public file → `.webp` candidate.
- *
  * @param {PageProps} props - Route params
  * @param {Promise<{ slug: string[], locale: string }>} props.params - Async route parameters
  * @returns {Promise<Metadata>} Page metadata with openGraph and twitter sub-objects.

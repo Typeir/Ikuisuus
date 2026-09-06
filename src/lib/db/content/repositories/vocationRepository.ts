@@ -17,9 +17,6 @@ import type { VocationMetadata } from '../schemas/vocationMetadata';
 
 /**
  * Repository contract for vocation metadata.
- *
- * Implementations MUST be safe to call even when the backing store is
- * unavailable — return empty arrays or null rather than throwing.
  */
 export interface VocationRepository {
   /**

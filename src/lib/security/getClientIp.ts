@@ -1,8 +1,7 @@
 /**
  * @fileoverview Client IP Extraction Utility
  * @description Provider-agnostic helper that extracts the true client IP from
- * common proxy/load-balancer headers. Works across Vercel, Cloudflare, AWS ALB,
- * Nginx, and direct connections.
+ * common proxy/load-balancer headers.
  *
  * @module lib/security/getClientIp
  * @version 1.0.0
@@ -14,11 +13,6 @@ import type { NextRequest } from 'next/server';
 
 /**
  * Extracts the client IP address from an incoming request.
- *
- * Precedence (first non-empty value wins):
- * 1. `x-forwarded-for` — leftmost entry (standard proxy header)
- * 2. `x-real-ip` — common Nginx / cloud header
- * 3. `'unknown'` fallback
  *
  * @param {NextRequest} req - Incoming Next.js request
  * @returns {string} Client IP address or `'unknown'`

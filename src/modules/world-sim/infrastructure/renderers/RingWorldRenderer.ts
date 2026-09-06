@@ -1,8 +1,7 @@
 /**
  * @fileoverview Ring World Renderer — Frozen Core with Orbiting Rings
  * @description Renders a frozen ice core surrounded by multiple torus rings at
- * varying radii and tilt angles, each rotating at a different speed. Optionally
- * applies noise-displaced icy surface shaders to the core.
+ * varying radii and tilt angles, each rotating at a different speed.
  *
  * @module modules/world-sim/infrastructure/renderers/RingWorldRenderer
  * @version 3.0.0
@@ -75,8 +74,7 @@ const DEFAULT_RING_DISPLACEMENT = 0.25;
 
 /**
  * Renders a ring world as a frozen core sphere surrounded by independently
- * spinning rings at different radii and tilt angles. When `icyCore` is set,
- * the core uses noise-displaced icy surface shaders.
+ * spinning rings at different radii and tilt angles.
  *
  * @class RingWorldRenderer
  * @implements {ICelestialRenderer}

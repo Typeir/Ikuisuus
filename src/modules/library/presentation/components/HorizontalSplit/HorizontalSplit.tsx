@@ -22,8 +22,6 @@ type HorizontalSplitPadding = string | number;
 /**
  * Props for the HorizontalSplit component.
  *
- * Configures two-column widths, padding, and inter-column gap. Content passed via props or slots.
- *
  * @property {ReactNode} left - Left slot content (typically text/prose)
  * @property {ReactNode} right - Right slot content (typically description/infobox)
  * @property {HorizontalSplitWidth} [leftWidth] - CSS width for left column (e.g. '65%', 640)

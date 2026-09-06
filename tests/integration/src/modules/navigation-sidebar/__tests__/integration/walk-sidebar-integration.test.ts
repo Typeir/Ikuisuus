@@ -3,8 +3,7 @@
  *
  * @fileoverview Integration tests ensuring walkTree() utility generates correct
  * paths for sidebar navigation, with special attention to .sheet.mdx files
- * and project conventions for URL generation. Uses a real filesystem via a
- * temporary directory and a lightweight DirectorySourceAdapter wrapper.
+ * and project conventions for URL generation.
  *
  * @module tests/integration/lib/utils/walk-sidebar-integration
  * @version 2.0.0

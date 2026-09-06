@@ -1,7 +1,7 @@
 /**
  * @fileoverview Shared Feature Token Recognizers
  * @description Pure functions that parse a text string into a token
- * or null. Regex patterns and lookup tables come from featurePatterns.
+ * or null.
  *
  * @version 1.1.0
  * @author Typeir

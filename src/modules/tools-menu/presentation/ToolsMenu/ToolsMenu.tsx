@@ -1,10 +1,5 @@
 /**
  * @fileoverview Button-triggered dropdown menu for sidebar tools navigation (ARIA menu button pattern).
- * Focus enters the list on open and follows the active item. Closes on pointer
- * press outside, Escape, Tab, or focus leaving; Escape and selection return
- * focus to the trigger, other dismissals leave focus where it is.
- * Items are anchors with their own `href` in presentational `<li>`s. `onSelect`
- * fires only on unmodified left click or keyboard activation.
  *
  * @component ToolsMenu
  * @version 4.0.0

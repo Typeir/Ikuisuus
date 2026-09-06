@@ -4,16 +4,6 @@
  * with; defences and ability scores print as the two tables a reader expects;
  * the rest print as labelled rows.
  *
- * Challenge rating and XP are two values that print as one line. Either alone
- * is enough: the XP table fixes one from the other, so a sheet that writes only
- * a rating still shows its XP, and a sheet that writes only XP still shows its
- * rating. The identity line likewise fills what a sheet leaves out — a creature
- * with no stated size is Medium, with no stated type is a creature, with no
- * stated alignment is Unaligned — so the line always reads whole.
- *
- * Every number the card works out rather than reads is marked with the slot it
- * came from, so a reviewer can see which figures no longer live in the source.
- *
  * @module modules/library/presentation/components/slots/Monster
  * @version 0.2.0
  * @author Typeir

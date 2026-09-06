@@ -53,7 +53,6 @@ interface WorldSimProviderProps {
 
 /**
  * World Sim context provider component.
- * Wraps children with state and dispatch contexts.
  *
  * @component
  * @param {WorldSimProviderProps} props - Provider props

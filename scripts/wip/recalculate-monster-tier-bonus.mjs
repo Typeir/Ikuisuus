@@ -4,11 +4,6 @@
  * @fileoverview Monster Tier Bonus Recalculator
  *
  * Recalculates **Tier Bonus** in `.sheet.mdx` files from ceil(CR/3).
- * Adjusts all derived bonuses (attack, save DC, saving throws, skills)
- * by the same delta. Never touches AC, HP, ability scores, damage dice,
- * challenge rating, XP, or spell point costs.
- *
- * Usage: node scripts/wip/recalculate-monster-tier-bonus.mjs [--dry-run]
  *
  * @module scripts/wip/recalculate-monster-tier-bonus
  * @version 1.0.0
@@ -99,7 +94,6 @@ function isSaveSkillBullet(line) {
 
 /**
  * Add `delta` to every signed number in a string.
- * "+14" → "+15", "−2" → "−1" (if delta=+1).
  */
 function adjustNumbers(str, delta) {
   return str.replace(/([+\-−])?\d+/g, (match) => {

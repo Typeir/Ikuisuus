@@ -2,11 +2,6 @@
  * @fileoverview Vocation Tab
  * @description Two-level tabbed viewer for vocation data.
  *
- * An outer tab strip switches between multiple vocation entries; an inner tab
- * strip switches between the vocation and specialization views. The
- * Specialization tab is disabled when an entry has no specialization. No
- * vocations renders an empty prompt.
- *
  * @module modules/character-builder/presentation/tabs/vocationTab
  * @version 2.0.0
  * @author Typeir
@@ -31,8 +26,6 @@ type SectionTab = 'vocation' | 'specialization';
 
 /**
  * Inner section tabs (Vocation / Specialization) for a single vocation entry.
- * Renders the section feature list stacked above the `ContentShardPanel`.
- * Specialization tab is disabled when the entry has no specialization slug.
  *
  * @component
  * @param {object} props - Component props
@@ -153,10 +146,7 @@ const VocationEntryTabs: React.FC<{
 };
 
 /**
- * Vocation tab content. Renders an empty prompt when no vocations exist; an
- * outer entry-tab strip (only with 2+ entries) wrapping inner
- * Vocation/Specialization tabs otherwise. Reads the character from the
- * active-sheet context.
+ * Vocation tab content.
  *
  * @component
  * @returns {JSX.Element} Rendered tab body

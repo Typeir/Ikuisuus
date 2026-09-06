@@ -1,9 +1,6 @@
 /**
  * @fileoverview Web app manifest.
- * @description Served at `/manifest.webmanifest`. `display: standalone` is the
- * only way to remove the browser's address bar outright, and it applies once a
- * reader installs the site to their home screen; everywhere else the UA simply
- * ignores the manifest and the site renders as a normal tab.
+ * @description Served at `/manifest.webmanifest`.
  *
  * @module app/manifest
  * @version 1.0.0

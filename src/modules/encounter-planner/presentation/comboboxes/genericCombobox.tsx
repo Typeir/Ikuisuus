@@ -1,8 +1,7 @@
 /**
  * @fileoverview Generic Combobox Component
  * @description Searchable dropdown with keyboard navigation, ARIA attributes,
- * click-outside-to-close, and viewport-aware positioning. Dropdown renders to
- * document.body via React Portal, escaping ancestor overflow clipping.
+ * click-outside-to-close, and viewport-aware positioning.
  *
  * @module modules/encounter-planner/presentation/comboboxes/genericCombobox
  * @version 2.1.0
@@ -85,7 +84,7 @@ interface GenericComboboxProps<T extends ComboboxItem> {
 
 /**
  * Combobox with keyboard navigation and search filtering; base for SpellCombobox,
- * AffixCombobox, and CreatureCombobox. Custom rendering and filtering via props.
+ * AffixCombobox, and CreatureCombobox.
  *
  * @component
  * @template T - Item type extending ComboboxItem

@@ -21,7 +21,6 @@ import registryData from '../../data/blackCradleRegistry.json';
 
 /**
  * Runtime query interface over the Black Cradle celestial registry.
- * Loads data once from the JSON import and provides indexed lookups.
  *
  * @class CelestialRegistry
  *

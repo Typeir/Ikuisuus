@@ -1,7 +1,6 @@
 /**
  * @fileoverview Feat Picker Component
  * @description Fetches `/api/feats` and renders a toggleable list of feats.
- * Selected feats are stored as `CharacterShard` entries with `category: 'feat'`.
  *
  * @module modules/character-builder/presentation/builder/featPicker
  * @version 1.0.0
@@ -41,7 +40,7 @@ export interface FeatPickerProps {
 }
 
 /**
- * Feat picker panel. Fetches available feats, renders them as toggle cards.
+ * Feat picker panel.
  *
  * @component
  * @param {FeatPickerProps} props - Component props

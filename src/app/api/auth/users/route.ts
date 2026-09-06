@@ -2,9 +2,6 @@
  * @fileoverview Auth Users API Route
  * @description Admin-only endpoints for user management (list, create, delete).
  *
- * GET  /api/auth/users — List all users (admin only)
- * POST /api/auth/users — Create a new user (admin only)
- *
  * @module app/api/auth/users/route
  * @version 1.0.0
  * @author Typeir
@@ -41,7 +38,6 @@ const requireAdmin = async (req: NextRequest): Promise<NextResponse | null> => {
 
 /**
  * GET /api/auth/users — List all users (admin only).
- * Returns public user info (no password hashes).
  *
  * @param {NextRequest} req - Incoming request
  * @returns {NextResponse} JSON array of users

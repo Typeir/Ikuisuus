@@ -1,8 +1,7 @@
 /**
  * @fileoverview Filesystem Directory Source Adapter
  * @description Implements the DirectorySourceAdapter interface using the local
- * filesystem. Used during development and build phases where content lives
- * in `src/content/{locale}/`.
+ * filesystem.
  *
  * @module lib/db/content/adapters/fs/fsDirectorySource
  * @author Typeir
@@ -22,7 +21,6 @@ import type {
 
 /**
  * Filesystem-backed directory source.
- * Lists directory contents from `src/content/{locale}/{relativePath}`.
  */
 export const fsDirectorySource: DirectorySourceAdapter = {
   async listEntries(

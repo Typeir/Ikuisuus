@@ -1,6 +1,5 @@
 /**
  * @fileoverview Determines if the current route is a statically generated MDX content route.
- * Static routes derive expansion from URL only; dynamic routes can restore from localStorage.
  *
  * @module modules/library/application/selectors/isStaticContentRoute
  * @version 1.0.0
@@ -40,7 +39,7 @@ const STATIC_CONTENT_ROUTE_PATTERN = /^\/[a-z]{2}\/library\//;
  * Determines if the current route is a statically generated content route.
  *
  * @function isStaticContentRoute
- * @param {string} [pathname] - Optional pathname to check. Defaults to window.location.pathname
+ * @param {string} [pathname] - Optional pathname to check.
  * @returns {boolean} True if the route is a static content route, false when window is undefined and no pathname is given
  *
  * @description
@@ -71,7 +70,7 @@ export function isStaticContentRoute(pathname?: string): boolean {
  * Inverse of isStaticContentRoute.
  *
  * @function allowsSidebarPersistence
- * @param {string} [pathname] - Optional pathname to check. Defaults to window.location.pathname
+ * @param {string} [pathname] - Optional pathname to check.
  * @returns {boolean} True if the route allows restoring sidebar state from localStorage
  *
  * @description

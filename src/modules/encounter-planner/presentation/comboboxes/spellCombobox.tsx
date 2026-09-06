@@ -1,7 +1,6 @@
 /**
  * @fileoverview Spell Combobox Component
- * @description Searchable spell dropdown. Fetches spell data from
- * /api/spells/index and renders each item with level and school.
+ * @description Searchable spell dropdown.
  *
  * @module modules/encounter-planner/presentation/comboboxes/spellCombobox
  * @version 1.0.0

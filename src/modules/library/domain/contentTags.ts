@@ -1,17 +1,16 @@
 /**
  * @fileoverview Type definitions and tag utilities for MDX metadata.
- * Categorizes d20 content and provides union types for content fields.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires None - Pure type definitions
- * 
+ *
  * @example
  * ```typescript
  * import { ContentKind, SpellActionType } from '@/modules/library/domain/contentTags';
- * 
+ *
  * const spellKind: ContentKind = ContentKind.Spell;
  * const actionType: SpellActionType = 'bonus_action';
  * ```

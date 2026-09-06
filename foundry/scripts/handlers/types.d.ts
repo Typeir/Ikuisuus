@@ -1,12 +1,7 @@
 /**
  * @fileoverview Type definitions for the Foundry feature handler system.
  * @description Defines the interfaces that all parser classes and the registry
- * use. Keeps type contracts separate from runtime code so transformers can
- * import types without pulling in decorator metadata.
- *
- * Types target the dnd5e 5.3.0 Activity-based item model where activation,
- * damage, saves, and targeting live inside Activity entries rather than on
- * the item's top-level system data.
+ * use.
  *
  * @module foundry/scripts/handlers/types
  * @version 2.0.0
@@ -210,12 +205,6 @@ export type FoundryActivity = AttackActivity | SaveActivity | UtilityActivity;
  * Partial Foundry VTT dnd5e item overrides that a handler can return
  * to override or extend the generic feature-to-item transformation.
  *
- * Only the fields a handler cares about need to be set; they are merged
- * over the base item produced by the generic transformer.
- *
- * Uses the dnd5e 5.3.0 Activity model: activation, damage, saves, and
- * targeting live inside Activity entries in the `activities` map.
- *
  * @property {Record<string, FoundryActivity>} [activities] - Activity entries keyed by activity _id
  * @property {string} [description] - HTML description override (appended or replaced)
  * @property {Record<string, unknown>} [flags] - Foundry flags to set on the item
@@ -228,11 +217,6 @@ export interface FoundryItemOverrides {
 
 /**
  * Contract for a parser class that handles features from a specific monster sheet.
- * Implementations are decorated with `@parser(sheetSlug)` and have methods
- * decorated with `@handler(featureId)`.
- *
- * The registry instantiates parsers and calls handler methods via the
- * metadata collected by decorators.
  *
  * @interface IFeatureParser
  * @property {string} sheetSlug - The monster sheet slug this parser handles

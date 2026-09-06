@@ -1,8 +1,7 @@
 /**
  * @fileoverview Metadata Sync Service
  * @description Hash-based incremental sync from filesystem metadata to PostgreSQL
- * via MikroORM. Uses the app's ORM singleton (`getEM()`) and drives every content
- * type through {@link syncTable}.
+ * via MikroORM.
  *
  * @module lib/metadata/syncService
  * @version 2.0.0

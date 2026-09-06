@@ -1,8 +1,7 @@
 /**
  * @fileoverview Spell Metadata Domain Schema
  * @description Canonical TypeScript types derived from the real metadata output of
- * `scripts/metadata/generateSpellMetadata.ts`. Every field corresponds to a
- * parsed property emitted by `parseSpellFile()`.
+ * `scripts/metadata/generateSpellMetadata.ts`.
  *
  * @module lib/db/content/schemas/spellMetadata
  * @version 1.0.0
@@ -26,9 +25,6 @@ export interface SpellListRef {
 
 /**
  * Complete spell metadata record as emitted by the generator.
- *
- * Derived from `parseSpellFile()` output in
- * `scripts/metadata/generateSpellMetadata.ts`.
  *
  * @interface SpellMetadata
  * @property {number} [level] - Spell level (0 = cantrip, 1–10 = leveled)
@@ -70,7 +66,6 @@ export interface SpellMetadata extends BaseMetadata {
 
 /**
  * Lightweight projection for combobox / dropdown search.
- * Corresponds to the fields returned by `/api/spells/index`.
  *
  * @interface SpellIndexEntry
  * @property {number} [level] - Spell level

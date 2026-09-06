@@ -27,7 +27,6 @@ export interface ToolRegistryEntry {
 
 /**
  * The canonical list of DM tools exposed in the sidebar tools menu.
- * Order determines display order in the dropdown.
  *
  * @constant TOOL_REGISTRY
  * @type {readonly ToolRegistryEntry[]}
@@ -63,8 +62,6 @@ export const TOOL_REGISTRY: readonly ToolRegistryEntry[] = [
 
 /**
  * Narrows `TOOL_REGISTRY` to the entries listable under the given build mode.
- * Entries flagged `devOnly` survive only when `isDevelopment` is true; the
- * `/labs` routes they point at return 404 outside development.
  *
  * @function selectVisibleTools
  * @param {boolean} isDevelopment - Whether the app runs in development mode.

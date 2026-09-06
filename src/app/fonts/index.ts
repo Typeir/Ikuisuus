@@ -1,6 +1,5 @@
 /**
- * @fileoverview Local font registrations used by the app. Exports
- * optimized `next/font` instances and a list of fonts for convenience.
+ * @fileoverview Local font registrations used by the app.
  * @module app/fonts/index
  * @author Typeir
  * @version 2.3.0
@@ -9,12 +8,7 @@
 import localFont from 'next/font/local';
 
 /**
- * Empyrean Initialem local font registration. Drop-cap face, applied only to
- * the first letter of a heading. Glyph ink rises to 1.48em above the baseline
- * but the face declares hhea ascent 0.8em, so platforms that honor hhea
- * (Android, macOS) size the inline background box short and
- * `background-clip: text` decapitates the glyph. The overrides pin every
- * platform to the winAscent/winDescent (1.48em/0em) rendering.
+ * Empyrean Initialem local font registration.
  * @type {ReturnType<import('next/font/local').default>}
  */
 export const empyrean = localFont({
@@ -31,10 +25,7 @@ export const empyrean = localFont({
 });
 
 /**
- * Stropica local font registration, parked. Nothing references
- * `--font-stropica`, and a live `localFont()` call emits the file into the
- * build regardless. The file lives in `.ignore/fonts/`; move it back to
- * `public/fonts/`, uncomment, and add it to `fonts` to restore.
+ * Stropica local font registration, parked.
  */
 /**
 export const stropica = localFont({
@@ -49,8 +40,7 @@ export const stropica = localFont({
 */
 
 /**
- * Junicode 2 local font registration (variable Roman, SIL OFL). Exposed as
- * `--font-junicode`; the heading role in `_tokens.scss` resolves to it.
+ * Junicode 2 local font registration (variable Roman, SIL OFL).
  * @type {ReturnType<import('next/font/local').default>}
  */
 export const junicode = localFont({

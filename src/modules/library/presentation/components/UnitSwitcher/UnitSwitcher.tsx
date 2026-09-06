@@ -1,9 +1,7 @@
 /**
  * @fileoverview UnitSwitcher MDX Component
  * @description Lets a reader choose which unit system each measurement family
- * renders in. Distance, weight and volume are set independently.
- *
- * Until the first client render commits, the hook reports the native defaults.
+ * renders in.
  *
  * @module modules/library/presentation/components/UnitSwitcher/UnitSwitcher
  * @version 2.1.0

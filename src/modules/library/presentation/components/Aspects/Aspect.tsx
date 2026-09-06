@@ -1,5 +1,5 @@
 /**
- * @fileoverview Inline aspect pill. Compact default; display prop overrides site setting.
+ * @fileoverview Inline aspect pill.
  *
  * @module modules/library/presentation/components/Aspects/Aspect
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Vocation Feature Card Component
  * @description Renders vocation and specialization feature lists for a
- * character. Features with `level > characterLevel` are locked/dimmed. Shows a
- * "nothing selected" prompt when no selection exists.
+ * character.
  *
  * @module modules/character-builder/presentation/builder/vocationFeatureCard
  * @version 4.0.0
@@ -59,10 +58,6 @@ export interface VocationFeatureCardProps {
 
 /**
  * Renders vocation and specialization features grouped by section.
- * Features with `level > characterLevel` are shown as locked/dimmed cards.
- * When no selection has been made an appropriate "nothing selected" message
- * is shown; when a selection exists but has no features, "No features
- * available." is shown instead.
  *
  * @component
  * @param {VocationFeatureCardProps} props - Component props

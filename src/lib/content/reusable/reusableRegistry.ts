@@ -2,8 +2,7 @@
  * Reusable Region Registry
  *
  * @fileoverview Discovers content files that opt into reuse and exposes their
- * regions as MDX component sources. Reads frontmatter only; results cached for
- * the process lifetime.
+ * regions as MDX component sources.
  *
  * @module lib/content/reusable/reusableRegistry
  * @version 1.0.0

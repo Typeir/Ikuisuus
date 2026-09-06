@@ -3,8 +3,6 @@
  * @description Heuristic prose parser that turns "you gain proficiency…" style
  * feature text into flat grant tags (`weapon:martial`, `armor:medium`,
  * `saving_throw:dexterity`, `skill:persuasion:expertise`, `trade:smithing:proficient`).
- * A frontmatter `Grants` map (feature name → tags) overrides the prose parse for
- * named features.
  *
  * @module scripts/metadata/extraction/grantsExtractor
  * @version 1.0.0
@@ -128,8 +126,7 @@ function escapeRegex(phrase: string): string {
 
 /**
  * Extracts grant tags from a feature's prose body using proximity-anchored
- * patterns. Emits a grant only when a proficiency/expertise keyword appears
- * within the same sentence as the target.
+ * patterns.
  *
  * @param {string} prose - Feature body text
  * @returns {string[]} Sorted, deduped grant tags
@@ -190,10 +187,7 @@ export function extractGrantsFromProse(prose: string): string[] {
 }
 
 /**
- * Produces the final grant tags for a feature. If the feature name is a key in
- * the frontmatter `Grants` map, returns the map's tags (lowercased, trimmed,
- * deduped); an empty list suppresses the prose parse. Otherwise returns the
- * prose-parsed grants.
+ * Produces the final grant tags for a feature.
  *
  * @param {string} featureName - Parsed feature name (frontmatter key)
  * @param {string} prose - Feature body text

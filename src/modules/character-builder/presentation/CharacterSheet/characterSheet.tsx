@@ -1,7 +1,5 @@
 /**
- * @fileoverview Character sheet component. Renders a sticky header and the
- * active tab body wrapped in a `<PagePreviewProvider>` so library-page
- * tooltips open draggable iframes inside the sheet.
+ * @fileoverview Character sheet component.
  *
  * @module modules/character-builder/presentation/CharacterSheet/characterSheet
  * @version 2.0.0
@@ -67,8 +65,7 @@ export interface CharacterSheetProps {
 }
 
 /**
- * Full character sheet view. Wraps the body in an `ActiveSheetProvider`
- * and a `PagePreviewProvider`.
+ * Full character sheet view.
  *
  * @component
  * @param {CharacterSheetProps} props - Component props

@@ -1,13 +1,9 @@
 /**
  * @fileoverview `ik setup` — one-shot bootstrap for a fresh clone.
  *
- * Installs the `ik` PATH shim, configures the content submodule to merge on
- * update, installs content-repo git hooks, and runs `paw sync`. Idempotent;
- * re-running replaces sentinel-delimited rc blocks instead of duplicating.
- *
  * @module scripts/multirepo/commands/setup
  * @author Typeir
-
+ *
  * @version 1.0.0
  * @since 3.0.0
  */

@@ -3,9 +3,7 @@
  * @description Verifies base saving throws AND base skill-choice count sync
  * uniformly across the vocation use cases — first assignment, swap, and every
  * entry (not just the first) — plus legacy backfill, and that it no-ops on
- * convergence or missing metadata. The hook reads its vocations and write API
- * from the active-sheet context, so these assert the synced entries the context
- * ends up holding rather than a spy on a drilled callback.
+ * convergence or missing metadata.
  *
  * @module tests/unit/src/modules/character-builder/presentation/builder/useVocationBaseSync.test
  * @version 2.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Watches `messages/` for changes to namespace JSON files and
- * re-runs merge-locales. For use alongside `next dev`.
+ * re-runs merge-locales.
  *
  * @module scripts/dev/watchLocales
  * @version 1.0.0

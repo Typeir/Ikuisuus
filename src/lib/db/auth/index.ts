@@ -1,7 +1,7 @@
 /**
  * @fileoverview Auth Module — Barrel Export
  * @description Re-exports the auth service, schema types/validators, and the
- * user adapter type. Import from `@/lib/db/auth`.
+ * user adapter type.
  *
  * @module lib/db/auth/index
  * @version 1.0.0

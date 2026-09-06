@@ -26,7 +26,7 @@ const log = logger.child({ module: 'API:Spells:Index' });
 /**
  * GET /api/spells/index
  *
- * Returns spell index. `locale` query parameter defaults to 'en'.
+ * Returns spell index.
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of spell index entries

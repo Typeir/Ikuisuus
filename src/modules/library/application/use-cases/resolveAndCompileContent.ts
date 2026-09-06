@@ -23,7 +23,7 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 
 /**
- * Route tree the resolved content is rendered under. Redirects stay in the same tree.
+ * Route tree the resolved content is rendered under.
  */
 export type LibraryBasePath = 'library' | 'embed';
 

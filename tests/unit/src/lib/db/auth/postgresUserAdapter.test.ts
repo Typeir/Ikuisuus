@@ -2,7 +2,6 @@
  * PostgreSQL User Adapter Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL user adapter.
- * `@/lib/db/orm/orm` (getEM) is mocked.
  *
  * @module tests/unit/src/lib/db/auth/postgresUserAdapter.test
  */
@@ -30,7 +29,6 @@ vi.mock('@/lib/db/orm/orm', () => ({
 
 /**
  * Production row shape as returned by MikroORM after entity mapping.
- * `password_hash` column maps to `passwordHash` via the `@Property({ fieldName })` decorator.
  *
  * @type {object}
  */

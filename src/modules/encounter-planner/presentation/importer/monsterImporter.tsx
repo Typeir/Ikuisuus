@@ -1,7 +1,6 @@
 /**
  * @fileoverview Monster Importer Component
- * @description Importer selecting a monster and quantity. Combines CreatureCombobox
- * with QuantityPopup. Reads monster data from monsterCache.
+ * @description Importer selecting a monster and quantity.
  *
  * @module modules/encounter-planner/presentation/importer/monsterImporter
  * @version 1.0.0
@@ -68,8 +67,6 @@ interface PendingImport {
 
 /**
  * Monster importer component for Encounter Planner and Play Mode.
- * Selects a creature via combobox and a quantity via popup, then
- * fetches the full monster data and calls onImport.
  *
  * @component
  * @param {MonsterImporterProps} props - Component props

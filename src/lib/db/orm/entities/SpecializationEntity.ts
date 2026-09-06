@@ -101,7 +101,6 @@ export class SpecializationFeatureEntity {
 
 /**
  * MikroORM entity for the `specialization_prepared_spells` child table.
- * Each row represents a level threshold with a list of always-prepared spells.
  */
 @OrmEntity('SpecializationPreparedSpellEntity', {
   tableName: 'specialization_prepared_spells',

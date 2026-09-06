@@ -2,8 +2,6 @@
  * pgBloodlineRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL bloodline repository.
- * Verifies row-mapping from `BloodlineEntity` rows (with populated boons)
- * to `BloodlineMetadata` domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgBloodlineRepository
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Bloodline Metadata Generator
  * @description Parses `.bloodline.mdx` files into metadata: core features,
- * boons, ability scores, and gameplay tags. Excludes `main.mdx` files and files
- * under `shared-boons/`.
+ * boons, ability scores, and gameplay tags.
  *
  * @module scripts/metadata/generateBloodlineMetadata
  * @version 1.0.0
@@ -108,7 +107,6 @@ interface ParsedBoon {
 
 /**
  * Extracts text items from HTML list markup within a table cell.
- * Handles `<Tooltip>` wrappers by extracting only the display span.
  *
  * @param {string} cellContent - Raw cell content containing `<ul><li>` markup
  * @returns {string[]} Extracted text items
@@ -143,9 +141,7 @@ function parseTableRow(row: string): string[] {
 }
 
 /**
- * Extracts a Cost-column option table from a boon body block. Detects a markdown
- * table whose header has a `Cost` column and an `Option` column and returns one
- * sub-option per data row. Returns `[]` when the block has no such table.
+ * Extracts a Cost-column option table from a boon body block.
  *
  * @param {string[]} blockLines - Raw lines of the boon body (between headings)
  * @returns {BoonSubOption[]} Parsed sub-options, or `[]` when there is no cost table
@@ -306,9 +302,7 @@ function parseBpValue(bpLabel: string): number | undefined {
 }
 
 /**
- * Extracts proficiency tags for skills/tools/instruments. Emits a generic
- * `proficiency:skill` and `proficiency:tool` tag plus a specific tag per matched
- * item. A bare "grants some proficiency" match emits no tag.
+ * Extracts proficiency tags for skills/tools/instruments.
  *
  * @param {string} normalizedText - Normalized boon text
  * @returns {string[]} Derived proficiency tags
@@ -495,8 +489,7 @@ interface CoreFeatureShard {
 }
 
 /**
- * Splits `## Core Features` into its `###` traits and tags each. Pure stat
- * blocks (Languages) carry no gameplay tags and are dropped when empty.
+ * Splits `## Core Features` into its `###` traits and tags each.
  *
  * @param {string} body - File body (frontmatter blanked)
  * @param {string} slug - Bloodline slug, for ids
@@ -603,10 +596,6 @@ function parseBoonBudget(content: string): number | undefined {
 /**
  * Parses all boon entries from the Boons section, with 1-indexed absolute start
  * and end line numbers anchored to the full MDX file.
- *
- * Variable-cost boons ("Choose One" / "Pick Any") collapse to a single boon with
- * `subOptions` from the Cost-column table and nested `<Collapsible>` option
- * headings; their `bpValue` is undefined. Other boons set `bpValue`.
  *
  * @param {string} content - Full MDX content
  * @param {SharedData} sharedData - Shared game data used for tag extraction
@@ -793,7 +782,6 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
 
 /**
  * Parses a single bloodline MDX file into metadata.
- * Returns null for excluded files (main.mdx, shared-boons) or on parse error.
  *
  * @param {string} filePath - Path to .mdx file
  * @param {SharedData} sharedData - Shared game data

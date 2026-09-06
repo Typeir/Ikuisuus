@@ -1,8 +1,6 @@
 /**
  * @fileoverview Renders the flashlight-reveal background: an outer reveal
- * div wrapping an aperture div around a pattern field. Sets the
- * --reveal-radius CSS var to {radius}px and toggles opacity and
- * pointer-events via the hidden prop.
+ * div wrapping an aperture div around a pattern field.
  * @module lib/components/dotMatrix/DotMatrixBackground
  * @author Typeir
  * @version 0.2.0

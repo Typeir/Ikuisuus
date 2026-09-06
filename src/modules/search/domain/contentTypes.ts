@@ -2,8 +2,7 @@
  * @fileoverview Search content-type taxonomy
  * @module modules/search/domain/contentTypes
  * @description Canonical union of searchable content types and a display-metadata
- * registry (label, icon name, color token key, URL segment). `icon` is a Lucide
- * icon name string; `colorTokenKey` is a CSS custom-property name string.
+ * registry (label, icon name, color token key, URL segment).
  *
  * @author Typeir
  * @version 1.0.0
@@ -14,10 +13,7 @@ import { CONTENT_SUBDIRS } from '@/lib/constants/contentPaths';
 import { ContentType } from '@/lib/metadata/contentTypes';
 
 /**
- * Content kinds that never surface as their own search type. Tools and boons
- * are rules files with special metadata — a rule slapped onto another group —
- * and index as `rules`; lists are ignored everywhere, since the pages they
- * aggregate are indexed individually.
+ * Content kinds that never surface as their own search type.
  *
  * @constant
  */
@@ -29,8 +25,7 @@ export const SEARCH_EXCLUDED_TYPES = [
 
 /**
  * Union of all searchable content types: every {@link ContentType} except
- * {@link SEARCH_EXCLUDED_TYPES}. Adding a content type forces either a
- * {@link CONTENT_TYPE_META} entry or an explicit exclusion here.
+ * {@link SEARCH_EXCLUDED_TYPES}.
  *
  * @typedef {(
  *   | 'monsters' | 'heirlooms' | 'spells' | 'trinkets' | 'bloodlines'

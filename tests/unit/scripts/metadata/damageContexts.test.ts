@@ -1,7 +1,7 @@
 /**
  * @fileoverview Damage context tests.
  * @description Damage-type words are English words; a bare word is not
- * evidence of damage. Matching requires surrounding context.
+ * evidence of damage.
  *
  * @module tests/unit/scripts/metadata/damageContexts.test
  * @version 1.0.0

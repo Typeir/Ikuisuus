@@ -31,9 +31,7 @@ export function getCellValue(row: MetadataRow, column: ColumnConfig): unknown {
 }
 
 /**
- * Whether a row passes every active column filter. By filterType: 'text'
- * substring, 'select' exact, 'range' numeric min/max, 'multiselect' array
- * intersection. Empty filter values are skipped.
+ * Whether a row passes every active column filter.
  *
  * @param {MetadataRow} row - Data row
  * @param {FilterState} filters - Active filter values keyed by column key
@@ -96,10 +94,7 @@ export interface RowHrefOptions {
 }
 
 /**
- * Resolves the navigation target for a row. External http/https `row.link`
- * returns external; internal `row.link` prefixes locale (and `/library` when
- * absent); otherwise builds `/{locale}/library/{basePath}/{slug}`, preserving
- * any '#hash'.
+ * Resolves the navigation target for a row.
  *
  * @param {MetadataRow} row - Data row to resolve
  * @param {RowHrefOptions} opts - Locale, base path and slug extractor

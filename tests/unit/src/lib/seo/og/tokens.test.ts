@@ -1,9 +1,6 @@
 /**
  * @fileoverview Unit tests for OG design tokens.
  *
- * Validates that the token map contains the expected keys and that all values
- * are non-empty hex colour strings.
- *
  * @module tests/unit/src/lib/seo/og/tokens.test
  */
 

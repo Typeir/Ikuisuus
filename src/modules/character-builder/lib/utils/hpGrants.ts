@@ -1,8 +1,7 @@
 /**
  * @fileoverview HP Expression Grants
  * @description The scalar `hp:<term>:<scope>` grant sub-grammar and its live
- * resolvers. A term is an integer literal or a whitelisted resolver reference; a
- * scope is a level-count multiplier. Values resolve against the live sheet.
+ * resolvers.
  *
  * @module modules/character-builder/lib/utils/hpGrants
  * @version 1.0.0
@@ -29,10 +28,7 @@ import { computeAbilityModifier } from './characterStorage';
 export type HpTerm = { t: 'lit'; v: number } | { t: 'ref'; id: string };
 
 /**
- * The scope of an `hp` scalar grant — a level-count multiplier. `once` = ×1;
- * `level` = × total character level (equal to the count of rolled hit dice);
- * `level-vocation` / `level-specialization` = × the level in that named
- * vocation / specialization.
+ * The scope of an `hp` scalar grant — a level-count multiplier.
  *
  * @typedef {object} HpScope
  * @property {'once'|'level'|'level-vocation'|'level-specialization'} s - Scope kind
@@ -62,9 +58,7 @@ export interface HpValueGrant {
 
 /**
  * Live resolvers for `hp` grant term references, each a pure function of the
- * sheet returning a finite number. The keyset IS the term whitelist; a term
- * reference outside it is rejected at parse time. Keys are lowercase because
- * grant tags are lowercased before parsing.
+ * sheet returning a finite number.
  *
  * @constant SCALAR_RESOLVERS
  * @type {Record<string, (character: CharacterSheet) => number>}
@@ -93,7 +87,7 @@ const SCALAR_RESOLVER_KEYS = new Set(Object.keys(SCALAR_RESOLVERS));
 /**
  * Resolves an {@link HpTerm} to its live numeric value against the sheet: a
  * literal returns its value, a reference invokes its {@link SCALAR_RESOLVERS}
- * entry. An unknown reference (which parsing already rejects) resolves to 0.
+ * entry.
  *
  * @function resolveHpTerm
  * @param {HpTerm} term - The parsed term
@@ -144,8 +138,7 @@ function parseHpScope(raw: string): HpScope | null {
 }
 
 /**
- * Parses `hp:<term>[:<scope>]` positionally. Term is required; scope defaults
- * to `once`. Does not drop empty segments, so `hp::level` is malformed.
+ * Parses `hp:<term>[:<scope>]` positionally.
  *
  * @function parseHpGrant
  * @param {string[]} segs - Colon-split, lowercased segments (`segs[0] === 'hp'`)

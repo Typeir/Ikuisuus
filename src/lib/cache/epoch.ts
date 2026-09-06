@@ -1,15 +1,7 @@
 /**
  * @fileoverview Cache Epoch Port
  * @description A shared, monotonically changing marker that every server
- * instance can read. In-memory caches compare the epoch they were built at
- * against the current one and self-drop on mismatch, which is how an
- * invalidation on one instance reaches the module state of every other.
- *
- * The backing store is deployment infrastructure — Vercel Edge Config, a
- * Durable Object, a KV key — so it lives behind this port. The default
- * backend is `none`: `current()` answers null, the registry skips epoch
- * checks, and invalidation is explicit clears plus TTLs, which is correct on
- * a single instance and the accepted behavior on many.
+ * instance can read.
  *
  * @module lib/cache/epoch
  * @version 1.0.0
@@ -25,8 +17,7 @@
 export interface CacheEpochSource {
   /**
    * The current epoch value, or null when no shared store backs this
-   * deployment. Implementations should memoize per request; callers treat
-   * every call as cheap.
+   * deployment.
    *
    * @returns {Promise<string | null>} Current epoch, or null when unsupported
    */
@@ -34,8 +25,7 @@ export interface CacheEpochSource {
 
   /**
    * Advances the epoch, telling every instance its in-memory caches are
-   * stale. Best effort: a failure must be logged by the implementation, never
-   * thrown into the invalidation that triggered it.
+   * stale.
    *
    * @returns {Promise<void>} Resolves when the bump has been issued
    */

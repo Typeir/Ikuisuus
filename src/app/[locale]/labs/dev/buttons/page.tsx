@@ -3,8 +3,7 @@
  * @description Shows the whole button surface: the canonical variants from
  * `buttons.module.scss` with their reach through both distribution channels, then
  * every bespoke class actually applied to a `<button>` elsewhere, split by whether it
- * was built on a canonical mixin or hand-rolled. Source is compiled with sass on each
- * request, so the page reflects what ships rather than what the source implies.
+ * was built on a canonical mixin or hand-rolled.
  *
  * @module app/[locale]/labs/dev/buttons/page
  * @version 2.0.0

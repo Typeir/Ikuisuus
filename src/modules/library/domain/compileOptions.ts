@@ -20,7 +20,7 @@ type EvaluateMdxOptions = EvaluateOptions['mdxOptions'];
  * @property {string} [baseUrl] - Optional base URL for relative links.
  * @property {boolean} [parseFrontmatter=true] - Whether frontmatter should be parsed.
  * @property {{ keys: string[]; records: string[] }} [aspects] - Aspect index: section keys carrying aspects and record anchors; a row is placed under each matching section.
- * @property {string} [locale] - Locale whose keyword index and shard prose to read. Defaults to the keyword registry's own default.
+ * @property {string} [locale] - Locale whose keyword index and shard prose to read.
  */
 export interface CompileOptions {
   source: string;

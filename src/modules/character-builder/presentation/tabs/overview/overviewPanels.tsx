@@ -104,8 +104,7 @@ export const TradesPanel: React.FC = () => {
 };
 
 /**
- * Legend explaining the skill hint markers. Renders nothing when no skill
- * carries a hint.
+ * Legend explaining the skill hint markers.
  *
  * @component
  * @returns {JSX.Element | null} The legend, or null when there is nothing to explain
@@ -249,7 +248,6 @@ export const AspectSummary: React.FC = () => {
 
 /**
  * Chip clouds for the character's chosen boons, feats, and unlocked features.
- * Each section is omitted when it holds nothing.
  *
  * @component
  * @returns {JSX.Element} Rendered shard cloud sections

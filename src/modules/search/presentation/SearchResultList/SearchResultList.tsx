@@ -2,9 +2,7 @@
  * @fileoverview Virtualized search result list.
  * @description Renders `SearchResultRow`s through the shared `VirtualList` at
  * a fixed rem pitch, so a broad query mounts a screenful of rows instead of
- * every resolved hit. Resolves the next Pagefind batch as the rendered range
- * nears the tail. Fills the viewport below its mount point and scrolls inside
- * that box.
+ * every resolved hit.
  *
  * @module modules/search/presentation/SearchResultList/SearchResultList
  * @version 1.0.0

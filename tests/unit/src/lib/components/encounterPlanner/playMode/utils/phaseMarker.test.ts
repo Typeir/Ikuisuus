@@ -2,7 +2,6 @@
  * @fileoverview Unit tests for Phase Marker utility
  * @module tests/unit/src/lib/components/encounterPlanner/playMode/utils/phaseMarker.test
  * @description Validates getPhaseMarker utility for HP phase calculation.
- * Tests threshold-based phase determination (Wounded, Bloodied, Doomed).
  *
  * @version 1.0.0
  * @author Typeir

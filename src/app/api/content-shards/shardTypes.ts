@@ -1,9 +1,7 @@
 /**
  * @fileoverview Content Shard Type Registry
  * @description Maps each route type segment to how its address locates a
- * {@link ShardTarget}. Repository-backed types answer with the record's file
- * and route; the keyword type answers through the producer graph. Adding a
- * type is one registry entry.
+ * {@link ShardTarget}.
  *
  * @module src/app/api/content-shards/shardTypes
  * @version 1.0.0

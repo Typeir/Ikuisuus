@@ -1,7 +1,5 @@
 /**
  * @fileoverview Virtualized list renderer for sidebar folders with many children.
- * Uses the shared `VirtualList` atom instead of the full recursive
- * `Sidebar` tree when the child count exceeds `VIRTUALIZE_THRESHOLD`.
  *
  * @module modules/navigation-sidebar/presentation/components/VirtualizedSidebar
  * @author Typeir
@@ -23,7 +21,6 @@ import { SidebarLeafRow } from './SidebarLeafRow';
 
 /**
  * Number of items in a folder that triggers virtualization.
- * Below this threshold the normal recursive `Sidebar` is used.
  *
  * @constant
  * @type {number}
@@ -39,9 +36,7 @@ export const VIRTUALIZE_THRESHOLD = 50;
 const MAX_WINDOW_HEIGHT = 600;
 
 /**
- * Rows rendered beyond the visible window on each side. react-window defaults
- * to 3, which fast scrolling outruns; 12 rows buys about half a window of
- * runway now that leaf rows are cheap to mount.
+ * Rows rendered beyond the visible window on each side.
  *
  * @constant
  * @type {number}
@@ -64,8 +59,6 @@ export interface VirtualizedSidebarProps {
 
 /**
  * Renders a folder's children as a virtualized list when the item count is high.
- * Leaf rows render the hook-free `SidebarLeafRow`; folders and stubs render
- * `SidebarItem` — one shared `<ul>` via `VirtualList`, no per-row `<ul>` wrapper.
  *
  * @param {VirtualizedSidebarProps} props - Component props.
  * @param {LayoutItem[]} props.items - Folder children to virtualize.

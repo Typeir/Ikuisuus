@@ -344,8 +344,7 @@ describe('authService', () => {
     });
 
     /**
-     * Full login flow using the production row. Simulates what happens when
-     * the PostgreSQL adapter returns the real `corrections_users` row.
+     * Full login flow using the production row.
      */
     it('should successfully log in with production user data', async () => {
       const { login, setUserAdapter } = await import('@/lib/db/auth/authService');

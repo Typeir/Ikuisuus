@@ -1,7 +1,6 @@
 /**
  * @fileoverview Shard identity
- * @description Shard identity = anchor slug of the source feature. Shards
- * without a stored key derive it from the heading text at read time.
+ * @description Shard identity = anchor slug of the source feature.
  *
  * @module modules/character-builder/lib/utils/shardKey
  * @version 1.0.0

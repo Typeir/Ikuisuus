@@ -60,7 +60,7 @@ const unmaskCode = (text: string, masks: string[]): string =>
     (_m, _kind, n) => masks[Number(n)],
   );
 
-/** Build canonical self URL path (/en/library/world/...) for a given file under root. */
+/** Build canonical self URL path (/en/library/world/...) */
 const toSelfPath = (file: string, normalizedRoot: string): string => {
   const posixFile = file.replace(/\\/g, '/');
   let rel = posixFile.startsWith(normalizedRoot)

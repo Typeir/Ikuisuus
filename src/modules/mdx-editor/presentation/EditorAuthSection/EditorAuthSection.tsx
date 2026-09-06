@@ -46,7 +46,6 @@ interface EditorAuthSectionProps {
 
 /**
  * Auth section for the MDX editor.
- * Shows either a login form or the current user's status with a logout button.
  *
  * @component
  * @param {EditorAuthSectionProps} props - Component properties

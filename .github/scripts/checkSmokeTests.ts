@@ -2,8 +2,7 @@
  * Smoke Test Detection Check
  *
  * @fileoverview Scans test files for placeholder/dummy tests that need real
- * implementations. Reports as non-blocking warnings so existing smoke tests
- * do not block completion.
+ * implementations.
  *
  * @module .github/scripts/check-smoke-tests
  */

@@ -1,14 +1,6 @@
 /**
  * @fileoverview Dynamic OG image API route.
  *
- * Generates a 1200×630 PNG Open Graph card for a content type and slug.
- * Runs at request time (`force-dynamic`); URL `/api/og/[type]/[slug]`.
- *
- * Supported types: `monsters`, `heirlooms`, `spells`, `trinkets`,
- * `bloodlines`, `vocations`, `specializations`
- *
- * PNG cached with `s-maxage=31536000, immutable`.
- *
  * @module src/app/api/og/[type]/[slug]/route
  * @version 1.0.0
  * @author Typeir

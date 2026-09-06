@@ -2,9 +2,7 @@
  * @fileoverview Leaf row for virtualized sidebar lists
  * @description Renders the link-only markup of a leaf item with none of the
  * folder machinery in `SidebarItem` — no context subscription, no fetch hook,
- * no effects. Structure matches `SidebarItem`'s leaf branch so the stylesheet
- * selectors match both; `leafFade` is the one addition, fading each row in as
- * it scrolls into the virtual window.
+ * no effects.
  *
  * @module modules/navigation-sidebar/presentation/components/SidebarLeafRow
  * @author Typeir
@@ -35,8 +33,7 @@ export interface SidebarLeafRowProps {
 }
 
 /**
- * Memoized leaf row. Rendered per virtualized row in place of the full
- * `SidebarItem` when the item has no children and is not a stub.
+ * Memoized leaf row.
  *
  * @param {SidebarLeafRowProps} props - Component props.
  * @returns {JSX.Element} A list item wrapping a prefetch-on-hover link.

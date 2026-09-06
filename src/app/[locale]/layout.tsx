@@ -2,7 +2,7 @@
  * Root layout component.
  *
  * @fileoverview Next.js root layout with locale support and sidebar navigation
- * tree generation. Wraps all pages with client providers.
+ * tree generation.
  *
  * @module app/[locale]/layout
  * @version 2.1.0
@@ -97,15 +97,6 @@ export const metadata: Metadata = {
 
 /**
  * Viewport contract for the document.
- *
- * `viewportFit: 'cover'` lets the page paint into the display cutout instead
- * of being letterboxed beside it; the mobile title bar pads itself clear with
- * the `--safe-area-*` tokens. Browsers without cutout support report zero
- * insets and lay out unchanged.
- *
- * `interactiveWidget: 'resizes-content'` shrinks the layout viewport when the
- * on-screen keyboard opens, so the fixed title bar stays anchored to the
- * visible area while the search field is focused.
  *
  * @type {Viewport}
  */

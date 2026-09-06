@@ -70,10 +70,7 @@ function sectionFor(prefix: string): string {
 }
 
 /**
- * Normalizes the statlet lines in `[start, end)` in place. Line count is
- * preserved: an implicit `## Traits` heading is written over the blank line
- * preceding the first feature; when no blank line exists the section is left
- * implicit and the caller's classifier ignores those features.
+ * Normalizes the statlet lines in `[start, end)` in place.
  *
  * @param {string[]} lines - De-quoted file lines (mutated)
  * @param {number} start - First statlet line

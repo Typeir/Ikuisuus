@@ -31,7 +31,7 @@ const readBackgroundToken = (): string =>
     .trim();
 
 /**
- * Syncs the `theme-color` meta tag to the active theme. Renders nothing.
+ * Syncs the `theme-color` meta tag to the active theme.
  *
  * @component
  * @returns {null} No DOM of its own

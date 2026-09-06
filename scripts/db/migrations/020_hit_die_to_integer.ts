@@ -1,10 +1,7 @@
 /**
  * @fileoverview Migration 020 — vocations.hit_die text → integer
  * @description Converts `vocations.hit_die` from die-notation text (`'d12'`) to
- * an integer face count (`12`). Idempotent: skipped when the column is already
- * integer. A `USING` clause extracts digits, turning digit-less rows into 0.
- * After applying, run `npm run db:seed` to refresh content from the regenerated
- * `.metadata.json` sidecars.
+ * an integer face count (`12`).
  *
  * @module scripts/db/migrations/020_hit_die_to_integer
  * @author Typeir
@@ -57,8 +54,7 @@ export async function up(client: PoolClient): Promise<void> {
 
 /**
  * Reverts migration 020: restores `vocations.hit_die` to `d{faces}` notation
- * held as text. A stored 0 becomes `'unknown'`, the sentinel the old generator
- * emitted for a vocation with no parseable die.
+ * held as text.
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}

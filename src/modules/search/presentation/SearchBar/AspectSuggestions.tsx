@@ -2,8 +2,7 @@
  * @fileoverview Portal listbox of aspect suggestions under the search input.
  * @description Renders the `group:value` candidates as genuine aspect pills
  * (button mode) in a `document.body` portal anchored to the input, so it
- * escapes any overflow-clipped sidebar. Keyboard focus stays in the input;
- * `activeIndex` drives `aria-activedescendant`.
+ * escapes any overflow-clipped sidebar.
  *
  * @module modules/search/presentation/SearchBar/AspectSuggestions
  * @version 1.0.0
@@ -17,14 +16,11 @@ import { displayAspects } from '@/modules/library/domain/aspects';
 import { AspectPill } from '@/modules/library/presentation/components/Aspects/AspectPill';
 import { useLocale, useTranslations } from 'next-intl';
 import {
-  toAnchorName,
+  useAnchorName,
   useAnchoredPosition,
-  useCssAnchorSupport,
 } from '@/lib/hooks/useAnchoredPosition';
 import {
   useCallback,
-  useId,
-  useLayoutEffect,
   useRef,
   type CSSProperties,
   type JSX,
@@ -74,17 +70,7 @@ export function AspectSuggestions({
   }, []);
 
   const hasAnchor = isMounted && anchorRef.current !== null;
-  const cssAnchored = useCssAnchorSupport();
-  const anchorName = toAnchorName(useId());
-
-  useLayoutEffect(() => {
-    const el = anchorRef.current;
-    if (!cssAnchored || !el) return;
-    el.style.setProperty('anchor-name', anchorName);
-    return () => {
-      el.style.removeProperty('anchor-name');
-    };
-  }, [anchorRef, anchorName, cssAnchored, hasAnchor]);
+  const { anchorName, cssAnchored } = useAnchorName(anchorRef, hasAnchor);
 
   useAnchoredPosition(anchorRef, listRef, compute, {
     active: !cssAnchored && hasAnchor && suggestions.length > 0,

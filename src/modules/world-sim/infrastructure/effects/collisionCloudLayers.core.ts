@@ -2,7 +2,6 @@
  * @fileoverview Collision cloud layer factories.
  * @description Builds the four visual layers for `CollisionCloudEffect`:
  *   debris point cloud, opaque grey core, additive outer shells, corona shell.
- *   Each factory returns a `{ geometry, material, mesh }` triple.
  *
  * @module modules/world-sim/infrastructure/effects/collisionCloudLayers.core
  * @version 1.0.0
@@ -70,7 +69,7 @@ export const CORONA_FADE_DURATION = Math.max(
 /** @constant {number} NOISE_TIME_SCALE - Multiplier applied to `time` before feeding it into every shader's `uTime` uniform; raises apparent scroll speed of vertex-displacement noise across all collision-cloud layers. */
 export const NOISE_TIME_SCALE = 1.5;
 
-/** @constant {number} GROWTH_RATE - Logarithmic growth coefficient. Smaller = slower expansion. */
+/** @constant {number} GROWTH_RATE - Logarithmic growth coefficient. */
 export const GROWTH_RATE = 0.55;
 
 /** @constant {number} JITTER_FREQ_HZ - Jitter oscillations per second. */
@@ -87,7 +86,7 @@ export const ROTATION_BASE_SPIN = 0.18;
 
 /**
  * Per-axis multipliers applied to `ROTATION_BASE_SPIN` to bias the explosion
- * group's tumble (faster on Y, slower on Z). Dimensionless scalars 0-1.
+ * group's tumble (faster on Y, slower on Z).
  *
  * @constant {Object} COLLISION_ROTATION_AXIS_DAMPING
  * @property {number} x - Multiplier for the X-axis spin rate
@@ -102,8 +101,7 @@ export const COLLISION_ROTATION_AXIS_DAMPING = {
 
 /**
  * Per-axis multipliers applied to `DEBRIS_ROTATION_SPEED` for the debris
- * field's idle tumble. X-axis dampened so the cloud reads as a flattened
- * disk rather than a uniform sphere.
+ * field's idle tumble.
  *
  * @constant {Object} DEBRIS_ROTATION_AXIS_DAMPING
  * @property {number} x - Multiplier for the X-axis spin rate
@@ -117,7 +115,7 @@ export const DEBRIS_ROTATION_AXIS_DAMPING = {
 /** @constant {number} ROTATION_JITTER_AMPLITUDE - Peak rotation offset (radians) applied per axis at phase start. */
 export const ROTATION_JITTER_AMPLITUDE = 0.35;
 
-/** @constant {number} ROTATION_JITTER_FREQ_HZ - Base oscillation rate of the rotation jitter (Hz). Per-axis frequencies are detuned from this. */
+/** @constant {number} ROTATION_JITTER_FREQ_HZ - Base oscillation rate of the rotation jitter (Hz). */
 export const ROTATION_JITTER_FREQ_HZ = 1.6;
 
 /** @constant {number} CORE_SEGMENTS - Sphere subdivisions for the opaque core */
@@ -146,9 +144,7 @@ export interface OuterShellConfig {
 }
 
 /**
- * Russian-doll outer shells. Each is an inverted (BackSide) additive sphere
- * with progressively larger radius, lower opacity, more displacement, and a
- * unique noise offset. `renderOrder` controls sort.
+ * Russian-doll outer shells.
  */
 export const OUTER_SHELL_CONFIGS: OuterShellConfig[] = [
   {
@@ -240,8 +236,7 @@ export function createDebrisLayer(): DebrisLayer {
 }
 
 /**
- * Build the opaque grey core. The only depth-writing surface in the effect;
- * acts as a z-fighting anchor for the additive shells.
+ * Build the opaque grey core.
  *
  * @returns {ShaderLayer} Geometry, material, and mesh
  */
@@ -277,8 +272,7 @@ export function createCoreLayer(): ShaderLayer {
 }
 
 /**
- * Build the set of additive outer shells from `OUTER_SHELL_CONFIGS`. Each
- * uses BackSide rendering with additive blending.
+ * Build the set of additive outer shells from `OUTER_SHELL_CONFIGS`.
  *
  * @returns {ShaderLayer[]} One shader layer per config entry
  */
@@ -337,11 +331,7 @@ export interface CoronaLayers {
 }
 
 /**
- * Build the outermost corona as a two-pass additive halo. The near pass uses
- * FrontSide and depth testing; the far pass uses BackSide with
- * `depthTest: false` so it renders even when occluded by the core.
- *
- * Both passes share geometry; dispose `geometry` exactly once.
+ * Build the outermost corona as a two-pass additive halo.
  *
  * @param {number} renderOrder - Sort order for the near pass; far pass uses renderOrder+1
  * @returns {CoronaLayers} Geometry, near pass, and far pass

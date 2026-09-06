@@ -1,9 +1,7 @@
 /**
  * @fileoverview Persisted Storage Schema Version
  * @description Guards every client-persisted store behind a single schema
- * version. On the first read of a page load the stored version is compared with
- * {@link STORAGE_SCHEMA_VERSION}; missing or older version drops all payloads
- * and writes the current version.
+ * version.
  *
  * @module lib/utils/storageSchema
  * @version 1.0.0
@@ -21,8 +19,7 @@ import { fetchPersistentData } from './fetchPersistentData';
 import { removePersistentData, storePersistentData } from './storePersistentData';
 
 /**
- * Current shape of everything persisted on the client. Increment on any change
- * to a persisted structure to discard saves written against the previous shape.
+ * Current shape of everything persisted on the client.
  *
  * @constant STORAGE_SCHEMA_VERSION
  * @type {number}
@@ -55,7 +52,6 @@ export const VERSIONED_STORAGE_KEYS: readonly string[] = [
 
 /**
  * Key prefixes whose every match is dropped when the schema version moves on.
- * Covers stores with dynamic per-instance keys.
  *
  * @constant VERSIONED_STORAGE_PREFIXES
  * @type {readonly string[]}
@@ -104,7 +100,6 @@ const purgeVersionedStorage = (): void => {
 
 /**
  * Purges stored data when it does not match {@link STORAGE_SCHEMA_VERSION}.
- * Runs at most once per page load; no-op on the server.
  *
  * @function ensureStorageSchema
  * @returns {void}

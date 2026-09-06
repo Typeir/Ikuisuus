@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tooltip Visibility State Machine
  * @description Open/close lifecycle for hover surfaces: show delay, hide delay,
- * and a held-open exit phase. Owns no DOM and no positioning.
+ * and a held-open exit phase.
  *
  * @module lib/components/ui/tooltip/useTooltipVisibility
  * @version 1.0.0
@@ -14,7 +14,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
- * Duration of the CSS exit transition. Mirrors `tooltip.module.scss`.
+ * Duration of the CSS exit transition.
  *
  * @constant
  */
@@ -59,8 +59,7 @@ export interface TooltipVisibility {
 }
 
 /**
- * Drives a hover surface's open/close lifecycle. A `show` during the exit phase
- * cancels it, so returning to the trigger never restarts the enter transition.
+ * Drives a hover surface's open/close lifecycle.
  *
  * @param {TooltipVisibilityOptions} [options] - Timing and disabled state
  * @returns {TooltipVisibility} Visibility flags and imperative controls

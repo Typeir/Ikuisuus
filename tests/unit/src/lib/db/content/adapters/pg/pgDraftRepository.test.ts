@@ -2,8 +2,6 @@
  * pgDraftRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL draft repository.
- * Verifies upsert, findActive, and archive operations including
- * row-mapping from DraftEntity to DraftMetadata domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgDraftRepository
  */

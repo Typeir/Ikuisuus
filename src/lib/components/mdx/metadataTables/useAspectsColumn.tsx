@@ -1,6 +1,6 @@
 /**
  * @fileoverview Aspects column for MetadataTable
- * @description Appends an Aspects column when rows carry `tags`. Cells render inert glyphs.
+ * @description Appends an Aspects column when rows carry `tags`.
  *
  * @module lib/components/mdx/metadataTables/useAspectsColumn
  * @version 1.0.0

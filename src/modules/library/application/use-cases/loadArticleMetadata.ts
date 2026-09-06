@@ -54,8 +54,6 @@ interface ContentKind {
 /**
  * Resolution table, ordered so a longer prefix is tested before a shorter one
  * that would also match.
- *
- * Vocations are absent, handled by `resolveVocationRoute`.
  */
 const KINDS: ContentKind[] = [
   {
@@ -120,9 +118,6 @@ function matchKind(
 /**
  * Resolves a vocation route.
  *
- * `…/vocations/wizard/main` is the vocation; `…/vocations/wizard/evocation` is a
- * specialization of it. The trailing segment decides which.
- *
  * @param {string[]} slug - Route slug segments
  * @param {string} locale - Active locale
  * @returns {Promise<{ record: TaggedRecord | null; contentType: string; shardKeys: string[] } | null>}
@@ -178,11 +173,7 @@ function anchorOf(text: string): string {
 
 /**
  * Collects the sub-records of one stat block that carry their own aspects,
- * keyed by anchor. Each shard yields its record-scoped key
- * (`record/anchor`) and the bare anchor; a feature whose heading differs
- * from its name (`## 1st Level – Spellcasting` → `Spellcasting`) yields both
- * anchors, since the heading is what the sectionizer sees and the name is
- * what list-entry and paragraph articles carry.
+ * keyed by anchor.
  *
  * @param {TaggedRecord} record - The loaded metadata record
  * @param {string[]} shardKeys - Fields to read
@@ -273,8 +264,6 @@ function mergeRecords(
 
 /**
  * Loads the article metadata for a resolved library slug.
- *
- * Returns null on no match, load failure, or an empty slug.
  *
  * @param {string[]} slug - Route slug segments, e.g. `['monsters', 'mucklord']`
  * @param {string} locale - Active locale

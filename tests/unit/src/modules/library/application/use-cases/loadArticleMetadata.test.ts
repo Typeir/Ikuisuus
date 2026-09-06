@@ -18,8 +18,7 @@ const getSpellBySlug = vi.fn();
 const getSpecializationBySlug = vi.fn();
 
 /**
- * Stubs every repository the loader can reach. Monster, spell, and
- * specialization calls go through mock functions; the rest resolve null.
+ * Stubs every repository the loader can reach.
  */
 vi.mock('@/lib/db/content/repositories/monsterRepository', () => ({
   monsterRepository: {

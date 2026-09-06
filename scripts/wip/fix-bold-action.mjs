@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 /**
  * Targeted fix: bold-wrapped **action** → **Major Action** (patterns missed by main script).
- * Only touches previously-missed bold text, won't double-process anything.
- * Usage: node scripts/wip/fix-bold-action.mjs [--live]
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { readdir, readFile, writeFile } from 'node:fs/promises';

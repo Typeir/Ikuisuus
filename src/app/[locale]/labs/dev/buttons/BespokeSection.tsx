@@ -2,8 +2,7 @@
  * @fileoverview Renders the bespoke button inventory with live previews.
  * @description Each entry is previewed by injecting its compiled declarations under a
  * `data-bespoke` attribute, so the real appearance is shown without importing forty
- * stylesheets. The global `button` rule still applies underneath, which is what the
- * class sees in situ.
+ * stylesheets.
  *
  * @component BespokeSection
  * @version 1.0.0

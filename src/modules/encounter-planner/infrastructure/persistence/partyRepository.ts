@@ -2,7 +2,6 @@
  * @fileoverview Party Storage Utilities
  * @description CRUD operations for saved parties using the multi-layer persistent
  * storage abstraction (cookie pointer ref strategy for large-payload arrays).
- * Follows the same pattern as encounterStorage.ts for consistency.
  *
  * @module modules/encounter-planner/infrastructure/persistence/partyRepository
  * @version 1.1.0
@@ -41,7 +40,6 @@ export const getSavedParties = (): SavedParty[] => {
 
 /**
  * Save or update a party in localStorage.
- * If a party with the same ID exists, it is replaced. Otherwise appended.
  *
  * @function saveParty
  * @param {SavedParty} party - The party to save

@@ -2,13 +2,7 @@
  * Remark Keyword Plugin
  *
  * @fileoverview Remark plugin replacing `[# kw:... #]` keyword expressions in
- * text nodes with `<Keyword>` MDX JSX elements. A reference is resolved against
- * the resolutions the caller supplies, which add the `href` attribute. The
- * plugin resolves nothing itself: it has no filesystem and no index, so a
- * document's targets are worked out before it runs and handed in.
- *
- * Malformed expressions stay as plain text; a well-formed expression that
- * resolves to nothing still renders its display text, never its source markup.
+ * text nodes with `<Keyword>` MDX JSX elements.
  *
  * @module lib/md/remarkKeyword
  * @version 2.0.0
@@ -105,9 +99,6 @@ function keyOf(reference: KeywordReference): string {
 /**
  * Builds an MDAST mdxJsxTextElement node for the `<Keyword>` component.
  *
- * Resolution is the caller's: this stamps what it is handed. An unresolved
- * reference still renders its display text, never its source markup.
- *
  * @param {KeywordReference} reference - Parsed reference parts
  * @param {KeywordResolutions} [resolutions] - Targets, keyed by normalised reference
  * @returns {MdxJsxTextElementNode} An MDAST JSX element node
@@ -145,8 +136,7 @@ function keywordNode(
 
 /**
  * Processes a single text node, replacing keyword expressions with JSX
- * elements. Modifies the parent's children array in place. Handles mixed text
- * by splitting into sequences of text and element nodes.
+ * elements.
  *
  * @param {TextNode} node - The text node to process
  * @param {number | null} index - The node's index in its parent

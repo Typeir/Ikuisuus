@@ -1,5 +1,5 @@
 /**
- * @fileoverview Aspects MDX component. Pills link to searches. Display and expansion driven by root attributes.
+ * @fileoverview Aspects MDX component.
  *
  * @module modules/library/presentation/components/Aspects/Aspects
  * @version 1.0.0
@@ -49,7 +49,7 @@ export interface AspectsProps {
 }
 
 /**
- * Toggle carousel expansion via root attribute. Returns null without provider.
+ * Toggle carousel expansion via root attribute.
  *
  * @returns {React.ReactElement | null} The toggle, or null with no provider to write to
  */
@@ -84,7 +84,6 @@ const ExpandToggle: React.FC = () => {
 
 /**
  * Renders a dense aspect set as a compressed stack that unpacks on hover.
- * Builds glyphs once the element reaches the viewport.
  *
  * @param {object} props - Component props
  * @param {ParsedAspect[]} props.aspects - Display-ordered aspects

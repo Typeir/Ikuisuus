@@ -255,9 +255,7 @@ export type FeatureFlag =
   | 'phase_added';
 
 /**
- * Canonical extracted feature record. Represents a single game mechanic
- * parsed from an MDX content file (class feature, spell, item effect,
- * monster action, etc.).
+ * Canonical extracted feature record.
  *
  * @interface Feature
  * @property {string} id - Stable slug (e.g., "rimelord/avalanche-blade")
@@ -307,11 +305,6 @@ export interface Feature {
 
 /**
  * Extended feature record for monster stat block mechanics.
- * Adds attack, multiattack, legendary deed, phase, spellcasting,
- * condition, and relationship fields.
- *
- * Flat damage/save fields override the nested base-Feature tokens for
- * PostgreSQL compatibility (max 1 level nesting).
  *
  * @interface MonsterFeature
  * @extends {Feature}

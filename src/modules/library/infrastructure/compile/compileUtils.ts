@@ -15,7 +15,7 @@ import type {
 export type { CompileOptions };
 
 /**
- * Merge defaults with user options and baseUrl. Expects plugin functions not modules.
+ * Merge defaults with user options and baseUrl.
  *
  * @param {EvaluateMdxOptions | undefined} mdxOptions - incoming options
  * @param {object} defaults - default plugin modules
@@ -55,7 +55,7 @@ export function buildMdxOptions(
 }
 
 /**
- * Dynamically import MDX modules in parallel. Returns normalized exports.
+ * Dynamically import MDX modules in parallel.
  */
 export async function importAllAsync() {
   const [

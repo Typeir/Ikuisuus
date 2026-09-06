@@ -1,8 +1,7 @@
 /**
  * @fileoverview Metadata Content Types
  * @description Content type keys, and classification of a content path onto them
- * by filename suffix. Classification reads the suffix, never the file. Folder
- * location is not a signal.
+ * by filename suffix.
  *
  * @module lib/metadata/contentTypes
  * @version 2.0.0
@@ -32,8 +31,7 @@ export enum ContentType {
 }
 
 /**
- * Outcome of classifying a content path. `Ambiguous` means the suffix maps to
- * several types and only frontmatter decides. `Untyped` means no suffix matched.
+ * Outcome of classifying a content path.
  *
  * @enum {string}
  */
@@ -140,8 +138,7 @@ export function classifyContent(path: string): Classification {
 }
 
 /**
- * Resolves a content path to its content type by suffix. Returns null for
- * ambiguous suffixes; read `contentType` frontmatter instead.
+ * Resolves a content path to its content type by suffix.
  *
  * @param {string} path - Content path, slug, or filename
  * @returns {ContentType | null} The content type, or null when the suffix cannot decide

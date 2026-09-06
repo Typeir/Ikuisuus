@@ -1,11 +1,7 @@
 /**
  * @fileoverview Content Shard Panel
  * @description Fetches the `main` prose shard via `/api/content-shards` and
- * renders it with the full MDX component registry. Falls back to plain HTML
- * via `renderMarkdownToHtml` when the source is truncated or malformed.
- *
- * The response carries the keyword definitions that prose references, since
- * compilation happens here in the browser where nothing can resolve them.
+ * renders it with the full MDX component registry.
  *
  * @module modules/character-builder/presentation/shards/contentShardPanel
  * @version 2.0.0
@@ -39,8 +35,7 @@ export interface ContentShardPanelProps {
 }
 
 /**
- * Compiles MDX synchronously with the full component registry. Throws on
- * truncated or malformed tokens.
+ * Compiles MDX synchronously with the full component registry.
  *
  * @param {string} source - Raw MDX/markdown source text
  * @returns {ReactNode} Compiled React element tree
@@ -51,7 +46,6 @@ function tryCompileMdxSync(source: string): ReactNode {
 
 /**
  * Renders markdown to a plain HTML fragment via `renderMarkdownToHtml`.
- * Used when MDX compilation fails on truncated or malformed tokens.
  *
  * @param {string} source - Raw markdown source text
  * @returns {Promise<ReactNode>} React element wrapping the rendered HTML
@@ -65,8 +59,6 @@ async function renderMarkdownFallback(source: string): Promise<ReactNode> {
 
 /**
  * Strips YAML frontmatter delimited by `---` from the start of content.
- * Only removes the block if line 1 is `---` and a closing `---` appears
- * before the first `#` heading (or end of content).
  *
  * @param {string} source - Raw markdown source
  * @returns {string} Source with frontmatter block removed
@@ -84,8 +76,6 @@ function stripYamlFrontmatter(source: string): string {
 
 /**
  * Fetches and renders the `main` prose shard for the content item.
- * Attempts MDX compilation; falls back to plain HTML on malformed input.
- * Shows a loading state while fetching and an error state on failure.
  *
  * @component
  * @param {ContentShardPanelProps} props - Component props

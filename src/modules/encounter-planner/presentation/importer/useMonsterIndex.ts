@@ -19,7 +19,6 @@ const log = logger.child({ module: 'useMonsterIndex' });
 
 /**
  * Hook for loading and querying the monster index.
- * Fetches the index lazily on first trigger and caches the result.
  *
  * @function useMonsterIndex
  * @param {string} locale - Locale for API requests

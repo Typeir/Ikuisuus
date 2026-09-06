@@ -4,7 +4,7 @@
  * Submodule Staging Guard
  *
  * @fileoverview Blocks commits with staged files in the content
- * submodule (src/content). Skipped when IK_RUNNING=1.
+ * submodule (src/content).
  *
  * @module .github/PAW/git-hooks/submodule-guard
  * @author Typeir

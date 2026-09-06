@@ -36,11 +36,6 @@ const IGNORE_SEGMENTS = [
 
 /**
  * Build a regex matching direct assignment to protected paw_config keys.
- * Matches patterns like:
- *   setPawConfig(db, 'severity_override', ...)
- *   setSeverityOverride(db, ...)
- *   setPawConfig( db , "severity_override" , ...
- *   .prepare('INSERT INTO paw_config ... severity_override ...')
  *
  * @returns RegExp matching protected key manipulation
  */

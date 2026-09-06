@@ -1,9 +1,6 @@
 /**
  * @fileoverview Invisible metadata directive component for MDX content.
- * @description Renders nothing in the browser. Parsed at build time by the
- * feature metadata generator to attach structured metadata to monster
- * features. Place `<Meta>` tags immediately after the feature heading in
- * `.sheet.mdx` files.
+ * @description Renders nothing in the browser.
  *
  * @example
  * ```mdx
@@ -39,8 +36,6 @@ interface MetaProps {
 
 /**
  * Renders an invisible `<span>` carrying metadata as `data-*` attributes.
- * The generator's regex parser extracts `<Meta>` from raw MDX at build time;
- * this component renders the directive data as `data-*` attributes.
  *
  * @component Meta
  * @param {MetaProps} props - Meta attributes

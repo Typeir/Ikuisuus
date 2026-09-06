@@ -1,9 +1,7 @@
 /**
  * @fileoverview Active Sheet Render Helper
  * @description Test utility for rendering components that consume the active
- *              sheet context. Wraps the tree in both the outer roster provider
- *              and the inner `ActiveSheetProvider`, and can flip into edit
- *              mode before assertions run.
+ *              sheet context.
  *
  * @module tests/setup/renderWithActiveSheet
  * @version 1.0.0

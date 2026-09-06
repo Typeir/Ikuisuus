@@ -2,8 +2,6 @@
  * pgSpellRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL spell repository.
- * Verifies row-mapping from `SpellEntity` rows (with embedded components
- * and loaded spell lists) to `SpellMetadata` domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgSpellRepository
  */

@@ -1,8 +1,5 @@
 /**
  * Integration tests for GET /api/content/tree.
- *
- * Asserts the route forwards query params to `listDirectory` and returns
- * the expected JSON shape. Runs against a mocked `listDirectory`.
  */
 
 import { NextRequest } from 'next/server';

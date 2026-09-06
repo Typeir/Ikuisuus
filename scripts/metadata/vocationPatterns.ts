@@ -1,8 +1,7 @@
 /**
  * @fileoverview Class & Specialization Metadata Patterns
  * @description Pre-compiled regex patterns shared by vocation and specialization
- * metadata generators. Centralizes table parsing, feature extraction, and
- * spellcasting detection into grouped dictionaries.
+ * metadata generators.
  *
  * @module scripts/metadata/vocationPatterns
  * @version 1.0.0
@@ -18,7 +17,7 @@
  * @property {RegExp} traitHeader - Trait label table start: "| Trait |"
  * @property {RegExp} separator - Separator row: "|---|---|"
  * @property {RegExp} spellSlotColumn - Spell slot column: "1st", "2nd", etc.
- * @property {RegExp} classLevelHeader - "| (Class)? Level |"
+ * @property {RegExp} classLevelHeader - "| (Class)?
  * @property {RegExp} levelSpellsHeader - "| Level | Spells |"
  * @property {RegExp} slotLevel - Slot level extraction: "1st", "2nd", etc.
  * @property {RegExp} markdownLink - Markdown link: [text](url)

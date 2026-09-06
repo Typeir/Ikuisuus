@@ -8,7 +8,6 @@ import { vi } from 'vitest';
 
 /**
  * Mock logger globally to suppress all logging output during tests.
- * Preserves all exports.
  */
 vi.mock('@/lib/logging/logger', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/logging/logger')>();
@@ -102,8 +101,6 @@ vi.mock('@/lib/components/icon/icons/unlock.svg', () => ({
 
 /**
  * Evaluate simple width-based media queries against window.innerWidth.
- * Supports the `(max-width: Npx)` / `(min-width: Npx)` forms used by the
- * app's viewport hooks; anything else reports no match.
  *
  * @param query - CSS media query string
  * @returns True if the query matches the current mocked viewport width
@@ -119,8 +116,7 @@ function evaluateMediaQuery(query: string): boolean {
 }
 
 /**
- * jsdom does not ship matchMedia. Width-aware stub that re-evaluates match
- * on window resize events.
+ * jsdom does not ship matchMedia.
  */
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -159,7 +155,7 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 /**
- * jsdom does not ship ResizeObserver. Stub it globally on window.
+ * jsdom does not ship ResizeObserver.
  */
 class MockResizeObserver {
   observe = vi.fn();

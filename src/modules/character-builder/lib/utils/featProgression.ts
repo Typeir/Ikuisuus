@@ -2,8 +2,7 @@
  * @fileoverview Derives earned and remaining feat slots per Damocles progression
  * rules (`src/content/en/rules/the-measure-of-the-self/character-progression.mdx`):
  * one extra feat per tier-bonus increase (`computeTierBonus(level) - 1`), plus a
- * feat/ASI at each vocation's listed levels. <br />An ASI and a feat occupy the
- * same slot: "Ability Score Improvement" is one feat option.
+ * feat/ASI at each vocation's listed levels.
  *
  * @module modules/character-builder/lib/utils/featProgression
  * @version 1.0.0
@@ -17,16 +16,14 @@ import { computeTierBonus } from './characterStorage';
 
 /**
  * Lowercased feature-row names that denote a feat/ASI slot in a vocation's
- * feature table. Most vocations label the row "Feat"; wizard and monk's level-4
- * row label it "Ability Score Improvement".
+ * feature table.
  */
 const ASI_FEATURE_NAMES = new Set(['feat', 'ability score improvement']);
 
 /**
  * Counts the global tier-transition feats a character has earned at the given
  * total level: one per tier-bonus increase, i.e. `computeTierBonus(level) - 1`
- * (0 at levels 1–3, 1 at 4–6, up to 9 at 28–30). Granted to every character
- * regardless of vocation.
+ * (0 at levels 1–3, 1 at 4–6, up to 9 at 28–30).
  *
  * @function countGlobalTierFeats
  * @param {number} totalLevel - Global character level (1–30)
@@ -74,7 +71,7 @@ export function countEarnedFeats(character: CharacterSheet): number {
 
 /**
  * Feat slots a character has earned but not yet filled from the feats list,
- * clamped at 0. Advisory only — it never blocks over-selection.
+ * clamped at 0.
  *
  * @function countUnspentFeats
  * @param {CharacterSheet} character - Character to inspect

@@ -13,8 +13,7 @@ import { Color } from 'three';
 
 /**
  * Read a named hex-color field off a render-config blob and construct a
- * Three.js `Color` from it. Falls back to `defaultHex` whenever the field is
- * missing or not a string.
+ * Three.js `Color` from it.
  *
  * @param {Record<string, unknown> | undefined} config - The renderer-specific config blob (typically `body.renderConfig`).
  * @param {string} field - The field name to read (e.g. `'baseColor'`, `'coronaColor'`).

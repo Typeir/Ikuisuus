@@ -130,10 +130,6 @@ export interface PatternsSection {
 /**
  * One aspect group in the closed vocabulary.
  *
- * A `meta:`-prefixed group is indexed and searchable but never drawn in prose.
- * Values are declared literally or borrowed via `valuesFrom`; references resolve
- * one level deep and never chain.
- *
  * @property {"*" | string[]} scope - Content types carrying the group, or `"*"` for all
  * @property {string[]} [values] - Literal value list
  * @property {string[]} [valuesFrom] - `section.key` paths, or a sibling group name, to borrow values from
@@ -173,7 +169,6 @@ let cached: SharedData | null = null;
 
 /**
  * Loads shared data from the canonical JSON file with caching.
- * The file lives at `scripts/core/shared-data.json` relative to project root.
  *
  * @returns {Promise<SharedData>} The shared data object
  * @throws {Error} If the file cannot be read or parsed

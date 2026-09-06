@@ -1,8 +1,7 @@
 /**
  * @fileoverview Carrying Capacity Calculator
  * @description Displays light/medium/heavy load thresholds from Strength,
- * size, and quadruped status. Computes load tier from carried weight and
- * total equipment weight; renders a load bar and tier label.
+ * size, and quadruped status.
  *
  * @module modules/character-builder/presentation/CarryingCapacity/carryingCapacityCalculator
  * @version 1.0.0
@@ -58,8 +57,7 @@ const classifyLoad = (
 };
 
 /**
- * Carrying capacity panel. Reads Strength from the active-sheet context and
- * carried weight from the equipment context.
+ * Carrying capacity panel.
  *
  * @component
  * @returns {JSX.Element} Rendered calculator

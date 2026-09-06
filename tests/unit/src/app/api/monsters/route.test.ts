@@ -1,9 +1,7 @@
 /**
  * Monsters API Route Unit Tests
  *
- * @fileoverview Tests for the /api/monsters endpoint. Verifies export structure,
- * locale handling, repository integration, and error resilience by mocking the
- * monster repository module.
+ * @fileoverview Tests for the /api/monsters endpoint.
  *
  * @module tests/unit/src/app/api/monsters/route.test
  * @version 3.0.0

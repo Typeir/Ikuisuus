@@ -1,7 +1,6 @@
 /**
  * @fileoverview Notes Section Component.
  * @description Renders the character note fields as labelled textareas.
- * Edits are passed to a single onChange callback.
  *
  * @module modules/character-builder/presentation/notes/notesSection
  * @version 1.0.0
@@ -112,7 +111,6 @@ export const NotesSectionImpl: React.FC<NotesSectionProps> = ({
 };
 
 /**
- * Memoized `NotesSection` export. Re-renders only when `values`, `onChange`,
- * or `readOnly` change by reference.
+ * Memoized `NotesSection` export.
  */
 export const NotesSection = memo(NotesSectionImpl);

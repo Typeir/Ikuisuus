@@ -1,12 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * @fileoverview Installs git hooks into the content repo's `.git/hooks/`
- * directory. Each hook is a bash wrapper that runs a TypeScript
- * implementation via `tsx`. Main repo hooks are managed by PAW
- * (`.github/PAW/`).
- *
- * Usage:
- *   tsx scripts/multirepo/setup-hooks.ts
+ * directory.
  *
  * @module scripts/multirepo/setup-hooks
  * @author Typeir
@@ -95,7 +90,7 @@ function resolveHooksDir(repo: string): string {
 }
 
 /**
- * Entry point. Installs all content-submodule git hooks.
+ * Entry point.
  * @returns {Promise<void>}
  */
 export async function main(): Promise<void> {
@@ -133,7 +128,7 @@ export async function main(): Promise<void> {
 
 /**
  * Executes `main()` when invoked directly via
- * `tsx scripts/multirepo/setup-hooks.ts`. Does nothing when imported.
+ * `tsx scripts/multirepo/setup-hooks.ts`.
  */
 const invokedDirectly =
   fileURLToPath(import.meta.url) === resolve(process.argv[1] ?? '');

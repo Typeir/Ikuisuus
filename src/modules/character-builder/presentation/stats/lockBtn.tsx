@@ -1,6 +1,5 @@
 /**
  * @fileoverview Lock toggle button shared by all combat stat chips.
- * Memoised component.
  *
  * @module modules/character-builder/presentation/stats/lockBtn
  * @version 1.0.0

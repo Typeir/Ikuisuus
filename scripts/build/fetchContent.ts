@@ -1,7 +1,5 @@
 /**
  * @fileoverview Shallow-clones the content repository into `src/content`.
- * Skips when `src/content/en` is populated and not on Vercel. On Vercel,
- * removes existing content before re-cloning.
  *
  * @module scripts/build/fetchContent
  * @version 1.1.0
@@ -28,7 +26,6 @@ const CONTENT_REPO_URL = GITHUB_PAT
 
 /**
  * Branch to clone: an explicit override, else the branch being deployed.
- * Undefined off Vercel, which clones the repository's default branch.
  */
 const REQUESTED_BRANCH =
   process.env['CONTENT_REPO_BRANCH'] ?? process.env['VERCEL_GIT_COMMIT_REF'];
@@ -38,9 +35,6 @@ const CONTENT_DIR = join(process.cwd(), 'src', 'content');
 
 /**
  * Replaces the token in a URL before it reaches a log line.
- *
- * `execSync` puts the whole command in its error message, so an unredacted
- * failure would print the PAT into the build log.
  *
  * @param {string} text - Text that may embed the authenticated URL
  * @returns {string} Text with any credential replaced
@@ -69,10 +63,6 @@ function hasBranch(branch: string): boolean {
 
 /**
  * Branch the clone should take, and why.
- *
- * Content tracks the branch being deployed when it publishes one of the same
- * name, so a preview builds against its own content. A branch the content repo
- * does not have falls back to the default rather than failing the build.
  *
  * @returns {{ branch: string | null; reason: string }} Branch to clone, or null for the default
  */
@@ -109,8 +99,7 @@ function isVercelEnvironment(): boolean {
 }
 
 /**
- * Entry point. Shallow-clones the content repository when content is absent
- * or on Vercel. Exits with code 1 on clone failure.
+ * Entry point.
  */
 function main(): void {
   if (isContentPopulated() && !isVercelEnvironment()) {

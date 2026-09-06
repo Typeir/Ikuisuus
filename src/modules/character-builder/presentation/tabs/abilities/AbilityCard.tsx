@@ -1,7 +1,6 @@
 /**
  * @fileoverview Ability Card Component
  * @description Card rendering ability mechanics + description as MDX.
- * Source lookup via (?) icon opens PagePreview draggable modal.
  *
  * @module modules/character-builder/presentation/tabs/abilities/AbilityCard
  * @version 3.0.0
@@ -46,8 +45,7 @@ const ABILITY_TYPE_I18N: Record<string, string> = {
 };
 
 /**
- * Ability type → search content type. `Feature` and `Other` have no search
- * taxonomy entry and use the closest sigil.
+ * Ability type → search content type.
  */
 const ABILITY_SIGIL_TYPE: Record<string, SearchContentType> = {
   Spell: 'spells',

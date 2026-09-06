@@ -20,8 +20,7 @@ import {
 import { describe, expect, it } from 'vitest';
 
 /**
- * The full expected set of content types. Kept independent of the source so the
- * test fails loudly if a type is added or removed without intent.
+ * The full expected set of content types.
  */
 const EXPECTED_TYPES: SearchContentType[] = [
   'monsters',

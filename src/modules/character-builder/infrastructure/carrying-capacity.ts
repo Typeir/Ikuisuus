@@ -1,9 +1,6 @@
 /**
  * @fileoverview Carrying Capacity Calculations
  * @description Implementation for computing carrying capacity thresholds.
- * Handles tremendous strength (STR > 29) by walking back to a Strength score
- * with the same ones digit in the 20-29 range and multiplying every threshold
- * by 4 for each full +10 step.
  *
  * @module modules/character-builder/infrastructure/carrying-capacity
  * @version 1.0.0
@@ -21,9 +18,7 @@ import {
 
 /**
  * Computes carrying capacity thresholds for a given Strength score, size, and
- * bipedal/quadruped status. Handles tremendous strength (STR > 29) by walking
- * back to STR 20-29 with the same ones digit and multiplying every threshold
- * by 4 per +10 step.
+ * bipedal/quadruped status.
  *
  * @function computeCapacity
  * @param {number} strength - Character Strength score (>= 1)

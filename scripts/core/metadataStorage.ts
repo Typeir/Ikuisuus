@@ -1,8 +1,7 @@
 /**
  * @fileoverview Postgres storage adapter for build scripts.
  * @description Upserts canonical metadata records into the `content_metadata`
- * table using `pg` directly. No dependency on the Next.js runtime or the
- * TypeScript source tree.
+ * table using `pg` directly.
  *
  * @module scripts/core/metadataStorage
  * @version 1.0.0
@@ -151,7 +150,6 @@ export function createPostgresStorage(
 
 /**
  * Creates a Postgres storage instance from the `DATABASE_URL` env var.
- * Calls `ensureTable()` before returning.
  *
  * @returns Initialized storage instance
  * @throws If `DATABASE_URL` is not set

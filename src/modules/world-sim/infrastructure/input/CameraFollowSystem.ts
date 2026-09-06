@@ -12,7 +12,6 @@ import { Vector3 } from 'three';
 
 /**
  * Tracks a moving celestial body as the camera's orbit center.
- * Returns the body's movement delta per frame.
  *
  * @class CameraFollowSystem
  */
@@ -30,7 +29,7 @@ export class CameraFollowSystem {
   private tempDelta: Vector3 = new Vector3();
 
   /**
-   * Set the follow target. The camera orbit center will track this body.
+   * Set the follow target.
    *
    * @param {() => Vector3} getter - Function returning the body's current world position
    */
@@ -41,7 +40,7 @@ export class CameraFollowSystem {
   }
 
   /**
-   * Clear the follow target. The orbit center stays where it was.
+   * Clear the follow target.
    */
   clearTarget(): void {
     this.positionGetter = null;
@@ -58,7 +57,7 @@ export class CameraFollowSystem {
   }
 
   /**
-   * Get the current target position. Returns null if not following.
+   * Get the current target position.
    *
    * @returns {Vector3 | null} Current world position of the followed body
    */
@@ -69,7 +68,6 @@ export class CameraFollowSystem {
 
   /**
    * Compute the frame delta — how much the followed body moved since last frame.
-   * Updates the internal cached position. Returns zero vector if not following.
    *
    * @returns {Vector3} Movement delta of the followed body
    */

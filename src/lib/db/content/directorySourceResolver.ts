@@ -1,8 +1,7 @@
 /**
  * @fileoverview Directory Source Resolver
  * @description Resolves the active DirectorySourceAdapter based on runtime
- * environment. Uses filesystem during development/build and GitHub at
- * production runtime for content revalidation.
+ * environment.
  *
  * @module lib/db/content/directorySourceResolver
  * @author Typeir

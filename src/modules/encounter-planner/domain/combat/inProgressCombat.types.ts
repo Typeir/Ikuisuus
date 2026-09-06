@@ -42,7 +42,6 @@ export interface CombatantMechanics {
 
 /**
  * Heroic Awakening state for a single combatant.
- * Tracks the results of fate die rolls and applied tier bonuses.
  *
  * @interface HeroicAwakeningState
  * @property {number} fateDieResult - D20 result from fate die roll (1-20)
@@ -72,7 +71,6 @@ export interface HeroicAwakeningState {
 
 /**
  * Runtime combatant in an in-progress combat snapshot.
- * Extends base creature data with combat state and session-only flag.
  *
  * @interface InProgressCombatant
  * @property {string} id - Unique combatant identifier
@@ -143,7 +141,6 @@ export interface InProgressCombatant {
 
 /**
  * In-progress combat snapshot.
- * Represents the runtime state during Play Mode, stored separately from base encounters.
  *
  * @interface InProgressCombat
  * @property {string} id - Unique combat session identifier

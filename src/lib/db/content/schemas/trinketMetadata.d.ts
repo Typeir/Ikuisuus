@@ -1,12 +1,7 @@
 /**
  * @fileoverview Trinket Metadata Domain Schema
  * @description Canonical TypeScript types derived from the real metadata output of
- * `scripts/metadata/generateTrinketMetadata.ts`. Every field corresponds to a
- * parsed property emitted by `parseTrinketFile()`.
- *
- * Trinkets are consumable adventuring gear with damage, range, weight, and
- * special effects. Unlike heirlooms, they do not have rarity, attunement,
- * or weapon mastery properties.
+ * `scripts/metadata/generateTrinketMetadata.ts`.
  *
  * @module lib/db/content/schemas/trinketMetadata
  * @version 1.0.0
@@ -18,9 +13,6 @@ import type { BaseMetadata } from './baseMetadata';
 
 /**
  * Complete trinket metadata record as emitted by the generator.
- *
- * Derived from `parseTrinketFile()` output in
- * `scripts/metadata/generateTrinketMetadata.ts`.
  *
  * @interface TrinketMetadata
  * @property {string} itemType - Item category (e.g. "Adventuring Gear")

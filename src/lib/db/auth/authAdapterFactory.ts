@@ -1,7 +1,6 @@
 /**
  * @fileoverview Auth Adapter Factory
  * @description Resolves the user storage adapter from `METADATA_BACKEND`.
- * Backends: `'fs'` (default, Filesystem JSON) or `'pg'` (PostgreSQL via MikroORM).
  *
  * @module lib/db/auth/authAdapterFactory
  * @version 2.0.0

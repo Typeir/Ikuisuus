@@ -1,9 +1,6 @@
 /**
  * @fileoverview Aspect Extractors
- * @description Derives faceted aspects from content text. Each function owns one
- * group and returns fully-qualified aspects (`resistance:fire`,
- * `sense:darkvision`). Judgement facets — `source:`, `access:`, `myth:`,
- * `theme:` — are authored, with no extractor.
+ * @description Derives faceted aspects from content text.
  *
  * @module scripts/metadata/aspectExtractors
  * @version 1.0.0
@@ -68,7 +65,6 @@ function captureAll(pattern: RegExp, text: string): string[] {
 
 /**
  * Extract scoped defence aspects naming what is resisted, ignored or amplified.
- * Immunity also matches conditions.
  *
  * @param {string} text - Content to analyze
  * @param {SharedData} sharedData - Shared game data
@@ -226,11 +222,6 @@ export function extractDeliveryTags(text: string): string[] {
 /**
  * Extract range aspects from the stat-block Range field.
  *
- * A numeric distance maps to a band (its max feet threshold); the raw distance
- * stays in the stat block. A `Self` range sized by its area — parentheses carry
- * a measurement such as `Self ([= 6 stride =] cone)` — yields no ranged aspect;
- * the measurement is ignored and the shape is left to `delivery:`.
- *
  * @param {string} text - Content to analyze
  * @returns {string[]} Array of range aspects
  */
@@ -351,9 +342,6 @@ const STRATUM_GROUPS = [
 
 /**
  * Adds the stratum an aspect's damage type belongs to.
- *
- * Derived, not authored: a stratum is a property of the type. `true` damage is
- * excluded — it stands outside all strata and cannot be resisted.
  *
  * @param {string[]} aspects - Aspects already derived for the content
  * @param {SharedData} sharedData - Shared game data

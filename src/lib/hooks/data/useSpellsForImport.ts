@@ -1,7 +1,6 @@
 /**
  * @fileoverview Spells for Import Hook
- * @description SWR hook fetching spell metadata. Scopes to vocation spell lists
- * when `listSources` is provided; otherwise returns the full library.
+ * @description SWR hook fetching spell metadata.
  *
  * @module lib/hooks/data/useSpellsForImport
  * @author Typeir
@@ -48,8 +47,7 @@ export interface UseSpellsForImportResult {
 }
 
 /**
- * Fetches spells. Scoped to `listSources` lists (merged, deduped) when non-empty;
- * otherwise returns the full library.
+ * Fetches spells.
  *
  * @param {UseSpellsForImportOptions} options - Hook configuration
  * @returns {UseSpellsForImportResult} Spell loading state

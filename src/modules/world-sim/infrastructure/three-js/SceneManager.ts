@@ -1,8 +1,7 @@
 /**
  * @fileoverview Scene Manager — Three.js Lifecycle Owner
  * @description Creates and manages the Three.js renderer, scene, camera, lights,
- * and animation loop. Dispatches frame phases to RenderLifecycle
- * (PreUpdate → PostRender) with priority ordering.
+ * and animation loop.
  *
  * @module modules/world-sim/infrastructure/three-js/SceneManager
  * @version 2.0.0
@@ -55,7 +54,6 @@ function isMobileDevice(): boolean {
 
 /**
  * Compute the initial maximum pixel ratio.
- * Mobile devices get DPR 1; touch devices get 1.5; others get 2.
  *
  * @function getInitialMaxDPR
  * @returns {number} Maximum pixel ratio for the WebGL renderer
@@ -68,9 +66,6 @@ function getInitialMaxDPR(): number {
 
 /**
  * Manages the Three.js rendering lifecycle.
- * Creates renderer, scene, camera, base lighting, and starfield background.
- * Runs the animation loop, delegates phase dispatch to RenderLifecycle,
- * and handles resize events.
  *
  * @class SceneManager
  *
@@ -190,7 +185,6 @@ export class SceneManager {
 
   /**
    * Register a callback for the Update phase (before WebGL render).
-   * Wrapper for `lifecycle.on(RenderPhase.Update, ...)`.
    *
    * @param {LifecycleCallback} callback - Function called with FrameContext
    * @returns {Function} Unsubscribe function
@@ -201,7 +195,6 @@ export class SceneManager {
 
   /**
    * Register a callback for the PostRender phase (after WebGL render).
-   * Wrapper for `lifecycle.on(RenderPhase.PostRender, ...)`.
    *
    * @param {LifecycleCallback} callback - Function called with FrameContext
    * @returns {Function} Unsubscribe function
@@ -285,7 +278,6 @@ export class SceneManager {
 
   /**
    * Dispose all Three.js resources and remove the canvas from the DOM.
-   * Must be called when the component unmounts.
    */
   dispose(): void {
     this.stop();
@@ -318,9 +310,7 @@ export class SceneManager {
   }
 
   /**
-   * Main animation loop tick. Builds a FrameContext and dispatches
-   * phases around the WebGL render call:
-   * PreUpdate → Update → PostUpdate → PreRender → render() → PostRender
+   * Main animation loop tick.
    *
    * @private
    */

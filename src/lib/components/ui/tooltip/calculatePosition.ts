@@ -1,7 +1,5 @@
 /**
  * @fileoverview Tooltip position calculation utility.
- * Computes absolute screen-space coordinates for a tooltip relative to
- * a trigger element, with viewport-aware flip logic.
  *
  * @module lib/components/ui/tooltip/calculatePosition
  * @version 1.0.0
@@ -10,7 +8,7 @@
  */
 
 /**
- * Placement relative to the trigger. Flips to the opposite side when short of room.
+ * Placement relative to the trigger.
  *
  * @typedef {'top' | 'bottom' | 'left' | 'right'} TooltipPlacement
  */

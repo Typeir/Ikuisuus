@@ -2,10 +2,7 @@
  * @fileoverview Fetcher collapse sweep: one member per file, each converts its
  * file (and paired unit test) off getJson/postJson/raw fetch onto the canonical
  * fetcher at src/lib/fetch/fetcher.ts, preserving the file's existing failure
- * contract. Roster and contracts derive from
- * .ignore/reports/duplication-inventory.md cluster 1.
- *
- *   paw swarm run plans/fetcher-collapse.swarm.mjs --live
+ * contract.
  */
 
 const CANON = [

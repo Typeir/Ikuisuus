@@ -2,11 +2,8 @@
 
 /**
  * @fileoverview Seeds an admin user into the backend selected by the
- * METADATA_BACKEND env var. Password comes from CORRECTIONS_SECRET.
+ * METADATA_BACKEND env var.
  * @description Creates the initial admin user using the active backend.
- * Reads the admin password from CORRECTIONS_SECRET.
- * Side effects: with `fs`, writes `.meta/runtime/users.json`; with `pg`,
- * upserts the `corrections_users` PostgreSQL table.
  *
  * @module scripts/auth/seedAdmin
  * @version 2.0.0

@@ -1,9 +1,7 @@
 /**
  * @fileoverview PostgreSQL Monster Repository (MikroORM)
  * @description Implements `MonsterRepository` via MikroORM `EntityManager`
- * against the `monsters` table. Maps embedded value objects (AC, HP, Speed,
- * Scores, Saves, Senses) from the entity. Ability modifiers are not stored;
- * consumers compute `mod = Math.floor((score - 10) / 2)`.
+ * against the `monsters` table.
  *
  * @module lib/db/content/adapters/pg/pgMonsterRepository
  * @version 5.0.0
@@ -126,8 +124,6 @@ const mapSenses = (row: MonsterEntity): MonsterSenses => ({
 
 /**
  * Maps the loaded feature collection to the domain summary shape.
- *
- * Returns `undefined` when the collection was not populated.
  *
  * @param {MonsterEntity} row - Monster entity row
  * @returns {MonsterFeatureSummary[] | undefined} Feature summaries in stat block order

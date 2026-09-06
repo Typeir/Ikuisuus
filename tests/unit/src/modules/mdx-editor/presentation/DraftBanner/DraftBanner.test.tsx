@@ -1,8 +1,7 @@
 /**
  * DraftBanner Component Unit Tests
  *
- * @fileoverview Tests for the draft indicator banner. Verifies
- * rendering of the DRAFT badge, timestamp metadata, and ARIA attributes.
+ * @fileoverview Tests for the draft indicator banner.
  *
  * @module tests/unit/src/modules/mdx-editor/presentation/DraftBanner/DraftBanner.test
  */

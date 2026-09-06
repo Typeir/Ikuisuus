@@ -1,6 +1,6 @@
 /**
  * @fileoverview HP Roller Group Sub-component
- * @description Renders one vocation's hit dice: a bulk-action row (roll/avg/max/set/add/clear all, with an inline "set all" value box) and one row per level. Each level row has roll and average icon buttons (no-icon tooltips), a value box, and an add/remove control.
+ * @description Renders one vocation's hit dice: a bulk-action row (roll/avg/max/set/add/clear all, with an inline "set all" value box) and one row per level.
  *
  * @module modules/character-builder/presentation/atoms/hpRollerGroup
  * @version 2.0.0

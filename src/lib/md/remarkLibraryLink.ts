@@ -5,9 +5,6 @@
  * routes, so prose can address a page as `/rules/…` instead of repeating
  * `/en/library/` on every link.
  *
- * Rewrites link targets only. A link already carrying a locale, addressing a
- * reserved app path, or pointing off-site is left exactly as authored.
- *
  * @module lib/md/remarkLibraryLink
  * @version 1.0.0
  * @author Typeir

@@ -3,11 +3,6 @@
  * @description Selects the backend that answers which files define and which
  * files ingest a shard, and exports a resolved instance.
  *
- * The query spans every content type rather than one, since a page can consume
- * a shard defined anywhere. The per-type repositories cannot answer it, and two
- * of the ten tables carrying the columns — `rules` and `world` — have no
- * repository of their own.
- *
  * @module lib/db/content/repositories/keywordLinkRepository
  * @version 1.0.0
  * @author Typeir
@@ -37,10 +32,6 @@ export interface KeywordLink {
 
 /**
  * Repository contract for the keyword link graph.
- *
- * Implementations MUST be safe to call when the backing store is unavailable —
- * return an empty array rather than throwing. Invalidation is best effort and
- * must never fail the write that triggered it.
  */
 export interface KeywordLinkRepository {
   /**

@@ -3,12 +3,6 @@
  *
  * @fileoverview Breaks long multi-sentence blockquote lines into one line per
  * sentence, reusing the source line's quote prefix so nesting depth survives.
- * Intermediate lines carry no hard break, so a split paragraph still renders as
- * one paragraph; the original trailing whitespace rides on the final segment.
- *
- *   npx tsx --tsconfig tsconfig.scripts.json scripts/content/splitQuotedSentences.ts
- *   npx tsx --tsconfig tsconfig.scripts.json scripts/content/splitQuotedSentences.ts --apply
- *   npx tsx --tsconfig tsconfig.scripts.json scripts/content/splitQuotedSentences.ts --min=200 src/content/en
  *
  * @module scripts/content/splitQuotedSentences
  * @version 1.0.0

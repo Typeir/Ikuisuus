@@ -1,8 +1,6 @@
 /**
  * @fileoverview Vocation Selector Component
  * @description Renders bloodline, vocation, and specialization selection.
- * Multiclassing supported via multiple {@link VocationEntryBlock} rows.
- * Metadata loads via {@link useVocationMetadata}; skeletons shown while loading.
  *
  * @module modules/character-builder/presentation/builder/vocationSelector
  * @version 7.0.0
@@ -60,8 +58,6 @@ function toOpt(item: { slug: string; title: string }): {
 
 /**
  * Selector panel for bloodline and multiple vocations.
- * Uses `FilterSelect` comboboxes in edit mode; identity pills in view mode.
- * Reads character and edit mode from the active-sheet context.
  *
  * @component
  * @param {VocationSelectorProps} props - Component props

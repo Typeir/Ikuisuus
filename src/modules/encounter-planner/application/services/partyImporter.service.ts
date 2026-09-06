@@ -1,8 +1,7 @@
 /**
  * @fileoverview Party Importer Utilities
  * @description Converts saved party data into InProgressCombatant entries and
- * merges them into an in-progress combat. Handles replace-on-import by removing
- * existing party members before adding new ones.
+ * merges them into an in-progress combat.
  *
  * @module modules/encounter-planner/application/services/partyImporter.service
  * @version 1.0.0
@@ -20,7 +19,6 @@ import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 
 /**
  * Create a minimal InProgressCombatant from a party member name.
- * Party members have no HP, AC, stats, or mechanics — only name, initiative, and slain toggle.
  *
  * @function createPartyMemberCombatant
  * @param {string} name - Character name
@@ -80,8 +78,6 @@ export const createPartyMemberCombatant = (
 
 /**
  * Import a saved party into an in-progress combat.
- * Removes any existing party members (replace-on-import) before adding new ones.
- * New party members are prepended to the turn order.
  *
  * @function importPartyIntoCombat
  * @param {SavedParty} party - The party to import

@@ -1,11 +1,6 @@
 /**
  * @fileoverview Selected Character Badge
  * @description Round badge rendering the globally selected character.
- * Clicking opens a picker; selecting an entry dispatches `SET_ACTIVE_ID`
- * on the roster context, and the final row navigates to the character
- * manager page. The manager row is an anchor with a real `href`; character
- * rows are buttons. An unmodified left click on the anchor is upgraded to
- * a client-side push.
  *
  * @module modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge
  * @version 1.0.0
@@ -37,7 +32,7 @@ import styles from './selectedCharacterBadge.module.scss';
  *
  * @interface SelectedCharacterBadgeProps
  * @property {'up' | 'down'} [dropDirection='up'] - Direction the picker
- * expands. Defaults to 'up'.
+ * expands.
  * @property {'start' | 'end'} [deselectSide='end'] - Corner the deselect
  * control hangs off; `start` for a badge at the end of a bar.
  */
@@ -48,11 +43,11 @@ interface SelectedCharacterBadgeProps {
 
 /**
  * Badge for the globally selected character (sidebar footer or mobile
- * header). Renders nothing until the roster context has hydrated.
+ * header).
  *
  * @component
  * @param {SelectedCharacterBadgeProps} props - Component props
- * @param {'up' | 'down'} [props.dropDirection='up'] - Direction the picker expands. Defaults to 'up'.
+ * @param {'up' | 'down'} [props.dropDirection='up'] - Direction the picker expands.
  * @param {'start' | 'end'} [props.deselectSide='end'] - Corner the deselect control hangs off
  * @returns {JSX.Element | null} Rendered badge or null pre-hydration
  */

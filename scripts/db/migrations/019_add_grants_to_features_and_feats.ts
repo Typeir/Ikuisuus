@@ -1,9 +1,7 @@
 /**
  * @fileoverview Migration 019 — add proficiency grant tags to features and feats
  * @description Adds a nullable `grants text[]` column to `vocation_features`,
- * `specialization_features`, and `feats`. Stores tag-based proficiency grants
- * (`skill:arcana:expertise`, `armor:heavy`, `saving_throw:wisdom`,
- * `weapon:martial`, …). NULL when a row grants nothing.
+ * `specialization_features`, and `feats`.
  * @module scripts/db/migrations/019_add_grants_to_features_and_feats
  * @author Typeir
  * @version 1.0.0

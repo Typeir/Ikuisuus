@@ -1,6 +1,5 @@
 /**
- * @fileoverview XP progression lookup tables and helpers. Thresholds from
- * `character-progression.mdx` (levels 1–30).
+ * @fileoverview XP progression lookup tables and helpers.
  *
  * @module modules/character-builder/lib/utils/xpProgression
  * @version 2.0.0
@@ -10,7 +9,6 @@
 
 /**
  * XP required to reach each level index (1-based).
- * Index 0 is unused; `XP_THRESHOLDS[n]` is the XP needed to be level `n`.
  *
  * @constant {number[]} XP_THRESHOLDS
  */
@@ -29,7 +27,6 @@ export const MAX_XP_LEVEL = 30;
 
 /**
  * Returns the character level for the given XP total.
- * Capped at {@link MAX_XP_LEVEL}; never returns less than 1.
  *
  * @function getLevelFromXP
  * @param {number} xp - Total accumulated experience points
@@ -49,7 +46,6 @@ export function getLevelFromXP(xp: number): number {
 
 /**
  * Returns the minimum XP required to be at the given level.
- * Returns 0 for any level outside the range 1–{@link MAX_XP_LEVEL}.
  *
  * @function getXPForLevel
  * @param {number} level - Target character level
@@ -63,9 +59,6 @@ export function getXPForLevel(level: number): number {
 /**
  * Returns a power-law position (0–100) for the given XP along the
  * 0 → {@link XP_THRESHOLDS}[{@link MAX_XP_LEVEL}] axis.
- * Uses `(xp / maxXp) ** 0.325`, expanded ×100. `xp` is clamped to [0, maxXp].
- * Guarantees `getXpAxisPosition(0) === 0`, `getXpAxisPosition(maxXp) === 100`,
- * and no decrease.
  *
  * @function getXpAxisPosition
  * @param {number} xp - Total accumulated experience points (clamped to [0, maxXp])
@@ -80,7 +73,7 @@ export function getXpAxisPosition(xp: number): number {
 
 /**
  * Returns percentage progress (0–100) from the current level's XP floor
- * toward the next level's XP threshold. Returns 100 when level ≥ {@link MAX_XP_LEVEL}.
+ * toward the next level's XP threshold.
  *
  * @function getXPProgressPercent
  * @param {number} xp - Total accumulated experience points

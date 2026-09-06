@@ -1,7 +1,6 @@
 /**
  * @fileoverview next-intl mock backed by the real English message files with
- * `{param}` interpolation. Provides `createRealMessageIntlMock` for tests that
- * assert user-visible copy.
+ * `{param}` interpolation.
  * @module tests/setup/intlMock
  * @version 1.0.0
  * @author Typeir
@@ -47,8 +46,7 @@ const resolvePath = (root: unknown, path?: string): unknown => {
 };
 
 /**
- * Substitutes `{param}` placeholders using the supplied values. Placeholders
- * with no matching value are left intact.
+ * Substitutes `{param}` placeholders using the supplied values.
  *
  * @function interpolate
  * @param {string} template - Message template
@@ -65,21 +63,23 @@ const interpolate = (
 
 /**
  * Builds a `next-intl` module replacement whose `useTranslations` resolves
- * against the real English messages. Unknown keys fall back to the key itself.
+ * against the real English messages.
  *
  * @function createRealMessageIntlMock
  * @param {T} actual - The unmocked `next-intl` module (spread through so
  *   `NextIntlClientProvider` and friends keep working)
+ * @param {Record<string, unknown>} [extra] - Further catalogues keyed by namespace, for a test that reads one the default set leaves out
  * @returns {T & Record<string, unknown>} Module replacement for `vi.mock`
  * @template {Record<string, unknown>} T
  */
 export const createRealMessageIntlMock = <T extends Record<string, unknown>>(
   actual: T,
+  extra: Record<string, unknown> = {},
 ): T & Record<string, unknown> => ({
   ...actual,
   useLocale: () => 'en',
   useTranslations: (namespace?: string) => {
-    const scope = resolvePath(MESSAGES, namespace);
+    const scope = resolvePath({ ...MESSAGES, ...extra }, namespace);
     return (key: string, values?: Record<string, unknown>) => {
       const message = resolvePath(scope, key);
       return typeof message === 'string' ? interpolate(message, values) : key;

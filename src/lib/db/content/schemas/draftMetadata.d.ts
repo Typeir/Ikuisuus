@@ -1,7 +1,6 @@
 /**
  * @fileoverview Draft Metadata Schema
- * @description Domain types for draft content. These types define the shape
- * of data returned to consumers — decoupled from the ORM entity layer.
+ * @description Domain types for draft content.
  *
  * @module lib/db/content/schemas/draftMetadata
  * @version 1.0.0

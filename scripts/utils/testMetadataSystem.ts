@@ -2,7 +2,6 @@
  * Integration test helper for MetadataTable components
  *
  * @fileoverview Verifies that the metadata table system is working correctly.
- * Checks directories, metadata files, and component files.
  *
  * @module scripts/utils/testMetadataSystem
  * @version 1.0.0

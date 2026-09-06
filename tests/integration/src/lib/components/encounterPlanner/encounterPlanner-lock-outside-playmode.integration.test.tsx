@@ -2,8 +2,6 @@
  * EncounterPlanner Lock Outside PlayMode Integration Tests
  *
  * @fileoverview Tests lock functionality in EncounterPlanner (non-PlayMode) context.
- * Verifies createInProgressCombatant initializes locked, CombatantRow renders lock
- * state, and lock toggles work outside PlayMode.
  *
  * @module encounterPlanner-lock-outside-playmode
  * @version 1.0.0
@@ -35,9 +33,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * Integration tests for lock functionality outside PlayMode.
- *
- * Verifies the lock system works in EncounterPlanner context; locked field
- * is initialized by createInProgressCombatant.
  */
 
 // Helper to wrap component with intl context

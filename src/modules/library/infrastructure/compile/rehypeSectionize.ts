@@ -1,5 +1,5 @@
 /**
- * @fileoverview Rehype plugin: wraps content between headings in sections, entries in articles. Adds anchors, slugs and stream rails.
+ * @fileoverview Rehype plugin: wraps content between headings in sections, entries in articles.
  *
  * @module modules/library/infrastructure/compile/rehypeSectionize
  * @version 2.1.0
@@ -255,8 +255,7 @@ function sectionize(
 /* ─────────────────────────  Pass 3: stream rails  ───────────────────── */
 
 /**
- * Rail element the stream text scrolls inside. Hidden from assistive tech;
- * the text is ornament.
+ * Rail element the stream text scrolls inside.
  *
  * @param {'left' | 'right'} side - Section edge the rail hugs
  * @returns {Element} Rail element
@@ -286,9 +285,7 @@ function isEntryChild(node: ElementContent): boolean {
 
 /**
  * Adds rails to every heading section: a left rail always, a right rail when
- * the section holds entries. The text comes from the host's inherited
- * `--stream-text`, so no option gates this. Rails go after the heading so
- * `children[0]` stays the heading for later passes.
+ * the section holds entries.
  *
  * @param {Parent} node - Node whose subtree to walk
  */

@@ -36,7 +36,6 @@ export type EntityClass = abstract new (...args: never[]) => unknown;
 
 /**
  * Returns the definition owned by this exact class, creating it on first use.
- * Shallow-copies an inherited definition onto the class on first access.
  *
  * @param {EntityClass} target - Class collecting the definition.
  * @returns {EntityDefinition} The class's own mutable definition.
@@ -63,7 +62,7 @@ export const getOwnDefinition = (target: EntityClass): EntityDefinition => {
 
 /**
  * Restores the authored name onto a class constructor via configurable
- * `Function.prototype.name`. Must run before the EntitySchema is built.
+ * `Function.prototype.name`.
  *
  * @param {EntityClass} target - Class whose name is being restored.
  * @param {string} name - Authored entity name.

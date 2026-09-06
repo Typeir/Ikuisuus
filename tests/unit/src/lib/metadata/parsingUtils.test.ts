@@ -116,8 +116,7 @@ describe('parseProperties', () => {
 
 describe('parseWeight', () => {
   /**
-   * Weight is answered in burden, whatever unit the source used. Imperative
-   * units matched no authoring expression.
+   * Weight is answered in burden, whatever unit the source used.
    */
   it('should read the native expression the corpus actually uses', () => {
     expect(parseWeight({ Weight: '[= 2 burden =]' })).toEqual({

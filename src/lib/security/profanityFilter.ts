@@ -1,8 +1,6 @@
 /**
  * @fileoverview Profanity Filter
- * @description Server-side profanity detection. Loads banned terms from
- * `banned-terms.txt` at module init and matches strings against them with
- * word-boundary regex. Returns match details.
+ * @description Server-side profanity detection.
  *
  * @module lib/security/profanityFilter
  * @author Typeir
@@ -31,7 +29,6 @@ export interface ProfanityCheckResult {
 
 /**
  * Reads `banned-terms.txt` co-located with this module.
- * Skips blank lines and comment lines (starting with #).
  *
  * @returns {string[]} Array of trimmed, non-empty banned terms
  */
@@ -75,8 +72,6 @@ const getBannedTerms = (): string[] => {
 
 /**
  * Compiled regex built from the banned terms list.
- * Uses word boundaries (\b) and case-insensitive matching.
- * Lazily compiled on first use and cached.
  */
 let cachedRegex: RegExp | null = null;
 

@@ -1,8 +1,6 @@
 /**
  * @fileoverview Combatant Details Columns Component
  * @description Renders a column per details type (buffs, items, spells, affixes, conditions).
- * Each column renders only if content is provided or showEmpty is true.
- * Used in CreatureRow (design mode) and PlayModeCombatantRow (play mode).
  *
  * @module modules/encounter-planner/presentation/combatantDetailsColumns
  * @version 1.0.0
@@ -51,7 +49,6 @@ interface CombatantDetailsColumnsProps {
 /**
  * @component
  * @description Renders the four-column details layout.
- * Each column renders only if content is provided or showEmpty is true.
  *
  * @param {CombatantDetailsColumnsProps} props - Component props
  * @param {ReactNode} [props.buffs] - Buff list editor component

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Sample templates for each content kind. Must parse via metadata generator.
+ * @fileoverview Sample templates for each content kind.
  *
  * @module modules/mdx-editor/domain/sampleTemplates
  * @version 1.0.0

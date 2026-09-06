@@ -64,8 +64,6 @@ const highlight = (code: string): string =>
 
 /**
  * Split-pane editor layout with a draggable divider.
- * Left side: toolbar + syntax-highlighted code editor.
- * Right side: live MDX preview (toggleable).
  *
  * @component
  * @param {EditorSplitPaneProps} props - Component properties

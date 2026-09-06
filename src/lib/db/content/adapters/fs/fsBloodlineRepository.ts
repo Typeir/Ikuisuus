@@ -25,7 +25,6 @@ import { FsMetadataRepository } from './FsMetadataRepository';
  *
  * @description
  * Reads `.metadata.json` sidecar files from `character-creation/bloodlines/`.
- * Null entries from excluded files are removed.
  */
 class FsBloodlineRepository
   extends FsMetadataRepository<BloodlineMetadata>

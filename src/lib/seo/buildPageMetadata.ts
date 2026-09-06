@@ -1,9 +1,6 @@
 /**
  * @fileoverview Builds Next.js Metadata objects for library content pages.
  *
- * Assembles Open Graph and Twitter metadata from a PageSeoInput. Image and
- * URL paths are root-relative strings.
- *
  * @module lib/seo/buildPageMetadata
  * @version 1.0.0
  * @author Typeir
@@ -21,9 +18,6 @@ const OG_IMAGE_HEIGHT = 630;
 
 /**
  * Parses a `slugPath` into an OG content type and slug.
- *
- * Supports flat paths (`monsters/slug`) and nested item paths
- * (`items/heirlooms/slug`). Returns `null` when no type is identified.
  *
  * @param {string} slugPath - Slash-separated content path
  * @returns {{ type: string; slug: string } | null} Parsed type + slug or null

@@ -101,8 +101,7 @@ function firstParenGroup(text: string): string | undefined {
 }
 
 /**
- * Splits a mastery clause into lower-case names. Strips markdown and em-dash
- * notes, splits on "or"/commas, drops "None".
+ * Splits a mastery clause into lower-case names.
  *
  * @param {string} value - Raw mastery clause
  * @returns {string[]} Mastery names
@@ -434,8 +433,7 @@ function parseWeaponDamageFromProperties(properties: Record<string, string>) {
 
 /**
  * Parses the Type property and extracts weapon properties, weapon type, unique
- * tags, and mastery. The parenthetical lists weapon properties for weapon base
- * types and occupied slots for all other base types.
+ * tags, and mastery.
  *
  * @param {Record<string, string>} properties - Parsed properties
  * @param {SharedData} sharedData - Shared data
@@ -535,9 +533,7 @@ function parseTypeProperty(
 }
 
 /**
- * First prose paragraph after the H1 title, with markdown stripped. Skips JSX
- * component blocks, italic metadata lines, headings, table rows, blockquotes,
- * and code fences.
+ * First prose paragraph after the H1 title, with markdown stripped.
  *
  * @param {string[]} lines - File lines (trimmed)
  * @returns {string | undefined} First prose line with markdown stripped, or undefined
@@ -911,8 +907,7 @@ function attrValueOf(node: MdNode, name: string): string | undefined {
 }
 
 /**
- * Text of the first child slot element with the given name (form D). Slots
- * sit directly or inside a paragraph of the host.
+ * Text of the first child slot element with the given name (form D).
  *
  * @param {MdNode} node - Host element node
  * @param {string} name - Slot element name

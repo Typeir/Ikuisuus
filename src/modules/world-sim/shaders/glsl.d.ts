@@ -1,9 +1,7 @@
 /**
  * @fileoverview GLSL Module Declaration
  * @description Declares .glsl files as string modules so TypeScript
- * can import them with proper typing. The string is produced by
- * `scripts/build/glslRawLoader.cjs` under Turbopack and by the matching
- * `glsl-source` plugin in `vitest.config.ts` under test.
+ * can import them with proper typing.
  *
  * @module modules/world-sim/shaders/glsl
  * @version 1.1.0

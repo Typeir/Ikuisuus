@@ -1,7 +1,6 @@
 /**
  * @fileoverview Builds sitemap.xml from the English content tree, mapping each
- * MDX file to its canonical locale-prefixed URL. Index files map to the URL of
- * the folder they stand for.
+ * MDX file to its canonical locale-prefixed URL.
  *
  * @module app/sitemap
  * @version 2.0.0
@@ -25,7 +24,7 @@ const CONTENT_ROOT = getContentFolder('en');
 
 /**
  * Resolves a content file's slug path, pruning the extension and content-type
- * suffix. An index file resolves to its containing folder.
+ * suffix.
  *
  * @param {string} relativePath - Path relative to the content root
  * @returns {string} Slug path with forward slashes, empty for a root index

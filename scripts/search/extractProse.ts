@@ -130,10 +130,6 @@ function stripMarkdownSyntax(content: string): string {
 /**
  * Unwraps the authored shortcodes to the text a reader sees.
  *
- * A keyword yields its display text, a measure its plain form, a dice
- * expression its notation. Left in place they would index as literal markup,
- * so a search for the word inside one would miss the page carrying it.
- *
  * @param {string} content - Body content
  * @returns {string} Content with shortcodes reduced to their rendered text
  */
@@ -169,8 +165,6 @@ function collapseWhitespace(content: string): string {
 
 /**
  * Extracts readable plain-text prose from a raw MDX file for Pagefind indexing.
- *
- * Pipeline: frontmatter → imports → JSX → code → markdown syntax → whitespace.
  *
  * @param {string} raw - Raw MDX file content
  * @returns {string} Plain-text prose suitable for full-text search indexing

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Viewport Media Query Hooks
- * @description SSR-safe `matchMedia` subscription hooks. Returns `undefined`
- * on the server and during pre-hydration client render.
+ * @description SSR-safe `matchMedia` subscription hooks.
  *
  * @module lib/hooks/useMediaQuery
  * @author Typeir
@@ -20,7 +19,6 @@ export const MOBILE_VIEWPORT_QUERY = '(max-width: 1023.98px)';
 
 /**
  * Subscribe to a CSS media query and return whether it currently matches.
- * Returns `undefined` on the server and during hydration.
  *
  * @function useMediaQuery
  * @param {string} query - CSS media query string, e.g. `(max-width: 768px)`

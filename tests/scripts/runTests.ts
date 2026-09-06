@@ -3,9 +3,6 @@
  * Test Runner — Parallel Project Orchestrator
  *
  * @fileoverview Runs vitest projects with bounded parallelism.
- * Each project gets its own process with bounded memory and concurrency controls.
- * Suppresses known CJS deprecation warnings from stderr.
- * Aggregates exit codes: fails if any project fails.
  *
  * @module runTests
  * @author Typeir
@@ -20,8 +17,6 @@ const LOCAL_PROJECT_CONCURRENCY = 3;
 
 /**
  * Project names matching vitest.config.ts `projects[].test.name`.
- *
- * Exported for CI matrix building.
  */
 export const PROJECTS = [
   'unit:components',

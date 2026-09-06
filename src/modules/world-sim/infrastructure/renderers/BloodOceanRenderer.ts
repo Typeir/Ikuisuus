@@ -4,12 +4,6 @@
  * semi-transparent blood ocean shell displaced by bloodOcean.vert.glsl and
  * coloured by bloodOcean.frag.glsl, plus a corona atmosphere and glow sprite.
  *
- * Layer order (back to front):
- * 1. Dark core sphere — opaque, depthWrite true
- * 2. Blood ocean shell — semi-transparent, depthWrite false
- * 3. Corona atmosphere — BackSide AdditiveBlending, depthWrite false
- * 4. Glow sprite — outer far glow, AdditiveBlending
- *
  * @module modules/world-sim/infrastructure/renderers/BloodOceanRenderer
  * @version 1.0.0
  * @author Typeir
@@ -134,7 +128,6 @@ export class BloodOceanRenderer implements ICelestialRenderer {
 
   /**
    * Create the blood ocean world mesh group.
-   * Layers: dark core → displaced ocean shell → corona → glow sprite.
    *
    * @param {CelestialBodyData | BoundaryData} data - Body definition data
    * @returns {Object3D} Group containing all blood ocean layers

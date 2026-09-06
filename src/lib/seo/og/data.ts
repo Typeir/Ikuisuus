@@ -1,14 +1,6 @@
 /**
  * @fileoverview OG image metadata resolver.
  *
- * Fetches a single metadata record via the active content repository for a
- * given content type and slug. Delegates to the same adapter (fs or pg) used
- * by all other content API routes — no direct filesystem access.
- *
- * Supported type strings:
- * - `monsters`, `heirlooms`, `spells`, `trinkets`
- * - `bloodlines`, `vocations`, `specializations`
- *
  * @module lib/seo/og/data
  * @version 2.0.0
  * @author Typeir
@@ -78,9 +70,6 @@ export function getSupportedOgTypes(): string[] {
  * Resolves and returns the root-relative public image path for a content
  * entity, following the same convention used by `resolvePageImage`.
  *
- * Pattern: `/library/images/{type}/{slug}.webp` — falls back gracefully
- * to an empty string if no known subfolder exists for the type.
- *
  * @param {string} type - Content type key (e.g. `"monsters"`)
  * @param {string} slug - Entity slug (e.g. `"abominable-avian"`)
  * @returns {string} Root-relative image path or empty string
@@ -98,11 +87,6 @@ export function resolveOgImagePath(type: string, slug: string): string {
 
 /**
  * Resolves the root-relative path for a background sidecar image.
- *
- * Background images follow the naming convention `{slug}-background.webp`
- * and exist alongside the primary entity image in the same directory. Not
- * every entity has a background image — callers must check file existence
- * before using this path.
  *
  * @param {string} type - Content type key (e.g. `"heirlooms"`)
  * @param {string} slug - Entity slug (e.g. `"dreaded-defender"`)
@@ -135,10 +119,6 @@ function formatSpellLevel(level: number | undefined): string | undefined {
 
 /**
  * Fetches the OG card data for a single entity identified by type and slug.
- *
- * Delegates to the active repository adapter (fs or pg) — never reads
- * the filesystem directly. Returns `null` when the type is unsupported
- * or no record exists for the slug.
  *
  * @param {string} type - Content type key (e.g. `"monsters"`, `"heirlooms"`)
  * @param {string} slug - URL-safe entity identifier

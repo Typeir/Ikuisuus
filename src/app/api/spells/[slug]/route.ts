@@ -28,7 +28,6 @@ const log = logger.child({ module: 'API:Spell:Single' });
  * GET /api/spells/[slug]
  *
  * Returns full metadata for a specific spell.
- * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object
  * @param {Object} context - Next.js context

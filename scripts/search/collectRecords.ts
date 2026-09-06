@@ -4,10 +4,6 @@
  * extracts prose from MDX files, and joins `.metadata.json` sidecars to
  * produce IndexRecord entries for the Pagefind index.
  *
- * Sidecar lookup is locale-parameterized: with `pg` METADATA_BACKEND,
- * `.meta/{locale}/{subdir}/` is tried first, then source-adjacent
- * `src/content/{locale}/...` files ({@link sidecarCandidates}).
- *
  * @module scripts/search/collectRecords
  * @version 1.0.0
  * @author Typeir
@@ -71,8 +67,7 @@ export interface IndexRecord {
 }
 
 /**
- * Strips the extension and content-type suffix to derive the slug. `TYPE_PATTERNS`
- * is the file matcher, and several entries would leave the suffix in.
+ * Strips the extension and content-type suffix to derive the slug.
  *
  * @param {string} fileName - Base filename (e.g. `aboleth.sheet.mdx`)
  * @returns {string} Sluggified name (e.g. `aboleth`)
@@ -97,8 +92,7 @@ function humanizeFolderName(folderName: string): string {
 
 /**
  * Derives a display title for a record: the sidecar `title` when set, else
- * the filename-derived slug. If the slug is empty or `main`, the parent
- * folder name is humanised and used instead.
+ * the filename-derived slug.
  *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
@@ -174,15 +168,6 @@ async function scanDir(
 /**
  * Candidate sidecar paths for a source file, highest priority first.
  *
- * Naming (per metadata generators, e.g. `generateMetadata.ts`):
- * - vocations: `{dir}/main.mdx` → `{dir}/{dirName}.metadata.json`
- * - world: `x.lore.mdx` → `x.lore.metadata.json` and suffix-stripped
- *   `x.metadata.json`
- * - all others: type suffix replaced — `x.sheet.mdx` → `x.metadata.json`
- *
- * The `.meta/{locale}/{metaSubdir}/{basename}` paths take priority; the
- * source-adjacent locations remain as a fallback.
- *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
  * @param {string} locale - Locale code
@@ -232,10 +217,6 @@ function sidecarCandidates(
 
 /**
  * Reads the metadata sidecar for a source file, if any exists.
- *
- * Tries each candidate from {@link sidecarCandidates} and returns the first
- * that parses. Monster sidecars are JSON arrays (one entry per stat variant);
- * all other types are single objects — callers must handle both.
  *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
@@ -288,11 +269,6 @@ const ASPECT_TOKEN = /^[a-z][a-z0-9-]*(:[a-z0-9-]+)+$/;
 /**
  * Splits aspect tags into one filter per group.
  *
- * A token `a:b:c` becomes filter key `a-b` value `c`. Group names are joined
- * with a dash so `meta:source` reaches Pagefind as `meta-source`. Only
- * matches {@link ASPECT_TOKEN}; non-matching tags are skipped. Mutates
- * `filters` in place, de-duplicating values.
- *
  * @param {unknown} tags - The metadata `tags` value
  * @param {Record<string, string[]>} filters - Filter map, mutated in place
  * @returns {void}
@@ -320,10 +296,6 @@ function assignAspectFilters(
 
 /**
  * Converts metadata fields to Pagefind filters (string arrays).
- *
- * `level` and `rarity` are read from aspects instead of the raw duplicated
- * fields (`0`/`very rare` in the field vs `cantrip`/`very-rare` in the
- * aspect). `cr` and `category` have no aspect and stay.
  *
  * @param {Record<string, unknown>} metadata - Parsed metadata record
  * @param {string} contentType - Content type key

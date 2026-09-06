@@ -10,7 +10,6 @@
 
 /**
  * Shape of a raw Pagefind search result before `data()` resolution.
- * A hit is cheap; `data()` is one network fetch per result.
  *
  * @interface PagefindResult
  */
@@ -73,9 +72,6 @@ const loading = new Map<string, Promise<PagefindInstance>>();
 
 /**
  * Loads and caches the Pagefind ESM bundle for a locale via native `import()`.
- * The bundle is a pure ES module: its API lives on the module namespace,
- * not `window`, and it uses `import.meta` so it cannot load as a classic
- * `<script>` tag.
  *
  * @param {string} locale - Locale code (e.g. 'en')
  * @returns {Promise<PagefindInstance>} Initialised Pagefind instance
@@ -106,8 +102,6 @@ async function loadBundle(locale: string): Promise<PagefindInstance> {
 
 /**
  * Returns the Pagefind instance for a locale, loading the bundle if needed.
- *
- * SSR-safe — returns `null` when `window` is absent.
  *
  * @param {string} locale - Locale code
  * @returns {Promise<PagefindInstance | null>} Instance or null when not in browser

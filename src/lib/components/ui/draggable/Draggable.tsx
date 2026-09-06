@@ -29,7 +29,7 @@ import {
  * @property {CSSProperties} [style] - Additional inline styles for the outer container
  * @property {CSSProperties['width']} [defaultWidth] - Default width in CSS syntax; overridden by user resize
  * @property {CSSProperties['height']} [defaultHeight] - Default height in CSS syntax; overridden by user resize
- * @property {PositionValue | PositionFromBounds} [initialPosition] - Starting position; static coordinates or a function receiving parent bounds. New static coordinates after mount move the container; an unchanged value is ignored
+ * @property {PositionValue | PositionFromBounds} [initialPosition] - Starting position; static coordinates or a function receiving parent bounds.
  * @property {React.RefObject<HTMLElement | null>} [boundsRef] - Ref to the bounding container element
  * @property {string} [testId] - data-testid for testing
  * @property {boolean} [resizable] - Whether the container can be resized via a corner handle

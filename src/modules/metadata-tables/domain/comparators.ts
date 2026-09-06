@@ -64,8 +64,7 @@ export function parseChallengeRating(cr: unknown): number {
 
 /**
  * Comparison utility for Challenge Rating values.
- * Handles fractions, regular numbers, and missing values.
- * 
+ *
  * @param {unknown} a - First CR value
  * @param {unknown} b - Second CR value
  * @returns {number} Comparison result (-1, 0, 1)

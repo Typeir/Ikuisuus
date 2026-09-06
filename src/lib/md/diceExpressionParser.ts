@@ -2,8 +2,6 @@
  * Dice Expression Parser
  *
  * @fileoverview Pure parser for `[% ... %]` dice expression syntax used in MDX content.
- * Parses dice notation (NdM), optional special roll modifiers (KH1, KL1, DL1, DH1),
- * optional signed modifier, and optional damage type description.
  *
  * @module lib/md/diceExpressionParser
  * @version 1.0.0
@@ -11,7 +9,7 @@
  * @since 2026-07-10
  */
 
-/** Regex to match `[% ... %]` delimited dice expressions in text. Non-greedy inner capture. */
+/** Regex to match `[% ... %]` delimited dice expressions in text. */
 export const DICE_EXPR_REGEX = /\[%\s*(.*?)\s*%\]/g;
 
 /** Regex to match valid special roll type shortcodes: KH1, KL1, DL1, DH1. */
@@ -78,7 +76,6 @@ export interface ParsedDiceExpression {
 
 /**
  * Extracts special roll shortcodes from a string, in order of first appearance.
- * Deduplicates so each shortcode appears at most once.
  *
  * @param {string} text - The text to scan for special shortcodes
  * @returns {string[]} Ordered unique list of found special shortcodes
@@ -120,7 +117,6 @@ function stripSpecials(text: string): string {
 
 /**
  * Parses a dice expression from the inner content of a `[% ... %]` block.
- * Returns null for malformed or empty expressions (leaves them as plain text).
  *
  * @param {string} inner - The raw content between `[%` and `%]`, e.g. "2d20;KH1 + 5 fire"
  * @returns {ParsedDiceExpression | null} Parsed expression or null if malformed

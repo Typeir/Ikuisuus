@@ -2,7 +2,6 @@
  * fetchPersistentData Utility Unit Tests
  *
  * @fileoverview Tests for multi-layer persistent data retrieval utility.
- * Validates priority ordering: cookies > sessionStorage > localStorage.
  *
  * @module tests/unit/src/lib/utils/fetchPersistentData.test
  * @version 1.0.0

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Spell Metadata Generator
- * @description Parses Damocles spell entries in MDX format. Extracts level, school,
- * casting time, range, components, duration, concentration, and gameplay tags.
+ * @description Parses Damocles spell entries in MDX format.
  *
  * @module scripts/metadata/generateSpellMetadata
  * @version 2.0.0
@@ -13,6 +12,7 @@ import { createLogger } from '@/lib/logging/logger';
 import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
+import { unslotSpell } from './slotForms';
 import path from 'path';
 import {
   GameData,
@@ -315,9 +315,7 @@ function generateSpellTags(
 }
 
 /**
- * Parses spell lists section from MDX content. A link that targets a
- * `.specialization` page marks the list as specialization-owned; the owning
- * slug is derived from the link's basename.
+ * Parses spell lists section from MDX content.
  *
  * @param {string} content - Full MDX content
  * @returns {Array<{ name: string, link: string, specialization?: string }>} Spell list references
@@ -384,7 +382,8 @@ export function parseSpellSource(
   filePath: string,
   sharedData: SharedData,
 ): object {
-  const { data: frontmatter, content } = matter(raw);
+  const { data: frontmatter, content: authored } = matter(raw);
+  const content = unslotSpell(authored);
   const lines = content.split('\n');
   const source =
     typeof frontmatter.source === 'string' ? frontmatter.source : undefined;

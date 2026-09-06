@@ -37,10 +37,7 @@ function defaultDieResult(
 
 /**
  * Rebuilds the canonical hit-dice log: one entry per vocation level, in
- * vocation-then-level order. Keeps existing entries' rolled values, seeds
- * never-rolled entries to their default with `addedToHp` true, and drops entries
- * whose level or vocation no longer exists. Reuses the existing entry object when
- * `dieType`, `result`, and `addedToHp` are unchanged.
+ * vocation-then-level order.
  *
  * @function buildCanonicalLog
  * @param {CharacterSheet} character - Character to rebuild the log for
@@ -108,9 +105,7 @@ function buildCanonicalLog(character: CharacterSheet): {
 
 /**
  * Computes the patch to bring a character's `hitDiceLog` and `hpMax` into sync
- * with its vocations and level. Returns `null` when already in sync. `hpMax` is
- * recomputed from {@link deriveHitPoints} on every call, so any dice, CON, or
- * passive-HP change is reflected. `tierBonus` is never included in the patch.
+ * with its vocations and level.
  *
  * @function syncHitDiceLog
  * @param {CharacterSheet} character - Character to reconcile

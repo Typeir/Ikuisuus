@@ -13,7 +13,6 @@ import type { ReusableEntry } from './reusableRegistry';
 
 /**
  * Matches a self-closing PascalCase tag, optionally dotted for a named region.
- * Attributes are ignored.
  */
 const REUSABLE_TAG = /<([A-Z][A-Za-z0-9]*)(?:\.([A-Za-z][A-Za-z0-9]*))?\s*\/>/g;
 
@@ -45,7 +44,6 @@ function resolveSource(
 
 /**
  * Replaces reusable references in a document with their region sources.
- * Unknown references are left unchanged.
  *
  * @param {string} source - Host document source
  * @param {Map<string, ReusableEntry>} registry - Discovered reusable entries

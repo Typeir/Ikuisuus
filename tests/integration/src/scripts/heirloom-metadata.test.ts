@@ -2,8 +2,6 @@
  * Heirloom Metadata Generator Integration Tests
  *
  * @fileoverview Integration tests for the heirloom (magical item) metadata extraction system.
- * Tests parsing of Damocles magical items including weapons, armor, and accessories with various
- * rarities, properties, and attunement requirements.
  *
  * @module tests/integration/heirloom-metadata
  * @version 1.0.0

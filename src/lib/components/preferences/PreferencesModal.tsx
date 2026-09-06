@@ -32,9 +32,6 @@ import styles from './PreferencesModal.module.scss';
 /**
  * Percentage a reader types, over the multiplier the stylesheet consumes.
  *
- * The stored value is a bare multiplier so the CSS `calc()` stays trivial;
- * the field shows percent because a percentage is what a reader means.
- *
  * @constant
  */
 const SCALE_AS_PERCENT = 100;

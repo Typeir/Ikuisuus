@@ -11,7 +11,6 @@ import type { CharacterShard } from '@/lib/types/character';
 
 /**
  * Compute the total Boon Points spent across all selected boon shards.
- * Non-boon shards and shards with no `bpCost` are counted as 0.
  *
  * @function computeBpSpent
  * @param {CharacterShard[]} selectedBoons - Array of selected boon shards

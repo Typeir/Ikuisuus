@@ -2,9 +2,7 @@
  * @fileoverview In-house ORM decorators safe under class-name minification.
  * @description Drop-in replacements for MikroORM's `@Entity`, `@Property`,
  * `@PrimaryKey`, `@ManyToOne`, `@OneToMany`, `@Embedded`, `@Embeddable`,
- * `@Index` and `@Unique`. Entity and relation targets are literal strings, not
- * class references. `@OrmIndex` and `@OrmUnique` must sit below `@OrmEntity`
- * because class decorators run bottom-up.
+ * `@Index` and `@Unique`.
  *
  * @module lib/db/orm/schema/decorators
  * @version 1.0.0

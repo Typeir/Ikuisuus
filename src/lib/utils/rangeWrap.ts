@@ -22,12 +22,6 @@
 /**
  * Wraps a number into an inclusive [min, max] range using modulo arithmetic.
  *
- * - Values above max wrap to the start of the range.
- * - Values below min wrap to the end of the range.
- * - Multiple wraps accumulate (e.g., 100 in [0, 10] wraps 9 times).
- *
- * Handles any input magnitude.
- *
  * @param {number} val - The value to wrap within the range.
  * @param {number} min - The minimum bound of the range (inclusive).
  * @param {number} max - The maximum bound of the range (inclusive).

@@ -1,9 +1,7 @@
 /**
  * Library URL Expansion
  *
- * @fileoverview Expands a shorthand library link into a full route. Pure, with
- * no filesystem access, so the remark plugin stays safe to bundle for the
- * client and the link checker can share the same rule.
+ * @fileoverview Expands a shorthand library link into a full route.
  *
  * @module lib/md/libraryUrl
  * @version 1.0.0
@@ -43,12 +41,6 @@ function isRootRelative(url: string): boolean {
 
 /**
  * Full route for a library link written in shorthand.
- *
- * Content addresses the library three ways, and all three resolve here:
- * `/en/library/rules/…` (already whole), `/library/rules/…` (locale dropped),
- * and `/rules/…` (locale and library dropped). Anything already carrying a
- * locale, addressing a reserved app path, or pointing off-site is returned
- * unchanged, so expansion never rewrites a link that already meant something.
  *
  * @param {string} url - Link target as authored
  * @param {string} locale - Locale of the document holding the link

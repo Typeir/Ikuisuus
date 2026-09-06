@@ -1,9 +1,7 @@
 /**
  * @fileoverview Inventories the button classes that live outside `buttons.module.scss`.
  * @description Every class applied to a `<button>` from a module stylesheet, compiled
- * to its resolved declarations so mixin-produced styles are visible. Each entry is
- * scored against the canonical variants, and split by whether it was built on a
- * canonical mixin or hand-rolled from nothing.
+ * to its resolved declarations so mixin-produced styles are visible.
  *
  * @module app/[locale]/labs/dev/buttons/bespokeCatalog
  * @version 1.0.0

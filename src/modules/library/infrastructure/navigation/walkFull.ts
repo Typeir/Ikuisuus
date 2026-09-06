@@ -23,10 +23,6 @@ import type { WalkNode } from './types';
  * Chooses one file per navigation slug, so that a suffixed content file and a
  * bare one sharing a base name do not both become nodes.
  *
- * A content suffix wins over none: `dragon.sheet.mdx` is preferred to
- * `dragon.mdx`, both of which resolve to the slug `dragon`. Where neither
- * carries a suffix, or both do, the first name in the sorted list wins.
- *
  * @param {string[]} files - Content filenames in one directory, already sorted.
  * @returns {Map<string, string>} Kebab-cased slug to the filename that owns it.
  *

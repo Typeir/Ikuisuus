@@ -1,9 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview ik — Interactive multirepo sync CLI entry point. With no
- * arguments, launches the interactive TUI. With arguments, routes to the
- * matching command in `./commands/*.ts`; unrecognised commands fall through to
- * a dual-repo git passthrough.
+ * @fileoverview ik — Interactive multirepo sync CLI entry point.
  *
  * @module scripts/multirepo/ik
  * @author Typeir
@@ -22,8 +19,7 @@ import { checkSubmodule, cmdPassthrough } from './git';
 import { runInteractive } from './tui';
 
 /**
- * CLI entry point. Launches the interactive TUI when called with no arguments;
- * otherwise routes directly to the matching command handler.
+ * CLI entry point.
  */
 async function main(): Promise<void> {
   process.env['IK_RUNNING'] = '1';

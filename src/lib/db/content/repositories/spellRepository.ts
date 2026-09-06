@@ -17,12 +17,10 @@ import type { SpellIndexEntry, SpellMetadata } from '../schemas/spellMetadata';
 
 /**
  * Spell metadata repository contract.
- * Implementations return empty arrays or null when the backing store is unavailable.
  */
 export interface SpellRepository {
   /**
    * Returns all spell metadata records for a locale.
-   * Optional filters are pushed down to the backing store.
    *
    * @param {string} locale - Locale code (e.g. 'en', 'es')
    * @param {FilterExpression[]} [filters] - Optional JSON-serializable filter list
@@ -49,7 +47,6 @@ export interface SpellRepository {
 
   /**
    * Returns spells belonging to a named spell list (e.g. 'Wizard', 'Pilgrim').
-   * Only meaningful for the pg backend; fs falls back to listBySlugs.
    *
    * @param {string} locale - Locale code
    * @param {string} source - Spell list name (vocation/class)

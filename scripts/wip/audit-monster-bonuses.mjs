@@ -3,10 +3,7 @@
 /**
  * @fileoverview Monster Bonus Auditor
  * @description Scans every `.sheet.mdx` for ALL numeric bonus patterns (+N to hit,
- * DC N, spell save DC N, save/skill +N, etc.) and flags any that are inconsistent
- * with a naive `ceil(CR/3)` tier bonus check. Not a fixer — a linter for manual review.
- *
- * Usage: node scripts/wip/audit-monster-bonuses.mjs
+ * DC N, spell save DC N, save/skill +N, etc.)
  *
  * @module scripts/wip/audit-monster-bonuses
  * @version 1.0.0
@@ -37,7 +34,6 @@ function expectedTB(cr) {
 
 /**
  * Extract ALL numeric bonus occurrences from a monster sheet.
- * Returns structured findings for manual audit.
  */
 function extractBonuses(content) {
   const lines = content.split('\n');

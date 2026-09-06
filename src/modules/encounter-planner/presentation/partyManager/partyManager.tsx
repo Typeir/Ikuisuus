@@ -1,7 +1,6 @@
 /**
  * @fileoverview Party Manager Modal.
  * @description Modal for creating, editing, deleting, and importing saved parties.
- * Two views: party list and party editor.
  *
  * @module modules/encounter-planner/presentation/partyManager/partyManager
  * @version 1.0.0
@@ -41,7 +40,6 @@ export interface PartyManagerProps {
 
 /**
  * Party manager modal with list and editor views.
- * Provides CRUD operations for saved parties and optional import-to-combat action.
  *
  * @component
  * @param {PartyManagerProps} props - Component props

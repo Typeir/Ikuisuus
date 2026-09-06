@@ -1,12 +1,6 @@
 /**
  * @fileoverview Search Hook
  * @description Debounced, race-safe client hook for Pagefind search.
- * Handles loading, empty, and error states; lazy-loads the Pagefind bundle
- * on first query.
- *
- * Pagefind returns hit handles, and resolving one costs a fetch. The hook
- * resolves a page at a time and hands back `loadMore` for the rest, so a broad
- * query reports its full total without paying for every fragment up front.
  *
  * @module modules/search/application/useSearch
  * @version 2.0.0

@@ -22,7 +22,6 @@ import type { WorldSimMediator } from '@/modules/world-sim/application/mediator/
 
 /**
  * Imperative control surface for the WorldSim scene.
- * All methods are no-ops while the mediator is still initializing.
  *
  * @interface WorldSimControls
  * @property {(bodyId: string) => void} zoomToBody - Focus camera on a celestial body
@@ -50,7 +49,6 @@ export interface WorldSimControls {
 
 /**
  * Context for the WorldSim imperative controls.
- * `null` indicates the hook is being called outside a provider.
  *
  * @constant
  */
@@ -72,8 +70,6 @@ interface WorldSimControlsProviderProps {
 
 /**
  * Provider providing a stable controls object bound to `mediatorRef`.
- * Callbacks read `mediatorRef.current` at call time; calls made before the
- * mediator initializes are silently ignored.
  *
  * @component
  * @param {WorldSimControlsProviderProps} props - Provider props
@@ -109,7 +105,6 @@ export function WorldSimControlsProvider({
 
 /**
  * Access the WorldSim imperative controls.
- * Returns a stable object whose methods proxy to the current mediator.
  *
  * @function useWorldSimControls
  * @returns {WorldSimControls} Stable controls object

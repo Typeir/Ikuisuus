@@ -1,8 +1,7 @@
 /**
  * Specializations API Route Unit Tests
  *
- * @fileoverview Tests for the /api/specializations endpoint. Verifies export structure,
- * locale handling, vocation filtering, repository integration, and error resilience.
+ * @fileoverview Tests for the /api/specializations endpoint.
  *
  * @module tests/unit/src/app/api/specializations/route.test
  * @version 1.0.0

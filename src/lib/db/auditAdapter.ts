@@ -33,7 +33,6 @@ export interface AuditRecord {
 
 /**
  * Adapter interface for audit log persistence.
- * Implementations MUST still be callable when the backing store is unavailable.
  */
 export interface AuditAdapter {
   /**

@@ -19,7 +19,7 @@ import { useState } from 'react';
 import styles from './SpellTable.module.scss';
 
 /**
- * Tabbed spell table from API or inline data. See FilteredSpellTable for full library.
+ * Tabbed spell table from API or inline data.
  *
  * @component
  * @param {SpellTablesProps} props

@@ -36,7 +36,7 @@ type FeatTableProps = {
 };
 
 /**
- * Client-side feat table. Renders `feats` from `useFeats` in a {@link MetadataTable}.
+ * Client-side feat table.
  *
  * @component
  * @param {FeatTableProps} props - Component props

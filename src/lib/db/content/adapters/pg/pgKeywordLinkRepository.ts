@@ -1,11 +1,7 @@
 /**
  * @fileoverview PostgreSQL Keyword Link Repository (MikroORM)
  * @description Implements `KeywordLinkRepository` by reading `produces` and
- * `consumes` from every file-level content table. Migration 027 added the pair
- * and 028 added `produces`, both with GIN indexes.
- *
- * Ten queries rather than one union: MikroORM addresses entities, not tables,
- * and the row shapes differ everywhere except the four columns read here.
+ * `consumes` from every file-level content table.
  *
  * @module lib/db/content/adapters/pg/pgKeywordLinkRepository
  * @version 1.0.0
@@ -35,7 +31,7 @@ import type {
 
 const log = logger.child({ module: 'PgKeywordLinkRepository' });
 
-/** Every file-level table carrying the shard columns. Mirrors migration 028. */
+/** Every file-level table carrying the shard columns. */
 const ENTITIES = [
   BloodlineEntity,
   FeatEntity,
@@ -74,9 +70,6 @@ interface KeywordLinkRow {
 class PgKeywordLinkRepository implements KeywordLinkRepository {
   /**
    * Collects every row that defines or ingests a shard.
-   *
-   * Invalidation is best effort, so a failure returns nothing rather than
-   * throwing: a page write must not fail because the graph was unreachable.
    *
    * @param {string} locale - Locale code
    * @returns {Promise<KeywordLink[]>} Participating records

@@ -4,11 +4,6 @@
  * @fileoverview Escalates unresolved session-scoped violations to project scope
  * at session end, then runs garbage collection on old resolved violations.
  *
- * When a session ends with unresolved violations:
- *   - Session-scoped violations (session_id = uuid) → project-scoped (session_id = NULL)
- *   - Project-scoped violations block ALL future sessions until manually resolved
- *   - Resolved violations older than 30 days are pruned
- *
  * @module .paw/plugins/session-end/escalate-violations
  * @author Typeir
  * @version 1.0.0

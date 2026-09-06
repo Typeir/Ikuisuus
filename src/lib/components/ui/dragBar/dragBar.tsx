@@ -1,7 +1,6 @@
 /**
  * @fileoverview Drag Bar Atom
  * @description Thin vertical drag handle for resizable split panes.
- * Keyboard-accessible (ArrowLeft/Right, Home/End).
  *
  * @module lib/components/ui/dragBar/dragBar
  * @author Typeir
@@ -37,7 +36,7 @@ export interface DragBarProps {
 }
 
 /**
- * Thin draggable vertical bar. No drag logic — parent owns everything.
+ * Thin draggable vertical bar.
  *
  * @component
  * @param {DragBarProps} props - Component props

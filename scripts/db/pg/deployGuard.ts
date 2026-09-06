@@ -2,11 +2,7 @@
  * @fileoverview Deploy-time write guard for the shared database.
  * @description Preview and branch deploys share one database with production,
  * so a schema migration or a seed run from a test environment lands on live
- * data. Seeding replaces rows per locale, which makes an accidental preview run
- * destructive rather than merely noisy.
- *
- * Every script that writes to Postgres calls this first. Off Vercel nothing is
- * blocked — a developer running a seed locally means it.
+ * data.
  *
  * @module scripts/db/pg/deployGuard
  * @author Typeir
@@ -33,10 +29,6 @@ function onVercel(): boolean {
 /**
  * Whether the deploy targets production.
  *
- * `VERCEL_ENV` is the authority: it reads `production` only for a production
- * deploy, whatever branch produced it. The branch name is checked too so a
- * production build is not blocked if the variable is ever absent.
- *
  * @returns {boolean} True when the deploy is the production one
  */
 function isProductionDeploy(): boolean {
@@ -48,9 +40,6 @@ function isProductionDeploy(): boolean {
 
 /**
  * Stops a database write that a non-production deploy should not perform.
- *
- * Exits the process successfully when it blocks, so a build continues without
- * the write rather than failing.
  *
  * @param {string} operation - What was about to run, for the log line
  * @returns {void}

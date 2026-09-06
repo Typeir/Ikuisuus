@@ -3,16 +3,6 @@
  * @description Cuts MDX source at a boundary the parser recognises, rather than
  * at a character offset chosen blind.
  *
- * A raw `slice` lands wherever it lands: halfway through a JSX tag, inside a
- * link target, between the asterisks of a bold run. The result no longer
- * compiles, and the caller falls back to rendering the fragment as plain
- * markdown, losing every component the registry provides.
- *
- * Parsing first gives every block a start and end offset. Cutting on one of
- * those offsets cannot split a construct, because a construct never straddles
- * its own boundary. The original text is then sliced at that offset — nothing is
- * re-serialised, so authored spacing and formatting survive untouched.
- *
  * @module lib/md/truncateMdx
  * @version 1.0.0
  * @author Typeir
@@ -27,8 +17,7 @@ import type { Root, RootContent } from 'mdast';
 export const ELLIPSIS = '…';
 
 /**
- * Options for {@link truncateMdxSource}. Both limits may apply at once; the
- * earlier cut wins.
+ * Options for {@link truncateMdxSource}.
  *
  * @interface TruncateOptions
  * @property {string} [stopAtComponent] - Cut before the first block opening this JSX component
@@ -53,7 +42,7 @@ export interface TruncateResult {
   truncated: boolean;
 }
 
-/** Parser only. No compile, no stringify — offsets are all this needs. */
+/** Parser only. */
 const parser = remark().use(remarkGfm);
 
 /**
@@ -74,10 +63,6 @@ function nodeText(node: RootContent): string {
 
 /**
  * Whether a block is the opening of a given JSX component.
- *
- * Covers both parses: with the MDX extension a component is an
- * `mdxJsxFlowElement` carrying its name, and without it the same markup lands
- * as an `html` node whose text opens with the tag.
  *
  * @param {RootContent} node - Block-level node
  * @param {string} name - Component name to match
@@ -111,11 +96,6 @@ function componentOffset(tree: Root, name: string): number | null {
 
 /**
  * Offset at which the rendered text budget runs out.
- *
- * Whole blocks are taken while they fit. When the very first block is already
- * over budget it is cut inside its own text, backing off to the last space so a
- * word is not halved — safe because the surrounding block is left open by the
- * caller's own slice, never by this offset.
  *
  * @param {Root} tree - Parsed document
  * @param {string} source - Original source, for the word-boundary search

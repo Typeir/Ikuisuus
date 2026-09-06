@@ -2,11 +2,10 @@
  * @fileoverview Unit tests for Dynamic Content page component
  * @module tests/unit/src/app/[locale]/library/[...slug]/page.test
  * @description Validates dynamic content Page default export and utility functions.
- * Tests async server component for MDX content rendering.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @/app/[locale]/library/[...slug]/page
  */

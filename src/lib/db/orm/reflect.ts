@@ -18,7 +18,7 @@ import type { MetadataStorage } from '@mikro-orm/core';
 import { ReferenceKind } from '@mikro-orm/core';
 
 /**
- * Cross-entity association property kinds. Skipped by both converters.
+ * Cross-entity association property kinds.
  */
 const RELATION_KINDS = new Set<ReferenceKind>([
   ReferenceKind.MANY_TO_ONE,
@@ -29,7 +29,6 @@ const RELATION_KINDS = new Set<ReferenceKind>([
 
 /**
  * Default skip set for `entityToRecord` content hash payloads.
- * Excludes `id`, `locale`, and `versionHash`.
  */
 export const HASH_SKIP: ReadonlySet<string> = new Set([
   'id',
@@ -40,9 +39,6 @@ export const HASH_SKIP: ReadonlySet<string> = new Set([
 /**
  * Converts a loaded MikroORM entity instance to a plain JS record using the
  * property metadata for `className`.
- *
- * Omits primary-key, relation, and `skip`-listed properties; recurses embedded
- * value objects; copies remaining scalars by value.
  *
  * @param {MetadataStorage} allMeta - Full ORM metadata storage from `orm.getMetadata()`
  * @param {object} entity - Loaded entity instance (or embedded VO instance)
@@ -86,9 +82,6 @@ export function entityToRecord(
 /**
  * Builds a MikroORM `em.create()` init payload from a plain JSON record using
  * the property metadata for `className`.
- *
- * Writes only keys present in `record`; omits primary-key and relation
- * properties; recurses embedded value objects.
  *
  * @param {MetadataStorage} allMeta - Full ORM metadata storage from `orm.getMetadata()`
  * @param {string} className - Target entity or embeddable class name

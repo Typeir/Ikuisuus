@@ -1,9 +1,6 @@
 /**
  * @fileoverview Meta Tag Parser for MDX Content
- * @description Extracts `<Meta>` JSX directives from raw MDX text. Each
- * directive maps a `featureId` to a bag of key-value attributes consumed
- * by the feature metadata generator. The parser operates on raw text
- * (not compiled JSX) so it runs at build time without React.
+ * @description Extracts `<Meta>` JSX directives from raw MDX text.
  *
  * @module scripts/metadata/extraction/metaTagParser
  * @version 1.0.0
@@ -27,19 +24,16 @@ export interface MetaDirective {
 
 /**
  * Regex to match self-closing `<Meta ... />` tags.
- * Captures the full attribute string for further parsing.
  */
 const META_TAG_RE = META_TAG.tag;
 
 /**
  * Regex to extract individual JSX attributes.
- * Matches `key="value"` or `key='value'` pairs.
  */
 const ATTR_RE = META_TAG.attribute;
 
 /**
  * Parses all `<Meta>` tags from raw MDX content.
- * Only extracts tags with `target="generator"` and `type="feature"`.
  *
  * @param {string} raw - Raw MDX file content
  * @returns {MetaDirective[]} Array of parsed directives

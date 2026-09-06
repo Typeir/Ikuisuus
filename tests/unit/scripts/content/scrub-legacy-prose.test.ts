@@ -1,9 +1,6 @@
 /**
  * @fileoverview Tests for the legacy prose scrubber.
- * @description The grammar, written down. Each save shape the corpus uses
- * has its rewrite; subject number is read head-first and carried onto the
- * verb after `or` and a second verb after `and`; anything outside the
- * grammar is declined to review rather than guessed at.
+ * @description The grammar, written down.
  *
  * @module tests/unit/scripts/content/scrub-legacy-prose.test
  * @version 0.1.0

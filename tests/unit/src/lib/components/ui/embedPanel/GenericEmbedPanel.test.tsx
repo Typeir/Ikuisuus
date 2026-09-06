@@ -1,7 +1,6 @@
 /**
  * @fileoverview Generic Embed Panel Tests
  * @description Unit tests for the generic embed panel component.
- * Tests positioning, drag handle, closing, iframe rendering, and prop passing.
  *
  * @module tests/unit/src/lib/components/ui/embedPanel/GenericEmbedPanel.test
  * @version 2.0.0

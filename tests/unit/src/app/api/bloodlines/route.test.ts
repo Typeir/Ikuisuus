@@ -1,8 +1,7 @@
 /**
  * Bloodlines API Route Unit Tests
  *
- * @fileoverview Tests for the /api/bloodlines endpoint. Verifies export structure,
- * locale handling, repository integration, and error resilience.
+ * @fileoverview Tests for the /api/bloodlines endpoint.
  *
  * @module tests/unit/src/app/api/bloodlines/route.test
  * @version 1.0.0

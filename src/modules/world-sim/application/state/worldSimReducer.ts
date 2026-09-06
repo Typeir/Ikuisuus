@@ -1,7 +1,6 @@
 /**
  * @fileoverview World Sim Reducer
  * @description Pure reducer function for World Sim state transitions.
- * Handles body/region selection, zoom level changes, and UI toggles.
  *
  * @module modules/world-sim/application/state/worldSimReducer
  * @version 1.0.0
@@ -19,7 +18,6 @@ import {
 
 /**
  * World Sim state reducer.
- * All state transitions are handled here in a single, pure function.
  *
  * @function worldSimReducer
  * @param {WorldSimState} state - Current state

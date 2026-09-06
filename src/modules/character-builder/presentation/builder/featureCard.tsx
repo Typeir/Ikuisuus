@@ -1,8 +1,6 @@
 /**
  * @fileoverview Feature Card Component
- * @description Toggleable card for feature lists (feats, boons). Renders a
- * toggle button (select/deselect), an optional open-source button that focuses
- * the shard for the detail panel, an expand chevron, and an optional badge.
+ * @description Toggleable card for feature lists (feats, boons).
  *
  * @module modules/character-builder/presentation/builder/featureCard
  * @version 1.0.0
@@ -66,8 +64,7 @@ export interface FeatureCardProps {
 }
 
 /**
- * Repeatable-selection controls for a {@link FeatureCard}. Used for feats
- * (such as Ability Score Improvement) that may be taken more than once.
+ * Repeatable-selection controls for a {@link FeatureCard}.
  *
  * @interface FeatureCardMultiSelect
  * @property {number} count - How many instances are currently selected
@@ -87,10 +84,7 @@ export interface FeatureCardMultiSelect {
 }
 
 /**
- * Feature card for picker lists (FeatPicker, BoonPicker). The open-source
- * button focuses the shard for the detail panel; the toggle selects/deselects
- * and the chevron expands inline prose. The inline expand body fetches prose
- * lazily on first expand.
+ * Feature card for picker lists (FeatPicker, BoonPicker).
  *
  * @component
  * @param {FeatureCardProps} props - Component props

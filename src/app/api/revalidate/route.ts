@@ -41,9 +41,6 @@ const log = logger.child({ module: 'API:Revalidate' });
  * POST /api/revalidate
  *
  * @description Revalidates one or more library paths via ISR.
- * Requires `REVALIDATION_SECRET` env var and matching `x-revalidation-secret` header.
- *
- * Body: `{ paths: string[] }` — e.g. `["/library/monsters/albedo-the-bleak-bloom"]`
  */
 export async function POST(req: NextRequest) {
   const secret = process.env.REVALIDATION_SECRET;

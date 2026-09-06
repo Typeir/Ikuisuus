@@ -1,12 +1,7 @@
 /**
  * @fileoverview Compares each migrated heirloom against its committed version
  * and reports mechanical drift: dice, units, keywords and bare numbers that
- * were dropped, added or changed. The migration may restructure and reword
- * freely, so prose is not compared — only the load-bearing tokens a migration
- * is forbidden to touch.
- *
- *   node scripts/content/audit-heirloom-migration.mjs
- *   node scripts/content/audit-heirloom-migration.mjs --json
+ * were dropped, added or changed.
  */
 
 import { execFileSync } from 'node:child_process';
@@ -20,8 +15,7 @@ const NUMBER = /(?<![\w.])\d+(?:d\d+)?(?![\w.])/g;
 
 /**
  * A dice token reduced to its rollable core, so `[% 4d10 bludgeoning %]` and
- * `[% 4d10 %]` compare equal. A damage type moving on or off a die is an
- * editorial change; the die itself going missing is not.
+ * `[% 4d10 %]` compare equal.
  *
  * @param {string} token - Dice token.
  * @returns {string} The dice core, or the token when it rolls nothing.

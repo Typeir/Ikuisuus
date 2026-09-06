@@ -2,9 +2,6 @@
  * repositoryWalk Unit Tests
  *
  * @fileoverview Tests for the environment-coupled walk wrappers.
- * Mocks both `directorySourceResolver` (for `repositoryWalk`) and
- * `fileTreeService` (for `repositoryShallowWalk`) to verify adapter
- * wiring without filesystem access.
  *
  * @module tests/unit/src/modules/library/infrastructure/navigation/repositoryWalk.test
  * @version 1.0.0

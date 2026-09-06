@@ -1,10 +1,6 @@
 /**
  * @fileoverview Shard Display Component
- * @description Renders a `CharacterShard` as an expand/collapse card. On first
- * expand the full heading block is fetched from the DB-backed
- * `/api/content-shards/[type]/[slug]` endpoint and cached in state.
- * Renders the shard heading, category badge, BP cost (if boon), level (if feature),
- * and collapsible body text.
+ * @description Renders a `CharacterShard` as an expand/collapse card.
  *
  * @module modules/character-builder/presentation/shards/shardDisplay
  * @version 1.0.0
@@ -39,7 +35,7 @@ export interface ShardDisplayProps {
 }
 
 /**
- * Expand/collapse shard card. Fetches body text lazily on first expand.
+ * Expand/collapse shard card.
  *
  * @component
  * @param {ShardDisplayProps} props - Component props

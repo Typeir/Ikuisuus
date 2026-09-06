@@ -2,13 +2,7 @@
  * @fileoverview Server Cache Registry
  * @description Every module-level server cache registers its clear function
  * here at creation, so invalidation is one call over a known set rather than
- * a list of imports someone has to remember to extend. A cache that exists
- * but is absent from the registry is visibly wrong, which is the failure mode
- * this replaces: caches cleared only in tests.
- *
- * `ensureCachesFresh` is the cross-instance half: when a shared epoch source
- * is configured, a bump on any instance makes every other instance drop its
- * registered caches on its next read.
+ * a list of imports someone has to remember to extend.
  *
  * @module lib/cache/registry
  * @version 1.0.0
@@ -28,11 +22,7 @@ const caches = new Map<string, () => void>();
 let seenEpoch: string | null | undefined;
 
 /**
- * Registers a module-level cache's clear function. Call once at cache
- * creation; re-registering a name replaces its clear function.
- *
- * `clear` must be synchronous: `clearServerCaches` isolates a throwing clear,
- * but a returned rejecting promise would escape it.
+ * Registers a module-level cache's clear function.
  *
  * @param {string} name - Stable cache name, e.g. `github-tree`
  * @param {() => void} clear - Drops the cache's state, synchronously
@@ -45,8 +35,7 @@ export function registerServerCache(name: string, clear: () => void): void {
 }
 
 /**
- * Clears every registered cache. A clear that throws is logged and does not
- * stop the rest.
+ * Clears every registered cache.
  */
 export function clearServerCaches(): void {
   for (const [name, clear] of caches) {
@@ -63,11 +52,7 @@ export function clearServerCaches(): void {
 
 /**
  * Drops every registered cache when the shared epoch has moved since the
- * last check. A no-op when no epoch source is configured, and on the first
- * check of a process's life, which adopts the current epoch.
- *
- * Cache readers call this at entry; the epoch source is expected to make
- * repeated reads cheap.
+ * last check.
  *
  * @returns {Promise<void>} Resolves once freshness is settled
  */

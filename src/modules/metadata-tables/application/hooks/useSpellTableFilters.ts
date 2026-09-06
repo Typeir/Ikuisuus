@@ -11,7 +11,7 @@ import type { FilterExpression } from '@/lib/db/content/filters';
 import { useMemo, useState } from 'react';
 
 /**
- * Concentration filter tri-state. Empty string means "no filter".
+ * Concentration filter tri-state.
  *
  * @typedef {('' | 'yes' | 'no')} ConcentrationFilter
  */

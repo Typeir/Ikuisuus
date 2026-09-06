@@ -1,8 +1,7 @@
 /**
  * @fileoverview Migration 018 — Add sub_options to bloodline_boons
  * @description Adds a nullable `sub_options` JSONB column to the `bloodline_boons`
- * table. Stored via `information_schema.columns` check, so re-runs are safe.
- * After applying, run `npm run db:seed` to backfill sub-options.
+ * table.
  *
  * @module scripts/db/migrations/018_add_sub_options_to_bloodline_boons
  * @author Typeir

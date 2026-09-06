@@ -2,7 +2,6 @@
  * Server-side persistent data reader
  *
  * @fileoverview Reads persistent UI state from cookies on the server.
- * Uses Next.js cookies() API for server component access.
  *
  * @module lib/utils/getServerPersistentData
  * @version 1.0.0
@@ -28,7 +27,6 @@ import {
  *
  * @description
  * Decodes URL-encoded cookie value and parses as JSON.
- * Returns null if cookie is missing, empty, or malformed.
  *
  * @example
  * // In a Server Component

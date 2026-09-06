@@ -1,7 +1,7 @@
 /**
  * @fileoverview Granted Proficiencies Strip
  * @description Read-only digest of the proficiencies a character's active
- * features and feats confer via grant tags. Derived from the character's shards.
+ * features and feats confer via grant tags.
  *
  * @module modules/character-builder/presentation/stats/grantedProficiencies
  * @version 1.0.0
@@ -47,7 +47,7 @@ function titleCase(value: string): string {
 
 /**
  * Renders the granted-proficiency strip, or nothing when no active feature
- * grants any proficiency. Reads the character from the active-sheet context.
+ * grants any proficiency.
  *
  * @component
  * @returns {JSX.Element | null} The strip, or null when there is nothing granted

@@ -17,9 +17,6 @@ import type { FeatMetadata } from '../schemas/featMetadata';
 
 /**
  * Repository contract for feat metadata.
- *
- * Implementations MUST be safe to call even when the backing store is
- * unavailable — return empty arrays or null rather than throwing.
  */
 export interface FeatRepository {
   /**

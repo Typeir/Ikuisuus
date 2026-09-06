@@ -2,11 +2,10 @@
  * @fileoverview Unit tests for Metadata Table Skeleton component
  * @module tests/unit/src/lib/components/mdx/metadataTables/metadataTableSkeleton.test
  * @description Validates MetadataTableSkeleton export and component signature.
- * Tests skeleton loading state for MetadataTable with configurable row/column counts.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @/lib/components/mdx/metadataTables/metadataTableSkeleton
  */

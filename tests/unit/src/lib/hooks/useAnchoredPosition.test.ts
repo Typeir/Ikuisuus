@@ -3,10 +3,10 @@
  * @module tests/unit/src/lib/hooks/useAnchoredPosition.test
  */
 
-import { useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
+import { useAnchorName, useAnchoredPosition } from '@/lib/hooks/useAnchoredPosition';
 import { act, renderHook } from '@testing-library/react';
 import { createRef, type RefObject } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const makeRefs = () => {
   const anchor = document.createElement('div');
@@ -138,5 +138,48 @@ describe('useAnchoredPosition', () => {
 
     expect(remove).toHaveBeenCalledWith('scroll', expect.any(Function), true);
     expect(remove).toHaveBeenCalledWith('resize', expect.any(Function));
+  });
+});
+
+describe('useAnchorName', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('returns a dashed-ident and reports no engine support without CSS.supports', () => {
+    const { anchor, anchorRef } = makeRefs();
+    const setProperty = vi.spyOn(anchor.style, 'setProperty');
+
+    const { result } = renderHook(() => useAnchorName(anchorRef));
+
+    expect(result.current.anchorName).toMatch(/^--ik-anchor-[a-zA-Z0-9]+$/);
+    expect(result.current.cssAnchored).toBe(false);
+    expect(setProperty).not.toHaveBeenCalled();
+  });
+
+  it('names the anchor while active and clears it on unmount when supported', () => {
+    vi.stubGlobal('CSS', { supports: vi.fn(() => true) });
+    const { anchor, anchorRef } = makeRefs();
+    const setProperty = vi.spyOn(anchor.style, 'setProperty');
+    const removeProperty = vi.spyOn(anchor.style, 'removeProperty');
+
+    const { result, unmount } = renderHook(() => useAnchorName(anchorRef));
+
+    expect(result.current.cssAnchored).toBe(true);
+    expect(setProperty).toHaveBeenCalledWith('anchor-name', result.current.anchorName);
+
+    unmount();
+
+    expect(removeProperty).toHaveBeenCalledWith('anchor-name');
+  });
+
+  it('does not name the anchor while inactive', () => {
+    vi.stubGlobal('CSS', { supports: vi.fn(() => true) });
+    const { anchor, anchorRef } = makeRefs();
+    const setProperty = vi.spyOn(anchor.style, 'setProperty');
+
+    renderHook(() => useAnchorName(anchorRef, false));
+
+    expect(setProperty).not.toHaveBeenCalled();
   });
 });

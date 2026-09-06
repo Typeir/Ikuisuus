@@ -1,10 +1,7 @@
 /**
  * @fileoverview Fullscreen ("immersive") toggle for the document.
  * @description Wraps the Fullscreen API with its WebKit-prefixed variant and
- * reports whether the UA offers it at all. Chromium and Firefox on Android
- * drop the address bar entirely in this mode; iOS Safari on iPhone exposes no
- * element fullscreen, so `supported` is false there and callers hide the
- * control. Entering requires a user gesture — call `toggle` from a handler.
+ * reports whether the UA offers it at all.
  *
  * @module lib/components/viewport/useImmersiveMode
  * @version 1.0.0

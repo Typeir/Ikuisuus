@@ -1,7 +1,6 @@
 /**
  * @fileoverview Metadata Table Data Hook
  * @description Generic hook for locale-aware metadata table API loading.
- * Uses SWR for automatic caching, deduplication, and error handling.
  *
  * @module modules/metadata-tables/application/hooks/useMetadataTableData
  * @author Typeir
@@ -31,8 +30,6 @@ const log = logger.child({ module: 'useMetadataTableData' });
 
 /**
  * Loads locale-specific metadata rows using a supplied service fetcher.
- * Results are cached and deduplicated by SWR across all consumers sharing
- * the same `fetchRows` + `locale` combination.
  *
  * @template T
  * @param {(locale: string) => Promise<T[]>} fetchRows - Metadata service fetcher

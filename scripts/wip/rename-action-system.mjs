@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
  * Action System Rename — dry-run engine.
- * Usage: node scripts/wip/rename-action-system.mjs [--phase=a|b|ab]
  * @module scripts/wip/rename-action-system
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -42,7 +41,7 @@ async function walk(dir) {
 }
 
 /**
- * Apply ordered rules to a single line. Non-exclusive — later rules can match earlier output.
+ * Apply ordered rules to a single line.
  * @param {string} line
  * @param {typeof RULES} rules
  * @returns {{ changed: boolean, result: string, hits: string[] }}

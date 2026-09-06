@@ -1,8 +1,7 @@
 /**
  * @fileoverview VocationSelector Unit Tests
  * @description Tests view-mode pills, edit-mode FilterSelect comboboxes,
- * multi-vocation add/remove, and bloodline selection. Write assertions read
- * the sheet from the active-sheet context.
+ * multi-vocation add/remove, and bloodline selection.
  *
  * @module tests/unit/src/modules/character-builder/presentation/builder/vocationSelector.test
  * @version 4.0.0

@@ -48,7 +48,6 @@ interface SpellListEditorProps {
 
 /**
  * Spell list editor with combobox and link fetching.
- * Displays spell chips with wiki links, fetches links on demand from API.
  *
  * @component
  * @param {SpellListEditorProps} props - Component props

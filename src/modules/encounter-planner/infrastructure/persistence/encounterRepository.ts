@@ -1,8 +1,6 @@
 /**
  * @fileoverview Persists and retrieves encounter data via the persistent storage abstraction.
  * @description CRUD for encounter data keyed by the EncounterStorage enum.
- * Encounters array uses the ref strategy (storePersistentDataRef/fetchPersistentDataRef);
- * scalar IDs use storePersistentData.
  *
  * @module modules/encounter-planner/infrastructure/persistence/encounterRepository
  * @version 1.0.0
@@ -57,7 +55,6 @@ const migrateEncounter = (encounter: any): Encounter => {
 
 /**
  * Returns all encounters from localStorage.
- * Returns empty array if none exist, on parse error, or in SSR context.
  *
  * @function getEncounters
  * @returns {Encounter[]} Array of all saved encounters, or empty array on error
@@ -84,7 +81,6 @@ export const getEncounters = (): Encounter[] => {
 
 /**
  * Returns the active encounter ID from localStorage.
- * Returns null if none set or in SSR context.
  *
  * @function getActiveEncounterId
  * @returns {string | null} Active encounter ID, or null if none set
@@ -174,7 +170,6 @@ export const saveEncounter = (encounter: Encounter): void => {
 
 /**
  * Deletes an encounter by ID from localStorage.
- * Clears the active encounter ID if the deleted encounter is active.
  *
  * @function deleteEncounter
  * @param {string} id - ID of encounter to delete

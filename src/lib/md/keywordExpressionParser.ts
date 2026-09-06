@@ -19,7 +19,7 @@ export function normalizeKeyword(raw: string): string {
   return raw.trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
-/** Regex to match `[# ... #]` delimited keyword expressions in text. Non-greedy inner capture. */
+/** Regex to match `[# ... #]` delimited keyword expressions in text. */
 export const KEYWORD_EXPR_REGEX = /\[#\s*(.*?)\s*#\]/g;
 
 /** Regex to match the `kw:` marker and capture the reference text. */
@@ -27,10 +27,6 @@ export const KW_INNER_REGEX = /^kw:\s*(.+)$/;
 
 /**
  * Regex splitting a NORMALISED reference (`namespace;value`) into its parts.
- * The normalised form is internal — extractor output, resolution keys, the
- * shard URL — and keeps `;` as its separator. The author grammar is parsed by
- * {@link parseKeywordReference} and uses `:` between namespace and value,
- * with `;` cutting off a display override.
  */
 export const KW_NAMESPACED_REGEX = /^([^;]+);(.+)$/;
 
@@ -50,12 +46,6 @@ export interface KeywordReference {
 
 /**
  * Splits the inner content of a `[# ... #]` block into its keyword parts.
- * Performs no registry lookup.
- *
- * Grammar: `kw:` marker, then the target — `namespace:value` or a bare value —
- * then an optional `;display` override. The target always comes first, so `;`
- * is free to carry the rendered text; the override keeps its author casing and
- * never enters the reference's identity.
  *
  * @param {string} inner - The raw content between `[#` and `#]`
  * @returns {KeywordReference | null} Reference parts, or null when malformed

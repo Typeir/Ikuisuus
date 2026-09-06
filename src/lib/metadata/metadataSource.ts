@@ -1,8 +1,7 @@
 /**
  * @fileoverview Reads `.metadata.json` sidecars for the sync layer.
  * @description Thin wrapper over the fs adapter reader, adding the
- * source-presence flag the sync targets consume. Reads recursively from
- * `.meta/{locale}/{subdir}`, falling back to `src/content/{locale}/{subdir}`.
+ * source-presence flag the sync targets consume.
  *
  * @module lib/metadata/metadataSource
  * @version 2.0.0

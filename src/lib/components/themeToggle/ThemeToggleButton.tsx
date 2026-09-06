@@ -1,8 +1,7 @@
 /**
  * @fileoverview The site's theme toggle control.
  * @description Single definition of the round Moon/Sun button used in the
- * sidebar header, the mobile title bar, and the preferences panel. Drives
- * theme through the persistent UI port, so every copy reads the same state.
+ * sidebar header, the mobile title bar, and the preferences panel.
  *
  * @module lib/components/themeToggle/ThemeToggleButton
  * @version 1.0.0

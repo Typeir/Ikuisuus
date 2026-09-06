@@ -2,12 +2,11 @@
  * @fileoverview Unit tests for Generic Combobox component
  * @module tests/unit/src/modules/encounter-planner/presentation/comboboxes/genericCombobox.test
  * @description Validates GenericCombobox export and component signature.
- * Tests generic reusable combobox component for encounter planner.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires vitest
  * @requires @/modules/encounter-planner/presentation/comboboxes/genericCombobox
  */

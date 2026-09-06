@@ -1,7 +1,6 @@
 /**
  * @fileoverview Ability Grid Component
  * @description Responsive CSS Grid rendering `AbilityCard` components.
- * Shows empty state when no abilities exist.
  *
  * @module modules/character-builder/presentation/tabs/abilities/AbilityGrid
  * @version 1.0.0
@@ -33,7 +32,7 @@ export interface AbilityGridProps {
 }
 
 /**
- * Responsive grid of ability cards. Empty state when no abilities.
+ * Responsive grid of ability cards.
  *
  * @component
  * @param {AbilityGridProps} props - Component props

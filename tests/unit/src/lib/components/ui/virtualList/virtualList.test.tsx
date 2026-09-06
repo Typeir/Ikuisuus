@@ -1,8 +1,7 @@
 /**
  * @fileoverview VirtualList Tests
  * @description Covers the props forwarded to react-window's `List`: row
- * count, pitch, clamped height and the rendered-range callback. `List` is
- * stubbed so the assertions read props, not layout.
+ * count, pitch, clamped height and the rendered-range callback.
  *
  * @module tests/unit/src/lib/components/ui/virtualList/virtualList.test
  * @version 1.0.0

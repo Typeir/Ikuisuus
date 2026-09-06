@@ -1,5 +1,5 @@
 /**
- * @fileoverview Post MDX buffer to preview API. Returns parsed metadata.
+ * @fileoverview Post MDX buffer to preview API.
  *
  * @module modules/mdx-editor/infrastructure/api-clients/metadataPreviewClient
  * @author Typeir

@@ -39,8 +39,6 @@ function parseFileArg(): string | undefined {
 
 /**
  * Wraps a generator main function with CLI flag handling.
- * Supports `--persist` for database storage and `--file <name>` for
- * single-file generation.
  *
  * @param {Function} mainFn - Generator main function receiving CLI options
  * @returns {Promise<void>}

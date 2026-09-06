@@ -284,8 +284,6 @@ function stemOf(fileName: string): string | null {
 
 /**
  * Execute the orphaned-mdx-links check and return a structured result.
- * When options.rootDir is provided, uses that instead of auto-detected ROOT.
- * When options.readFile is provided, uses that instead of fs.readFile.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations

@@ -1,9 +1,7 @@
 /**
  * @fileoverview In-Progress Combat Persistence
  * @description Multi-layer persistent storage CRUD, migration, and query helpers
- * for in-progress combat snapshots. Large-payload arrays (combats) use the ref
- * strategy via storePersistentDataRef/fetchPersistentDataRef; scalar IDs use
- * storePersistentData/fetchPersistentData/removePersistentData.
+ * for in-progress combat snapshots.
  *
  * @module modules/encounter-planner/infrastructure/persistence/combatRepository
  * @version 1.1.0
@@ -32,7 +30,6 @@ import {
 
 /**
  * Migrate a combatant to include new mechanics fields if missing.
- * Provides backward compatibility for saved combats from before the mechanics update.
  *
  * @function migrateCombatant
  * @param {any} combatant - Possibly outdated combatant data
@@ -80,7 +77,6 @@ const migrateCombatant = (combatant: unknown): InProgressCombatant => {
 
 /**
  * Migrate an in-progress combat to include new fields if missing.
- * Applies combatant migrations to ensure backward compatibility.
  *
  * @function migrateInProgressCombat
  * @param {any} combat - Possibly outdated combat data
@@ -104,7 +100,6 @@ const migrateInProgressCombat = (combat: unknown): InProgressCombat => {
 
 /**
  * Get all in-progress combats from localStorage.
- * Applies migrations for backward compatibility.
  *
  * @function getInProgressCombats
  * @returns {InProgressCombat[]} Array of in-progress combats (empty if SSR or error)
@@ -140,7 +135,6 @@ export const getInProgressCombat = (id: string): InProgressCombat | null => {
 
 /**
  * Save an in-progress combat to localStorage.
- * Updates existing or appends new combat.
  *
  * @function saveInProgressCombat
  * @param {InProgressCombat} combat - Combat to save

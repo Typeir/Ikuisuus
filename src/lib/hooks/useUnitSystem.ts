@@ -1,8 +1,5 @@
 /**
  * @fileoverview React hooks for unit display preferences and their actions.
- * Returns the native system until the first client render commits, matching
- * server markup for hydration. Reports `isHydrated`, not
- * `PersistentUiState.isHydrated`, which the provider sets true on first render.
  *
  * @module lib/hooks/useUnitSystem
  * @version 2.0.0
@@ -40,8 +37,6 @@ export interface UnitSystemState {
 
 /**
  * Hook to access unit display preferences.
- *
- * Returns native defaults until the first client render commits.
  *
  * @function useUnitSystemState
  * @returns {UnitSystemState} Preferences with a hydration flag

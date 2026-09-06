@@ -1,8 +1,6 @@
 /**
  * @fileoverview Single-row editor for one {@link VocationEntry}: vocation picker,
- * specialization picker, and level spinner with {@link NumericInput}. Tracks
- * async loading via `asyncLoading`. Replaces selector inputs with skeletons while
- * loading.
+ * specialization picker, and level spinner with {@link NumericInput}.
  *
  * @module modules/character-builder/presentation/builder/vocationEntryBlock
  * @version 3.0.0

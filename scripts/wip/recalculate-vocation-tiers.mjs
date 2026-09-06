@@ -5,11 +5,6 @@
  * @description Recalculates tier bonus values in vocation main.mdx progression
  * tables from the old formula (ceil(1+level/4)) to the new formula (ceil(level/3)).
  *
- * The table column header was already renamed "Proficiency Bonus" → "Tier Bonus"
- * by the rename script; this script only updates the numeric VALUES.
- *
- * Usage: node scripts/wip/recalculate-vocation-tiers.mjs [--dry-run]
- *
  * @module scripts/wip/recalculate-vocation-tiers
  * @version 1.0.0
  */

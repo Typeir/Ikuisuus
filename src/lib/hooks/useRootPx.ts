@@ -2,8 +2,6 @@
  * @fileoverview Root font size in px, kept current with the reader's text scale.
  * @description Virtualized rows are absolutely positioned and sized in px, so a
  * rem-based row pitch has to be resolved against the root font size at runtime.
- * The root is `calc(--text-scale-base * --text-scale-user)`; the user multiplier
- * is written to the root's `style` attribute, which is what the observer watches.
  *
  * @module lib/hooks/useRootPx
  * @version 1.0.0
@@ -36,9 +34,7 @@ export function measureRootPx(): number {
 }
 
 /**
- * Root font size in px. Re-measures a frame after mount and whenever the
- * root's `style` attribute changes, which is where the text-scale
- * preference lands.
+ * Root font size in px.
  *
  * @returns {number} Root font size in px
  */

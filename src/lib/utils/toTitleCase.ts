@@ -1,7 +1,6 @@
 /**
  * @fileoverview Title case conversion utility.
- * @description Converts kebab-case strings to Title Case. Inverse of toKebabCase.
- * Collapses consecutive dashes into single spaces and capitalizes each word.
+ * @description Converts kebab-case strings to Title Case.
  *
  * @version 1.0.0
  * @author Typeir
@@ -36,7 +35,6 @@ function capitalizeWord(word: string): string {
 
 /**
  * Converts a dash-separated string (e.g., kebab-case) to Title Case.
- * Collapses multiple dashes into a single space.
  *
  * @param {string} str - The input string using dashes as separators.
  * @returns {string} The converted string in Title Case with normalized spacing.

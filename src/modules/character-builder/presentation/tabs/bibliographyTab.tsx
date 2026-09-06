@@ -1,8 +1,7 @@
 /**
  * @fileoverview Bibliography Tab
  * @description Full-width resizable text block for character backstory,
- * notes, and narrative content. Uses the `notes` field from the character
- * sheet.
+ * notes, and narrative content.
  *
  * @module modules/character-builder/presentation/tabs/bibliographyTab
  * @version 1.0.0
@@ -23,9 +22,7 @@ import { useCallback } from 'react';
 import styles from './tabs.module.scss';
 
 /**
- * Bibliography tab content. Renders the character's notes as a large
- * resizable text area. Reads the character and edit mode from the active-sheet
- * context.
+ * Bibliography tab content.
  *
  * @component
  * @returns {JSX.Element} Rendered tab body

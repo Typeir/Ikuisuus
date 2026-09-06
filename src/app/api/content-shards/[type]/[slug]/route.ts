@@ -1,16 +1,7 @@
 /**
  * @fileoverview Content Shard API Route
  * @description Resolves shards for any registered type — repository-backed
- * content and keyword references through one pipeline. The address differs per
- * type; the extraction does not.
- *
- * Returns source, not HTML. The caller compiles, which keeps `Unit`,
- * `DiceRoll` and nested keywords live. Keyword resolution happens here because
- * the browser compile has no index: every response carries the definitions and
- * stamp targets for the references its prose writes, so the card that opens
- * next costs no further request. References living deeper are fetched when
- * their own card opens — following them here would pull each shard's
- * dependencies onto the page, and theirs after that.
+ * content and keyword references through one pipeline.
  *
  * @module src/app/api/content-shards/[type]/[slug]/route
  * @version 3.0.0
@@ -32,9 +23,7 @@ import { shardTypeRegistry } from '../../shardTypes';
 const log = logger.child({ module: 'API:ContentShards' });
 
 /**
- * Keywords for a shard payload. Failure returns an empty result rather than
- * throwing: a missing definition costs a card, and must not cost the prose it
- * was written in.
+ * Keywords for a shard payload.
  *
  * @param {ResolvedShard[]} shards - Resolved prose
  * @param {string} locale - Content locale
@@ -62,10 +51,7 @@ async function keywordsFor(
  * GET /api/content-shards/[type]/[slug]
  *
  * `type` is a registry key; `slug` is that type's address — a content slug, or
- * a URL-encoded keyword reference for `keyword`. `keys[]` query parameters
- * request a subset of shards; absence returns all known shards including
- * `main`. Responds 404 when the type, address, or content file is unknown, 500
- * on resolution failure.
+ * a URL-encoded keyword reference for `keyword`.
  *
  * @param {Request} req - Next.js request object
  * @param {{ params: Promise<{ type: string; slug: string }> }} context - Route segment params

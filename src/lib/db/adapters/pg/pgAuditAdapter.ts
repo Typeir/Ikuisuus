@@ -1,7 +1,6 @@
 /**
  * @fileoverview PostgreSQL Audit Adapter (MikroORM)
  * @description Implements the `AuditAdapter` interface using MikroORM.
- * Queries the `audit_logs` table via the shared ORM singleton.
  *
  * @module lib/db/adapters/pg/pgAuditAdapter
  * @version 1.0.0

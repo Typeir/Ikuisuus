@@ -10,9 +10,7 @@
  */
 
 /**
- * Vertex shader for the collision corona. Passes view-space normal and a
- * three-octave simplex-noise sample of local position. `noise3d.glsl` is
- * prepended at runtime.
+ * Vertex shader for the collision corona.
  */
 export const CORONA_VERT = `
 uniform float uTime;
@@ -34,10 +32,7 @@ void main() {
 `;
 
 /**
- * Fragment shader for the collision corona. Computes a Fresnel rim term,
- * mixes primary and secondary colours by noise, and modulates alpha by
- * noise. `uFadeT` attenuates the outer rim first; at `uFadeT` = 1 the corona
- * collapses to the core.
+ * Fragment shader for the collision corona.
  */
 export const CORONA_FRAG = `
 uniform vec3 uColor;

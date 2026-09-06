@@ -1,7 +1,7 @@
 /**
  * @fileoverview Creature Combobox Component
  * @description Searchable dropdown for importing creatures from the monster
- * library. Fetches monster data from /api/monsters/index and renders size/type/CR.
+ * library.
  *
  * @module modules/encounter-planner/presentation/comboboxes/creatureCombobox
  * @version 1.0.0
@@ -51,8 +51,7 @@ interface CreatureComboboxProps {
 }
 
 /**
- * Creature combobox wrapping GenericCombobox. Fetches the monster index from
- * the API and renders species-specific item content.
+ * Creature combobox wrapping GenericCombobox.
  *
  * @component
  * @param {CreatureComboboxProps} props - Component props

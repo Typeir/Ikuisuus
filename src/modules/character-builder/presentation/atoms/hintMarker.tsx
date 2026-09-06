@@ -1,7 +1,7 @@
 /**
  * @fileoverview Vocation-pick Hint Marker
  * @description Hint asterisk for a skill/trade a vocation offers as a free base
- * pick. Never disables or restricts the row. Renders nothing when `show` is false.
+ * pick.
  *
  * @module modules/character-builder/presentation/atoms/hintMarker
  * @version 1.0.0

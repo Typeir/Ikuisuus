@@ -1,7 +1,6 @@
 /**
  * @fileoverview Migration 007 — Create bloodlines + bloodline_boons tables
- * @description Creates bloodlines and bloodline_boons tables. Multi-value fields are
- * text[] columns. Boons live in a normalised child table keyed by bloodline_id. No JSONB columns.
+ * @description Creates bloodlines and bloodline_boons tables.
  *
  * @module scripts/db/migrations/007_create_bloodlines_tables
  * @author Typeir

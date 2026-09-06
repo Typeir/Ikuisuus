@@ -1,7 +1,6 @@
 /**
  * @fileoverview useWorldSimCanvas Hook Unit Tests
- * @description Tests the useWorldSimCanvas React hook. Verifies subsystem
- * creation, animation start, cleanup on unmount, and projection subscription.
+ * @description Tests the useWorldSimCanvas React hook.
  *
  * @module tests/unit/src/modules/world-sim/application/hooks/useWorldSimCanvas.test
  */

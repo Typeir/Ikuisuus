@@ -51,8 +51,7 @@ const sampleDraft = {
 };
 
 /**
- * Drafts exist only on the pg backend. On `fs` the route short-circuits
- * before reaching the repository, so METADATA_BACKEND is declared here.
+ * Drafts exist only on the pg backend.
  */
 beforeEach(() => {
   process.env.REVALIDATION_SECRET = 'test-secret-123';

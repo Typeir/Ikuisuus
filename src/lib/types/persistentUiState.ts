@@ -27,7 +27,6 @@
 
 /**
  * Action type constants for persistent UI state management.
- * Namespaced string literals.
  *
  * @constant
  */
@@ -70,7 +69,7 @@ export interface SidebarMenuState {
 export type ThemeValue = 'dark' | 'light';
 
 /**
- * Unit system display preference. `stride` is the server-rendered default.
+ * Unit system display preference.
  *
  * @typedef {'stride' | 'metric' | 'imperial'} UnitSystemValue
  */
@@ -156,7 +155,6 @@ export const ASPECT_DISPLAY_MODES: readonly AspectDisplayMode[] = [
 
 /**
  * Serialized format for localStorage/cookie storage.
- * Only includes fields that should be persisted.
  *
  * @interface SerializedPersistentUiState
  * @property {SidebarMenuState} [sidebarMenu] - Optional sidebar menu state
@@ -187,7 +185,6 @@ export interface SerializedPersistentUiState {
 
 /**
  * Legacy storage format for backwards compatibility.
- * Maps old storage keys to their values.
  *
  * @interface LegacyStorageFormat
  * @property {string} ['data-theme'] - Legacy theme storage key
@@ -437,9 +434,6 @@ export const DEFAULT_SECTION_DECOR = true;
 
 /**
  * Narrows a stored preference to a usable positive number.
- *
- * Guards rendering against a corrupt or hand-edited store; it is not an input
- * restriction, so any positive value a reader types is honoured.
  *
  * @function readPositiveNumber
  * @param {unknown} stored - Raw stored value

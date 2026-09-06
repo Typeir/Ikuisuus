@@ -1,9 +1,7 @@
 /**
  * @fileoverview Monster Section Classifier
  * @description Classifies sections of monster `.sheet.mdx` files by heading
- * text into semantic categories. Heading-level-agnostic — matches on section
- * NAME patterns, not heading depth. Splits raw MDX lines into classified
- * Section objects for downstream extraction.
+ * text into semantic categories.
  *
  * @version 1.0.0
  * @author Typeir
@@ -52,8 +50,7 @@ export interface MonsterSection {
 }
 
 /**
- * Ordered classification rules. First match wins. Patterns are tested against
- * the stripped heading text (markdown removed).
+ * Ordered classification rules.
  */
 const SECTION_RULES: { pattern: RegExp; type: SectionType }[] = [
   { pattern: CLASSIFIER.deedAct, type: 'deed_act' },
@@ -97,8 +94,6 @@ export function classifyHeading(heading: string): SectionType {
 
 /**
  * Determines whether a heading starts a top-level section boundary.
- * Only headings at level 2 or 3 (or bold-formatted equivalents) act as
- * section boundaries. Deeper headings (H4+) are sub-headings within sections.
  *
  * @param {string} line - Raw markdown line
  * @returns {{ level: number; text: string } | null} Heading info or null
@@ -115,8 +110,6 @@ export function parseSectionHeading(
 
 /**
  * Splits raw MDX lines into classified MonsterSection objects.
- * Lines before the first section heading are discarded (stat header area).
- * Horizontal rules (`---`) within a section are preserved as content.
  *
  * @param {string[]} lines - All lines of the monster file
  * @param {number} [offset=0] - Line offset for multi-block files

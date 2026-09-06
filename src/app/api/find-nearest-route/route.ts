@@ -2,7 +2,6 @@
  * Find Nearest Route API
  *
  * @fileoverview Next.js API route for finding nearest matching route for 404 errors.
- * Uses fuzzy matching to suggest alternative routes when user hits a 404.
  *
  * @version 1.0.0
  * @author Typeir

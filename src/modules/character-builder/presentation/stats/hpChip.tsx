@@ -31,11 +31,7 @@ export interface HpChipProps {
 }
 
 /**
- * Renders the HP chip with Hit Dice counter and roller panel. Reads character
- * and write API from the active-sheet context. While the `hp` lock is engaged,
- * current HP is read-only and the roller is disabled; unlocked, current HP is
- * editable, clamped to `[-hpMax, hpMax]`. Max HP is a read-only derived value
- * (cache of `deriveHitPoints`); temp HP shows when positive.
+ * Renders the HP chip with Hit Dice counter and roller panel.
  */
 const HpChip = ({ isUnlocked, toggle, onHitDiceCommit }: HpChipProps) => {
   const tCommon = useTranslations('common');

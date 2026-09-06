@@ -1,7 +1,6 @@
 /**
  * @fileoverview Banned IP Manager
- * @description Manages a list of banned IP /24 CIDR ranges. Persistence is
- * delegated to the adapter resolved by `METADATA_BACKEND` (filesystem JSON or PostgreSQL).
+ * @description Manages a list of banned IP /24 CIDR ranges.
  *
  * @module lib/security/bannedIps
  * @author Typeir
@@ -38,7 +37,6 @@ export interface BannedIpEntry {
 
 /**
  * Converts an IPv4 address to its /24 CIDR range.
- * For IPv6 and mapped addresses, returns the /48 equivalent or the address itself.
  *
  * @param {string} ip - The IP address
  * @returns {string} CIDR range string
@@ -96,7 +94,6 @@ export const isIpBanned = async (
 
 /**
  * Bans the /24 range containing the given IP address.
- * No-ops if the range is already banned.
  *
  * @param {string} ip - The offending IP address
  * @param {string} reason - Human-readable reason for the ban

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Parked Card Chrome
  * @description The handle, title, close control and resize corner a parked card
- * wears. Split out so the surface component stays about its two states rather
- * than about markup.
+ * wears.
  *
  * @module lib/components/ui/detachableTooltip/CardChrome
  * @version 1.0.0

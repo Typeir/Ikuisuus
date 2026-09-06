@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the useToolRegistry hook.
  * @description Verifies that the hook resolves the visible registry entries into
- * locale-aware ToolMenuItem objects and guards against missing i18n keys. `NODE_ENV`
- * is `test` here, so `devOnly` entries are excluded.
+ * locale-aware ToolMenuItem objects and guards against missing i18n keys.
  *
  * @module tests/unit/src/modules/tools-menu/useToolRegistry.test
  * @version 1.0.0

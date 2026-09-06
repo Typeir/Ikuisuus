@@ -1,10 +1,5 @@
 /**
  * Generates minimal stub .mdx + .metadata.json for missing SRD spell files.
- *
- * Reads missing spell list from analysis; creates content stubs so library
- * links resolve. Each stub is a minimal MDX with TODO marker for later authoring.
- *
- * Run: node scripts/content/generate-spell-stubs.mjs [--dry-run]
  */
 
 import { existsSync, mkdirSync, writeFileSync } from 'fs';

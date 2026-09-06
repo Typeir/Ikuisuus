@@ -32,7 +32,7 @@ export interface FeatFeature {
  * Optional ability score increase granted by a feat.
  *
  * @interface FeatAbilityIncrease
- * @property {string[]} abilities - Ability score keys (`str`, `dex`, ...) the player may apply the increase to
+ * @property {string[]} abilities - Ability score keys (`str`, `dex`, ...)
  * @property {number} amount - Amount applied (typically `1`)
  * @property {number} [maximum] - Cap on the resulting score (typically `20`)
  */
@@ -51,7 +51,7 @@ export interface FeatAbilityIncrease {
  * @property {FeatAbilityIncrease} [abilityIncrease] - Parsed ability score increase
  * @property {FeatFeature[]} [features] - Named mechanics parsed from bold bullet items
  * @property {string[]} [grants] - Tag-based proficiency grants (e.g. `weapon:martial`, `skill:persuasion:expertise`)
- * @property {boolean} [multiSelect] - When true, the feat may be selected more than once (e.g. Ability Score Improvement). Backed by the `multi-select` tag so it survives both FS and PG backends.
+ * @property {boolean} [multiSelect] - When true, the feat may be selected more than once (e.g. Ability Score Improvement).
  */
 export interface FeatMetadata extends BaseMetadata {
   prerequisite?: string;

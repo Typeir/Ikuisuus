@@ -68,8 +68,6 @@ function readUnitSystem(
 /**
  * Reads persisted state with server-provided expanded paths for SSR.
  *
- * Falls back to URL-derived or default values when no persisted state exists.
- *
  * @function readPersistedState
  * @param {string[]} serverExpandedPaths - Paths from server cookies for hydration match
  * @returns {SerializedPersistentUiState & { unitSystem: UnitSystemPreferences }} Hydrated values
@@ -181,10 +179,6 @@ export function readPersistedState(
 
 /**
  * Writes state to persistent storage and stamps the root element.
- *
- * Preferences land on the root rather than being passed down so components
- * react through CSS alone. Numeric preferences are custom properties because
- * a reader types an arbitrary value, leaving no finite set of classes.
  *
  * @function writePersistedState
  * @param {PersistentUiState} state - Current UI state to persist

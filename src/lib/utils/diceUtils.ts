@@ -11,7 +11,6 @@
 
 /**
  * Rolls a single die with the given number of faces.
- * Returns 1 for invalid face counts (non-finite or less than 1).
  *
  * @function rollDie
  * @param {number} faces - Number of faces on the die (e.g. 6, 8, 10, 12, 20)

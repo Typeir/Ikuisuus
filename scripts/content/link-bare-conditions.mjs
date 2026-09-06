@@ -1,17 +1,5 @@
 /**
- * @fileoverview Wraps bare condition words in their keyword. `poisoned`
- * becomes `[# kw:condition:poisoned #]`, casing kept, so a capitalised word
- * at the head of a sentence displays as authored. Only the unambiguous
- * condition words are touched — the ones with no everyday sense in prose.
- * A burning horse or a dying breath is left alone, and `check-stale-prose`
- * reports those separately for a reader.
- *
- * Skips headings (they define keywords, they do not reference them),
- * frontmatter, fenced code, words already inside a keyword or a link's text,
- * and the term inside a `[# kw:… #]` that names the word itself.
- *
- *   node scripts/content/link-bare-conditions.mjs src/content/en/spells --check
- *   node scripts/content/link-bare-conditions.mjs src/content/en/spells
+ * @fileoverview Wraps bare condition words in their keyword.
  */
 
 import { globSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -19,8 +7,7 @@ import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /**
- * Condition words with no everyday sense in prose. Mirrors the legacy set in
- * `check-stale-prose.mjs`; the ambiguous ones are deliberately absent.
+ * Condition words with no everyday sense in prose.
  */
 export const CONDITIONS = [
   'blinded',

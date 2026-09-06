@@ -2,7 +2,6 @@
  * Derives sidebar expansion paths from the current URL route
  *
  * @fileoverview Utility to expand sidebar ancestors based on the active route.
- * Provides deterministic baseline expansion for static pages.
  *
  * @module modules/library/application/selectors/deriveExpandedPathsFromUrl
  * @version 1.0.0
@@ -20,11 +19,6 @@ import { stripContentSuffix } from '@/lib/constants/content';
  *
  * @description
  * Expands all ancestor folders of the current document in the navigation tree.
- * For example, if the URL is /en/library/monsters/ancient-red-dragon,
- * it will expand: ['/monsters', '/monsters/ancient-red-dragon']
- *
- * This provides a deterministic baseline for static pages where no
- * persisted state exists.
  *
  * @example
  * // URL: /en/library/monsters/dragons/ancient-red-dragon

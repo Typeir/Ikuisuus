@@ -2,7 +2,6 @@
  * findNearestRoute Utility Unit Tests
  *
  * @fileoverview Tests for nearest route finder utility exports and structure.
- * Full integration testing with filesystem is handled by e2e tests.
  *
  * @module tests/unit/src/modules/library/application/use-cases/findNearestRoute.test
  * @version 1.0.0

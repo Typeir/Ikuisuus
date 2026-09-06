@@ -1,8 +1,7 @@
 /**
  * @fileoverview PostgreSQL Spell Repository (MikroORM)
  * @description Implements `SpellRepository` via MikroORM against the
- * `spells` and `spell_lists` tables. Uses `populate` to eagerly load
- * the SpellList one-to-many relation.
+ * `spells` and `spell_lists` tables.
  *
  * @module lib/db/content/adapters/pg/pgSpellRepository
  * @version 4.0.0
@@ -143,8 +142,7 @@ class PgSpellRepository
   }
 
   /**
-   * Returns spells matching the provided slug set. Passing an empty array
-   * returns all spells.
+   * Returns spells matching the provided slug set.
    *
    * @param {string} locale - Locale code
    * @param {string[]} slugs - Slug allowlist; empty means all

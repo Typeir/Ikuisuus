@@ -1,8 +1,7 @@
 /**
  * @fileoverview Gas Giant Renderer — Multi-Layer Cloud Sphere with Storm Effects
  * @description Renders gas giant bodies with procedural cloud bands computed in
- * the fragment shader via world-space noise sampling. Two concentric spheres —
- * an opaque base layer and a transparent overlay — provide parallax depth.
+ * the fragment shader via world-space noise sampling.
  *
  * @module modules/world-sim/infrastructure/renderers/GasGiantRenderer
  * @version 3.0.0
@@ -73,8 +72,6 @@ const HAZE_GLOW_STOPS = [
 
 /**
  * Configuration for a single concentric cloud layer in the gas giant atmosphere.
- * Outer layer is opaque with broad bands; inner layer is translucent with finer
- * detail.
  *
  * @interface CloudLayerConfig
  * @property {number} radiusScale - Shell radius as fraction of body radius
@@ -130,8 +127,7 @@ const CLOUD_LAYER_CONFIGS: CloudLayerConfig[] = [
 
 /**
  * Renders gas giant celestial bodies with layered fragment-based cloud bands
- * and atmospheric haze. Cloud noise is computed in the fragment shader using
- * world-space coordinates.
+ * and atmospheric haze.
  *
  * @class GasGiantRenderer
  * @implements {ICelestialRenderer}

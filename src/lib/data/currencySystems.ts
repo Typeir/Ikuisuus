@@ -1,8 +1,6 @@
 /**
  * @fileoverview Built-in Currency Systems Registry
- * @description Bundles the canonical Gold Standard coinage table. Custom systems
- * may be added at runtime via local state — this module exposes only the
- * read-only built-ins, and helpers for legacy migration.
+ * @description Bundles the canonical Gold Standard coinage table.
  *
  * @module lib/data/currencySystems
  * @version 1.0.0
@@ -17,8 +15,7 @@ import type {
 } from '@/lib/types/character';
 
 /**
- * Canonical gold standard coinage. Multipliers are expressed in gold-piece units
- * (gp is the base, multiplier = 1).
+ * Canonical gold standard coinage.
  */
 export const GOLD_STANDARD: CurrencySystem = {
   name: 'Gold Standard',
@@ -34,7 +31,7 @@ export const GOLD_STANDARD: CurrencySystem = {
 };
 
 /**
- * Built-in systems shipped with the application. Not user-editable.
+ * Built-in systems shipped with the application.
  */
 export const BUILT_IN_CURRENCY_SYSTEMS: CurrencySystem[] = [GOLD_STANDARD];
 

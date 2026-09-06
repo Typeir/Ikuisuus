@@ -168,8 +168,6 @@ function extractSubHeadingFeatures(
 
 /**
  * Enriches a feature with tokens parsed from its body text.
- * Sets flat damage fields (damage, damageType, damageFlat, damageFlatType)
- * and flat saving throw (ability + dc number) on MonsterFeature.
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Body text
@@ -238,7 +236,6 @@ export function enrichFromBody(feat: MonsterFeature, body: string): void {
 
 /**
  * Splits section lines by H4/H5/H6 sub-headings or bold-label bullets.
- * Tracks each sub-section's origin (heading or bold bullet).
  *
  * @param {string[]} lines - Section content lines
  * @returns {SubSection[]} Named sub-sections with origin tracking

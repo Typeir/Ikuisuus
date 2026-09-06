@@ -131,7 +131,6 @@ export const parseMechanicsFromTags = (tags?: string[]): CombatantMechanics => {
 
 /**
  * Get default number of resist uses.
- * Returns 3.
  *
  * @function getDefaultResistCount
  * @param {string} [_crText] - CR text (currently unused, reserved for future scaling)
@@ -143,7 +142,6 @@ export const getDefaultResistCount = (_crText?: string): number => {
 
 /**
  * Get default number of legendary deeds.
- * Returns 3.
  *
  * @function getDefaultDeedCount
  * @param {string} [_crText] - CR text (currently unused, reserved for future scaling)
@@ -155,8 +153,6 @@ export const getDefaultDeedCount = (_crText?: string): number => {
 
 /**
  * Set a combatant's HP to its maximized value.
- * Uses the "NdM" hpFormula with the constant term when present;
- * otherwise estimates from hpMax.
  *
  * @function maximizeHitDice
  * @param {InProgressCombatant} combatant - The combatant to maximize HP for (mutated in place)

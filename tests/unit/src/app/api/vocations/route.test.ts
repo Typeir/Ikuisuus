@@ -1,8 +1,7 @@
 /**
  * Vocations API Route Unit Tests
  *
- * @fileoverview Tests for the /api/vocations endpoint. Verifies export structure,
- * locale handling, repository integration, and error resilience.
+ * @fileoverview Tests for the /api/vocations endpoint.
  *
  * @module tests/unit/src/app/api/vocations/route.test
  * @version 1.0.0

@@ -28,8 +28,7 @@ import { SkeletonSidebarItems } from './SkeletonSidebarItems';
 import VirtualizedSidebar, { VIRTUALIZE_THRESHOLD } from './VirtualizedSidebar';
 
 /**
- * Renders an item as a link or a collapsible folder. Children mount on
- * first open and unmount after the closing animation.
+ * Renders an item as a link or a collapsible folder.
  *
  * @param {SidebarItemProps} props - Component props.
  * @param {LayoutItem} props.item - The item to render.

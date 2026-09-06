@@ -9,7 +9,7 @@
  */
 
 /**
- * Zoom level enum. Three levels: System, Body, Region.
+ * Zoom level enum.
  * @enum {string}
  */
 export enum ZoomLevel {

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Filesystem Audit Adapter
  * @description Implements the `AuditAdapter` interface using a local JSON file.
- * Audit records are persisted as an array in `.meta/runtime/audit-log.json`.
  *
  * @module lib/db/adapters/fs/fsAuditAdapter
  * @version 1.0.0
@@ -63,10 +62,6 @@ const writeRecords = async (records: AuditRecord[]): Promise<void> => {
 
 /**
  * Filesystem-backed audit adapter.
- *
- * Stores records as a JSON array in `.meta/runtime/audit-log.json`.
- * New records are prepended (most-recent-first). The array is trimmed to
- * `MAX_RECORDS` on every write.
  */
 export const fsAuditAdapter: AuditAdapter = {
   write: async (record: AuditRecord): Promise<void> => {

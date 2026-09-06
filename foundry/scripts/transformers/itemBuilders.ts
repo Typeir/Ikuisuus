@@ -2,7 +2,7 @@
  * @fileoverview Builder functions for dnd5e 5.3 Foundry item types.
  * @description Each builder constructs a specific item category (weapon,
  * save-feat, multiattack, passive) from a MonsterFeature using the
- * dnd5e Activity model. Called by `buildBaseItem` in the main transformer.
+ * dnd5e Activity model.
  *
  * @module foundry/scripts/transformers/itemBuilders
  * @version 1.0.0
@@ -311,7 +311,6 @@ export function buildMultiattackItem(
 
 /**
  * Builds a dnd5e feat item for a passive feature.
- * Legendary deed features with an action trigger get a Utility Activity.
  *
  * @param {MonsterFeature} feature - Source passive feature
  * @param {string} itemId - Generated Foundry document ID

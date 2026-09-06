@@ -2,11 +2,10 @@
  * @fileoverview Unit tests for Catch-All page component
  * @module tests/unit/src/app/[locale]/[...rest]/page.test
  * @description Validates CatchAllPage default export and component signature.
- * Tests catch-all route for undefined paths.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @/app/[locale]/[...rest]/page
  */

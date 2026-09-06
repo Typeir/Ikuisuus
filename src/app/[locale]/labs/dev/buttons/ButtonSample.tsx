@@ -1,7 +1,6 @@
 /**
  * @fileoverview Renders one canonical button variant with representative content.
  * @description Icon-only variants get an icon and `tabActive` composes with `tab`.
- * Unknown names fall back to a text label so a newly added class still renders.
  *
  * @component ButtonSample
  * @version 1.0.0

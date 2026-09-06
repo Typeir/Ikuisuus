@@ -45,7 +45,7 @@ export interface TagExtractionOptions {
 }
 
 /**
- * Removes the labels of links that cite another content entity. Rules links keep their labels.
+ * Removes the labels of links that cite another content entity.
  *
  * @param {string} text - Content to clean
  * @returns {string} The text with entity link labels removed
@@ -127,7 +127,7 @@ export function extractConditionTags(
 }
 
 /**
- * Extract ability save tags from content. Emits the abbreviated form (`save:dex`).
+ * Extract ability save tags from content.
  *
  * @param {string} text - Content to analyze
  * @param {SharedData} sharedData - Shared game data
@@ -294,7 +294,7 @@ export function extractItemMechanicTags(text: string): string[] {
 }
 
 /**
- * Extract lore tags (factions, locations) from content. Both carry the `meta:` prefix.
+ * Extract lore tags (factions, locations) from content.
  *
  * @param {string} text - Content to analyze
  * @param {string[]} factions - List of faction names to search for
@@ -406,7 +406,7 @@ const ASPECT_SHAPE = /^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9-]*$/;
 
 /**
  * Slug rule shared with the page anchors: lowercase, hyphenated, ASCII word
- * chars only. Feature-scoped frontmatter entries key on this.
+ * chars only.
  *
  * @param {string} text - Feature name or heading
  * @returns {string} Slug
@@ -441,8 +441,7 @@ export function stampAnchors(
 
 /**
  * Splits an `aspects:` / `denyAspects:` frontmatter list into sheet-level
- * and feature-scoped aspects. Entry: bare `group:value` (sheet) or
- * `{ anchor: [aspects] }` (feature). Malformed entries are ignored.
+ * and feature-scoped aspects.
  *
  * @param {unknown} list - Frontmatter list value
  * @returns {{ sheet: string[]; features: Map<string, string[]> }} Parsed scopes
@@ -482,8 +481,6 @@ export function parseAuthoredAspectList(list: unknown): {
 /**
  * Applies the sheet-level authored aspect frontmatter to a generated tag set:
  * bare `aspects:` entries are added, bare `denyAspects:` entries removed.
- * Feature-scoped entries are ignored here; see `applyAuthoredFeatureAspects`.
- * Output is deduplicated and sorted.
  *
  * @param {string[]} tags - Generated aspects
  * @param {Record<string, unknown> | undefined} frontmatter - Parsed frontmatter
@@ -501,8 +498,7 @@ export function applyAuthoredAspects(
 
 /**
  * Applies feature-scoped authored aspects to a list of feature shards in
- * place. A shard matches an entry when the anchor of its `heading` or `name`
- * equals the entry key.
+ * place.
  *
  * @param {Array<{ name?: string; heading?: string; tags?: string[] }>} features - Feature shards (mutated)
  * @param {Record<string, unknown> | undefined} frontmatter - Parsed frontmatter
@@ -528,8 +524,6 @@ export function applyAuthoredFeatureAspects(
 
 /**
  * Filters generated aspects through the frontmatter `denyAspects` list.
- * An author lists exact aspects the generator must not assign to this
- * file. Unknown or absent list returns tags unchanged.
  *
  * @param {string[]} tags - Generated aspects
  * @param {unknown} denyAspects - Frontmatter `denyAspects` value
@@ -549,7 +543,7 @@ export function applyAspectDenyList(
 }
 
 /**
- * Extract all tags from content. Unified entry point.
+ * Extract all tags from content.
  *
  * @param {string} content - File content to analyze
  * @param {string} filePath - Absolute path to file

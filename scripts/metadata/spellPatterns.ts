@@ -1,8 +1,6 @@
 /**
  * @fileoverview Spell Metadata Patterns
  * @description Pre-compiled regex patterns for the spell metadata generator.
- * Centralizes stat-block line detection, component parsing, casting-time
- * classification, and spell-list extraction.
  *
  * @module scripts/metadata/spellPatterns
  * @version 1.0.0

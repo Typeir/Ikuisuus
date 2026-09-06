@@ -1,12 +1,7 @@
 /**
  * @fileoverview Active Sheet Context
  * @description Owns the sheet session state: draft lifecycle, edit-mode flag,
- * and active tab. Holds no character data; the sheet mounts a single
- * {@link CharacterEntityProvider} with the display entity (draft while
- * editing, saved snapshot otherwise). Exposes a typed mutator API and selector
- * hooks. Writes are not gated on edit mode — see {@link sheetReducer}. Any
- * saved-character change is pushed to the outer roster context
- * (`@/lib/context/CharacterSheetContext`) by a single effect.
+ * and active tab.
  * @module modules/character-builder/application/context/activeSheetContext
  * @version 2.0.0
  * @author Typeir
@@ -64,8 +59,7 @@ export interface SheetMutators {
 }
 
 /**
- * Session state exposed by the context value. Character data lives in the
- * entity context — read it with {@link useSheetData}.
+ * Session state exposed by the context value.
  * @interface SheetContextValue
  * @property {boolean} editing - Edit mode flag
  * @property {SheetTabId} activeTab - Currently displayed tab
@@ -95,8 +89,7 @@ export interface ActiveSheetProviderProps {
 }
 
 /**
- * Provides the active-sheet state and mutators to descendants. `saveEdit`
- * dispatches `UPSERT_CHARACTER` to the outer roster context.
+ * Provides the active-sheet state and mutators to descendants.
  * @component
  * @param {ActiveSheetProviderProps} props - Provider props
  * @returns {JSX.Element} Context provider element
@@ -117,8 +110,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
   });
 
   /**
-   * Adopts a different character when the roster selects one. Skips the initial
-   * mount pass; the reducer is already seeded from the `character` prop.
+   * Adopts a different character when the roster selects one.
    */
   const syncedCharacterRef = useRef(character);
   useEffect(() => {
@@ -128,8 +120,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
   }, [character]);
 
   /**
-   * Enters edit mode when `startEditingId` matches `character.id`. Re-fires
-   * only when the flagged id or active character changes.
+   * Enters edit mode when `startEditingId` matches `character.id`.
    */
   useEffect(() => {
     if (startEditingId && startEditingId === character.id) {
@@ -139,8 +130,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
 
   /**
    * Pushes dirty saved-character writes to the outer roster context via
-   * `UPSERT_CHARACTER`. Skips while editing. Triggered by the dirty flag, not
-   * by comparison against the incoming `character` prop.
+   * `UPSERT_CHARACTER`.
    */
   useEffect(() => {
     if (state.editing || !state.dirty) return;
@@ -232,7 +222,7 @@ export const ActiveSheetProvider: React.FC<ActiveSheetProviderProps> = ({
 };
 
 /**
- * Reads the full active-sheet context. Throws outside the provider.
+ * Reads the full active-sheet context.
  * @function useActiveSheet
  * @returns {SheetContextValue} The current context value
  * @throws {Error} When called outside an ActiveSheetProvider
@@ -249,8 +239,7 @@ export const useActiveSheet = (): SheetContextValue => {
 
 /**
  * Reads the currently displayed character data (`draft` when editing, else the
- * saved snapshot). Resolves to {@link useCharacterEntity}; both return the
- * same object.
+ * saved snapshot).
  * @function useSheetData
  * @returns {CharacterSheetType} The display data
  */

@@ -1,6 +1,5 @@
 /**
- * @fileoverview Unit tests for convertToPngDataUri. Mocks sharp and fetch.
- * Covers data URIs, PNG pass-through, remote fetch, and failure handling.
+ * @fileoverview Unit tests for convertToPngDataUri.
  * @module tests/unit/src/lib/seo/og/pngConverter.test
  */
 

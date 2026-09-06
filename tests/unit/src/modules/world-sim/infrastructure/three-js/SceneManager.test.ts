@@ -1,8 +1,7 @@
 /**
  * @fileoverview SceneManager Unit Tests
  * @description Tests SceneManager initialization, lifecycle registration,
- * start/stop, resize handling, and disposal. Mocks WebGLRenderer since
- * jsdom lacks actual WebGL support.
+ * start/stop, resize handling, and disposal.
  *
  * @module tests/unit/src/modules/world-sim/infrastructure/three-js/SceneManager.test
  */

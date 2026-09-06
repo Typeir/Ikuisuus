@@ -27,7 +27,7 @@ export interface SyncResult {
  * Options for one content type's sync.
  *
  * @property {Record<string, unknown>[]} [records] - Pre-parsed records to sync instead of reading sidecars
- * @property {boolean} [allowDeletion] - Removes rows with no incoming record. Destructive; safe only with a full read. Defaults to false
+ * @property {boolean} [allowDeletion] - Removes rows with no incoming record.
  */
 export interface SyncOptions {
   records?: Record<string, unknown>[];

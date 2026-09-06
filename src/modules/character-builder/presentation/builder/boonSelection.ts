@@ -23,9 +23,7 @@ import { unstable_serialize, type Arguments } from 'swr';
 
 /**
  * Computes the next selected-boon array after toggling a sub-option of a
- * variable-cost boon. `choose-one` replaces the choice; `pick-any` toggles the
- * option in/out. Empty result removes the boon. `bpCost` is the summed cost of
- * the chosen options.
+ * variable-cost boon.
  *
  * @param {CharacterShard[]} selectedBoons - Current selection
  * @param {BloodlineBoon} boon - The boon whose sub-option changed
@@ -86,8 +84,7 @@ export function applySubOptionSelection(
 }
 
 /**
- * Aspects of the picked options, unioned in option order. Falls back to the
- * boon's own roll-up when no option carries tags of its own (older sidecars).
+ * Aspects of the picked options, unioned in option order.
  *
  * @param {BloodlineBoon} boon - The multichoice boon
  * @param {string[]} picked - Names of the picked options
@@ -124,7 +121,7 @@ export interface ShardCacheHandles {
 }
 
 /**
- * Builds the shard for a single-cost boon. Prefetches its prose by anchor; on failure the body stays lazy.
+ * Builds the shard for a single-cost boon.
  *
  * @param {BloodlineBoon} boon - The boon being picked
  * @param {string} bloodlineSlug - Bloodline slug

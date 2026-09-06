@@ -1,5 +1,5 @@
 /**
- * @fileoverview Glyph-only pill row. Inert mode for nested buttons.
+ * @fileoverview Glyph-only pill row.
  *
  * @module modules/library/presentation/components/Aspects/AspectGlyphs
  * @version 1.0.0

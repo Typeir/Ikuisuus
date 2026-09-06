@@ -1,9 +1,7 @@
 /**
  * @fileoverview Stream rail: the static box a vertical ticker scrolls inside.
  * @description Renders `<span aria-hidden data-stream-rail>`; the host's
- * stylesheet includes `mdx-stream-rail` on it. `streamStyle` builds the
- * `--stream-text` and `--stream-speed` custom properties the rail reads,
- * quoting the text as a CSS string token.
+ * stylesheet includes `mdx-stream-rail` on it.
  *
  * @module lib/components/stream/StreamRail
  * @version 1.0.0
@@ -35,9 +33,7 @@ export interface StreamRailProps {
 }
 
 /**
- * Quotes text as a CSS string token. `content: var(--stream-text)` resolves
- * to nothing when the value is bare identifiers, and a raw newline ends a
- * CSS string, so whitespace runs collapse to one space.
+ * Quotes text as a CSS string token.
  *
  * @param {string} text - Raw stream text
  * @returns {string} Double-quoted CSS string
@@ -53,7 +49,6 @@ export function cssString(text: string): string {
 /**
  * Custom properties a stream host sets: the quoted text and a loop duration
  * derived from its length, so every page scrolls at about the same speed.
- * The copy the rail repeats is the text plus one separator space.
  *
  * @param {string} text - One copy of the stream text
  * @returns {CSSProperties} `--stream-text` and `--stream-speed`
@@ -71,8 +66,7 @@ export function streamStyle(text: string): CSSProperties {
 }
 
 /**
- * Static rail the ticker scrolls inside. Hidden from assistive tech: the text
- * is ornament.
+ * Static rail the ticker scrolls inside.
  *
  * @component
  * @param {StreamRailProps} props - Component props

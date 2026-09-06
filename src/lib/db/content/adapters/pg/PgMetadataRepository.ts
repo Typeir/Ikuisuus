@@ -1,7 +1,6 @@
 /**
  * @fileoverview Abstract PostgreSQL metadata repository, MikroORM-backed.
- * @description Implements `list` and `getBySlug` on `getEM`. Subclasses supply
- * the entity class and row-to-domain mapper; `populate` and `orderBy` are overridable.
+ * @description Implements `list` and `getBySlug` on `getEM`.
  *
  * @module lib/db/content/adapters/pg/PgMetadataRepository
  * @version 1.0.0
@@ -24,8 +23,8 @@ import {
  *
  * @abstract
  * @class PgMetadataRepository
- * @template TEntity - MikroORM entity type. Must expose `locale` and `slug` string fields.
- * @template TMetadata - Domain metadata record type. Must expose a `slug` string field.
+ * @template TEntity - MikroORM entity type.
+ * @template TMetadata - Domain metadata record type.
  *
  * @description Abstract members require an entity constructor and a row mapper; `populate()`
  * and `orderBy()` may be overridden.
@@ -62,7 +61,7 @@ export abstract class PgMetadataRepository<
   /**
    * Relation paths to eagerly populate on every query.
    *
-   * @returns {string[]} Array of relation field names. Defaults to `[]`.
+   * @returns {string[]} Array of relation field names.
    *
    * @description Override to load relation paths (e.g. `['boons']`, `['features']`).
    */
@@ -75,7 +74,7 @@ export abstract class PgMetadataRepository<
    *
    * @returns {Record<string, 'asc' | 'desc'> | undefined} Order map or `undefined`.
    *
-   * @description Override to control sort order. Defaults to `undefined` (database-native order).
+   * @description Override to control sort order.
    */
   protected orderBy(): Record<string, 'asc' | 'desc'> | undefined {
     return undefined;
@@ -83,8 +82,6 @@ export abstract class PgMetadataRepository<
 
   /**
    * Returns all metadata records for the given locale.
-   *
-   * Translates optional filters into a MikroORM query object merged with the locale predicate before `em.find`.
    *
    * @param {string} locale - Locale code (e.g. `'en'`, `'es'`).
    * @param {FilterExpression[]} [filters] - JSON-serializable filter list.

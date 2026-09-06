@@ -54,7 +54,6 @@ export {
 
 /**
  * Convert a base creature to an in-progress combatant.
- * Preserves heroic awakening state if the creature was already awakened.
  *
  * @function createInProgressCombatant
  * @param {CreatureEntry} creature - Base creature to convert

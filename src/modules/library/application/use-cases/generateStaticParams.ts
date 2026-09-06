@@ -12,9 +12,7 @@ import findAllMdxFiles from '@/modules/library/infrastructure/content/findAllMdx
 import path from 'path';
 
 /**
- * Generates static slug params for the dynamic library route. A folder index —
- * `main`, or a file named after its folder — is served at the folder's route,
- * so that route is emitted beside the file's own.
+ * Generates static slug params for the dynamic library route.
  *
  * @param {string} [contentRoot] - Optional content root override.
  * @returns {Promise<Array<{ slug: string[] }>>} Next.js static params.

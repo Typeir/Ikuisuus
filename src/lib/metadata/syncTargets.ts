@@ -1,8 +1,6 @@
 /**
  * @fileoverview Content tables the metadata sync covers.
- * @description One target per content type. Mapping comes from entity property
- * metadata, so a target declares only where records live and how rows are
- * identified.
+ * @description One target per content type.
  *
  * @module lib/metadata/syncTargets
  * @version 1.0.0
@@ -29,10 +27,6 @@ import { readMetadataFiles } from './metadataSource';
 
 /**
  * Reader keeping only records whose source file carries one content suffix.
- *
- * The vocations tree holds vocation, specialization and spell-list sidecars
- * side by side, so the tables sharing it must discriminate by file, not by
- * directory — a directory sweep would seed a specialization as a vocation.
  *
  * @param {string} suffix - Full file suffix, e.g. `.vocation.mdx`
  * @returns {SyncTarget['readRecords']} Reader for records bearing the suffix

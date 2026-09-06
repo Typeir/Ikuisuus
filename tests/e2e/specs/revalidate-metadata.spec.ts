@@ -1,11 +1,5 @@
 /**
  * @fileoverview E2E tests for the ISR revalidation endpoint's metadata contract.
- * Drives the live route over HTTP and asserts the response shape that callers
- * depend on: per-path results plus a metadata block reporting which content
- * types were regenerated.
- *
- * Skipped unless REVALIDATION_SECRET is present in the server environment, since
- * the endpoint refuses to run unconfigured.
  */
 
 import { expect, test } from '@playwright/test';

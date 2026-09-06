@@ -1,7 +1,6 @@
 /**
  * @fileoverview Search Results Page Unit Tests
- * @description Smoke tests for the /{locale}/search page. `useSearch` and
- * `next/navigation` are mocked so no Pagefind bundle or router is needed.
+ * @description Smoke tests for the /{locale}/search page.
  *
  * @module tests/unit/src/app/[locale]/search/page.test
  */

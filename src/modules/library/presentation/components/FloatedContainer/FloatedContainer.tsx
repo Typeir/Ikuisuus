@@ -12,9 +12,6 @@ import styles from './FloatedContainer.module.scss';
 
 /**
  * Props for the FloatedContainer component.
- *
- * A container that floats its content to the specified side (left or right)
- * with configurable width and margin.
  * @property {ReactNode} [children] - The content to be wrapped in the floated container.
  * @property {('left' | 'right')} [side='right'] - The side to float the container.
  * @property {string | number} [width='40%'] - The CSS width of the container.

@@ -78,8 +78,7 @@ export function readLines(raw: string): string[] {
 
 /**
  * Empties a leading YAML frontmatter block, delimiters included, keeping its
- * line breaks so line numbers still match the source file. Content without
- * frontmatter is returned unchanged.
+ * line breaks so line numbers still match the source file.
  *
  * @param {string} raw - Raw MDX file content
  * @returns {string} Content with the frontmatter lines blanked

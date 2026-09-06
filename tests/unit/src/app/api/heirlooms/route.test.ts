@@ -1,9 +1,7 @@
 /**
  * Heirlooms API Route Unit Tests
  *
- * @fileoverview Tests for the /api/heirlooms endpoint. Verifies export structure,
- * locale handling, repository integration, and error resilience by mocking the
- * heirloom repository module.
+ * @fileoverview Tests for the /api/heirlooms endpoint.
  *
  * @module tests/unit/src/app/api/heirlooms/route.test
  * @version 3.0.0

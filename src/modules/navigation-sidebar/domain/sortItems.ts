@@ -1,6 +1,5 @@
 /**
  * @fileoverview Pure sort logic for sidebar navigation items.
- * Sorts items with folders last, alphabetically within each category.
  * @module modules/navigation-sidebar/domain/sortItems
  * @author Typeir
  * @version 1.0.0
@@ -11,10 +10,6 @@ import type { Item } from './types';
 
 /**
  * Sorts navigation items alphabetically (numeric-aware) with folders last.
- * Uses Unicode Collation Algorithm for locale-aware comparison.
- *
- * Sort order: [files, then folders] within each group by display name,
- * then by path for stable secondary ordering.
  *
  * @param {Item[]} items - Items to sort
  * @returns {Item[]} Sorted items (folders last)

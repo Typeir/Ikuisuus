@@ -1,18 +1,6 @@
 /**
  * @fileoverview Item card: heirlooms and trinkets.
- * @description Holds the whole item, story included. Renders the italic brief
- * from its identity slots first, then the children in source order, and hands
- * the number slots down for `<Attributes />` to print wherever the author
- * placed it. Authors group the blocks under their own `###` headings
- * (Attributes, Traits, Features); sectionize nests the blocks beneath them.
- * Header slots arrive as attributes by default, or as a paragraph of slot
- * elements; slot props derive from the slot schema.
- *
- * A trinket is the same card with a shorter brief and no `<Attributes />`
- * marker: it leads with its category rather than its rarity, and prints its
- * numbers itself, because a trinket is one block where an heirloom is a page.
- * Both draw from one slot table, so a slot cannot mean two things depending on
- * which tag wrote it.
+ * @description Holds the whole item, story included.
  *
  * @module modules/library/presentation/components/slots/Heirloom
  * @version 0.5.0
@@ -58,11 +46,6 @@ export type ItemKind = 'heirloom' | 'trinket';
 
 /**
  * Rows an item of this kind prints for itself.
- *
- * A trinket prints every row slot, because it is one block with no room for
- * an `<Attributes />` marker. An heirloom prints only what the marker does not
- * already show: `STAT_SLOTS` covers its numbers and `versatile` rides inside
- * the damage cell there.
  *
  * @param {ItemKind} kind - Which item card
  * @returns {readonly HeirloomSlotName[]} Slot names to print
@@ -200,7 +183,7 @@ function briefLines(
 
 /**
  * A trinket's brief: its category, then rarity and attunement where it carries
- * them. Most trinkets are mundane and name only a category.
+ * them.
  *
  * @param {HeirloomValues} values - Header slot values
  * @param {(key: string) => string} t - Translator for the heirloom namespace

@@ -2,11 +2,7 @@
  * Incipient → Delayed rename
  *
  * @fileoverview One-off corpus sweep renaming the `incipient` effect timing to
- * `delayed`, preserving capitalisation. Covers content prose, the aspect
- * vocabulary in shared-data, and generated sidecars.
- *
- *   npx tsx --tsconfig tsconfig.scripts.json scripts/content/renameIncipientToDelayed.ts
- *   npx tsx --tsconfig tsconfig.scripts.json scripts/content/renameIncipientToDelayed.ts --apply
+ * `delayed`, preserving capitalisation.
  *
  * @module scripts/content/renameIncipientToDelayed
  * @version 1.0.0
@@ -24,9 +20,7 @@ const TARGETS = ['src/content/en', 'scripts/core/shared-data.json'];
 const EXTENSIONS = new Set(['.mdx', '.md', '.json']);
 
 /**
- * Matches the word in any capitalisation. Underscore is a word character, so
- * `\b` never fires inside markdown emphasis such as `[_incipient effect_]`; the
- * boundary is spelled out as "not a letter or digit" instead.
+ * Matches the word in any capitalisation.
  */
 const PATTERN = /(?<![a-z0-9])incipient(?![a-z0-9])/gi;
 

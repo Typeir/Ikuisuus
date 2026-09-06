@@ -1,8 +1,7 @@
 /**
  * @fileoverview Rewrites markdown links whose targets gained a double-extension
  * suffix (e.g. `/vocations/Berserker/path-of-the-berserker` →
- * `/vocations/Berserker/path-of-the-berserker.specialization`). Builds an old-to-new
- * URL slug map from the filesystem and applies replacements across `.mdx` files.
+ * `/vocations/Berserker/path-of-the-berserker.specialization`).
  *
  * @module scripts/content/updateContentLinks
  * @author Typeir

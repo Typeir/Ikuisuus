@@ -1,10 +1,7 @@
 /**
  * @fileoverview Collision Cloud Effect — Länsihenki × Itähenki Impact Visual
  * @description Multi-layer collision visual driven by a phase-time state
- *   machine. Surface contact starts a phase clock that drives a logarithmic
- *   growth curve, a smoothstep opacity envelope, and jitter coupled to live
- *   opacity. Outer layers expand past apex and fade through alpha; core vertex
- *   displacement collapses with opacity.
+ *   machine.
  *
  * @module modules/world-sim/infrastructure/effects/CollisionCloudEffect
  * @version 3.0.0
@@ -68,26 +65,6 @@ export interface CollisionCloudUpdateParams {
 
 /**
  * Proximity-driven multi-layer collision cloud centered between two bodies.
- * Pair identity is injected via `pairId`. Surface-gap triggers it, not center
- * distance.
- *
- * Usage:
- * ```typescript
- * const effect = new CollisionCloudEffect('lansihenki-itahenki');
- * effect.addToScene(scene);
- * // each frame:
- * effect.update({
- *   bodyAPosition: lansPos,
- *   bodyBPosition: itaPos,
- *   bodyARadius: lansRadius,
- *   bodyBRadius: itaRadius,
- *   time,
- *   deltaTime,
- * });
- * // on dispose:
- * effect.removeFromScene(scene);
- * effect.dispose();
- * ```
  *
  * @class CollisionCloudEffect
  */
@@ -135,9 +112,7 @@ export class CollisionCloudEffect {
    * Builds the four-layer scene graph: debris points, opaque grey core,
    * russian-doll additive shells, and the corona shell.
    *
-   * @param {string} pairId - Collision pair identifier. Used as the
-   *   scene-graph group name; same id `CelestialRegistry.getCollisionPair(id)`
-   *   exposes.
+   * @param {string} pairId - Collision pair identifier.
    */
   constructor(pairId: string) {
     this.group = new Group();
@@ -206,12 +181,9 @@ export class CollisionCloudEffect {
   }
 
   /**
-   * Updates the cloud each frame. Phase clock starts the first frame surfaces
-   * come within `TRIGGER_GAP_SCALE * avgRadius` and advances by `deltaTime`
-   * until the fade completes, even if the planets drift apart.
+   * Updates the cloud each frame.
    *
-   * @param {CollisionCloudUpdateParams} params - Per-frame inputs. See
-   *   `CollisionCloudUpdateParams` for field semantics.
+   * @param {CollisionCloudUpdateParams} params - Per-frame inputs.
    */
   update(params: CollisionCloudUpdateParams): void {
     const {
@@ -350,7 +322,7 @@ export class CollisionCloudEffect {
   }
 
   /**
-   * Dispose of all GPU resources. Call `removeFromScene` first.
+   * Dispose of all GPU resources.
    */
   dispose(): void {
     this.debrisGeometry.dispose();

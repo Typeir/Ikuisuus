@@ -1,8 +1,6 @@
 /**
  * @fileoverview Bloodline Metadata Patterns
  * @description Pre-compiled regex patterns for the bloodline metadata generator.
- * Centralizes HTML/MDX markup cleanup, boon heading parsing, section
- * detection, and proficiency tagging patterns.
  *
  * @module scripts/metadata/bloodlinePatterns
  * @version 1.0.0

@@ -2,8 +2,7 @@
  * @fileoverview Values a card works out rather than reads.
  * @description Numbers a sheet would otherwise hand-maintain beside the number
  * they come from: an ability modifier beside its score, a tier bonus beside a
- * challenge rating, an ordinal beside a level. Each is arithmetic the rules
- * already fix, so authoring both halves only creates a pair that can disagree.
+ * challenge rating, an ordinal beside a level.
  *
  * @module modules/library/domain/derive
  * @version 0.1.0
@@ -75,11 +74,7 @@ export function challengeValue(challenge: string | number): number | null {
 }
 
 /**
- * XP awarded for each challenge rating, in rating order. Through 27 this is
- * what the sheets carrying both numbers agree on wherever two or more agree.
- * From 28 the budget grows geometrically through two fixed points — 31 at
- * 325,000 and 35 at 425,000, the sheets whose budgets are the reference —
- * because a power budget compounds and the sparse data up there is noise.
+ * XP awarded for each challenge rating, in rating order.
  */
 export const XP_BY_CHALLENGE: ReadonlyArray<readonly [number, number]> = [
   [0, 10],
@@ -193,8 +188,7 @@ export function challengeLabel(rating: number): string {
 
 /**
  * Tier bonus for a challenge rating: one step per three rating, rounded up,
- * never below one. This is what `Tier Bonus by Challenge Rating` states and
- * what all 71 sheets carrying both numbers print.
+ * never below one.
  *
  * @param {string | number} challenge - Challenge rating
  * @returns {number | null} Tier bonus, or null when the rating is unreadable
@@ -228,8 +222,7 @@ export function ordinal(value: number): string {
 }
 
 /**
- * A spell's level as its card names it. Level zero is a cantrip, which carries
- * no ordinal at all.
+ * A spell's level as its card names it.
  *
  * @param {string | number} level - Spell level
  * @returns {string | null} Level phrase, or null when the level is unreadable

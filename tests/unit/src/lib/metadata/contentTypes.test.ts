@@ -2,8 +2,7 @@
  * @fileoverview Unit tests for metadata content types
  * @module tests/unit/src/lib/metadata/contentTypes.test
  * @description Validates suffix extraction, suffix classification, ambiguity
- * handling, and frontmatter narrowing. Classification must never depend on the
- * folder a file lives in.
+ * handling, and frontmatter narrowing.
  *
  * @version 2.0.0
  * @author Typeir

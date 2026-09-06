@@ -3,7 +3,7 @@
  *
  * @fileoverview One shared Escape listener over a LIFO stack, so a press closes
  * the most recent surface only — tooltips, modals, and custom surfaces share
- * the one stack. Satisfies WCAG 2.1 SC 1.4.13 for hover content.
+ * the one stack.
  *
  * @module lib/hooks/useEscapeDismiss
  * @version 2.0.0
@@ -58,9 +58,7 @@ function syncListener(): void {
 }
 
 /**
- * Registers a surface to be closed by Escape while it is open. Pass a stable
- * `onDismiss` — a new identity re-registers the surface at the top of the
- * stack.
+ * Registers a surface to be closed by Escape while it is open.
  *
  * @param {boolean} active - Whether the surface is currently open
  * @param {() => void} onDismiss - Closes the surface

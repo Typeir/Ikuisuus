@@ -1,9 +1,7 @@
 /**
  * @fileoverview Content Hash Utility (FNV-1a 32-bit)
  * @description Computes FNV-1a 32-bit hashes of metadata records over
- * stable (key-sorted) JSON. Output is 8 lowercase hex chars,
- * deterministic across platforms. The seed script and sync service
- * compare it against the stored hash to skip unchanged rows.
+ * stable (key-sorted) JSON.
  *
  * @module lib/metadata/contentHash
  * @version 2.0.0
@@ -34,7 +32,6 @@ export function fnv1a32(str: string): string {
 
 /**
  * Serializes an object to JSON with keys sorted recursively.
- * Object property insertion order does not affect the output.
  *
  * @param {unknown} obj - Object to serialize
  * @returns {string} Deterministic JSON string

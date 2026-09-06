@@ -1,9 +1,6 @@
 /**
  * @fileoverview useHpRoller hook
- * @description Two-phase hit-die roller state machine. Phase one sets a die value
- * (roll / average / typed / bulk set); phase two adds it to HP (per-die add or
- * bulk add). Re-setting a die already added re-commits; every commit calls
- * `onCommit` with the full log.
+ * @description Two-phase hit-die roller state machine.
  *
  * @module modules/character-builder/presentation/atoms/useHpRoller
  * @version 2.0.0

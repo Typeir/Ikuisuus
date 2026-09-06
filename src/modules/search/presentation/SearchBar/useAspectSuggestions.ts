@@ -3,9 +3,7 @@
  * @description Watches the token under the caret; once it reads
  * `group:` (a group from the vocabulary, optionally with a value prefix),
  * the vocabulary is fetched lazily and the matching `group:value` tokens are
- * offered. Selecting one strips the token from the query and yields the
- * aspect and the remaining text, so the caller can navigate to the search
- * page with it as a filter.
+ * offered.
  *
  * @module modules/search/presentation/SearchBar/useAspectSuggestions
  * @version 1.0.0

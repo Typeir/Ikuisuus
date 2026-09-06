@@ -1,8 +1,7 @@
 /**
  * @fileoverview Factory functions for dnd5e 5.3 Activity data objects.
  * @description Creates fully-populated Activity entries matching the
- * canonical SRD structure. Base construction delegates to
- * `activityDefaults.ts`.
+ * canonical SRD structure.
  *
  * @module foundry/scripts/constants/activityTemplates
  * @version 2.0.0

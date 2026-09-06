@@ -1,8 +1,7 @@
 /**
  * @fileoverview Camera Controller — facade composing orbit, follow, and command execution.
  * @description Composes CameraOrbitControls, CameraFollowSystem, and CameraCommand
- * execution. Orbit works relative to the current orbit center (target); follow moves
- * that center with a tracked body.
+ * execution.
  *
  * @module modules/world-sim/infrastructure/input/CameraController
  * @version 2.0.0
@@ -26,7 +25,6 @@ const TEMP_PAN = new Vector3();
 
 /**
  * Coordinates camera orbit controls, body-follow tracking, and command transitions.
- * Manual orbit and zoom work relative to the current orbit center, static or tracking.
  *
  * @class CameraController
  * @implements {ICameraController}
@@ -98,7 +96,6 @@ export class CameraController implements ICameraController {
 
   /**
    * Execute a camera command, disabling manual controls during the transition.
-   * The follow system continues to operate during the command.
    *
    * @param {ICameraCommand} command - The command to execute
    */
@@ -167,8 +164,7 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Per-frame update. Applies follow delta to the orbit center, then either
-   * advances the active command or updates manual orbit.
+   * Per-frame update.
    *
    * @param {number} deltaTime - Time since last frame in seconds
    */
@@ -216,8 +212,7 @@ export class CameraController implements ICameraController {
   }
 
   /**
-   * Advance the active camera command. Re-enables orbit controls
-   * when the command completes.
+   * Advance the active camera command.
    *
    * @private
    * @param {number} deltaTime - Frame delta time
@@ -288,7 +283,6 @@ export class CameraController implements ICameraController {
 
   /**
    * Sync orbit controls' spherical state from the camera's current position.
-   * Called after command completion or target changes.
    *
    * @private
    */

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Resolves decorated classes into MikroORM `EntitySchema` instances.
  * @description Maps a list of entity classes to the schema each decorator
- * built. Throws on any class that has no schema.
+ * built.
  *
  * @module lib/db/orm/schema/toSchemas
  * @version 1.0.0

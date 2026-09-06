@@ -1,7 +1,7 @@
 /**
  * @fileoverview Option shapes for the in-house ORM schema decorators.
  * @description Mirrors the subset of MikroORM's property options this codebase
- * uses. Every option maps 1:1 onto an `EntitySchema` property definition.
+ * uses.
  *
  * @module lib/db/orm/schema/types
  * @version 1.0.0
@@ -13,7 +13,7 @@
  * Options accepted by a persisted scalar column.
  *
  * @interface ScalarFieldOptions
- * @property {string} type - Explicit MikroORM type. Required: reflection is unavailable.
+ * @property {string} type - Explicit MikroORM type.
  * @property {string} [fieldName] - Database column name when it differs from the property.
  * @property {string} [columnType] - Explicit SQL column type.
  * @property {boolean} [nullable] - Whether the column accepts NULL.

@@ -35,7 +35,6 @@ import { createDisplacedShaderMaterial } from '@/modules/world-sim/infrastructur
 
 /**
  * Configuration for a single Everdark shell layer.
- * All values are absolute — no multipliers against a shared base.
  *
  * @interface EverdarkLayerConfig
  * @property {number} radiusScale - Fraction of the boundary radius for this shell

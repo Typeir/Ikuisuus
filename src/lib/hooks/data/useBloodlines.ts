@@ -44,7 +44,7 @@ export interface UseBloodlinesResult {
 }
 
 /**
- * Fetches bloodline list from `/api/bloodlines`. Results are cached by SWR.
+ * Fetches bloodline list from `/api/bloodlines`.
  *
  * @param {UseBloodlinesOptions} options - Hook configuration
  * @returns {UseBloodlinesResult} Bloodline loading state

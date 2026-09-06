@@ -1,8 +1,7 @@
 /**
  * @fileoverview Match Snippet Atom
  * @description Renders the Pagefind excerpt with `<mark>` highlight tags
- * preserved and styled with accent underglow. Clamps to configurable lines
- * via CSS and expands on row hover.
+ * preserved and styled with accent underglow.
  *
  * @module modules/search/presentation/atoms/MatchSnippet
  * @version 1.0.0
@@ -28,7 +27,6 @@ interface MatchSnippetProps {
 
 /**
  * Renders the match snippet with mark highlights from Pagefind.
- * Falls back to a hidden element when no snippet is available.
  *
  * @param {MatchSnippetProps} props - Component props
  * @param {string} [props.snippet] - HTML snippet with optional `<mark>` tags

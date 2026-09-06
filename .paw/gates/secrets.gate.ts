@@ -2,8 +2,7 @@
  * Secrets Gate
  *
  * @fileoverview Scans files for restricted base64-encoded patterns from the
- * .patterns file. Blocks commits and agent edits that introduce sensitive
- * content.
+ * .patterns file.
  *
  * @module .paw/gates/secrets
  * @author Typeir

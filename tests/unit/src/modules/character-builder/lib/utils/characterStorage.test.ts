@@ -2,7 +2,6 @@
  * Character Storage Utilities Unit Tests
  *
  * @fileoverview Tests for pure helper functions in characterStorage.
- * Covers tier bonus math, ability modifier math, and the createEmptyCharacter factory.
  */
 
 import {

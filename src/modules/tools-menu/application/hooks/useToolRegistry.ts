@@ -1,7 +1,6 @@
 /**
  * @fileoverview Resolves `TOOL_REGISTRY` items into locale-aware menu items.
  * @description Single entry point for obtaining the tools-menu item list.
- * Wraps `TOOL_REGISTRY` with `useTranslations` and `useLocale` from next-intl.
  *
  * @module src/modules/tools-menu/application/hooks/useToolRegistry
  * @version 1.1.0
@@ -18,11 +17,6 @@ import { selectVisibleTools } from '../../infrastructure/registry/toolRegistry.c
 
 /**
  * Returns the tool menu items for the current locale.
- *
- * Labels use the `layout` i18n namespace. Hrefs include the active locale
- * segment. Entries flagged `devOnly` are listed only while `NODE_ENV` is
- * `development`. Memoized; recomputed only when locale or translation
- * function reference changes.
  *
  * @function useToolRegistry
  * @returns {ToolMenuItem[]} Ordered array of resolved tool menu items.

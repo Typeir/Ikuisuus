@@ -124,8 +124,7 @@ async function countRenderableChildren(
 
 /**
  * Detects whether a directory carries an index file — `main`, or a file named
- * after the folder — and returns the route that serves it. A folder with an
- * index is served at its own route, so that is what a stub links to.
+ * after the folder — and returns the route that serves it.
  *
  * @param {DirectorySourceAdapter} adapter - Directory source adapter.
  * @param {string} locale - Locale code.

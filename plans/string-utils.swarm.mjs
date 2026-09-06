@@ -1,11 +1,7 @@
 /**
  * @fileoverview String-utils consolidation sweep: one member per file, each
  * repoints hand-rolled string/dice/path/classname helpers onto the canonical
- * implementations. Only output-identical conversions, except two flagged
- * intended fixes (TrinketTable casing, vocation generator stripper). Roster
- * derives from .ignore/reports/duplication-inventory.md cluster 3.
- *
- *   paw swarm run plans/string-utils.swarm.mjs --live
+ * implementations.
  */
 
 const CANON = [

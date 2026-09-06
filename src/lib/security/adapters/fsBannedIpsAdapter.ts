@@ -1,7 +1,6 @@
 /**
  * @fileoverview Filesystem Banned IP Adapter
  * @description Implements the `BannedIpsAdapter` interface using a local JSON file.
- * Banned IP ranges are persisted as an array in `.meta/runtime/banned-ips.json`.
  *
  * @module lib/security/adapters/fsBannedIpsAdapter
  * @version 1.0.0
@@ -32,8 +31,6 @@ const ensureDir = async (): Promise<void> => {
 
 /**
  * Filesystem-backed banned IP adapter.
- *
- * Stores entries as a JSON array in `.meta/runtime/banned-ips.json`.
  */
 export const fsBannedIpsAdapter: BannedIpsAdapter = {
   read: async (): Promise<BannedIpEntry[]> => {

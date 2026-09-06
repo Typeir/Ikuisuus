@@ -1,6 +1,6 @@
 /**
  * @fileoverview Filter Select Component
- * @description Dropdown select for table filters. Renders as a bottom sheet below 640px viewport width.
+ * @description Dropdown select for table filters.
  *
  * @module lib/components/ui/filterSelect/filterSelect
  * @version 1.0.0
@@ -63,7 +63,7 @@ export interface FilterSelectOption {
  * @property {string} [className] - CSS class for the container
  * @property {boolean} [searchable=false] - Whether to show search input in dropdown
  * @property {'sm' | 'md' | 'lg'} [size='md'] - Size variant
- * @property {(option: FilterSelectOption) => ReactNode} [renderOptionTrailing] - Optional renderer for trailing content inside each option row (e.g. a preview icon). Click handlers in the trailing slot must call `e.stopPropagation()` to keep the dropdown open.
+ * @property {(option: FilterSelectOption) => ReactNode} [renderOptionTrailing] - Optional renderer for trailing content inside each option row (e.g. a preview icon).
  * @property {(option: FilterSelectOption) => ReactNode} [renderOptionLeading] - Optional renderer for leading content before each option label (e.g. a content-type icon)
  * @property {boolean} [hideAllOption=false] - Omit the "All" option; for action selects where every row is a concrete choice
  * @property {ReactNode} [iconTrigger] - Render the trigger as a compact icon-only button holding this node instead of the text-and-chevron trigger; pair with `ariaLabel`
@@ -88,7 +88,7 @@ export interface FilterSelectProps {
 }
 
 /**
- * Select dropdown for table filters. Renders as a bottom sheet on mobile viewports.
+ * Select dropdown for table filters.
  *
  * @component
  * @param {FilterSelectProps} props - Component configuration

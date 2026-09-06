@@ -1,7 +1,6 @@
 /**
  * @fileoverview Unit tests for Monster Cache Utilities
  * @description Tests for cached monster data fetching from API routes.
- * Tests cache behavior, fetch operations, and error handling.
  *
  * @version 1.0.0
  * @author Typeir

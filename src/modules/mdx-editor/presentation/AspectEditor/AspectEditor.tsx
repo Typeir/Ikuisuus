@@ -1,5 +1,5 @@
 /**
- * @fileoverview Two-pane aspect picker. Staged aspects top, vocabulary bottom. Apply commits to buffer.
+ * @fileoverview Two-pane aspect picker.
  *
  * @module modules/mdx-editor/presentation/AspectEditor/AspectEditor
  * @version 1.0.0

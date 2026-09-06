@@ -1,7 +1,6 @@
 /**
  * @fileoverview Party Member Row Component
  * @description Thin row rendering for imported party members in Play Mode.
- * Displays only name, initiative input, and slain toggle.
  *
  * @module modules/encounter-planner/presentation/combatantRow/partyMemberRow
  * @version 1.0.0
@@ -22,7 +21,6 @@ import { useEditableField } from './utils/useEditableField';
 
 /**
  * Thin row for party member combatants.
- * Renders only name, initiative, and slain toggle — no HP, AC, stats, mechanics, or details.
  *
  * @component
  * @returns {JSX.Element} Rendered party member row

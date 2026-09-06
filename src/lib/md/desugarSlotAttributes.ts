@@ -7,9 +7,6 @@
  * become real nodes through the component registry, and the card reads the
  * value through the element path it already supports.
  *
- * Only a value that needs parsing is moved. Plain prose stays a string
- * attribute, since the heirloom brief assembles its sentences from strings.
- *
  * @module lib/md/desugarSlotAttributes
  * @version 1.0.0
  * @author Typeir
@@ -53,8 +50,7 @@ interface MdxJsxElementNode extends Node {
 }
 
 /**
- * Any shortcode family. A value carrying one needs parsing even when markdown
- * reads it as plain text.
+ * Any shortcode family.
  */
 const SHORTCODE_REGEX = new RegExp(
   [
@@ -74,8 +70,6 @@ const parser = unified().use(remarkParse).use(remarkGfm);
 /**
  * Where a host's slot run goes: after the heading the host opens with, which
  * titles it and has to stay first for sectionize, and at the front otherwise.
- * A heading deeper in the children belongs to a group inside the host, and
- * putting the run after that one would file the slots under it.
  *
  * @param {RootContent[]} children - Host children
  * @returns {number} Insertion index
@@ -118,8 +112,7 @@ function needsParsing(value: string, phrasing: PhrasingContent[]): boolean {
 }
 
 /**
- * Attribute naming the slot a JSX element fills. A card reads its slots off
- * this, never off the component's identity, which a server boundary hides.
+ * Attribute naming the slot a JSX element fills.
  */
 export const SLOT_NAME_ATTRIBUTE = 'data-slot';
 

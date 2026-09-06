@@ -91,8 +91,6 @@ interface ToolbarButton {
 
 /**
  * Formatting toolbar for the MDX editor.
- * Provides undo/redo, heading levels, inline formatting, block elements,
- * and shows keyboard shortcut hints on hover.
  *
  * @component
  * @param {EditorToolbarProps} props - Component properties

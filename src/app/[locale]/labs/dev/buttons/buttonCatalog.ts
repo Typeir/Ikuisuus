@@ -3,7 +3,7 @@
  * @description Parses `src/styles/buttons.module.scss` for variant names, doc comments
  * and group headers, then counts reach through both distribution channels: direct
  * `btn.<variant>` references in TSX, and bespoke classes that `@include` a mixin only
- * that variant uses. Nothing is hardcoded, so the catalogue cannot drift.
+ * that variant uses.
  *
  * @module app/[locale]/labs/dev/buttons/buttonCatalog
  * @version 2.0.0
@@ -112,7 +112,6 @@ export function classMixins(lines: string[], className: string): string[] {
 
 /**
  * Extracts variant names, doc comments and group headers from stylesheet source.
- * Declaration order is preserved so the page mirrors the file.
  *
  * @function parseVariants
  * @param {string} scss - Contents of `buttons.module.scss`.
@@ -173,9 +172,7 @@ export function parseVariants(
 
 /**
  * Marks button-family mixins used by exactly one canonical variant, so a bespoke
- * class including one can be attributed to that variant unambiguously. Generic
- * helpers such as `disabled-state` are excluded, and a mixin shared by several
- * variants (`icon-transparent`) attributes to none rather than over-counting.
+ * class including one can be attributed to that variant unambiguously.
  *
  * @function signatureMixins
  * @param {Record<string, string[]>} mixinsByVariant - Mixins per canonical variant.
@@ -200,7 +197,6 @@ export function signatureMixins(
 
 /**
  * Compiles the canonical stylesheet and returns each variant's declarations.
- * Used to score bespoke classes before the full catalogue is assembled.
  *
  * @async
  * @function loadCanonicalDeclarations

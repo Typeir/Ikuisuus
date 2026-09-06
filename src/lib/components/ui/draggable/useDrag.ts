@@ -217,8 +217,7 @@ export function useDrag({
   const onDragPointerUp = useCallback(() => setIsDragging(false), []);
 
   /**
-   * Moves by arrow key, coarser with Shift. A `separator` handle is the ARIA
-   * window-splitter pattern, which is expected to be keyboard operable.
+   * Moves by arrow key, coarser with Shift.
    *
    * @param {ReactKeyboardEvent} event - Key event from the handle
    */
@@ -312,8 +311,7 @@ export function useDrag({
   }, [initialPosition, boundsRef, clampToBounds, containerRef]);
 
   /**
-   * Moves the element when static coordinates change after mount. Compared by
-   * value, since an inline literal is a new reference every render.
+   * Moves the element when static coordinates change after mount.
    */
   const appliedInitial = useRef<PositionValue | null>(
     typeof initialPosition === 'function' ? null : staticInitial,

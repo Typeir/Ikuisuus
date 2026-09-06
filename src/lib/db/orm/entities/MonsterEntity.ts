@@ -35,7 +35,7 @@ export * from './MonsterEmbeds';
 /* ────────────────────────────  Entity  ─────────────────────────────── */
 
 /**
- * Single monster stat block. Multiple variants share slug, differ in subSlug.
+ * Single monster stat block.
  */
 @OrmEntity('MonsterEntity', { tableName: 'monsters' })
 @OrmUnique({ properties: ['locale', 'slug', 'subSlug'] })
@@ -211,7 +211,6 @@ export class MonsterEntity {
 
 /**
  * MikroORM entity for the `monster_features` child table.
- * One row per feature shard in a stat block.
  */
 @OrmEntity('MonsterFeatureEntity', { tableName: 'monster_features' })
 export class MonsterFeatureEntity {

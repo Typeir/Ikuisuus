@@ -1,7 +1,6 @@
 /**
  * @fileoverview Renders loading placeholder components.
- * Supports variants, width/height overrides, and element count.
- * 
+ *
  * @module lib/components/skeleton/skeleton
  * @version 1.0.0
  * @author Typeir

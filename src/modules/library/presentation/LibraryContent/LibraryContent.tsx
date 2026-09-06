@@ -1,8 +1,6 @@
 /**
  * @fileoverview Library Content Body
- * @description Resolves a library slug and renders the compiled article. Shared
- * by the `/{locale}/library/...` and `/{locale}/embed/...` route trees. `basePath`
- * carries the originating tree down to content resolution.
+ * @description Resolves a library slug and renders the compiled article.
  *
  * @module modules/library/presentation/LibraryContent/LibraryContent
  * @version 1.0.0
@@ -41,10 +39,7 @@ export interface LibraryContentProps {
 }
 
 /**
- * Resolves and renders one library article. Redirects when the slug resolves
- * only via its `main` child, 404s when nothing resolves, renders raw markdown
- * through `<MdRawPage>`, and falls back to the client renderer when MDX
- * compilation fails.
+ * Resolves and renders one library article.
  *
  * @component
  * @param {LibraryContentProps} props - Component props

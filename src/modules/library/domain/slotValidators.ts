@@ -1,14 +1,7 @@
 /**
  * @fileoverview Shape rules for slot values.
  * @description The schema knows every slot name; this says what a value for
- * one may look like. A slot with no rule accepts anything, which is most of
- * them — prose slots have no shape to check. The rules exist for values a
- * later step does arithmetic on, where a typo currently fails silently: a
- * challenge rating that will not parse simply drops its derived tier, and an
- * ability score that is not a number prints the typo.
- *
- * Validation is deliberately separate from rendering. A card never rejects a
- * value; the gate reports it, so a page in progress still renders.
+ * one may look like.
  *
  * @module modules/library/domain/slotValidators
  * @version 0.1.0
@@ -35,8 +28,8 @@ const COUNT = /^\d+$/;
 /** A whole number, with the thousands separators a sheet writes. */
 const GROUPED_COUNT = /^(?:\d+|\d{1,3}(?:,\d{3})+)$/;
 
-/** Hit points as a sheet writes them: the total, then the dice in parentheses. */
-const HIT_POINTS = /^\d+(?:\s*\(.+\))?$/;
+/** Hit points as a sheet writes them: the total, grouped or not, then the dice in parentheses. */
+const HIT_POINTS = /^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\s*\(.+\))?$/;
 
 /** A challenge rating: a whole number or one of the low fractions. */
 const CHALLENGE = /^(?:\d+|1\/(?:8|4|2))$/;
@@ -48,8 +41,7 @@ const BONUS = /^[+-]\d+$/;
 const SPELL_LEVEL = /^(?:cantrip|\d|1[0-2])$/i;
 
 /**
- * Shape rules by slot name. Every slot absent from this table accepts any
- * value, which is the correct answer for prose.
+ * Shape rules by slot name.
  */
 export const SLOT_RULES: Readonly<Partial<Record<SlotName, SlotRule>>> = {
   ...Object.fromEntries(

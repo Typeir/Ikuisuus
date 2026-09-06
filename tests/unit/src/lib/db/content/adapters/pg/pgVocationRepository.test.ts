@@ -2,8 +2,6 @@
  * pgVocationRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL vocation repository.
- * Verifies row-mapping from `VocationEntity` rows (with populated features)
- * to `VocationMetadata` domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgVocationRepository
  * @version 1.0.0

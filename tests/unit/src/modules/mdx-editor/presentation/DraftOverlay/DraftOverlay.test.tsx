@@ -1,9 +1,7 @@
 /**
  * DraftOverlay Component Unit Tests
  *
- * @fileoverview Tests for the draft content overlay. Verifies fetch behavior,
- * loading states, client-side MDX compilation, rendering of draft content
- * over static children, and the toggle button that slides the draft panel.
+ * @fileoverview Tests for the draft content overlay.
  *
  * @module tests/unit/src/modules/mdx-editor/presentation/DraftOverlay/DraftOverlay.test
  */

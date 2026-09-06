@@ -1,7 +1,7 @@
 /**
  * Combatant Conditions Manager Component
  *
- * @fileoverview Manages conditions on combatants. Renders condition chips and an input to add new conditions.
+ * @fileoverview Manages conditions on combatants.
  *
  * @module modules/encounter-planner/presentation/combatantRow/combatantConditionsManager
  * @version 3.0.0
@@ -43,8 +43,6 @@ function generateConditionId(): string {
 
 /**
  * Conditions manager for Play Mode combatants.
- * Displays condition chips with remove buttons and input field for adding new conditions.
- * Uses CombatantContext for state and updates.
  *
  * @component
  * @param {CombatantConditionsManagerProps} props - Component props

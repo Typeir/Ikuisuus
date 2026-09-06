@@ -1,7 +1,7 @@
 /**
  * @fileoverview CounterChip atom
  * @description Floating count pill rendered `position: absolute`; returns null
- * when `count <= 0`. Memoised, re-renders only when its props change.
+ * when `count <= 0`.
  *
  * @module modules/character-builder/presentation/atoms/counterChip
  * @version 1.0.0
@@ -77,6 +77,6 @@ const CounterChipImpl: React.FC<CounterChipProps> = ({
 };
 
 /**
- * Memoised `CounterChip`. Re-renders only when its props change by value.
+ * Memoised `CounterChip`.
  */
 export const CounterChip = memo(CounterChipImpl);

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Tests for the shared overview panels rendered by desktop and
  * mobile layouts.
- * @description Each panel reads the character from context. Shard clouds omit
- * empty sections.
+ * @description Each panel reads the character from context.
  *
  * @module tests/unit/src/modules/character-builder/presentation/tabs/overview/overviewPanels.test
  * @version 1.0.0

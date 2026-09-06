@@ -1,7 +1,7 @@
 /**
  * @fileoverview Monster Index API Route - Lightweight monster index for combobox
  * @description Returns minimal monster metadata (slug, title, cr, size, creatureType)
- * for efficient dropdown population. Full metadata is fetched separately on selection.
+ * for efficient dropdown population.
  *
  * @version 2.0.0
  * @author Typeir
@@ -28,7 +28,6 @@ const log = logger.child({ module: 'API:Monsters:Index' });
  * GET /api/monsters/index
  *
  * Returns lightweight array of monster index entries for combobox.
- * Only includes fields needed for search/display: slug, title, cr, size, creatureType.
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of minimal monster objects

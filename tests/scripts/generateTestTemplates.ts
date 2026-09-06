@@ -1,6 +1,5 @@
 /**
  * @fileoverview Generates smoke test templates for source files lacking tests.
- * Writes templates to tests/unit mirroring the source path. Skips excluded patterns.
  *
  * @module generateTestTemplates
  * @version 1.0.0

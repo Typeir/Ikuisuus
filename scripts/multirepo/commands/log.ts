@@ -13,7 +13,7 @@ export const meta: CommandMeta = {
 };
 
 /**
- * Runs `git log` in both repos. Defaults to `--oneline -10` when no args given.
+ * Runs `git log` in both repos.
  * @param args - Arguments forwarded verbatim to `git log`.
  */
 export function run(args: string[]): void {

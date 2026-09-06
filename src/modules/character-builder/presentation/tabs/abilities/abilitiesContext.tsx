@@ -77,7 +77,6 @@ export interface AbilitiesProviderProps {
 
 /**
  * Provides abilities state and mutators to descendants.
- * Reads/writes `data.abilities` from the active sheet context via `patch`.
  *
  * @component
  * @param {AbilitiesProviderProps} props - Provider props
@@ -182,7 +181,6 @@ export const AbilitiesProvider: React.FC<AbilitiesProviderProps> = ({
 
 /**
  * Hook to read abilities state and mutators from context.
- * Throws if used outside an `AbilitiesProvider`.
  *
  * @function useAbilities
  * @returns {AbilitiesContextValue} Abilities state and mutators

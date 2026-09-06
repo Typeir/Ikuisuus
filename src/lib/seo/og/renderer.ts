@@ -1,10 +1,6 @@
 /**
  * @fileoverview Renders an OG card to a compressed PNG buffer.
  *
- * satori converts a React tree to SVG; resvg rasterises it to PNG; Sharp
- * compresses (level 9, palette). Fonts resolve via Google Fonts CSS and cache
- * module-level.
- *
  * @module lib/seo/og/renderer
  * @version 1.0.0
  * @author Typeir
@@ -34,9 +30,6 @@ const fontCache = new Map<string, ArrayBuffer>();
 /**
  * Fetches the raw font binary from a Google Fonts CSS URL.
  *
- * Fetches the CSS, extracts the font binary URL via FONT_SRC_RE, then fetches
- * the binary. Caches results module-level.
- *
  * @param {string} cssUrl - Google Fonts CSS API URL
  * @returns {Promise<ArrayBuffer>} Raw font binary
  * @throws {Error} When the CSS response does not contain a parseable font src
@@ -65,14 +58,7 @@ async function loadFontBuffer(cssUrl: string): Promise<ArrayBuffer> {
 const localFontCache = new Map<string, ArrayBuffer>();
 
 /**
- * Reads a font from `public/fonts`. Caches module-level.
- *
- * satori's opentype fork parses neither WOFF2 nor variable-font tables, and
- * crashes on an `ltag` table. The `*OG*` files are therefore satori-safe
- * derivatives of the site fonts, regenerated with Python fontTools:
- * `instantiateVariableFont` with every fvar axis pinned (wght at 400/700),
- * name records filtered to platform 3, and `ltag`/`STAT`/`meta` deleted.
- * The browser-served originals stay untouched.
+ * Reads a font from `public/fonts`.
  *
  * @param {string} fileName - File name inside `public/fonts`
  * @returns {Promise<ArrayBuffer>} Raw font binary satori can parse
@@ -117,9 +103,6 @@ async function loadFonts(): Promise<import('satori').Font[]> {
 
 /**
  * Renders an OG card to a compressed PNG buffer.
- *
- * satori produces an SVG string from the React tree; Resvg renders it to PNG;
- * Sharp compresses (compressionLevel 9, palette, effort 10). Target size < 600 KB.
  *
  * @param {OGTemplateProps} props - Data and optional image URL for the card
  * @returns {Promise<Uint8Array<ArrayBuffer>>} Compressed PNG image data (target: < 600 KB)

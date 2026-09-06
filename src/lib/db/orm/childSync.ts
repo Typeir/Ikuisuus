@@ -1,8 +1,7 @@
 /**
  * @fileoverview Child-row sync contract for entities with `1:m` collections.
  * @description Entities expose a static `syncChildren` that the sync driver calls
- * after upserting the parent row. The context keeps ORM types out of the entity
- * layer.
+ * after upserting the parent row.
  *
  * @module lib/db/orm/childSync
  * @version 1.0.0

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Play Mode Components Exports
  * @description Barrel export for play mode components.
- * Re-exports for convenient import from single module.
  *
  * @module modules/encounter-planner/presentation/playMode/index
  * @version 2.0.0

@@ -2,7 +2,6 @@
  * Character Sheet Reducer
  *
  * @fileoverview Pure reducer function for character sheet state management.
- * Handles all state transitions: upsert, delete, active selection, and reset.
  *
  * @module lib/reducers/characterSheetReducer
  * @version 1.0.0

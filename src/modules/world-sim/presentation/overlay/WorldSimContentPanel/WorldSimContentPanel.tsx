@@ -1,8 +1,7 @@
 /**
  * @fileoverview WorldSim-specific wrapper around GenericEmbedPanel.
  * @description Wraps GenericEmbedPanel with WorldSim state management, positioning,
- * and selection tracking. Resolves the selected celestial body or region into an
- * embed URL passed to GenericEmbedPanel.
+ * and selection tracking.
  *
  * @module modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel
  * @version 1.0.0
@@ -48,8 +47,6 @@ function computeInitialPosition(parentBounds: {
 
 /**
  * WorldSim-specific wrapper around GenericEmbedPanel.
- * Manages selection tracking, visibility logic, and embed URL determination.
- * Renders a draggable iframe for the selected celestial body or region.
  *
  * @returns {React.ReactElement | null} The content panel with iframe, or null when hidden
  */
@@ -69,7 +66,6 @@ export function WorldSimContentPanel(): React.ReactElement | null {
 
   /**
    * Resolve the content path based on current selection.
-   * Region selection takes priority over body selection.
    */
   const contentPath = useMemo(() => {
     if (state.selectedRegionId && state.selectedBodyId) {

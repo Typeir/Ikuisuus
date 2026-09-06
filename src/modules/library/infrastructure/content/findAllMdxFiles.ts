@@ -1,8 +1,6 @@
 /**
  * @fileoverview MDX File Finder - Recursive directory scanner for MDX content files
  * @description Traverses directory trees to locate all .mdx files for static site generation.
- * Used by generateStaticParams() to build route manifests at compile time. Returns absolute
- * file paths for further processing by content loaders and metadata extractors.
  *
  * @version 1.0.0
  * @author Typeir

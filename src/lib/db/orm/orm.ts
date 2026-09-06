@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Singleton
  * @description Lazy-initialised MikroORM instance backed by the shared `pg.Pool`.
- * Cached on `globalThis` in development.
  *
  * @module lib/db/orm/orm
  * @version 1.0.0
@@ -23,7 +22,6 @@ let initPromise: Promise<MikroORM> | null = null;
 
 /**
  * Returns the singleton MikroORM instance, initialising it on first call.
- * The instance is cached on `globalThis` when `NODE_ENV` is not `production`.
  *
  * @returns {Promise<MikroORM>} Ready-to-use ORM instance
  */

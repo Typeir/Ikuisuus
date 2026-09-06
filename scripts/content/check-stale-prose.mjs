@@ -1,23 +1,5 @@
 /**
- * @fileoverview Finds prose the corpus has moved past. Each pattern names one
- * expression the register replaced — a D&D save clause, an attack block, a
- * bare condition word — and says what replaced it. The scan reports where
- * each still occurs, by family, by file, or as a worklist for a swarm.
- *
- * The default pattern set is the D&D inheritance inventory. Adding a pattern
- * is one object in PATTERNS; the scan, the summary, the JSON and the tests
- * take it from there. A pattern marked `review` is not wrong on sight and is
- * reported apart from the ones marked `legacy`, so a sweep does not convert
- * what only wanted reading.
- *
- *   npm run stale-prose -- src/content/en/items/heirlooms
- *   node scripts/content/check-stale-prose.mjs src/content/en/spells --list
- *   node scripts/content/check-stale-prose.mjs src/content/en --family=save
- *   node scripts/content/check-stale-prose.mjs src/content/en/monsters --json > worklist.json
- *   node scripts/content/check-stale-prose.mjs src/content/en/items --fail
- *
- * Call `node` directly when passing `--flags`; the npm shim on Windows does
- * not forward them reliably. Paths alone go through `npm run` fine.
+ * @fileoverview Finds prose the corpus has moved past.
  */
 
 import { globSync, readFileSync, statSync } from 'node:fs';
@@ -35,15 +17,13 @@ const CONDITIONS =
 
 /**
  * Condition words that are also ordinary English — a burning horse, a dying
- * breath, a blade that cannot be sundered. Bare, each may be the condition
- * or may be the word, and only a reader can tell.
+ * breath, a blade that cannot be sundered.
  */
 const AMBIGUOUS_CONDITIONS =
   'bleeding|burning|dying|invisible|slowed|steady|sundered';
 
 /**
- * The patterns. `legacy` is wrong wherever it appears; `review` needs a read
- * before it is touched, and the hint says what to read for.
+ * The patterns.
  *
  * @type {ReadonlyArray<{id: string, family: string, severity: 'legacy'|'review', label: string, regex: RegExp, hint: string}>}
  */

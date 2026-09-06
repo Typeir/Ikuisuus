@@ -53,7 +53,6 @@ export interface ModalProps {
 
 /**
  * Modal component with focus management and keyboard navigation.
- * Renders to document.body via portal.
  *
  * @component
  * @param {ModalProps} props - Modal configuration

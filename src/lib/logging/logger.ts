@@ -9,9 +9,7 @@
  * @since 1.0.0
  *
  * @description
- * Five levels (DEBUG, MESSAGE, WARNING, ERROR, SILENT, ascending). Supports scoped loggers,
- * safe serialization of complex objects with circular reference detection, and configuration
- * via IKUISUUS_LOG_LEVEL, LOG_LEVEL, and NODE_ENV.
+ * Five levels (DEBUG, MESSAGE, WARNING, ERROR, SILENT, ascending).
  *
  * @example
  * // Basic usage

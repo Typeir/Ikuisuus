@@ -1,8 +1,6 @@
 /**
  *  @fileoverview Generates spell slug arrays for spell list files from
-  * per-spell metadata. Reads every .metadata.json in the spells directory,
-  * groups slugs by vocation list, sorts by level then alphabetically, and writes
-  * the spells={[...]} array into each spells.list.mdx file.
+ * per-spell metadata.
  *
  * @module scripts/dev/generateSpellLists
  * @version 1.0.0
@@ -26,8 +24,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 
 /**
- * Directory of spell .metadata.json files. Uses `.meta/en/spells` if it
- * exists, else `src/content/en/spells`.
+ * Directory of spell .metadata.json files.
  */
 const SPELLS_DIR = existsSync(path.join(ROOT, '.meta', 'en', 'spells'))
   ? path.join(ROOT, '.meta', 'en', 'spells')
@@ -97,9 +94,7 @@ interface ListRef {
 }
 
 /**
- * Reads all spell metadata files and groups slugs by list. Vocation lists and
- * specialization-owned lists (link targets a `.specialization` page) are
- * grouped separately.
+ * Reads all spell metadata files and groups slugs by list.
  *
  * @returns {{ byList: Record<string, SpellEntry[]>, bySpecList: Record<string, SpellEntry[]> }} Vocation and specialization list groupings
  */
@@ -168,8 +163,7 @@ function formatSpellsArray(spells: SpellEntry[], indent: number = 4): string {
 }
 
 /**
- * Replaces the spells={[...]} array in the file at the given path. The file
- * must contain exactly one SpellTable spells array.
+ * Replaces the spells={[...]} array in the file at the given path.
  *
  * @param {string} filePath - Absolute path to the MDX file holding the array
  * @param {SpellEntry[]} spells - Sorted spell entries for this list
@@ -221,8 +215,7 @@ function writeList(
 }
 
 /**
- * Entry point. Scans metadata, groups spells, and writes updated arrays into
- * vocation spells.list.mdx files and specialization MDX files.
+ * Entry point.
  */
 function main(): void {
   const { byList, bySpecList } = scanSpells();

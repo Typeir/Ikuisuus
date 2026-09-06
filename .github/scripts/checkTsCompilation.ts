@@ -1,9 +1,7 @@
 /**
  * TypeScript Compilation Check
  *
- * @fileoverview Runs tsc --noEmit and parses diagnostics. Errors map to
- * critical, warnings to warning. With options.files set, filters to those
- * files.
+ * @fileoverview Runs tsc --noEmit and parses diagnostics.
  *
  * @module .github/scripts/check-tsc-compilation
  * @author Typeir
@@ -46,7 +44,6 @@ interface Diagnostic {
 
 /**
  * Parse tsc output to extract diagnostics.
- * Format: `src/file.ts(10,5): error TS2304: Cannot find name 'foo'.`
  *
  * @param output - Raw tsc stderr output
  * @param rootDir - Root directory for normalizing paths
@@ -99,8 +96,7 @@ function filterDiagnosticsByFile(
 }
 
 /**
- * Run tsc --noEmit and return a structured result. When options.files is set,
- * diagnostics are filtered to those files.
+ * Run tsc --noEmit and return a structured result.
  *
  * @param options - Optional execution context from PAW gates or CLI
  * @returns Check result with any violations

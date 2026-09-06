@@ -2,7 +2,6 @@
  * @fileoverview Character Entity — canonical single-JSON character model.
  * @description One flat, self-contained JSON structure: plain objects and
  * arrays only, no class instances, no functions, no circular links.
- * Re-exported from `@/lib/types/character`.
  *
  * @module modules/character-builder/domain/character/characterEntity
  * @version 1.0.0
@@ -44,7 +43,7 @@ export type AbilityKey = (typeof ABILITY_KEYS)[number];
  * @interface CharacterShard
  * @property {string} id - Unique shard identifier
  * @property {string} sourceFile - Relative path from `src/content/en/`, e.g. `character-creation/bloodlines/empyrean.bloodline.mdx`
- * @property {string} [key] - Anchor slug of the source feature; the identity a pick is matched on. Absent on older saves — `shardKey()` derives it from `heading`
+ * @property {string} [key] - Anchor slug of the source feature; the identity a pick is matched on.
  * @property {string} heading - The exact heading text, e.g. `Extended Reach`
  * @property {'boon'|'vocation-feature'|'specialization-feature'|'feat'} category - Type of content block
  * @property {number} [bpCost] - Boon Point cost (boons only)
@@ -94,8 +93,6 @@ export type AbilityImportSource = 'spells' | 'heirlooms' | 'trinkets' | 'feats';
 
 /**
  * A single ability card on the character's Abilities tab.
- * Stores raw MDX for mechanics and description, rendered client-side via
- * `compileRuntimeSync` + `enrichedComponents`.
  *
  * @interface CharacterAbility
  * @property {string} id - Unique identifier
@@ -200,7 +197,7 @@ export interface CharacterCurrency {
  *
  * @interface CoinDenomination
  * @property {string} name - Display name (e.g. `"Gold"` or `"Sovereigns"`)
- * @property {number} multiplier - Conversion factor expressed in system base units. The base unit is whatever has `multiplier === 1`.
+ * @property {number} multiplier - Conversion factor expressed in system base units.
  * @property {string} [abbreviation] - Optional short form (e.g. `"gp"`)
  */
 export interface CoinDenomination {
@@ -210,9 +207,7 @@ export interface CoinDenomination {
 }
 
 /**
- * Definition of a coinage system. A character may carry holdings against many
- * systems simultaneously (campaign mixing). Built-in systems are immutable;
- * custom systems are user-defined.
+ * Definition of a coinage system.
  *
  * @interface CurrencySystem
  * @property {string} name - Unique system name (e.g. `"Gold Standard"`)
@@ -241,7 +236,6 @@ export interface CharacterCoinHoldings {
 
 /**
  * Compact reference object encoded in the print QR code.
- * Intentionally small to stay under QR capacity limits (~1 KB).
  *
  * @interface CompactCharacterRef
  * @property {1} v - Schema version (always 1)
@@ -286,18 +280,16 @@ export interface EquipmentItem {
 
 /**
  * A single vocation entry in a character's vocation list.
- * Supports mixing (multiclassing) by allowing multiple entries, each with its
- * own level, specialization, and feature shards.
  *
  * @interface VocationEntry
  * @property {string} slug - Vocation identifier, e.g. `wizard`
  * @property {string} title - Display name, e.g. `Wizard`
  * @property {number} level - Levels invested in this vocation specifically
- * @property {number} [hitDie] - Hit die face count (e.g. `10`), copied from vocation metadata on selection. `0` when the vocation has no usable die.
+ * @property {number} [hitDie] - Hit die face count (e.g. `10`), copied from vocation metadata on selection.
  * @property {string[]} [baseSavingThrows] - Saving-throw ability names this vocation confers at its base (e.g. `["Constitution", "Intelligence"]`), copied from vocation metadata on selection and auto-applied as a proficiency floor
  * @property {number} [baseSkillChoiceCount] - Number of base skill proficiencies this vocation lets the player choose (from its metadata `skillProficiencies.count`), synced from vocation metadata; the primary vocation's value drives the unspent-proficiency counter
- * @property {string[]} [baseSkillChoices] - The skills this vocation offers as its base picks, stored as table row-keys (`skills.<camel>`). Empty with a non-zero `baseSkillChoiceCount` means "any skill" (unrestricted). Synced from vocation metadata `skillProficiencies.choices`; drives the per-row hint marker and the on-list budget
- * @property {string[]} [baseTradeFixed] - Trades this vocation grants outright (not chosen), stored as table row-keys (`tools.<camel>`). Synced from vocation metadata `toolProficiencies`; the primary vocation's list is folded into the tools floor
+ * @property {string[]} [baseSkillChoices] - The skills this vocation offers as its base picks, stored as table row-keys (`skills.<camel>`).
+ * @property {string[]} [baseTradeFixed] - Trades this vocation grants outright (not chosen), stored as table row-keys (`tools.<camel>`).
  * @property {string|null} specializationSlug - Specialization identifier, e.g. `evoker`
  * @property {string} specializationTitle - Specialization display name, e.g. `Evoker`
  * @property {CharacterShard[]} vocationFeatures - Unlocked vocation feature shards for this entry
@@ -322,11 +314,6 @@ export interface VocationEntry {
  * The canonical character entity: one flat JSON document per character,
  * stored verbatim in localStorage and across the persistence layer.
  *
- * Invariants:
- * - Serializable with `JSON.stringify` (round-trips losslessly)
- * - No self-referencing or circular structures
- * - `level` / `tierBonus` are derived caches recomputed by the sheet reducer
- *
  * @interface CharacterEntity
  * @property {string} id - Unique character identifier
  * @property {string} createdAt - ISO timestamp of creation
@@ -344,7 +331,7 @@ export interface VocationEntry {
  * @property {number} hpMax - Maximum hit points
  * @property {number} hpCurrent - Current hit points
  * @property {number} tempHp - Temporary hit points
- * @property {number} [grievousWounds] - Grievous-wound pool; degrades the effective max HP (`base − grievousWounds`). Defaults to 0.
+ * @property {number} [grievousWounds] - Grievous-wound pool; degrades the effective max HP (`base − grievousWounds`).
  * @property {number} ac - Armor class
  * @property {number} initiativeBonus - Initiative modifier (typically DEX mod)
  * @property {number|null} speedOverride - Override for movement speed (walk); null = no override
@@ -463,8 +450,6 @@ export const cloneCharacterEntity = (
 
 /**
  * Loose structural guard for raw values read from storage or messages.
- * Checks the identity fields only — full normalization is handled by
- * `migrateCharacter` in `lib/utils/characterStorage`.
  *
  * @function isCharacterEntity
  * @param {unknown} value - Candidate value

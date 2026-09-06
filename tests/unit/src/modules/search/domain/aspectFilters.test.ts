@@ -1,7 +1,7 @@
 /**
  * @fileoverview Aspect Filter Tests
  * @description Covers the translation from `?aspect=` parameters into Pagefind
- * filters. Filter keys must match those written into the index.
+ * filters.
  *
  * @module tests/unit/src/modules/search/domain/aspectFilters.test
  * @version 1.0.0

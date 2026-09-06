@@ -1,5 +1,5 @@
 /**
- * @fileoverview Client-side MDX compiler. Hash-caches by source, async and sync separate.
+ * @fileoverview Client-side MDX compiler.
  *
  * @module modules/library/infrastructure/compile/compileRuntime
  * @version 2.0.0
@@ -39,7 +39,7 @@ export interface MdxCompileResult {
 type MdxContentComponent = React.FC<{ components?: unknown }>;
 
 /**
- * Internal cache maps by source hash. Async and sync separate.
+ * Internal cache maps by source hash.
  */
 const asyncCache = new Map<string, MdxContentComponent>();
 const syncCache = new Map<string, MdxContentComponent>();
@@ -85,7 +85,6 @@ function pluginOptions(locale: string) {
 
 /**
  * Compile MDX client-side async using @mdx-js/mdx compile + run.
- * Results cached by source hash unless skipCache is set.
  *
  * @param {CompileOptions} opts - Compilation options
  * @param {boolean} [opts.skipCache=false] - Skip cache and force recompilation
@@ -124,7 +123,6 @@ export async function compileRuntime(
 
 /**
  * Compile MDX client-side synchronously using @mdx-js/mdx compileSync + runSync.
- * Results cached by source hash unless skipCache is set.
  *
  * @param {CompileOptions} opts - Compilation options
  * @param {boolean} [opts.skipCache=false] - Skip cache and force recompilation
@@ -161,7 +159,6 @@ export function compileRuntimeSync(
 
 /**
  * Async template literal for compiling MDX.
- * Interpolations are joined into the source text.
  *
  * @example
  * ```tsx
@@ -185,7 +182,6 @@ export async function mdx(
 
 /**
  * Sync template literal for compiling MDX.
- * Interpolations are joined into the source text.
  *
  * @example
  * ```tsx

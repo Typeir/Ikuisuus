@@ -1,8 +1,7 @@
 /**
  * @fileoverview PipCheckbox Component
  * @description A pip-styled checkbox/radio control: an accent pip dot button
- * (filled when checked, hollow when not) with an optional inline label. Sizes:
- * `sm` (8.4px), `lg` (28px).
+ * (filled when checked, hollow when not) with an optional inline label.
  * @todo TODO: move pip to shared
  * @module modules/character-builder/presentation/components/PipCheckbox
  * @version 1.0.0

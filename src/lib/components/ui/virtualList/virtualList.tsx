@@ -1,7 +1,6 @@
 /**
  * @fileoverview VirtualList Atom
- * @description Generic virtualized list using react-window v2. Renders a
- * semantic `<ul>` with virtualized `<li>` rows. Only visible rows rendered.
+ * @description Generic virtualized list using react-window v2.
  *
  * @module lib/components/ui/virtualList/virtualList
  * @version 2.0.0
@@ -23,8 +22,7 @@ export interface VirtualRowRange {
 }
 
 /**
- * Row renderer signature. Receives item and index.
- * Row is already wrapped in a positioned element by the atom.
+ * Row renderer signature.
  *
  * @template T - Item type
  */
@@ -47,9 +45,9 @@ export interface VirtualListProps<T> {
   maxHeight: number;
   /** Row content renderer — receives item and index. */
   renderRow: VirtualRowRenderer<T>;
-  /** HTML tag for each row. Default `'li'`. Use `'div'` when row content is already `<li>`. */
+  /** HTML tag for each row. */
   rowElement?: 'li' | 'div';
-  /** Rows rendered beyond the visible window. Defaults to react-window's 3. */
+  /** Rows rendered beyond the visible window. */
   overscanCount?: number;
   /** Optional className for the outer `<ul>`. */
   className?: string;
@@ -59,7 +57,6 @@ export interface VirtualListProps<T> {
 
 /**
  * Row component passed to react-window.
- * Renders a positioned wrapper element with ARIA attributes.
  *
  * @template T - Item type
  */
@@ -101,11 +98,7 @@ function RowComponent<T>({
 }
 
 /**
- * Generic virtualized list. Renders a `<ul>` with virtualized `<li>` rows.
- * Only rows within the viewport are rendered. The box scrolls vertically
- * only: anything a row hangs past its inline edges is clipped instead of
- * becoming a horizontal scrollbar, so a consumer with outsets (decorations,
- * hover transforms) bleeds the box outward and insets its rows to match.
+ * Generic virtualized list.
  *
  * @template T - Item type
  */

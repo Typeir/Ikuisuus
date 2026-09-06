@@ -11,7 +11,7 @@
  * @requires @/modules/encounter-planner/domain/combat/inProgressCombat.types Combatant mechanics type definitions
  * @requires ../playMode/CombatantContext useCombatant hook for context
  *
- * @description Manages legendary deed pips and resist counters with use/reset controls. Uses CombatantContext for state.
+ * @description Manages legendary deed pips and resist counters with use/reset controls.
  */
 
 'use client';
@@ -29,8 +29,7 @@ import styles from './combatantRow.module.scss';
 export interface CombatantMechanicsSectionProps {}
 
 /**
- * Mechanics section for Play Mode combatants. Renders null if combatant has no mechanics.
- * Displays legendary deed tracker pips and resist counter. Resist reset restores to 3.
+ * Mechanics section for Play Mode combatants.
  *
  * @component
  * @param {CombatantMechanicsSectionProps} props - Component props

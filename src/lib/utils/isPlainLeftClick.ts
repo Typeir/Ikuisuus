@@ -1,11 +1,7 @@
 /**
  * @fileoverview Plain Left Click Predicate — modifier-aware click gating
  * @description Decides whether a click on a link may be intercepted for
- * client-side routing. Navigation controls must be real anchors so the browser
- * can serve middle-click, ctrl/cmd-click, shift-click and the context menu
- * itself. Those gestures are the browser's to handle, so any handler that
- * calls `preventDefault` has to stand down for them and act only on an
- * unmodified primary-button press.
+ * client-side routing.
  *
  * @version 1.0.0
  * @author Typeir
@@ -27,9 +23,6 @@
 /**
  * Structural subset of a mouse event needed to classify a click.
  *
- * Declared structurally rather than against `MouseEvent` so both React's
- * synthetic events and native DOM events satisfy it without a cast.
- *
  * @interface ClickLike
  * @property {number} button - Pressed button; 0 is the primary button
  * @property {boolean} metaKey - Whether Meta/Command was held
@@ -50,11 +43,6 @@ export interface ClickLike {
 /**
  * Reports whether a click is an unmodified primary-button press that no
  * earlier handler has claimed.
- *
- * Returns `false` for middle and secondary buttons, for any modifier
- * combination the browser maps to "open elsewhere", and for events already
- * defaulted-prevented upstream. Callers treat `false` as "leave it to the
- * browser" and return without touching the event.
  *
  * @param {ClickLike} event - The click to classify
  * @returns {boolean} True when the handler may intercept and route in-page

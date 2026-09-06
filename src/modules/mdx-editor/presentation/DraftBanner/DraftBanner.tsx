@@ -42,7 +42,6 @@ const formatDate = (iso: string): string => {
 
 /**
  * Renders a banner indicating the page is showing draft content.
- * Includes a "DRAFT" badge and created/updated metadata.
  *
  * @param {DraftBannerProps} props - Component props
  * @param {string} props.createdAt - ISO 8601 creation timestamp

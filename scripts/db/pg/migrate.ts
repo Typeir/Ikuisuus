@@ -1,18 +1,7 @@
 /**
  * @fileoverview PostgreSQL Migration Runner
  * @description Runs pending migrations from `scripts/db/migrations/` in
- * alphabetical order. Supports legacy `.sql` files (read and executed as raw
- * SQL) and TypeScript migration modules that export `up(client)` /
- * `down(client)` functions.
- *
- * Pass `--down` to roll back the most recently applied migration.
- *
- * Usage:
- *   npx tsx scripts/db/pg/migrate.ts          # apply pending migrations
- *   npx tsx scripts/db/pg/migrate.ts --down   # roll back last migration
- *
- * Required env:
- *   DATABASE_URL — Neon / Postgres connection string
+ * alphabetical order.
  *
  * @module scripts/db/pg/migrate
  * @author Typeir
@@ -54,7 +43,6 @@ loadEnv();
 
 /**
  * Parses `.env.local` and injects any missing keys into `process.env`.
- * Silently no-ops when the file is absent (production relies on system env).
  */
 function loadEnv(): void {
   try {
@@ -96,8 +84,6 @@ function getMigrationFiles(): string[] {
 
 /**
  * Runs one migration's `up` phase inside an open transaction.
- * TypeScript: calls the exported `up(client)`. SQL: reads the file and
- * executes its contents as a single query.
  *
  * @param {PoolClient} client - Transactional pg client.
  * @param {string} file - Absolute path to the migration file.
@@ -115,8 +101,6 @@ async function runUp(client: PoolClient, file: string): Promise<void> {
 
 /**
  * Runs one migration's `down` phase inside an open transaction.
- * Only TypeScript migration modules support rollback; rolling back a raw SQL
- * file exits with an error.
  *
  * @param {PoolClient} client - Transactional pg client.
  * @param {string} file - Absolute path to the migration file.
@@ -135,8 +119,6 @@ async function runDown(client: PoolClient, file: string): Promise<void> {
 
 /**
  * Applies all unapplied migrations in ascending alphabetical order.
- * Each migration runs in its own transaction; a failure rolls back only that
- * migration and stops the run.
  *
  * @param {pg.Pool} pool - Active connection pool.
  * @returns {Promise<void>}
@@ -226,8 +208,7 @@ async function runDownCommand(pool: pg.Pool): Promise<void> {
 }
 
 /**
- * Entry point. Acquires an advisory lock, delegates to up or down command,
- * then releases the lock.
+ * Entry point.
  *
  * @returns {Promise<void>}
  */

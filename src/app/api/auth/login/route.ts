@@ -1,9 +1,7 @@
 /**
  * @fileoverview Auth Login API Route
  * @description Authenticates a user by username + password, returns a
- * non-expiring session token. Validates input with Zod.
- *
- * POST /api/auth/login
+ * non-expiring session token.
  *
  * @module app/api/auth/login/route
  * @version 1.0.0

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Combatant Context for Play Mode
  * @description Provides combatant state and update functions to child components.
- * Each combatant row creates its own context.
  *
  * @module modules/encounter-planner/presentation/combatantRow/utils/context/combatantContext
  * @version 1.0.0
@@ -136,7 +135,7 @@ export const CombatantProvider: React.FC<CombatantProviderProps> = ({
 };
 
 /**
- * Hook to access combatant context. Must be used within a CombatantProvider.
+ * Hook to access combatant context.
  *
  * @function useCombatant
  * @returns {CombatantContextValue} Context value with combatant and update functions

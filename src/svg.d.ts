@@ -3,8 +3,7 @@
  *
  * @fileoverview Allows TypeScript to resolve `.svg` imports as React
  * components (via the Next.js / webpack SVGR loader configured in
- * `next.config.js`). Required so `tsc --noEmit` succeeds outside the
- * Next build pipeline (e.g. in the composite health check).
+ * `next.config.js`).
  *
  * @module svg
  * @version 1.0.0

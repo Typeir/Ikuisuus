@@ -4,13 +4,6 @@
  * carries and turns them into the reverse direction invalidation needs: given a
  * file that changed, which pages hold a baked copy of its prose.
  *
- * A shard is copied into each consuming page at compile, so editing a producer
- * leaves stale prose everywhere it was baked. Revalidating the producer alone
- * fixes nothing downstream.
- *
- * Reads through `keywordLinkRepository`, so the graph follows whichever backend
- * the deployment runs on. Server only.
- *
  * @module lib/db/content/keywordGraph
  * @version 1.0.0
  * @author Typeir
@@ -46,16 +39,13 @@ export interface KeywordGraph {
   files: Map<string, string>;
 }
 
-/** Cached graph per locale. Cleared when metadata is regenerated. */
+/** Cached graph per locale. */
 const cache = new Map<string, KeywordGraph>();
 
 registerServerCache('keyword-graph', () => cache.clear());
 
 /**
  * Trims a route to the comparable form: no locale prefix, no trailing slash.
- *
- * The generator stamps `link` without a locale, while a revalidation target
- * arrives with one. Both collapse to the same key here.
  *
  * @param {string} route - Route in either form
  * @returns {string} Normalised route
@@ -123,10 +113,6 @@ export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
 /**
  * The file that defines a shard, when exactly one does.
  *
- * A shard id claimed by two files resolves to nothing, the same rule heading
- * slugs follow: an ambiguous reference points nowhere rather than somewhere
- * arbitrary.
- *
  * @param {KeywordGraph} graph - Graph for the locale
  * @param {string} shardId - Shard id, e.g. `kw-condition-blinded`
  * @returns {{ file: string; route: string } | null} The defining file and its route, or null
@@ -148,11 +134,6 @@ export function producerOf(
 
 /**
  * Walks every page holding prose that originates in a changed file.
- *
- * The walk is transitive: a consumer that itself defines shards is followed in
- * turn, since re-baking it can change what its own consumers copied. A visited
- * set makes a cycle terminate rather than recurse, and the starting file is
- * never returned — its own revalidation is the caller's job.
  *
  * @param {KeywordGraph} graph - Graph for the locale
  * @param {string} filePath - File that changed, as `file` was stamped

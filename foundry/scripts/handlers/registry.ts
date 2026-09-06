@@ -35,9 +35,6 @@ interface DispatchEntry {
 /**
  * Registry that collects parser classes and provides feature-level dispatch.
  *
- * Parser classes are registered via {@link register} or the constructor's
- * `parsers` array; {@link dispatch} routes full feature IDs to handler methods.
- *
  * @property {Map<string, DispatchEntry>} handlers - Full feature ID → dispatch entry
  * @property {Map<string, IFeatureParser>} parsers - Sheet slug → parser instance
  */

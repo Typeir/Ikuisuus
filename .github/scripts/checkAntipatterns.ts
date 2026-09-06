@@ -111,8 +111,6 @@ async function findSourceFiles(
 
 /**
  * Execute the antipatterns check and return a structured result.
- * When options.files is provided, uses those instead of self-discovering.
- * When options.readFile is provided, uses that instead of fs.readFile.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations

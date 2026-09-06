@@ -2,7 +2,6 @@
  * Playwright Test Configuration
  *
  * @fileoverview Configuration for end-to-end and visual regression tests.
- * Targets Chromium, Firefox, and WebKit browsers.
  *
  * @module playwright.config
  * @version 1.0.0

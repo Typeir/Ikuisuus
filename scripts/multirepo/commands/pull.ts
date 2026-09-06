@@ -20,7 +20,7 @@ export const meta: CommandMeta = {
 };
 
 /**
- * Pulls content repo first, then main repo. Then runs `submodule update`.
+ * Pulls content repo first, then main repo.
  * @param {string[]} args - Arguments forwarded verbatim to `git pull`.
  * @returns {Promise<void>}
  */

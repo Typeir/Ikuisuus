@@ -2,9 +2,7 @@
  * Persistent UI State Initialization Script Generator
  *
  * @fileoverview Returns an inline JavaScript IIFE that restores persistent UI
- * state. Reads cookies first, then sessionStorage, then localStorage. Sets
- * data-theme attribute synchronously. Must be placed in <head> to run before
- * first paint; pairs with `html:not([data-theme]) body { visibility: hidden; }`.
+ * state.
  *
  * @module lib/utils/persistentUiScript
  * @version 1.2.0
@@ -48,12 +46,7 @@ import {
  * every root hook the stylesheets key off: data-theme, data-aspect-display,
  * data-aspect-expanded, data-stream-text, data-section-decor,
  * data-constrained-hue, and the `--text-scale-user` / `--prose-measure`
- * custom properties. Numeric preferences accept any finite positive number,
- * mirroring `readPositiveNumber`; everything else falls back to the shipped
- * defaults. Runs synchronously before React hydration and before data-theme
- * lifts the body's visibility, so the first paint already carries the
- * reader's text scale and measure instead of reflowing after the provider's
- * effect writes them.
+ * custom properties.
  */
 export function getPersistentUiInitScript(): string {
   return `

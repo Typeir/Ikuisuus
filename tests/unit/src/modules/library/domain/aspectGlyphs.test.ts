@@ -4,9 +4,6 @@
  * rules define has a mark, and that the tables stay in step with the closed
  * vocabulary in shared data.
  *
- * A missing entry is silent: the value falls back to its group's glyph and looks
- * like every other value in that group, which is indistinguishable from working.
- *
  * @module tests/unit/src/modules/library/domain/aspectGlyphs.test
  * @version 1.0.0
  * @author Typeir

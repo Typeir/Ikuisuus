@@ -1,8 +1,6 @@
 /**
  * @fileoverview Character Sheet Header
- * @description Sticky character-sheet header. Renders character name
- * (editable in edit mode), level/XP meta, `<VocationSelector>` selectors only,
- * a BP counter, and edit/save/cancel buttons.
+ * @description Sticky character-sheet header.
  *
  * @module modules/character-builder/presentation/Header/characterSheetHeader
  * @version 1.0.0
@@ -39,8 +37,7 @@ import { VocationSelector } from '../builder/vocationSelector';
 import styles from './characterSheetHeader.module.scss';
 
 /**
- * Sticky character-sheet header. Reads character, edit mode, and write API
- * from the active-sheet context.
+ * Sticky character-sheet header.
  *
  * @component
  * @returns {JSX.Element} Rendered header

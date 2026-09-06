@@ -1,8 +1,7 @@
 /**
  * @fileoverview PostgreSQL Heirloom Repository (MikroORM)
  * @description Implements `HeirloomRepository` via MikroORM against the
- * `heirlooms` table. Charges are read directly from the embedded VO.
- * Weapon damage is reconstructed from flat columns (no shared prefix).
+ * `heirlooms` table.
  *
  * @module lib/db/content/adapters/pg/pgHeirloomRepository
  * @version 5.0.0

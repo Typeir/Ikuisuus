@@ -1,8 +1,6 @@
 /**
  * @fileoverview Hook for inline-editable numeric fields.
- * @description React hook implementing an edit/commit/cancel cycle. Each
- * instance owns its editing state and shares a cancel-pending ref to
- * coordinate blur with Escape.
+ * @description React hook implementing an edit/commit/cancel cycle.
  *
  * @module modules/encounter-planner/presentation/combatantRow/utils/useEditableField
  * @version 1.0.0

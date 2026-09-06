@@ -1,8 +1,6 @@
 /**
  * @fileoverview Affix Combobox Component
  * @description Searchable dropdown for selecting heroic awakening affixes.
- * Built on top of GenericCombobox for consistent behavior. Fetches affix data
- * from /api/affixes/index and filters out already-selected affixes.
  *
  * @module modules/encounter-planner/presentation/comboboxes/affixCombobox
  * @version 1.0.0
@@ -56,7 +54,6 @@ interface AffixComboboxProps {
 
 /**
  * Affix combobox wrapper around GenericCombobox.
- * Fetches affix index from API and filters out existing affixes.
  *
  * @component
  * @param {AffixComboboxProps} props - Component props

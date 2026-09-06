@@ -187,7 +187,7 @@ export function Heading({
  * @returns {React.FC<Omit<HeadingProps, 'level'>>} A heading component for the specified level
  *
  * @remarks
- * Uses React.memo. The fixed level is set on the Heading component.
+ * Uses React.memo.
  *
  * @example
  * const H1 = createHeadingComponent(1);

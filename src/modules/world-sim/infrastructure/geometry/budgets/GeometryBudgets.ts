@@ -20,7 +20,6 @@ export type SphereLODSet = Record<RenderQualityLevel, SphereGeometry>;
 
 /**
  * Sphere segment counts per quality tier.
- * Used for stars, planets, gas giants, and icy cores.
  *
  * @constant {Record<RenderQualityLevel, number>}
  */
@@ -43,7 +42,6 @@ export const ATMOSPHERE_LOD: Record<RenderQualityLevel, number> = {
 
 /**
  * Gas giant cloud layer segments per quality tier.
- * Base layer (opaque) is denser; overlay (transparent parallax) is lighter.
  *
  * @constant {Record<RenderQualityLevel, { base: number; overlay: number }>}
  */
@@ -69,7 +67,6 @@ export const ICY_CORE_LOD: Record<RenderQualityLevel, number> = {
 
 /**
  * Everdark boundary shell segments per quality tier.
- * Array entries are outer → inner layer.
  *
  * @constant {Record<RenderQualityLevel, number[]>}
  */
@@ -170,7 +167,6 @@ export const STARFIELD_BUDGET = 1200;
 
 /**
  * Create three SphereGeometry instances at LOD tiers for a given radius.
- * The caller owns disposal of all three geometries.
  *
  * @function createSphereLODSet
  * @param {number} radius - Sphere radius in scene units

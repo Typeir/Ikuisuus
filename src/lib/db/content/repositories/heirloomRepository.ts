@@ -1,8 +1,7 @@
 /**
  * @fileoverview Heirloom Repository interface and factory.
  * @description Defines the heirloom metadata repository contract and exports a
- * factory-resolved instance based on `METADATA_BACKEND` env var. Matches the
- * `/api/heirlooms` route.
+ * factory-resolved instance based on `METADATA_BACKEND` env var.
  *
  * @module lib/db/content/repositories/heirloomRepository
  * @version 2.0.0
@@ -18,9 +17,6 @@ import type { HeirloomMetadata } from '../schemas/heirloomMetadata';
 
 /**
  * Repository contract for heirloom metadata.
- *
- * Implementations MUST be safe to call even when the backing store is
- * unavailable — return empty arrays or null rather than throwing.
  */
 export interface HeirloomRepository {
   /**

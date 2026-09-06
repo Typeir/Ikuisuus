@@ -52,7 +52,6 @@ export class SpellComponentEmbed {
 
 /**
  * MikroORM entity for the `spell_lists` table.
- * Represents a normalised spell-list membership row.
  */
 @OrmEntity('SpellListEntity', { tableName: 'spell_lists' })
 @OrmIndex({ properties: ['spell'], name: 'spell_lists_spell_id_idx' })

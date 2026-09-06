@@ -9,7 +9,7 @@
  */
 
 /**
- * Scoped defence patterns. Each captures the clause following the keyword.
+ * Scoped defence patterns.
  *
  * @property {RegExp} resistance - "resistance to …"
  * @property {RegExp} immunity - "immune to …", "immunity to …"
@@ -22,8 +22,7 @@ export const SCOPED_DEFENCE = {
 } as const;
 
 /**
- * Flat damage-reduction patterns. Reduction subtracts a fixed amount, distinct
- * from resistance which halves incoming damage.
+ * Flat damage-reduction patterns.
  *
  * @property {RegExp} reduction - Damage reduced by a fixed amount
  */
@@ -80,8 +79,7 @@ export const SENSE = {
 } as const;
 
 /**
- * Health-state ladder patterns. These are states a creature passes through, not
- * conditions applied to it.
+ * Health-state ladder patterns.
  *
  * @property {RegExp} wounded - Wounded
  * @property {RegExp} bloodied - Bloodied
@@ -113,8 +111,7 @@ export const POSITION = {
 } as const;
 
 /**
- * Cover patterns. Tier values say how much, directional values say whether the
- * feature hands cover out or reads through it.
+ * Cover patterns.
  *
  * @property {RegExp} half - Half cover
  * @property {RegExp} threeQuarters - Three-quarters cover
@@ -269,8 +266,7 @@ export const MOVEMENT_EXTRA = {
 } as const;
 
 /**
- * The word that licenses a damage type. A type word alone is ambiguous, so it
- * counts only where the text is talking about damage.
+ * The word that licenses a damage type.
  */
 export const DAMAGE_WORD = /\bdamage\b/gi;
 
@@ -289,14 +285,12 @@ export const CLAUSE_BEFORE = 60;
 export const CLAUSE_AFTER = 24;
 
 /**
- * Punctuation that ends a clause. A colon does not end a clause because a stat
- * block writes `**Damage**: 1d4 poison`, where the colon introduces the type.
+ * Punctuation that ends a clause.
  */
 export const CLAUSE_BREAK = /[.;!?\n]/;
 
 /**
- * A markdown link that cites another content entity. Excludes links under a
- * rules path, which cite the mechanic rather than name an entity.
+ * A markdown link that cites another content entity.
  */
 export const ENTITY_CITATION =
   /\[([^\]]*)\]\((?:[^)]*\/)?(?:spells|monsters|heirlooms|trinkets|feats|bloodlines|vocations|specializations)\/[^)]*\)/gi;

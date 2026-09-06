@@ -61,7 +61,6 @@ const DEFAULT_RIDGE_COLOR = '#d4c8a0';
 
 /**
  * Simple deterministic pseudo-random number generator using a hash-style seed.
- * Produces values in [0, 1) that are stable across sessions for a given seed.
  *
  * @param {number} seed - Seed value
  * @returns {number} Pseudo-random value between 0 and 1

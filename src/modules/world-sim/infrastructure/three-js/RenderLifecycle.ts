@@ -1,9 +1,6 @@
 /**
  * @fileoverview Render Lifecycle — Phase-Based Frame Event System
  * @description Typed, priority-sorted observer system for the render loop.
- * Subscribers register for lifecycle phases and receive a shared FrameContext
- * with renderer, scene, camera, and frame timing. Phases execute each frame in
- * numeric order: PreUpdate, Update, PostUpdate, PreRender, PostRender.
  * @module modules/world-sim/infrastructure/three-js/RenderLifecycle
  * @version 1.0.0
  * @author Typeir
@@ -14,7 +11,6 @@ import type { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 
 /**
  * Ordered lifecycle phases executed each frame.
- * Numeric values define execution order.
  *
  * @enum {number}
  */
@@ -92,8 +88,7 @@ interface LifecycleEntry {
 const DEFAULT_PRIORITY = 100;
 
 /**
- * Phase-based render lifecycle manager. Manages ordered subscriber lists
- * for each render phase and dispatches a shared FrameContext each frame.
+ * Phase-based render lifecycle manager.
  *
  * @class RenderLifecycle
  *
@@ -198,7 +193,7 @@ export class RenderLifecycle {
   }
 
   /**
-   * Execute all post-render phases in order. Currently only PostRender.
+   * Execute all post-render phases in order.
    *
    * @param {FrameContext} ctx - Shared frame context
    */

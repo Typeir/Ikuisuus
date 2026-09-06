@@ -1,6 +1,6 @@
 /**
  * @fileoverview Global Debug Namespace — window.ik
- * @description Runtime debug namespace for subsystems. Subsystems register modules under short keys.
+ * @description Runtime debug namespace for subsystems.
  *
  * @example Console usage
  * ```js
@@ -22,7 +22,7 @@
  */
 export interface IkWorldSimDebug {
   /**
-   * Maximum `deltaTime` per frame (seconds). Clamped [1/120, 1], default 1/15.
+   * Maximum `deltaTime` per frame (seconds).
    *
    * @type {number}
    * @example window.ik.ws.deltaTimeCap = 1 / 30
@@ -46,7 +46,7 @@ export interface IkWorldSimDebug {
   readonly time: number;
 
   /**
-   * Simulation speed multiplier. Default 1, clamped [0, 1000]. 0 freezes.
+   * Simulation speed multiplier.
    *
    * @type {number}
    * @example window.ik.ws.simulationSpeed = 50
@@ -78,9 +78,9 @@ export interface IkModules {
  * `window.ik.ui` — persistent UI preferences, live.
  *
  * @interface IkUiDebug
- * @property {'compact' | 'verbose' | 'glyph'} aspectDisplay - RW. How aspect pills render: icon+value, icon+group:value, glyph only.
- * @property {boolean} aspectExpanded - RW. Whether aspect carousels stay unpacked.
- * @property {'dark' | 'light'} theme - RW. Active theme.
+ * @property {'compact' | 'verbose' | 'glyph'} aspectDisplay - RW.
+ * @property {boolean} aspectExpanded - RW.
+ * @property {'dark' | 'light'} theme - RW.
  */
 export interface IkUiDebug {
   aspectDisplay: 'compact' | 'verbose' | 'glyph';
@@ -89,7 +89,7 @@ export interface IkUiDebug {
 }
 
 /**
- * Root `window.ik` namespace. Modules optional.
+ * Root `window.ik` namespace.
  *
  * @interface IkNamespace
  */
@@ -103,13 +103,13 @@ declare global {
    * @property {IkNamespace} ik - Global Ikuisuus debug namespace
    */
   interface Window {
-    /** Global Ikuisuus debug namespace. Use `window.ik.ws` for World Sim controls. */
+    /** Global Ikuisuus debug namespace. */
     ik: IkNamespace;
   }
 }
 
 /**
- * Initialise and return `window.ik`. Returns stub in non-browser environments.
+ * Initialise and return `window.ik`.
  *
  * @function ensureIkNamespace
  * @returns {IkNamespace} The `window.ik` namespace
@@ -121,7 +121,7 @@ export function ensureIkNamespace(): IkNamespace {
 }
 
 /**
- * Register debug module under `window.ik[key]`. Overwrites previous registration.
+ * Register debug module under `window.ik[key]`.
  *
  * @template K
  * @function registerIkModule

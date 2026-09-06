@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for Combatant Heroic Section component
  * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/combatantHeroicSection.test
  * @description Tests CombatantHeroicSection rendering and interactions: awakening display,
- * affixes, bonuses, and force awakening controls. Renders inside CombatantProvider.
+ * affixes, bonuses, and force awakening controls.
  *
  * @version 2.0.0
  * @author Typeir

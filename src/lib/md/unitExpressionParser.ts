@@ -9,7 +9,7 @@
  * @since 2026-08-03
  */
 
-/** Regex to match `[= ... =]` delimited unit expressions in text. Non-greedy inner capture. */
+/** Regex to match `[= ... =]` delimited unit expressions in text. */
 export const UNIT_EXPR_REGEX = /\[=\s*(.*?)\s*=\]/g;
 
 /** Regex to match flag shortcodes appended with a semicolon. */
@@ -42,7 +42,6 @@ export interface ParsedUnitExpression {
 
 /**
  * Extracts flag shortcodes from a string, in order of first appearance.
- * Deduplicates so each shortcode appears at most once.
  *
  * @param {string} text - The text to scan for flag shortcodes
  * @returns {string[]} Ordered unique list of found flags
@@ -74,7 +73,6 @@ function stripFlags(text: string): string {
 
 /**
  * Parses a unit expression from the inner content of a `[= ... =]` block.
- * Returns null for malformed or empty expressions (leaves them as plain text).
  *
  * @param {string} inner - The raw content between `[=` and `=]`, e.g. "6 stride;ADJ"
  * @returns {ParsedUnitExpression | null} Parsed expression or null if malformed

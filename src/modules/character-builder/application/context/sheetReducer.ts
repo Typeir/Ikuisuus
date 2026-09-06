@@ -1,10 +1,6 @@
 /**
  * @fileoverview Active Sheet Reducer
- * @description Pure reducer for the active character sheet. `level` and
- * `tierBonus` are derived caches recomputed from `experience` and
- * `vocations`; XP writes are clamped to the vocation-sum floor, and PATCH
- * strips direct writes to `level`/`tierBonus`. While editing, writes land on
- * the draft only; otherwise on the saved character with `dirty` set.
+ * @description Pure reducer for the active character sheet.
  *
  * @module modules/character-builder/application/context/sheetReducer
  * @version 1.0.0
@@ -42,7 +38,7 @@ export type SheetTabId =
  * @property {CharacterSheetType} draft - Working copy used while editing
  * @property {boolean} editing - Whether the sheet is in edit mode
  * @property {SheetTabId} activeTab - Currently displayed tab
- * @property {boolean} dirty - Whether `character` holds changes the roster has not been told about yet. Set by any write landing on the saved character, cleared when a character is adopted from the roster.
+ * @property {boolean} dirty - Whether `character` holds changes the roster has not been told about yet.
  */
 export interface SheetReducerState {
   character: CharacterSheetType;
@@ -74,8 +70,7 @@ export type SheetAction =
   | { type: 'SET_TAB'; payload: { tab: SheetTabId } };
 
 /**
- * Returns the minimum XP required to satisfy the vocation-sum floor. Returns
- * 0 when no vocations are allocated.
+ * Returns the minimum XP required to satisfy the vocation-sum floor.
  *
  * @function vocationXpFloor
  * @param {CharacterSheetType['vocations']} vocations - Vocation entries

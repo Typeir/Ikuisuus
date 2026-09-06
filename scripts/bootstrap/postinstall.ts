@@ -1,12 +1,10 @@
 #!/usr/bin/env tsx
 /**
- * @fileoverview Postinstall bootstrap, run after `npm install`. Skips when
- * `PAW_SKIP_POSTINSTALL=1` or in CI unless `PAW_FORCE_POSTINSTALL=1`.
- * Exits 0 when `PAW_CLI` is missing.
+ * @fileoverview Postinstall bootstrap, run after `npm install`.
  *
  * @module scripts/bootstrap/postinstall
  * @author Typeir
-
+ *
  * @version 1.0.0
  * @since 3.0.0
  */

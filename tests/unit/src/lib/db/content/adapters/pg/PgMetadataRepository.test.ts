@@ -2,8 +2,6 @@
  * PgMetadataRepository Unit Tests
  *
  * @fileoverview Tests for the abstract MikroORM metadata repository base class.
- * Exercises `list` and `getBySlug` via a concrete minimal subclass,
- * with `getEM` mocked so no real database is needed.
  *
  * @module tests/unit/lib/db/content/adapters/pg/PgMetadataRepository
  */

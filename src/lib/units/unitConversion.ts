@@ -2,8 +2,6 @@
  * Unit Conversion
  *
  * @fileoverview Converts Damocles measures into a chosen display system.
- * Whole-number conversions round halves upward. Fractional quantities resolve
- * to prose via the i18n fraction dictionary, not here.
  *
  * @module lib/units/unitConversion
  * @version 1.0.0
@@ -56,7 +54,6 @@ export interface ConvertedUnit {
 
 /**
  * Conversion factors and nouns per unit and display system.
- * `numerator` over `denominator` scales the native quantity.
  */
 const CONVERSIONS: Record<
   UnitName,
@@ -210,8 +207,6 @@ export function convertUnit(
 
 /**
  * Renders a converted measure as display text.
- * With the `ADJ` flag the measure is hyphenated for attributive use and the
- * unit noun stays singular.
  *
  * @param {number} value - The native quantity, a whole number
  * @param {UnitName} unit - The native unit
@@ -267,9 +262,6 @@ export interface ConvertedFraction {
 
 /**
  * Converts a fractional native measure into the chosen display system.
- *
- * Scales the fraction by the conversion factor, reducing it and splitting
- * into a whole part and a remainder.
  *
  * @param {number} numerator - Native fraction numerator
  * @param {number} denominator - Native fraction denominator

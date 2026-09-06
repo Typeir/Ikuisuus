@@ -18,13 +18,11 @@ import type {
 } from '../schemas/draftMetadata';
 
 /**
- * Repository contract for draft persistence. Handles active/archived
- * lifecycle; at most one active draft per locale+slug pair.
+ * Repository contract for draft persistence.
  */
 export interface DraftRepository {
   /**
    * Creates or replaces the active draft for a locale+slug pair.
-   * If an active draft exists, updates its content and updatedAt.
    *
    * @param {DraftInput} input - Draft content to upsert
    * @returns {Promise<DraftMetadata>} The created or updated draft
@@ -33,8 +31,7 @@ export interface DraftRepository {
 
   /**
    * Upserts the active draft only if the provided cursor matches the
-   * current active draft state. Prevents stale concurrent submissions
-   * from overwriting newer state.
+   * current active draft state.
    *
    * @param {DraftInput} input - Draft payload to upsert
    * @param {DraftConcurrencyExpectation} expectation - Last-seen draft cursor
@@ -54,8 +51,7 @@ export interface DraftRepository {
   findActive(locale: string, slug: string): Promise<DraftMetadata | null>;
 
   /**
-   * Archives the active draft for a locale+slug pair. Sets status to
-   * 'archived'. No-op if no active draft exists.
+   * Archives the active draft for a locale+slug pair.
    *
    * @param {string} locale - Locale code
    * @param {string} slug - Content slug path

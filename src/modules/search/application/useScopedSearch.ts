@@ -2,9 +2,7 @@
  * @fileoverview Scoped Pagefind Search Hook
  * @description Ranks a caller-owned dataset against the Pagefind index: query
  * the shared index (optionally type-filtered), resolve hits to slugs, and
- * intersect with the slugs the caller owns. Embedded surfaces (metadata
- * tables) get the root search's matching — NFC, diacritics, stemming — over
- * data they already hold.
+ * intersect with the slugs the caller owns.
  *
  * @module modules/search/application/useScopedSearch
  * @version 1.0.0
@@ -55,10 +53,6 @@ export interface ScopedSearchState {
 
 /**
  * Ranks the caller's slugs against the Pagefind index for a term.
- *
- * `ranks` is null for a short term, an unavailable index, or a failed query —
- * the caller keeps its own filtering as the fallback. An empty map is a real
- * answer: nothing matched.
  *
  * @param {string} term - Raw search term, debounced and NFC-normalized internally
  * @param {ScopedSearchOptions} options - Locale, scoping, and tuning

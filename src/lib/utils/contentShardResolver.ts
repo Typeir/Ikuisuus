@@ -83,11 +83,6 @@ export function resolveShards(
 
 /**
  * Return all content that appears before the first `<Collapsible` tag.
- * If the file has no Collapsible components, the entire content is returned.
- *
- * The cut is taken at the block boundary the parser reports, so it can never
- * land inside a construct and leave the caller with source that will not
- * compile.
  *
  * @function extractMainSection
  * @param {string} content - Full normalised MDX content
@@ -127,11 +122,6 @@ const JSX_TAG = /<(\/?)[A-Z][A-Za-z0-9]*(?:\s[^<>]*?)?(\/?)>/g;
 /**
  * Truncates a block where an element opened outside it closes.
  *
- * Metadata line ranges are stamped heading-to-next-heading with no JSX
- * awareness, so a feature authored inside a `<Collapsible>` gets a range that
- * runs across the closing tag and into the next component. Carrying that tail
- * hands the client source that will not compile.
- *
  * @function clampToElementBoundary
  * @param {string} block - Extracted block text
  * @returns {string} The block, cut before the first unmatched closing tag
@@ -166,14 +156,6 @@ function clampToElementBoundary(block: string): string {
 
 /**
  * Find a heading by case-insensitive text match and extract its block.
- * The block ends immediately before the next heading of the same or higher level,
- * or where an element opened outside the block closes, whichever comes first.
- * Matches exact heading text or a heading suffix (e.g. `"Memorize Spell"` matches
- * `"5th Level – Memorize Spell"`).
- *
- * A heading nested inside a component runs past that component's closing tag on
- * heading level alone, and the extracted source then carries a stray close and
- * fails to compile. Tracking depth stops the block at its enclosing element.
  *
  * @function extractByHeadingText
  * @param {string[]} lines - File lines array
@@ -246,8 +228,6 @@ function extractByHeadingText(lines: string[], heading: string): string | null {
 
 /**
  * Strip the first line from a block only when it is a Markdown heading line.
- * Bullet-based blocks (e.g. feat features starting with `- **Name.**`) keep their
- * first line.
  *
  * @function stripHeadingLine
  * @param {string} block - Full block text

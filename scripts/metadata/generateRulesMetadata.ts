@@ -2,8 +2,7 @@
  * @fileoverview Rules Metadata Generator
  * @description Parses `.mdx` files in `src/content/{locale}/rules/` and emits
  * `.metadata.json` sidecars with slug, title, link, description, and
- * folder-derived tags/category. Section hubs (`main.mdx`) are slugged and
- * sidecar-named after their parent folder.
+ * folder-derived tags/category.
  *
  * @module scripts/metadata/generateRulesMetadata
  * @version 1.0.0
@@ -45,9 +44,7 @@ function isSectionHub(filePath: string): boolean {
 }
 
 /**
- * Derives a page-level `library/rules/…` link from a file path. Section hubs
- * link to their folder (e.g. `/library/rules/steel-and-strife`), regular rule
- * pages to their own segment.
+ * Derives a page-level `library/rules/…` link from a file path.
  *
  * @param {string} filePath - Absolute path to the rules file
  * @param {string} slug - URL-friendly identifier
@@ -78,8 +75,6 @@ function deriveRulesLink(filePath: string, slug: string): string {
 
 /**
  * Derives display tags from the file's subfolder path under `rules/`.
- * `rules/steel-and-strife/initiative.mdx` → `['steel and strife']`; files at
- * the rules root get `['rules']`.
  *
  * @param {string} filePath - Absolute path to the rules file
  * @returns {string[]} Humanised folder tags
@@ -164,9 +159,7 @@ async function parseRulesFile(
 }
 
 /**
- * Resolves the sidecar output path for a rules file. Section hubs
- * (`main.mdx`) are named after their parent folder; regular rule pages
- * use the default suffix replacement.
+ * Resolves the sidecar output path for a rules file.
  *
  * @param {string} sourceFilePath - Original MDX file path
  * @param {string} contentType - Content type key

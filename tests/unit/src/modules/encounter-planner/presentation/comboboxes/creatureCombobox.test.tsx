@@ -2,12 +2,11 @@
  * @fileoverview Unit tests for Creature Combobox component
  * @module tests/unit/src/modules/encounter-planner/presentation/comboboxes/creatureCombobox.test
  * @description Validates CreatureCombobox export and component signature.
- * Tests combobox component for selecting creatures in encounter planner.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
- * 
+ *
  * @requires vitest
  * @requires @/modules/encounter-planner/presentation/comboboxes/creatureCombobox
  */

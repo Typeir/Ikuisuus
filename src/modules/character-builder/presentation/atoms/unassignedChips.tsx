@@ -1,9 +1,7 @@
 /**
  * @fileoverview Unassigned-benefit chip stack
  * @description Row of status pills, one per `(category, tier)` group of
- * unassigned benefits. Condenses into a single summary pill with breakdown
- * tooltip when the group count reaches {@link CONDENSE_AT}. Reads
- * {@link unassignedByCategory}; renders nothing when there is nothing to assign.
+ * unassigned benefits.
  *
  * @module modules/character-builder/presentation/atoms/unassignedChips
  * @version 2.0.0
@@ -65,8 +63,7 @@ export interface UnassignedChipsProps {
 
 /**
  * Renders a pill row for the given categories, or one condensed pill with a
- * breakdown tooltip at or above {@link CONDENSE_AT} groups. Reads the
- * character from the active-sheet context.
+ * breakdown tooltip at or above {@link CONDENSE_AT} groups.
  *
  * @component
  * @param {UnassignedChipsProps} props - Component props

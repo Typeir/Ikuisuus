@@ -35,7 +35,7 @@ export const DICE = {
 /**
  * Pre-compiled patterns for Difficulty Class and saving throw expressions.
  *
- * @property {RegExp} dcFormula - "DC 10 + Prof + CHA mod", or the legacy "DC = ..." form
+ * @property {RegExp} dcFormula - "DC 10 + Prof + CHA mod", or the legacy "DC = ..."
  * @property {RegExp} dcFlat - "DC 16"
  * @property {RegExp} savingThrow - "Wisdom saving throw" or "DEX save"
  * @property {RegExp} savingThrowWithDC - "DC 16 Wisdom saving throw"
@@ -52,9 +52,7 @@ export const SAVES = {
 
 /**
  * Regex source matching a distance in the `[= N stride =]` macro form or
- * the legacy imperial spellings. The opening bracket is optional, so the
- * numeric value always lands in capture group 1. Values are strides; convert
- * to imperial units downstream.
+ * the legacy imperial spellings.
  *
  * @constant
  */
@@ -71,9 +69,6 @@ const measurePattern = (source: string): RegExp =>
 
 /**
  * Pre-compiled patterns for distances, areas, and shapes.
- *
- * Each distance pattern accepts the `[= N stride =]` macro as well as the
- * legacy imperial spellings.
  *
  * @property {RegExp} feet - "[= 6 stride =]", "30 ft", "60-foot", "10 feet"
  * @property {RegExp} wide - "[= 2 stride;ADJ =]-wide", "10-foot wide"
@@ -95,8 +90,6 @@ export const DISTANCE = {
 
 /**
  * Reads the numeric value from a match produced by a measure-bearing pattern.
- * The macro and legacy alternatives occupy different capture groups, so
- * consumers should not index groups directly.
  *
  * @param {RegExpMatchArray | null} match - A match from a DISTANCE pattern
  * @returns {number | undefined} The distance, or undefined when absent

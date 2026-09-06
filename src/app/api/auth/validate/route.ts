@@ -12,10 +12,6 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * Validates a session token and returns the session payload.
  *
- * GET /api/auth/validate
- *
- * Expects `Authorization: Bearer <session-token>` header.
- *
  * @param {NextRequest} req - Incoming request
  * @returns {NextResponse} `{ valid, session }` or `{ valid: false, error }`
  */

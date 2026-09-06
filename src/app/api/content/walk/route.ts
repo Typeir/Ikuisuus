@@ -1,8 +1,7 @@
 /**
  * @fileoverview Route handler delegating to walkHandler.
  * @description GET fetches a shallow ({@link WalkNode}) tree for a content
- * path. Fetches two levels (maxDepth = 2); each second-level directory is a
- * stub node (`isStub: true, children: []`).
+ * path.
  *
  * @module app/api/content/walk/route
  * @version 1.0.0
@@ -18,8 +17,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Returns a two-level-deep {@link WalkNode} array for the requested path.
- * Sub-directories beyond the second level are returned as stub nodes.
- * Returns 500 with `{ error }` on failure.
  *
  * @param {NextRequest} req - Incoming request with `locale` and `path` params
  * @returns {Promise<NextResponse>} JSON array of {@link WalkNode} objects

@@ -1,10 +1,6 @@
 /**
  * @fileoverview Monster-Specific Token Recognizers
  * @description Pure-function token recognizers for monster stat block parsing.
- * Handles attack lines, hit lines, multiattack, deed costs, phase thresholds,
- * declare/resolve markers, auto-fail, and charge-recharge notations. All regex
- * patterns and lookup tables are imported from the centralized featurePatterns
- * module.
  *
  * @version 1.1.0
  * @author Typeir

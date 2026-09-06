@@ -1,6 +1,5 @@
 /**
  * @fileoverview Fails if any src/ file lacks a corresponding test file.
- * Must run before CI merge.
  *
  * @module enforceCoverage
  * @version 1.0.0

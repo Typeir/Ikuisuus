@@ -1,7 +1,6 @@
 /**
  * @fileoverview Raw Content API Route
  * @description Returns the raw MDX source text for any content file.
- * POST body: { type: 'spells'|'heirlooms'|'trinkets'|'feats', slug: string, locale: string }
  *
  * @module app/api/raw-content/route
  * @version 1.0.0

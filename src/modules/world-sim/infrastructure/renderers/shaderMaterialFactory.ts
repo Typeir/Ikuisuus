@@ -16,11 +16,11 @@ import noise3dGlsl from '../../shaders/noise3d.glsl';
  * Options accepted by `createDisplacedShaderMaterial`.
  *
  * @interface DisplacedShaderMaterialOptions
- * @property {string} vertexShader - The renderer-specific vertex shader source. The noise snippet is prepended automatically.
- * @property {string} fragmentShader - The renderer-specific fragment shader source. The noise snippet is NOT prepended unless `prependNoiseToFragment` is true.
+ * @property {string} vertexShader - The renderer-specific vertex shader source.
+ * @property {string} fragmentShader - The renderer-specific fragment shader source.
  * @property {Record<string, { value: unknown }>} uniforms - Uniform map forwarded to the `ShaderMaterial`.
- * @property {boolean} [prependNoiseToFragment] - When true, also prepend the noise snippet to the fragment shader. Defaults to false.
- * @property {string} [noiseSnippet] - Override the noise GLSL source. Defaults to the project-wide `noise3d.glsl` import.
+ * @property {boolean} [prependNoiseToFragment] - When true, also prepend the noise snippet to the fragment shader.
+ * @property {string} [noiseSnippet] - Override the noise GLSL source.
  * @property {Omit<ShaderMaterialParameters, 'vertexShader' | 'fragmentShader' | 'uniforms'>} [materialParams] - Optional additional `ShaderMaterial` parameters (transparent, depthWrite, blending, side, defines, etc.).
  */
 export interface DisplacedShaderMaterialOptions {

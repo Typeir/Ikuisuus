@@ -1,15 +1,6 @@
 /**
  * @fileoverview Spell card.
- * @description Replaces the hand-written blockquote stat block. Level and
- * school become the italic brief the way an heirloom's rarity and attunement
- * do, and the rest print as labelled rows above the body.
- *
- * Casting time is the `cost` slot, not a slot of its own: a cast spends the
- * same tempo currency a feature spends, so `1 Major Action`, `1 Reaction` and
- * `1 Reflex` mean here exactly what they mean there, and a spell that waits on
- * something carries `trigger` beside it. The row is labelled Casting Time
- * through the host's label override, so the page keeps the word a reader
- * expects while the schema keeps one currency.
+ * @description Replaces the hand-written blockquote stat block.
  *
  * @module modules/library/presentation/components/slots/Spell
  * @version 0.1.0
@@ -39,8 +30,7 @@ export type SpellProps = SlotProps<SpellSlotName> & {
 };
 
 /**
- * Slots that print as rows, in display order. Level, school and ritual are
- * spoken by the brief instead.
+ * Slots that print as rows, in display order.
  */
 const ROW_SLOTS: readonly SpellSlotName[] = [
   'cost',
@@ -53,17 +43,31 @@ const ROW_SLOTS: readonly SpellSlotName[] = [
 ];
 
 /**
- * The brief: what kind of spell this is. A cantrip names its school and says
- * cantrip; anything else takes an ordinal.
+ * Rarity as the brief speaks it: capitalised, and silent for common, which
+ * every spell is until it says otherwise.
+ *
+ * @param {ReactNode} rarity - Rarity slot
+ * @returns {string | null} Word to print, or null for common
+ */
+function rarityWord(rarity: ReactNode): string | null {
+  if (typeof rarity !== 'string') return null;
+  const word = rarity.trim();
+  return word === '' || word.toLowerCase() === 'common' ? null : capitalize(word);
+}
+
+/**
+ * The brief: what kind of spell this is.
  *
  * @param {ReactNode} level - Level slot
+ * @param {ReactNode} rarity - Rarity slot
  * @param {ReactNode} school - School slot
  * @param {ReactNode} ritual - Ritual slot
  * @param {(key: string) => string} t - Translator over `library.spell`
- * @returns {ReactNode[]} Brief fragments; empty when neither slot was written
+ * @returns {ReactNode[]} Brief fragments; empty when no brief slot was written
  */
 function briefLine(
   level: ReactNode,
+  rarity: ReactNode,
   school: ReactNode,
   ritual: ReactNode,
   t: (key: string) => string,
@@ -72,19 +76,20 @@ function briefLine(
     level === undefined ? null : spellLevelPhrase(String(inlineValue(level)));
   const named =
     typeof school === 'string' ? capitalize(school.trim()) : school;
+  const rare = rarityWord(rarity);
+  const kind = named === undefined ? t('kind') : named;
+  const rareKind: ReactNode[] = rare ? [`${rare} `, kind] : [kind];
 
   const parts: ReactNode[] =
     phrase === 'Cantrip'
-      ? named === undefined
+      ? named === undefined && !rare
         ? [t('cantrip')]
-        : [named, ` ${t('cantrip').toLowerCase()}`]
-      : phrase && named !== undefined
-        ? [`${phrase} `, named]
-        : phrase
-          ? [`${phrase} ${t('kind')}`]
-          : named !== undefined
-            ? [named]
-            : [];
+        : [...(rare ? [`${rare} `] : []), ...(named === undefined ? [] : [named, ' ']), t('cantrip').toLowerCase()]
+      : phrase
+        ? [`${phrase} `, ...rareKind]
+        : named !== undefined || rare
+          ? rareKind
+          : [];
 
   /* The corpus writes this as a parenthetical on the level line, and writes it
      two ways — `(Ritual)` and `(ritual)`. The slot holds the fact and the card
@@ -104,7 +109,7 @@ function briefLine(
 const Spell: React.FC<SpellProps> = ({ children, ...slots }) => {
   const t = useTranslations('library.spell');
   const { values, kept } = readSlots(children, SPELL_SLOT_NAMES, slots);
-  const brief = briefLine(values.level, values.school, values.ritual, t);
+  const brief = briefLine(values.level, values.rarity, values.school, values.ritual, t);
   const rows = ROW_SLOTS.filter((name) => values[name] !== undefined);
 
   return (

@@ -1,7 +1,5 @@
 /**
- * @fileoverview Root vitest config. Defines inline projects, one per test suite;
- * each runs in its own worker pool. Run a project with `--project <name>` or run
- * all with `vitest run`.
+ * @fileoverview Root vitest config.
  *
  * @module vitestConfig
  * @author Typeir

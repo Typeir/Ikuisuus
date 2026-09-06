@@ -115,7 +115,7 @@ export const GROUP_ICON: Record<string, LucideIcon> = {
 };
 
 /**
- * Glyph per damage type. Doubles as the badge on a scoped defence.
+ * Glyph per damage type.
  */
 export const DAMAGE_ICON: Record<string, LucideIcon> = {
   fire: Flame,
@@ -135,25 +135,11 @@ export const DAMAGE_ICON: Record<string, LucideIcon> = {
 
 /**
  * How much worse a condition is than the family it belongs to.
- *
- * Drawn as a chevron badge over the family's base glyph.
  */
 export type Severity = 'base' | 'worse' | 'worst';
 
 /**
  * Glyph and severity per condition.
- *
- * Every condition gets its own glyph; the chevron carries the family ladder.
- *
- * Four ladders are written into the rules:
- *
- * - **Incapacitation.** `stunned` and `paralyzed` each open with "is
- *   **incapacitated**"; paralyzed adds auto-crits.
- * - **Restraint.** `restrained` is `grappled` plus advantage against it and
- *   disadvantage on its own attacks and Dexterity saves.
- * - **Fear.** `terrified` is `frightened` plus a forced Dash away.
- * - **Action economy.** `staggered` forbids reactions; `slowed` forbids
- *   reactions, halves speed, caps attacks and taxes casting.
  */
 export const CONDITION_MARK: Record<string, { Icon: LucideIcon; severity: Severity }> =
   {
@@ -202,8 +188,6 @@ export const VALUE_ICON: Record<string, LucideIcon> = {
 
 /**
  * The three damage types in each stratum, in canon order.
- *
- * A stratum is always exactly three types. `true` damage has no stratum.
  */
 export const STRATUM_TYPES: Record<string, readonly string[]> = {
   physical: ['slashing', 'bludgeoning', 'piercing'],

@@ -1,10 +1,6 @@
 /**
  * @fileoverview Dropdown Panel Atom
- * @description ▾-triggered floating panel. Owns open/close state, click-outside
- * detection, and keyboard dismissal. Renders via
- * {@link https://react.dev/reference/react-dom/createPortal createPortal} at
- * `document.body`. Positioning derived from the trigger's bounding rect, applied
- * as a transform by {@link useAnchoredPosition}.
+ * @description ▾-triggered floating panel.
  * @module modules/character-builder/presentation/atoms/dropdownPanel
  * @version 1.0.0
  * @author Typeir
@@ -48,8 +44,7 @@ export interface DropdownPanelProps {
 
 /**
  * ▾-triggered floating panel portaled to `document.body` when open and
- * positioned with `position: fixed`. Renders as a Fragment: badge node, then
- * trigger button, then panel.
+ * positioned with `position: fixed`.
  * @component
  * @param {DropdownPanelProps} props - Component props
  * @param {string} props.triggerLabel - Accessible `aria-label` for the ▾ trigger button

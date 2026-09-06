@@ -1,8 +1,7 @@
 /**
  * @fileoverview Server-Only Import Boundary Tests
  * @description Asserts that barrels reachable from client components cannot
- * transitively import server-only modules. Walks the import graph and names
- * the first path that crosses a server-only module.
+ * transitively import server-only modules.
  *
  * @module tests/unit/src/modules/library/presentation/serverOnlyBoundaries.test
  * @version 1.0.0
@@ -63,8 +62,6 @@ function resolveInSrc(specifier: string, fromFile: string): string | null {
 /**
  * Walks the import graph and returns the first path that reaches a server-only
  * module.
- *
- * Type-only imports are ignored; they are erased at compile time.
  *
  * @param {string} entry - Absolute path of the entry file
  * @returns {string[] | null} The offending import chain, or null when clean

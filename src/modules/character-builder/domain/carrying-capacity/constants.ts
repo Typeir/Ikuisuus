@@ -66,7 +66,7 @@ export const SIZE_MULTIPLIERS: Record<CreatureSize, number> = {
 
 /**
  * Quadruped size multipliers (replaces bipedal multiplier when the creature is
- * a quadruped). Sizes smaller than Medium use the bipedal multiplier.
+ * a quadruped).
  *
  * @constant QUADRUPED_MULTIPLIERS
  */

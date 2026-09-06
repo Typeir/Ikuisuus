@@ -46,8 +46,7 @@ interface FileTreeSelectProps {
 }
 
 /**
- * Combobox for selecting a folder from a tree. Renders expandable folder
- * nodes; each ends with a "New file" option styled with a dashed border.
+ * Combobox for selecting a folder from a tree.
  *
  * @component
  * @param {FileTreeSelectProps} props - Component properties

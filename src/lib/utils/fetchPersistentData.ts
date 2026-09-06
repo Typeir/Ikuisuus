@@ -10,7 +10,6 @@
  *
  * @description
  * Lookup priority order: cookies, sessionStorage, localStorage.
- * Returns first non-null value; null when window is unavailable (SSR).
  */
 
 import { readCookie } from './storePersistentData';

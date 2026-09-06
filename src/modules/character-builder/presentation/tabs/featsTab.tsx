@@ -1,8 +1,7 @@
 /**
  * @fileoverview Feats Tab
  * @description Renders the feat picker (from `/api/feats` data) plus a chip
- * cloud of currently selected feats. The right-hand column renders the most
- * recently selected feat's prose content via the content-shards API.
+ * cloud of currently selected feats.
  *
  * @module modules/character-builder/presentation/tabs/featsTab
  * @version 2.1.0
@@ -44,8 +43,7 @@ interface FocusedShard {
 }
 
 /**
- * Feats tab content. Reads the character and edit mode from the active-sheet
- * context.
+ * Feats tab content.
  *
  * @component
  * @returns {JSX.Element} Rendered tab body

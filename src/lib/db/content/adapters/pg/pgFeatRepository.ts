@@ -1,9 +1,7 @@
 /**
  * @fileoverview PostgreSQL Feat Repository (MikroORM)
  * @description Implements `FeatRepository` via MikroORM against the `feats`
- * and `feat_features` tables. The optional ability-score increase is stored as
- * flat prefixed columns via `FeatAbilityIncreaseEmbed`. Named mechanics are
- * loaded via the `features` OneToMany relation.
+ * and `feat_features` tables.
  *
  * @module lib/db/content/adapters/pg/pgFeatRepository
  * @version 1.1.0
@@ -44,8 +42,7 @@ const toFeatFeature = (f: FeatFeatureEntity): FeatFeature => ({
 
 /**
  * Converts the nullable `FeatAbilityIncreaseEmbed` value object to its domain
- * shape. Returns `undefined` when the embed is absent or when the abilities
- * array is empty.
+ * shape.
  *
  * @param {FeatEntity['abilityIncrease']} embed - Loaded embedded VO
  * @returns {FeatAbilityIncrease | undefined} Domain model or undefined

@@ -2,10 +2,6 @@
  * @fileoverview Measure Component
  * @description Renders a stored measurement in the reader's chosen system.
  *
- * Metadata stores measures in native form (`12 stride`, `Self (6 stride;ADJ
- * cone)`); metres or feet conversion happens at display time here.
- * Measures are drawn by the `Unit` component; prose segments pass through.
- *
  * @module modules/library/presentation/components/Measure/Measure
  * @version 1.0.0
  * @author Typeir

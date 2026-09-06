@@ -10,9 +10,6 @@
 /**
  * Design token map for OG image rendering.
  *
- * Values 1-to-1 with dark-theme CSS custom properties in
- * `src/app/[locale]/globals.scss`.
- *
  * @property {string} bg - Main background colour (`--color-bg`)
  * @property {string} bgSecondary - Secondary background (`--color-bg-secondary`)
  * @property {string} surface - Surface colour (`--color-surface`)

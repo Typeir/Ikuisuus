@@ -41,8 +41,6 @@ const SidebarClient = dynamic(
  * @interface SidebarShellProps
  * @property {Item[]} items - Root navigation items to render
  * @property {() => void} [onNavigate] - Callback when a navigation link is clicked.
- *   Defaults to closing the mobile sidebar. The shell renders inside the
- *   `@sidebar` slot where no client callback is available, so it reads the menu store.
  * @property {boolean} [collapseSiblings=false] - If true, opening one folder collapses siblings
  */
 interface SidebarShellProps {
@@ -184,7 +182,6 @@ function StaticItem({
 
 /**
  * Renders the navigation tree in static (non-interactive) form.
- * Used as the Suspense fallback while SidebarClient is loading.
  *
  * @component
  * @param {StaticTreeProps} props - Component props.
@@ -220,8 +217,6 @@ function SidebarStaticTree({
 
 /**
  * Derives expanded sidebar paths from a pathname string.
- * Extracts the content path from `/[locale]/library/[...path]` and
- * returns all ancestor segments so every parent folder is pre-opened.
  *
  * @param {string} pathname - Current route pathname
  * @returns {Set<string>} Set of path strings that should be expanded
@@ -241,10 +236,6 @@ function expandedPathsFromPathname(pathname: string): Set<string> {
 /**
  * Sidebar shell that renders a static navigation tree as the Suspense fallback
  * and lazily loads the interactive client sidebar.
- *
- * On every pathname change the ancestor chain of the open page is dispatched
- * into the expansion store, keeping the chain to the current page open without
- * overriding folders opened by hand.
  *
  * @component
  * @param {SidebarShellProps} props - Component props.

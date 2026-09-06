@@ -1,8 +1,6 @@
 /**
  * @fileoverview Parses `.lore.mdx` files in `src/content/{locale}/world/` and
- * emits `.metadata.json` sidecars. Parses leading frontmatter via `gray-matter`;
- * `description` falls back to the first prose paragraph, `tags`/`category` to
- * the `world/` subfolder path.
+ * emits `.metadata.json` sidecars.
  *
  * @module scripts/metadata/generateWorldMetadata
  * @version 1.0.0
@@ -74,8 +72,6 @@ function deriveWorldLink(filePath: string, slug: string): string {
 
 /**
  * Derives display tags from the file's subfolder path under `world/`.
- * `world/gods-and-demigods/dreamcatcher.lore.mdx` → `['gods and demigods']`;
- * files at the world root get `['lore']` so they still surface one tag.
  *
  * @param {string} filePath - Absolute path to the lore file
  * @returns {string[]} Humanised folder tags
@@ -92,9 +88,6 @@ function deriveWorldFolderTags(filePath: string): string[] {
 
 /**
  * Parses a world/lore MDX file into a metadata record.
- *
- * When no frontmatter block is found, falls back to the minimal shape
- * (slug, title from H1, file, link).
  *
  * @param {string} filePath - Absolute path to the lore file
  * @param {SharedData} _sharedData - Shared game data (unused for world lore)
@@ -167,8 +160,6 @@ async function parseWorldFile(
 
 /**
  * Main entry point for world/lore metadata generation.
- *
- * Passes a custom `contentDir`; world content lives outside `CONTENT_PATHS`.
  *
  * @param {object} [options] - Configuration
  * @param {string} [options.contentDir] - Override content directory

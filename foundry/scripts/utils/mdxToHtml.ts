@@ -1,8 +1,7 @@
 /**
  * @fileoverview MDX-to-HTML converter for Foundry VTT descriptions.
  * @description Compiles MDX content to HTML via next-mdx-remote-client/rsc
- * evaluate + ReactDOMServer. Custom JSX components are no-op or pass-through
- * stubs.
+ * evaluate + ReactDOMServer.
  *
  * @module foundry/scripts/utils/mdxToHtml
  * @version 2.0.0
@@ -19,8 +18,7 @@ import remarkGfm from 'remark-gfm';
 import type { MonsterFeature } from '../../../src/lib/types/feature';
 
 /**
- * No-op component that renders nothing. Stubs JSX tags irrelevant to the
- * Foundry VTT export (BlendedImage, MonsterTable, etc.).
+ * No-op component that renders nothing.
  *
  * @returns {null} Renders nothing
  */
@@ -95,10 +93,7 @@ export async function mdxToHtml(mdx: string): Promise<string> {
 }
 
 /**
- * Extracts the description portion of a monster MDX file. Strips the stat
- * block header (title, type line, AC/HP/Speed table, ability score table, and
- * properties list); returns only the traits, actions, and other narrative
- * content.
+ * Extracts the description portion of a monster MDX file.
  *
  * @param {string} mdx - Full MDX content of a monster sheet
  * @returns {Promise<string>} HTML of the description portion only
@@ -113,7 +108,7 @@ export async function extractMonsterDescription(mdx: string): Promise<string> {
 
 /**
  * Extracts per-feature MDX text using source line ranges and converts each
- * slice to HTML. Mutates features in place, setting `description`.
+ * slice to HTML.
  *
  * @param {MonsterFeature[]} features - Features with source.start/end line ranges
  * @param {string} mdxContent - Full MDX file content

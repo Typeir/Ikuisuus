@@ -1,7 +1,6 @@
 /**
  * @fileoverview MikroORM Embeddables - Monster
- * @description Value objects embedded into the `monsters` table. Each flattens
- * to columns on the parent row rather than a table of its own.
+ * @description Value objects embedded into the `monsters` table.
  *
  * @module lib/db/orm/entities/MonsterEmbeds
  * @version 1.0.0

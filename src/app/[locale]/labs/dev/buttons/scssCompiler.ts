@@ -2,8 +2,7 @@
  * @fileoverview Compiles project SCSS to resolved CSS rules for the labs catalogue.
  * @description Loads `sass` lazily so it never enters a production server bundle, and
  * mirrors the `next.config.ts` resolution setup: `src/styles` on `loadPaths` plus an
- * importer for the `@/` alias. Returns flat rules so mixin-produced declarations are
- * visible the same way the browser sees them.
+ * importer for the `@/` alias.
  *
  * @module app/[locale]/labs/dev/buttons/scssCompiler
  * @version 1.0.0
@@ -64,7 +63,6 @@ export function extractRules(css: string): CssRule[] {
 
 /**
  * Compiles one SCSS file, returning its rules or an empty array on failure.
- * Failures are swallowed so one broken stylesheet cannot blank the catalogue.
  *
  * @async
  * @function compileScss

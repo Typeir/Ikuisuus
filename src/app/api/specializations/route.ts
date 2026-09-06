@@ -1,7 +1,6 @@
 /**
- * @fileoverview Specializations API route. Serves specialization metadata as JSON.
- * @description Reads specialization metadata from the content repository. Supports
- * ?locale query parameter (default 'en') and optional ?vocation filter.
+ * @fileoverview Specializations API route.
+ * @description Reads specialization metadata from the content repository.
  *
  * @version 1.0.0
  * @author Typeir
@@ -26,7 +25,6 @@ const log = logger.child({ module: 'API:Specializations' });
 /**
  * GET /api/specializations
  * Returns array of specialization metadata from the content repository.
- * Accepts locale (default 'en') and optional vocation query parameters.
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of specialization objects

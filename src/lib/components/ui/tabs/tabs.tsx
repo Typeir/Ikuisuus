@@ -1,10 +1,6 @@
 /**
  * @fileoverview Tabs Primitive
- * @description Lightweight, accessible tab system. Manages active tab state via
- * a context provider and exposes `<Tabs>`, `<TabList>`, `<Tab>`, and `<TabPanel>`
- * building blocks. Implements `role="tablist"` / `role="tab"` / `role="tabpanel"`
- * with arrow-key navigation across direct children of the tablist. Controlled
- * usage only — `value` and `onChange` are required on the root.
+ * @description Lightweight, accessible tab system.
  *
  * @module lib/components/ui/tabs/tabs
  * @version 1.0.0
@@ -43,7 +39,7 @@ interface TabsContextValue {
 const TabsContext = createContext<TabsContextValue | null>(null);
 
 /**
- * Read the surrounding tabs context. Throws when used outside `<Tabs>`.
+ * Read the surrounding tabs context.
  *
  * @function useTabsContext
  * @returns {TabsContextValue} The active tabs context
@@ -77,7 +73,7 @@ export interface TabsProps {
 }
 
 /**
- * Root tabs container. Provides the active-value context to descendants.
+ * Root tabs container.
  *
  * @component
  * @param {TabsProps} props - Component props
@@ -134,9 +130,7 @@ export interface TabListProps {
 }
 
 /**
- * Tab list container. Implements arrow-key navigation across direct `<Tab>`
- * children using DOM order. Activating a tab via keyboard also triggers click
- * to keep activation behaviour consistent across pointer and keyboard.
+ * Tab list container.
  *
  * @component
  * @param {TabListProps} props - Component props
@@ -246,7 +240,7 @@ export const Tab: React.FC<TabProps> = ({
  * @interface TabPanelProps
  * @property {string} value - Identifier matching the corresponding `<Tab>`
  * @property {ReactNode} children - Panel content
- * @property {boolean} [keepMounted] - When true, the panel stays in the DOM even when inactive (hidden via the `hidden` attribute). Useful for preserving form state across tab switches.
+ * @property {boolean} [keepMounted] - When true, the panel stays in the DOM even when inactive (hidden via the `hidden` attribute).
  */
 export interface TabPanelProps {
   value: string;
@@ -261,7 +255,7 @@ export interface TabPanelProps {
  * @param {TabPanelProps} props - Component props
  * @param {string} props.value - Identifier matching the corresponding `<Tab>`
  * @param {ReactNode} props.children - Panel content
- * @param {boolean} [props.keepMounted=false] - When true, the panel stays in the DOM even when inactive (hidden via the `hidden` attribute). Useful for preserving form state across tab switches.
+ * @param {boolean} [props.keepMounted=false] - When true, the panel stays in the DOM even when inactive (hidden via the `hidden` attribute).
  * @returns {JSX.Element | null} Rendered panel, or null when inactive and not kept mounted
  */
 export const TabPanel: React.FC<TabPanelProps> = ({

@@ -3,8 +3,7 @@
  * @description Generates one inline element per schema row (`<Cost>`,
  * `<Attunement>`, …) and provides the helpers both parents share: splitting a
  * paragraph of slot elements out of children and merging attribute slots with
- * element slots. Labels come from the message catalogue, never from the
- * content; identity is the generated `displayName`, never `props.mdxType`.
+ * element slots.
  *
  * @module modules/library/presentation/components/slots/slotElements
  * @version 0.4.0
@@ -104,8 +103,7 @@ export interface SlotEntry {
 
 /**
  * Splits paragraphs made only of the parent's own slot elements (the element
- * form) out of a node list. A paragraph carrying any other content, or a slot
- * that belongs to another parent, stays in the body.
+ * form) out of a node list.
  *
  * @param {ReactNode[]} nodes - Cleaned child nodes
  * @param {readonly SlotName[]} names - Slot names the parent accepts
@@ -188,8 +186,7 @@ export function collectSlotEntries<N extends SlotName>(
 }
 
 /**
- * Label + value row for one slot. Label comes from the message catalogue and
- * is separated from the value by the site's colon convention.
+ * Label + value row for one slot.
  *
  * @param {object} props - Row props
  * @param {SlotName} props.name - Slot name, drives label key and data attribute
@@ -234,8 +231,7 @@ export interface SlotReading<N extends SlotName> {
 
 /**
  * Reads a host's slots from both spellings at once: attributes on the tag and
- * element-form slot paragraphs among the children. Every card host does this
- * identically, so it lives here rather than in each of them.
+ * element-form slot paragraphs among the children.
  *
  * @param {ReactNode} children - The host's children
  * @param {readonly N[]} names - Slot names the host accepts, in display order
@@ -343,6 +339,7 @@ export const {
   Saves,
   Skills,
   Resistances,
+  Vulnerabilities,
   Immunities,
   ConditionImmunities,
   Senses,
@@ -350,6 +347,7 @@ export const {
   Challenge,
   Xp,
   TierBonus,
+  Parent,
   PrimaryAbility,
   HitDie,
   Trades,

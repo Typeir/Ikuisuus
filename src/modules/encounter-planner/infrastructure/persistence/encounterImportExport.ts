@@ -30,7 +30,7 @@ export const exportEncounter = (encounter: Encounter): string => {
 };
 
 /**
- * Parses and validates encounter from JSON string. Assigns a new ID and ensures timestamps exist.
+ * Parses and validates encounter from JSON string.
  *
  * @function importEncounter
  * @param {string} jsonString - JSON string to parse

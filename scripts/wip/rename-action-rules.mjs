@@ -1,7 +1,5 @@
 /**
  * Phase A + B regex rules for Damocles action system migration.
- * Phase A: bare mechanical "action" → "Major Action"
- * Phase B: "bonus action" → "Minor Action"
  * @module scripts/wip/rename-action-rules
  */
 

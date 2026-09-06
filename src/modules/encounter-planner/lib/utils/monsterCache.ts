@@ -1,6 +1,5 @@
 /**
  * @fileoverview Client-safe monster data caching layer with locale-aware deduplication.
- * Cache is stored in memory (module scope) and cleared on page reload.
  *
  * @module modules/encounter-planner/lib/utils/monsterCache
  * @author Typeir
@@ -79,7 +78,6 @@ function buildMonsterCacheKey(locale: string, slug: string): string {
 
 /**
  * Fetches and caches the monster index for a given locale.
- * Prevents duplicate concurrent requests through promise tracking.
  *
  * @param {string} locale - Locale code for API request
  * @returns {Promise<MonsterIndexEntry[]>} Array of monster index entries
@@ -127,7 +125,6 @@ async function fetchMonsterIndex(locale: string): Promise<MonsterIndexEntry[]> {
 
 /**
  * Fetches and caches a single monster by slug for a given locale.
- * Prevents duplicate concurrent requests through promise tracking.
  *
  * @param {string} slug - Monster slug identifier
  * @param {string} locale - Locale code for API request

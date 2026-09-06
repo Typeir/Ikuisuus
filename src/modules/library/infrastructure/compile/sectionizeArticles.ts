@@ -1,5 +1,5 @@
 /**
- * @fileoverview Sectionize helpers: anchor registry, text helpers, entry→article pass. Wraps feature entries in articles.
+ * @fileoverview Sectionize helpers: anchor registry, text helpers, entry→article pass.
  *
  * @module modules/library/infrastructure/compile/sectionizeArticles
  * @version 1.0.0
@@ -151,7 +151,7 @@ function article(children: ElementContent[], anchor: string, slug: string): Elem
 }
 
 /**
- * Article pass over subtree. Tracks section anchor and group heading status.
+ * Article pass over subtree.
  *
  * @param {Parent} node - Node whose children to scan
  * @param {Anchors} anchors - Document anchor registry

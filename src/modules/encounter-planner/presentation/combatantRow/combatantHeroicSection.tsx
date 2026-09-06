@@ -2,7 +2,6 @@
  * Combatant Heroic Section Component
  *
  * @fileoverview Displays heroic awakening state, affixes, and force awakening controls.
- * Manages heroic awakening tier selection and unawakening.
  *
  * @module modules/encounter-planner/presentation/combatantRow/combatantHeroicSection
  * @version 2.0.0
@@ -17,7 +16,6 @@
  * @requires ../playMode/CombatantContext useCombatant hook for context
  *
  * @description Displays awakening state, force awakening buttons, and bonuses.
- * Uses CombatantContext for state.
  */
 
 'use client';
@@ -42,7 +40,6 @@ type HeroicTier = 'awakened' | 'legendary' | 'mythic';
 
 /**
  * Props for CombatantHeroicSection component.
- * All props are optional when used within CombatantProvider (values come from context).
  *
  * @interface CombatantHeroicSectionProps
  */
@@ -68,8 +65,6 @@ const DEFAULT_HEROIC_STATE: HeroicAwakeningState = {
 
 /**
  * Heroic awakening section for Play Mode combatants.
- * Displays awakening tier, fate die result, affixes, bonuses, and force awakening buttons.
- * Uses CombatantContext for state and updates.
  *
  * @component
  * @param {CombatantHeroicSectionProps} props - Component props

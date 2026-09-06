@@ -20,8 +20,7 @@ import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 /**
- * Test-local wrapper supplying both the state and controls providers. The
- * mediator stub dispatches `Deselect` on `resetView`.
+ * Test-local wrapper supplying both the state and controls providers.
  */
 const mediatorRef: { current: WorldSimMediator | null } = { current: null };
 

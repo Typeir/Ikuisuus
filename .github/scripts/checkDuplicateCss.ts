@@ -1,7 +1,6 @@
 /**
  * Detects duplicate CSS selectors and property blocks across SCSS/CSS files;
- * reports exact duplicates as warning findings. Keyframe stop selectors and
- * selectors containing semicolons are excluded from detection.
+ * reports exact duplicates as warning findings.
  *
  * @module .github/scripts/check-duplicate-css
  */
@@ -118,9 +117,7 @@ function normalizeProperties(body: string): string {
 }
 
 /**
- * Execute the duplicate-css check and return a structured result. Uses
- * options.files when provided; otherwise discovers files. Uses options.readFile
- * when provided; otherwise reads via fs.readFile.
+ * Execute the duplicate-css check and return a structured result.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations

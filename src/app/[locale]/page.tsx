@@ -56,8 +56,7 @@ const ArchiveIntro = () => {
 };
 
 /**
- * Home page — "The Grand Archive". Introduction + featured discovery entries
- * per content type. Search is in the sidebar SearchBar.
+ * Home page — "The Grand Archive".
  *
  * @returns {JSX.Element} The rendered home page
  */

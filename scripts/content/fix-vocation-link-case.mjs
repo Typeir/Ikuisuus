@@ -1,10 +1,5 @@
 /**
  * Fixes MDX library links that use capitalized vocation directory names.
- *
- * Problem: Links like `/vocations/Berserker/...` don't resolve because
- * actual directories are lowercase (`berserker/`).
- *
- * Run: node scripts/content/fix-vocation-link-case.mjs [--dry-run]
  */
 
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'fs';

@@ -1,18 +1,7 @@
 /**
  * @fileoverview Overcast slot, inline or block.
  * @description Most spells overcast in a clause — *the spell gains 1d6 damage*
- * — and print it as a row like any other slot. Some overcast into a table:
- * Charm, Hold and Dominate each gain reach up a ladder of creature types by
- * slot level, and no clause says that.
- *
- * So this slot renders either way, and the author chooses by how they write it.
- * A value on the tag is a row. An `<Overcast>` element wrapping block content —
- * a table, a list, more than one paragraph — is a titled block beneath the
- * body. Nothing about the slot forces the shorter form.
- *
- * `at` names the slot level a tier begins at, because a spell may overcast in
- * steps: Imbue Weapon opens a damage strata at 5th and another at 7th, each
- * with its own table.
+ * — and print it as a row like any other slot.
  *
  * @module modules/library/presentation/components/slots/Overcast
  * @version 0.1.0
@@ -49,11 +38,6 @@ const BLOCK_TAGS = new Set([
 
 /**
  * Whether a node list reads as block content.
- *
- * Node count says nothing: a one-line value carrying a shortcode arrives as
- * several inline nodes — text, the rendered dice, text — and is still a phrase.
- * What separates the two is a block element among the children, which is what
- * MDX produces for content set off by blank lines.
  *
  * @param {ReactNode[]} nodes - Cleaned children
  * @returns {boolean} True when the value wants a block

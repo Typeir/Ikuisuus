@@ -1,7 +1,6 @@
 /**
  * @fileoverview Emits the vitest project list.
- * @description Prints the projects defined for the suite. With `--json`, emits
- * a JSON array; otherwise one name per line.
+ * @description Prints the projects defined for the suite.
  *
  * @module tests/scripts/listProjects
  * @author Typeir

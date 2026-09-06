@@ -1,8 +1,6 @@
 /**
  * @fileoverview Item List Editor Component
  * @description Reusable component for managing item lists (add/remove).
- * Simple text-based list with inline input field for adding new items.
- * Used in both CreatureRow (design mode) and PlayModeCombatantRow (play mode).
  *
  * @module modules/encounter-planner/presentation/listEditors/itemListEditor
  * @version 1.0.0
@@ -46,7 +44,6 @@ interface ItemListEditorProps {
 
 /**
  * Item list editor with inline text input.
- * Displays item chips and allows adding new items via input field.
  *
  * @component
  * @param {ItemListEditorProps} props - Component props

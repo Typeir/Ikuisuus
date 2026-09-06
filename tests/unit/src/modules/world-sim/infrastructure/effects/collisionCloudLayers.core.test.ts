@@ -2,7 +2,6 @@
  * @fileoverview Smoke tests for CollisionCloudLayers constant exports.
  * @description Validates that the scale constants and timing values exported by
  * collisionCloudLayers.core have the expected numeric types and ranges.
- * Factory functions are untested.
  *
  * @module tests/unit/src/modules/world-sim/infrastructure/effects/collisionCloudLayers.core.test
  * @version 1.0.0

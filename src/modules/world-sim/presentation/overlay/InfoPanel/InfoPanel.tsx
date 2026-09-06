@@ -2,7 +2,6 @@
  * @fileoverview Info Panel — Detailed Body Information Overlay
  * @description Displays a side panel with detailed information about the selected
  * celestial body, including its name, subtitle, lore origin, and region links.
- * Appears when a body is selected (zoom level = Body).
  *
  * @module modules/world-sim/presentation/overlay/InfoPanel/InfoPanel
  * @version 1.0.0

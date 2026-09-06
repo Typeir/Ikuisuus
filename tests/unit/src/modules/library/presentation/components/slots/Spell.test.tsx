@@ -89,6 +89,27 @@ describe('Spell', () => {
     expect(document.querySelector('[data-slot-grid]')).toBeNull();
   });
 
+  it('speaks a rarity above common between level and school, and none for common', () => {
+    render(<Spell level='10' rarity='legendary' school='evocation' />);
+    expect(briefText('data-spell-brief')).toBe('10th-level Legendary Evocation');
+    document.body.innerHTML = '';
+
+    render(<Spell level='10' rarity='legendary' />);
+    expect(briefText('data-spell-brief')).toMatch(/^10th-level Legendary (?:spell|kind)$/);
+    document.body.innerHTML = '';
+
+    render(<Spell level='0' rarity='rare' school='evocation' />);
+    expect(briefText('data-spell-brief')).toBe('Rare Evocation cantrip');
+    document.body.innerHTML = '';
+
+    render(<Spell level='3' rarity='common' school='evocation' />);
+    expect(briefText('data-spell-brief')).toBe('3rd-level Evocation');
+    document.body.innerHTML = '';
+
+    render(<Spell level='3' rarity='Common' />);
+    expect(briefText('data-spell-brief')).toMatch(/^3rd-level (?:spell|kind)$/);
+  });
+
   it('reads the ritual flag bare, and reads the negated word', () => {
     render(<Spell level='2' school='divination' ritual />);
     expect(briefText('data-spell-brief')).toBe('2nd-level Divination (ritual)');

@@ -1,7 +1,6 @@
 /**
  * @fileoverview GitHub Directory Source Adapter
  * @description Implements DirectorySourceAdapter via the GitHub Git Trees API.
- * Fetches the full recursive tree once and caches it in memory; listEntries filters the cached tree.
  *
  * @module lib/db/content/adapters/github/githubDirectorySource
  * @author Typeir
@@ -99,10 +98,6 @@ async function fetchFullTree(): Promise<GitTreeEntry[] | null> {
 /**
  * Returns the cached tree, refreshing if the TTL has expired.
  *
- * A failed fetch — rejection or API error — never occupies the TTL window:
- * its cache slot is dropped as it settles, so the next call retries instead
- * of replaying the failure for five minutes.
- *
  * @returns {Promise<GitTreeEntry[]>} Flat list of all tree entries
  */
 function getCachedTree(): Promise<GitTreeEntry[]> {
@@ -130,7 +125,6 @@ function getCachedTree(): Promise<GitTreeEntry[]> {
 
 /**
  * GitHub-backed directory source.
- * Fetches the full repo tree once and filters entries per directory listing request.
  */
 export const githubDirectorySource: DirectorySourceAdapter = {
   async listEntries(

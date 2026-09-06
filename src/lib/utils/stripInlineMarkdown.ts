@@ -1,7 +1,7 @@
 /**
  * @fileoverview Removes inline markdown markers from a string.
  * @description Handles paired emphasis/code/link syntax and removes unpaired
- * `**`/`__`/`` ` `` markers. Block-level markdown is out of scope.
+ * `**`/`__`/`` ` `` markers.
  *
  * @module lib/utils/stripInlineMarkdown
  * @version 1.0.0
@@ -19,11 +19,6 @@
  * @description
  * Applied in order:
  * 1. `[text](url)` links collapse to their `text`.
- * 2. Paired `**bold**`, `__bold__`, `*italic*`, and `` `code` `` unwrap to their
- *    inner content.
- * 3. Remaining unpaired `**`, `__`, or backtick markers are removed.
- *
- * Single-underscore `_italic_` is not handled.
  *
  * @example
  * stripInlineMarkdown('**Light**, Medium, **Heavy**');

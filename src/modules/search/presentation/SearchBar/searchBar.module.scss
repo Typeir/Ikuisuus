@@ -15,15 +15,22 @@
   }
 }
 
-/* ---- Dropdown ---- */
+/* ---- Dropdown ----
+   A body portal hung off the bar. The sidebar is transformed, so anything
+   positioned inside it is boxed to the sidebar's width; a result row (sigil,
+   title, snippet, meta trail) needs far more than that. The dropdown takes
+   its own width from the bar's left edge and slides back inside the viewport
+   when the bar sits near the right, as on the mobile title bar. */
 .dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
+  position: fixed;
+  top: 0;
   left: 0;
-  right: 0;
   z-index: 50;
-  /* Capped to the room below the input (measured by SearchBar) so the
-     absolute box never extends the page's scrollable overflow. */
+  will-change: transform;
+  --search-dropdown-width: min(40rem, calc(100vw - 2rem));
+  width: var(--search-dropdown-width);
+  /* Capped to the room below the bar (measured by SearchDropdown) so the
+     fixed box never runs past the viewport. */
   max-height: min(60vh, var(--search-dropdown-max, 60vh));
   overflow-y: auto;
   background: var(--color-surface);
@@ -33,6 +40,24 @@
     0 8px 24px var(--color-shadow),
     0 0 0 1px var(--color-border);
   padding: 0.25rem 0;
+
+  @supports (anchor-name: --a) {
+    top: calc(anchor(bottom) + 4px);
+    left: clamp(
+      1rem,
+      anchor(left),
+      calc(100vw - 1rem - var(--search-dropdown-width))
+    );
+    will-change: auto;
+  }
+}
+
+/* The hero bar is already wide; its dropdown matches the bar. */
+.dropdownHero {
+  @supports (anchor-name: --a) {
+    left: anchor(left);
+    width: anchor-size(width);
+  }
 }
 
 .dropdownStatus {

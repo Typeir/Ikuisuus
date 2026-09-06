@@ -18,7 +18,6 @@ export const meta: CommandMeta = {
 
 /**
  * Stages files in both repos with a spinner.
- * Content failures are soft-warned; main failures abort for real errors only.
  * @param files - Paths to stage; defaults to `['.']` when empty.
  */
 export async function run(files: string[]): Promise<void> {

@@ -1,6 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Bloodline
- * @description Maps the `bloodlines` table. Multi-value fields in text-array columns; boons in `bloodline_boons` child table.
+ * @description Maps the `bloodlines` table.
  *
  * @module lib/db/orm/entities/BloodlineEntity
  * @version 2.0.0

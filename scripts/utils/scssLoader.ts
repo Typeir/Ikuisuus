@@ -1,9 +1,7 @@
 /**
  * SCSS ESM Loader Hook
  *
- * @fileoverview Node.js ESM load hook intercepting .scss imports. Returns a
- * Proxy default export so CSS module property access returns the property name
- * as a string.
+ * @fileoverview Node.js ESM load hook intercepting .scss imports.
  *
  * @module scripts/utils/scssLoader
  */

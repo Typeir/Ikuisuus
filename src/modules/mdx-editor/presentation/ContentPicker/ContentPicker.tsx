@@ -1,5 +1,5 @@
 /**
- * @fileoverview Searchable dropdown over library content. Returns editor slug on pick.
+ * @fileoverview Searchable dropdown over library content.
  *
  * @module modules/mdx-editor/presentation/ContentPicker/ContentPicker
  * @version 1.0.0

@@ -2,11 +2,10 @@
  * @fileoverview Unit tests for Library Not Found page component
  * @module tests/unit/src/app/[locale]/library/not-found.test
  * @description Validates Library NotFound page default export and component signature.
- * Tests 404 error page for library routes.
- * 
+ *
  * @version 1.0.0
  * @author Typeir
- * 
+ *
  * @requires vitest
  * @requires @/app/[locale]/library/not-found
  */

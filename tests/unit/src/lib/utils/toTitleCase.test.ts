@@ -2,7 +2,6 @@
  * toTitleCase Utility Unit Tests
  *
  * @fileoverview Tests for kebab-case to Title Case string conversion utility.
- * Validates dash replacement, word capitalization, and multiple dash handling.
  *
  * @module tests/unit/src/lib/utils/toTitleCase.test
  * @version 1.0.0

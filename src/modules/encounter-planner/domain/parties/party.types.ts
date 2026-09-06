@@ -1,8 +1,6 @@
 /**
  * @fileoverview Party Types
  * @description TypeScript interfaces for the party management system.
- * Defines the data model for saved parties and individual party members,
- * stored in localStorage for persistence across sessions.
  *
  * @version 1.0.0
  * @author Typeir

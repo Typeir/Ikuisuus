@@ -1,8 +1,6 @@
 /**
  * @fileoverview Custom Meta Handler Registry
  * @description Implements extraction handlers for `<Meta customHandler="...">` directives.
- * Each handler enriches a MonsterFeature's `meta` map with structured data
- * extracted from the feature's body text.
  *
  * @module scripts/metadata/extraction/metaHandlers
  * @version 1.0.0
@@ -28,7 +26,6 @@ type MetaHandler = (
 
 /**
  * Parses a blockquote stat table with AC/HP/DT columns.
- * Finds the header row to determine column positions, then reads the first numeric data row.
  *
  * @param {string} body - Raw body text containing a markdown table
  * @returns {{ ac?: string; hp?: string; dt?: string }} Extracted stats
@@ -168,7 +165,6 @@ function handleAutoHit(
 
 /**
  * Extracts summoning data: creature name, count, range, and tether status.
- * AC/HP are not extracted.
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text
@@ -284,7 +280,6 @@ function handleDamageReflection(
 
 /**
  * Passthrough handler for mechanics not parsed here.
- * Sets `textPipe: 'true'` and forwards any passthrough attributes.
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} _body - Raw body text (unused)
@@ -349,7 +344,6 @@ function handleEnvironmentalZone(
 
 /**
  * Copies any non-reserved attributes from the Meta tag into `feat.meta`.
- * Reserved keys (`customHandler`) are excluded.
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {Record<string, string>} attrs - Additional Meta tag attributes
@@ -383,8 +377,7 @@ const HANDLER_REGISTRY: Record<string, MetaHandler> = {
 
 /**
  * Dispatches a feature to the appropriate meta handler based on its
- * `customHandler` name. If no matching handler exists, logs a warning
- * and sets a flag on the feature.
+ * `customHandler` name.
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text of the feature

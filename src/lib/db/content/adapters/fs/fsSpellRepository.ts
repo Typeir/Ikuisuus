@@ -30,8 +30,7 @@ const log = logger.child({ module: 'FSSpellRepo' });
 const SUBDIR = 'spells';
 
 /**
- * Reports whether a spell belongs to a named spell list. Membership is a
- * whitespace-trimmed, case-insensitive match against each `spellLists[].name`.
+ * Reports whether a spell belongs to a named spell list.
  *
  * @function spellMatchesSource
  * @param {SpellMetadata} spell - Spell record to test
@@ -109,8 +108,7 @@ class FsSpellRepository
   }
 
   /**
-   * Returns spells matching the provided slug set. Passing an empty array
-   * returns all spells.
+   * Returns spells matching the provided slug set.
    *
    * @param {string} locale - Locale code
    * @param {string[]} slugs - Slug allowlist; empty means all
@@ -135,9 +133,7 @@ class FsSpellRepository
   }
 
   /**
-   * Returns the spells whose spell-list membership includes `source`. A blank
-   * source returns the full library; membership is decided by
-   * {@link spellMatchesSource}.
+   * Returns the spells whose spell-list membership includes `source`.
    *
    * @param {string} locale - Locale code
    * @param {string} source - Spell-list name to scope to (e.g. a vocation title)

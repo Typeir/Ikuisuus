@@ -1,8 +1,7 @@
 /**
  * Character Sheet Context and Provider
  *
- * @fileoverview React context for character sheet state. Splits state and
- * dispatch contexts, persists via storePersistentDataRef.
+ * @fileoverview React context for character sheet state.
  *
  * @module lib/context/CharacterSheetContext
  * @version 1.0.0
@@ -50,7 +49,6 @@ interface SerializedCharacterSheetState {
 
 /**
  * Reads and parses the persisted character sheet state from storage.
- * Returns an empty state on missing or unparseable data.
  *
  * @function readPersistedCharacters
  * @returns {SerializedCharacterSheetState} Parsed state or safe empty fallback
@@ -220,7 +218,6 @@ export function useCharacterSheetDispatch(): (
 
 /**
  * Returns the active CharacterSheet, or null if none is selected.
- * Result is memoized per provider render.
  *
  * @function useActiveCharacter
  * @returns {CharacterSheet | null} The active character or null

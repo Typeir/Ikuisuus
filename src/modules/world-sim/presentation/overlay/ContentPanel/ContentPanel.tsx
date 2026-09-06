@@ -1,5 +1,5 @@
 /**
- * @fileoverview DEPRECATED Content Panel. Refactored into WorldSimContentPanel and GenericEmbedPanel.
+ * @fileoverview DEPRECATED Content Panel.
  * @description Use WorldSimContentPanel from '@/modules/world-sim/presentation/overlay/WorldSimContentPanel/WorldSimContentPanel' instead.
  *
  * @module modules/world-sim/presentation/overlay/ContentPanel/ContentPanel
@@ -47,9 +47,7 @@ function computeInitialPosition(parentBounds: {
 
 /**
  * Side panel rendering an iframe that loads the content page for the selected
- * celestial body or region. The iframe points at the `/{locale}/embed/` route
- * tree, which prerenders the article without sidebar/navigation chrome.
- * Supports drag, resize, and close.
+ * celestial body or region.
  *
  * @returns {React.ReactElement | null} The content panel with iframe, or null when hidden
  */
@@ -67,7 +65,6 @@ export function ContentPanel(): React.ReactElement | null {
 
   /**
    * Resolve the content path based on current selection.
-   * Region selection takes priority over body selection.
    */
   const contentPath = useMemo(() => {
     if (state.selectedRegionId && state.selectedBodyId) {

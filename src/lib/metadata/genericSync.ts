@@ -1,8 +1,7 @@
 /**
  * @fileoverview Definition-driven metadata sync.
  * @description Upserts a content table from metadata records using MikroORM
- * property metadata for the mapping, so no per-type field list exists. Entities
- * with `1:m` collections supply a static `syncChildren`.
+ * property metadata for the mapping, so no per-type field list exists.
  *
  * @module lib/metadata/genericSync
  * @version 1.0.0

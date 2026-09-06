@@ -1,9 +1,6 @@
 /**
  * @fileoverview CLI command contract and filesystem-based loader.
  *
- * Discovers command modules by scanning a commands/ directory. Each command
- * file exports `meta` and `run` conforming to the {@link CliCommand} interface.
- *
  * @module scripts/utils/cli-loader
  * @author Typeir
  * @version 1.0.1
@@ -71,9 +68,6 @@ export interface CommandRegistry {
 /**
  * Load all command modules from a directory.
  *
- * Scans for `.ts` files (excluding `index.ts`), dynamically imports each,
- * and indexes by primary name and aliases. Imports use `file://` URLs.
- *
  * @param {string} commandsDir - Absolute path to the commands/ directory
  * @returns {Promise<CommandRegistry>} Registry of loaded commands
  */
@@ -110,8 +104,6 @@ export async function loadCommands(
 
 /**
  * Resolve a subcommand within a parent command's meta.
- * Returns the matching subcommand key (canonical name) or the default
- * subcommand if one is marked `isDefault`, or null if no match.
  *
  * @param {CommandMeta} meta - Parent command meta
  * @param {string | undefined} sub - Subcommand name from argv (may be undefined)

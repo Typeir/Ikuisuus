@@ -1,8 +1,6 @@
 /**
  * Fixes broken library links in MDX source files by updating them to
- * point to the correct Damocles content. Does NOT create stub files.
- *
- * Run: node scripts/content/fix-broken-links.mjs [--dry-run]
+ * point to the correct Damocles content.
  */
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname, dirname } from 'path';

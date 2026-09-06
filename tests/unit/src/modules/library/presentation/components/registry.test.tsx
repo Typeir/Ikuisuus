@@ -2,7 +2,6 @@
  * MDX Components Index Unit Tests
  *
  * @fileoverview Tests for the MDX component registry exported by index.tsx.
- * Validates that all expected components are registered for MDX compilation.
  *
  * @module tests/unit/src/modules/library/presentation/components/registry.test
  * @version 1.0.0

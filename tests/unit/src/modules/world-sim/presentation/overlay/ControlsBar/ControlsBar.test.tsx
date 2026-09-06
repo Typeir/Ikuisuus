@@ -33,7 +33,6 @@ function createMediatorRef() {
 
 /**
  * Helper to render ControlsBar in an initialized state.
- * Dispatches Initialize before rendering the component.
  */
 function InitializerWrapper({ children }: { children: React.ReactNode }) {
   const dispatch = useWorldSimDispatch();

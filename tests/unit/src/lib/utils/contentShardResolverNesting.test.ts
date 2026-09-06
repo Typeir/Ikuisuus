@@ -1,9 +1,7 @@
 /**
  * @fileoverview Nested-heading Extraction Tests
  * @description Covers the case heading level alone cannot resolve: a heading
- * that sits inside a component. Level matching runs to the next same-level
- * heading and carries the enclosing element's closing tag with it, so the
- * extracted source no longer compiles.
+ * that sits inside a component.
  *
  * @module tests/unit/src/lib/utils/contentShardResolverNesting.test
  * @version 1.0.0

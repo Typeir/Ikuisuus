@@ -1,8 +1,6 @@
 /**
  * @fileoverview Smoke tests for the SEO module barrel export.
  *
- * Verifies all expected public exports are present and of the correct type.
- *
  * @module tests/unit/src/lib/seo/index.test
  */
 

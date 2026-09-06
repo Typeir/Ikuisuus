@@ -1,11 +1,6 @@
 /**
  * Scrapes every .mdx file under src/content/en/ and scaffolds them into a single
  * compressed file at .ignore/Ikuisuus-compressed.mdx.
- *
- * Each file's section is headed by its content slug (filesystem path relative to
- * src/content/en/, minus multi-extensions like .sheet.mdx / .heirloom.mdx / .lore.mdx).
- *
- * Usage: node .github/scripts/scaffold-compressed.mjs
  */
 
 import { readFile, writeFile, readdir } from 'node:fs/promises';
@@ -19,7 +14,6 @@ const OUTPUT = join(ROOT, '.ignore', 'Ikuisuus-compressed.mdx');
 
 /**
  * Multi-extensions that should be stripped for the slug.
- * Order matters: check longer patterns first.
  */
 const MULTI_EXTS = [
     '.specialization.mdx',
@@ -33,7 +27,6 @@ const MULTI_EXTS = [
 
 /**
  * Derive the content slug from a file's absolute path.
- * Strips the content root prefix and any known multi-extension.
  * @param {string} absPath
  * @returns {string}
  */

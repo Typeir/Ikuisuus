@@ -1,9 +1,7 @@
 /**
  * @fileoverview Migration 028: keyword production array.
  * @description `produces` lists the shard ids a file defines, completing the
- * pair 027 opened. Invalidation reads it to find what an edited file supplies,
- * then matches those ids against every `consumes`, so the walk never touches
- * the filesystem.
+ * pair 027 opened.
  *
  * @module scripts/db/migrations/028_keyword_production
  * @author Typeir
@@ -13,7 +11,7 @@
 
 import type { PoolClient } from 'pg';
 
-/** File-level content tables. Feature children are addressed through their parent. */
+/** File-level content tables. */
 const TABLES = [
   'bloodlines',
   'feats',

@@ -12,8 +12,7 @@ import type { BaseMetadata } from './baseMetadata';
 
 /**
  * A selectable option within a variable-cost boon (e.g. Silent One's Frame
- * sizes, Edaphite's Mind talents). Parsed from the boon's Cost-column table or
- * its nested option headings.
+ * sizes, Edaphite's Mind talents).
  *
  * @interface BloodlineBoonSubOption
  * @property {string} name - Option display name (e.g. "Powerful Build")

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Featured Pages for "The Archivist is reading…"
  * @description Hardcoded list of wiki pages for display on the home page.
- * One entry picked at a time.
  *
  * @module modules/search/domain/featuredPages
  * @version 1.0.0
@@ -54,7 +53,6 @@ export const FEATURED_PAGES: FeaturedPage[] = [
 
 /**
  * Seeded pseudo-random pick from the featured pages list.
- * Seed derived from unix hour (ms / 3600000 floored). Changes hourly.
  *
  * @returns {FeaturedPage} The selected page
  */

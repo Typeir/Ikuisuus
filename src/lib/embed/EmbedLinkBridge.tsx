@@ -17,16 +17,12 @@ import { useEffect } from 'react';
 import { classifyEmbedLink } from './classifyEmbedLink';
 
 /**
- * Window features for bubbled navigations. `noopener` detaches the new window
- * from the opening frame.
+ * Window features for bubbled navigations.
  */
 const BUBBLE_FEATURES = 'noopener';
 
 /**
  * Intercepts and routes link clicks inside an embedded frame.
- *
- * Modified clicks — middle button, ctrl/cmd, shift, alt — are ignored and left
- * to the browser.
  *
  * @component
  * @returns {null} Nothing; the component exists for its side effect

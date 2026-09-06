@@ -1,6 +1,5 @@
 /**
  * @fileoverview Search results page at `/{locale}/search?q=...`.
- * Client component. Binds useSearch + SearchResultList; query from URL params.
  *
  * @module app/[locale]/search/page
  * @version 1.0.0
@@ -26,7 +25,7 @@ import { Suspense, useMemo } from 'react';
 import styles from './page.module.scss';
 
 /**
- * Inner search page component. Consumes useSearchParams.
+ * Inner search page component.
  *
  * @returns {JSX.Element} The search results page
  */
@@ -118,7 +117,7 @@ function SearchPageInner(): JSX.Element {
 }
 
 /**
- * Search page. Wraps inner component in Suspense for useSearchParams.
+ * Search page.
  *
  * @returns {JSX.Element} The search page
  */

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the useToolRegistry hook.
  * @description Verifies the hook returns one ToolMenuItem per visible registry entry,
- * with ids in entry order and hrefs embedding the mocked locale. `NODE_ENV` is `test`
- * here, so `devOnly` entries are excluded. Uses global vitest mocks.
+ * with ids in entry order and hrefs embedding the mocked locale.
  *
  * @module tests/unit/src/modules/tools-menu/application/hooks/useToolRegistry.test
  * @version 1.0.0

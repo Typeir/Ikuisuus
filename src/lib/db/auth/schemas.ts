@@ -1,7 +1,7 @@
 /**
  * @fileoverview Auth Zod Schemas & DTOs
  * @description Validation schemas and TypeScript types for the user auth
- * system. Zod for runtime validation and type inference.
+ * system.
  *
  * @module lib/db/auth/schemas
  * @version 1.0.0
@@ -28,7 +28,6 @@ export type UserRole = z.infer<typeof UserRole>;
 
 /**
  * User record as persisted in the storage backend.
- * Passwords stored as SHA-256 hex digests.
  *
  * @property {string} id - Unique identifier (UUID v4 or similar)
  * @property {string} username - Display / login name (3-32 chars, alphanumeric + hyphens)
@@ -76,7 +75,6 @@ export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 
 /**
  * Successful login response returned to the client.
- * Contains a non-expiring session token and public user info.
  *
  * @property {string} token - Opaque session token (SHA-256 of server secret + user id)
  * @property {object} user - Public user info

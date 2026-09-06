@@ -2,9 +2,7 @@
  * Test Gaps Check
  *
  * @fileoverview Verifies that changed source files (compared to git HEAD) have
- * corresponding test files. Falls back to full src/ scan if git is unavailable.
- * Only files rooted under src/ are evaluated — test infrastructure, setup, and
- * config files are excluded regardless of what PAW passes via options.files.
+ * corresponding test files.
  *
  * @module .github/scripts/check-test-gaps
  */
@@ -82,9 +80,7 @@ async function findAllSourceFiles(
 
 /**
  * Build a lazy index mapping lowercase source-file basenames to the absolute
- * paths of every test file that imports them. Used as a fallback when the
- * mirror-path candidate does not exist (e.g. an application/ source covered by
- * a presentation/ test that imports the same module).
+ * paths of every test file that imports them.
  *
  * @param {string} rootDir Project root directory
  * @returns Map from lowercase basename (no extension) to matching test paths
@@ -125,8 +121,6 @@ let importIndexCache: Map<string, string[]> | null = null;
 
 /**
  * Check whether a corresponding test file exists for a source file.
- * First tries mirror-path candidates; falls back to an import-content scan
- * so tests living under a different directory still satisfy the gate.
  *
  * @param {string} sourcePath Relative source file path
  * @param {string} rootDir Project root directory
@@ -165,7 +159,6 @@ async function hasTestFile(
 
 /**
  * Execute the test-gaps check and return a structured result.
- * When options.files is provided, uses those instead of git/filesystem discovery.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations

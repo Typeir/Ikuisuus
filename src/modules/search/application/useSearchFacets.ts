@@ -1,9 +1,7 @@
 /**
  * @fileoverview Search Facets Hook
  * @description Returns available filter values with counts from the Pagefind
- * index for a given locale. Used by the facet rail on the `/search` page.
- *
- * Locale-parameterized — no `'en'` literal.
+ * index for a given locale.
  *
  * @module modules/search/application/useSearchFacets
  * @version 1.0.0
@@ -33,9 +31,6 @@ interface UseSearchFacetsState {
 
 /**
  * Returns available facet values with counts from the Pagefind index.
- *
- * Only fetches once per locale — filters are static for a given index build.
- * SSR-safe — returns empty state until the bundle loads in the browser.
  *
  * @param {string} locale - Locale code
  * @returns {UseSearchFacetsState} Facet state

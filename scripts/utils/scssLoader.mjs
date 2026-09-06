@@ -3,8 +3,6 @@
  *
  * @fileoverview Returns a Proxy default export so that CSS module property
  * access (e.g. styles.container) returns the property name as a plain string.
- * This allows importing React components that depend on CSS modules in a
- * Node/tsx script context without a bundler.
  *
  * @module scssLoader
  * @version 1.1.0

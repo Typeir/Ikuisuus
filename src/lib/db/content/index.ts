@@ -1,9 +1,7 @@
 /**
  * @fileoverview Public barrel export for the content metadata system.
  * @description Re-exports repositories, schemas, port interfaces, adapters, and
- * file-tree services. Import from `@/lib/db/content` instead of individual files.
- * The legacy shim (`setContentAdapter`, `getContentAdapter`, `listMonsters`, etc.)
- * lives in `./contentService` and is deprecated.
+ * file-tree services.
  *
  * @module lib/db/content
  * @version 3.0.0

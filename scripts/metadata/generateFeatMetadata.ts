@@ -1,12 +1,7 @@
 /**
  * @fileoverview Feat Metadata Generator
  * @description Parses plain `.mdx` files in `src/content/{locale}/character-creation/feats/`
- * and emits `.metadata.json` sidecars consumed by `/api/feats`. Excludes
- * `main.mdx` and files under `fighting-styles/`.
- *
- * Extracts: title, slug, description, prerequisite line, ability score
- * increase, named mechanic features (bold bullets), and derived gameplay tags
- * via the shared `extractAllTags` utility.
+ * and emits `.metadata.json` sidecars consumed by `/api/feats`.
  *
  * @module scripts/metadata/generateFeatMetadata
  * @version 1.1.0
@@ -17,6 +12,7 @@
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
+import { unslotFeat } from './slotForms';
 import path from 'path';
 import {
     blankFrontmatter,
@@ -51,16 +47,12 @@ const ABILITY_NAME_MAP: Record<string, string> = {
 /**
  * Regex matching a prerequisite line such as
  * `_Prerequisite: **Great Weapon Fighting** style_` or
- * `_No attribute prerequisite._`. The italics wrapper is required.
+ * `_No attribute prerequisite._`.
  */
 const PREREQUISITE_REGEX = /_([^_\n]*?prerequisite[^_\n]*?)_/i;
 
 /**
  * Regex matching ability score increase lines.
- * Examples (case-insensitive):
- *   "Increase your **Strength score by 1**"
- *   "Increase your **Strength or Dexterity score by 1**"
- *   "Increase your Strength score by 1"
  */
 const ABILITY_INCREASE_REGEX =
   /increase your\s+\**\s*([A-Za-z][A-Za-z\s,or]*?)\s+score\s+by\s+(\d+)\s*\**(?:,\s*to a maximum of\s+\**\s*(\d+))?/i;
@@ -88,8 +80,6 @@ function parsePrerequisite(raw: string): {
 
 /**
  * Removes the italic prerequisite line from a parsed description.
- * {@link parseDescription}'s italic-only filter misses prerequisite lines that
- * embed bold (e.g. `_Prerequisite: **Great Weapon Fighting** style_`).
  *
  * @param {string | undefined} description - Parsed description prose
  * @returns {string | undefined} Description without the prerequisite line, or undefined when empty
@@ -152,9 +142,7 @@ const FEATURE_BULLET_REGEX = /^[-*+]\s+\*\*([^*]+)\.\*\*/;
 
 /**
  * Walk forward from `startIdx` to find the last line belonging to this
- * feature's bullet block. The block ends when a new top-level bullet, a
- * Markdown heading, or a thematic break is encountered. Trailing blank lines
- * are excluded.
+ * feature's bullet block.
  *
  * @param {string[]} lines - All lines in the file (0-indexed)
  * @param {number} startIdx - 0-based index of the feature's opening bullet line
@@ -173,7 +161,6 @@ function findFeatureEndIdx(lines: string[], startIdx: number): number {
 
 /**
  * Parse all named-mechanic features from the raw MDX source.
- * Each feature maps to a bold-bullet item `- **Name.** description`.
  *
  * @param {string} raw - Full MDX file content
  * @param {string} filePath - Absolute path (used for tag extraction context)
@@ -214,8 +201,7 @@ function parseFeatures(
 }
 
 /**
- * Parses a single feat MDX file into a metadata record. Returns `null` for
- * excluded files (`main.mdx`, files under `fighting-styles/`).
+ * Parses a single feat MDX file into a metadata record.
  *
  * @param {string} filePath - Absolute path to the MDX file
  * @param {SharedData} sharedData - Shared game data
@@ -232,7 +218,7 @@ async function parseFeatFile(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const body = blankFrontmatter(raw);
+    const body = unslotFeat(blankFrontmatter(raw));
     const lines = body.split('\n').map((l) => l.trim());
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);

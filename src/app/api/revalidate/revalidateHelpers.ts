@@ -20,9 +20,7 @@ const log = logger.child({ module: 'API:Revalidate' });
 
 
 /**
- * One revalidation target. A bare string is the library path; the object form
- * lets a caller that already parsed the file declare its `contentType`
- * frontmatter, sparing the endpoint a directory listing.
+ * One revalidation target.
  *
  * @typedef {object} RevalidateTarget
  * @property {string} path - Library path to revalidate
@@ -35,7 +33,7 @@ export interface RevalidateTarget {
 
 /**
  * @function extractLocale
- * @description Extracts the locale from a given path. Assumes the locale is the first segment of the path.
+ * @description Extracts the locale from a given path.
  * @param {string} urlPath - The path to extract the locale from (e.g., "/en/library/monsters").
  * @returns {string | null} The extracted locale, or null if no valid locale is found.
  */
@@ -51,7 +49,6 @@ export const extractLocale = (urlPath: string): string | null => {
  * @function extractSlugPath
  * @description Extracts the content slug from a full URL path by stripping the
  * locale and /library/ prefix.
- * used by fetchContent (e.g. "items/heirlooms/sacred-heresy").
  * @param {string} urlPath - Full URL path (e.g. "/en/library/items/heirlooms/sacred-heresy")
  * @returns {string} The content slug path without locale or /library/ prefix
  */
@@ -99,9 +96,7 @@ export const archiveDraftForPath = async (
 /**
  * @function classifyByListing
  * @description Resolves the content type of a slug path by listing its parent
- * directory and classifying the matching entry's suffix. A listing is far
- * cheaper than a file read, and stems are unique within a folder, so the first
- * entry whose stem matches the slug decides. Failures are logged, never thrown.
+ * directory and classifying the matching entry's suffix.
  * @param {string} locale - Content locale
  * @param {string} slugPath - Content slug path, suffix-pruned
  * @returns {Promise<ContentType | null>} The content type, or null when unresolved

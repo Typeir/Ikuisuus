@@ -34,10 +34,6 @@ function smoothstep01(x: number): number {
 /**
  * Compute the phase envelope at a given elapsed phase time.
  *
- * `sizeNorm` is unbounded logarithmic growth, normalized to 1 at `apexTime`.
- * Opacity ramps 0 → 1 over `[0, apexTime]` and 1 → 0 over
- * `[apexTime, apexTime + fadeDuration]`.
- *
  * @param {number} phaseTime - Seconds since the phase was triggered
  * @param {number} apexTime - Seconds from trigger to opacity peak
  * @param {number} fadeDuration - Seconds from apex to fully faded
@@ -73,8 +69,7 @@ export function computePhaseEnvelope(
 
 /**
  * Compute a linear taper envelope that decays from 1 at phase start to 0 at
- * `totalDuration` (falloff at a constant rate). Returns 0 if
- * `totalDuration <= 0`.
+ * `totalDuration` (falloff at a constant rate).
  *
  * @param {number} phaseTime - Seconds since the phase was triggered
  * @param {number} totalDuration - Full phase duration (apex + fade)

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Trinket Metadata Patterns
  * @description Pre-compiled regex patterns for the trinket metadata generator.
- * Extracts bold properties, saving throws, and special effects.
  *
  * @module scripts/metadata/trinketPatterns
  * @version 1.0.0

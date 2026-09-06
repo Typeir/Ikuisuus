@@ -46,8 +46,7 @@ export interface UseFeatsResult {
 }
 
 /**
- * Fetches feat metadata from `/api/feats`. Results are cached by SWR per
- * locale key.
+ * Fetches feat metadata from `/api/feats`.
  *
  * @param {UseFeatsOptions} options - Hook configuration
  * @returns {UseFeatsResult} Feat loading state

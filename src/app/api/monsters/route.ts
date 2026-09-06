@@ -1,9 +1,7 @@
 /**
  * @fileoverview Monsters API route - monster metadata JSON endpoint
  * @description GET /api/monsters returns monster metadata via the
- * content adapter layer. Supports locale-aware content via ?locale query parameter.
- * Flattens multi-stat-block arrays (e.g., dragon variants in single file) into a
- * unified response.
+ * content adapter layer.
  *
  * @version 2.0.0
  * @author Typeir
@@ -33,7 +31,6 @@ const log = logger.child({ module: 'API:Monsters' });
  * GET /api/monsters
  *
  * Returns array of monster metadata from the active content repository.
- * Accepts optional locale query parameter (defaults to 'en').
  *
  * @param {Request} req - Next.js request object
  * @returns {NextResponse} JSON array of monster objects

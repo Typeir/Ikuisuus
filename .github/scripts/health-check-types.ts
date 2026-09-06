@@ -2,8 +2,7 @@
  * Health Check Types
  *
  * @fileoverview Type definitions shared by all health check scripts and the
- * composite orchestrator. Gates in .paw/gates/ import these types to adapt
- * script results into gate results.
+ * composite orchestrator.
  *
  * @module .github/scripts/health-check-types
  * @author Typeir
@@ -53,12 +52,12 @@ export interface CheckResult {
 
 /**
  * Optional execution context passed to runCheck() by PAW gates or other
- * callers. When omitted, scripts self-discover files from the filesystem.
+ * callers.
  *
  * @interface CheckOptions
- * @property {string} [rootDir] - Project root directory. Defaults to auto-detected.
- * @property {string[]} [files] - Pre-resolved relative file paths. Skips file discovery when provided.
- * @property {Function} [readFile] - Cached file reader. Defaults to fs.readFile.
+ * @property {string} [rootDir] - Project root directory.
+ * @property {string[]} [files] - Pre-resolved relative file paths.
+ * @property {Function} [readFile] - Cached file reader.
  */
 export interface CheckOptions {
   rootDir?: string;

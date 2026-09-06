@@ -1,9 +1,7 @@
 /**
  * @fileoverview Search Result Row Composer
  * @description Composes the five search result atoms into a link to the
- * page-level result URL. The `row` variant lays them out as
- * `[ sigil | title+content+meta | thumb ]`; the `card` variant drops the
- * sigil into the type-label line so the content column spans the full width.
+ * page-level result URL.
  * @module modules/search/presentation/SearchResultRow/SearchResultRow
  * @version 1.0.0
  * @author Typeir

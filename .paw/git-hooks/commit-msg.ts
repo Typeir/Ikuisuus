@@ -4,7 +4,6 @@
  * Commit Message Format Validator
  *
  * @fileoverview Validates commit message format.
- * Requires "[action]: imperative text", e.g. "[fix]: resolve issue".
  *
  * @module .github/PAW/git-hooks/commit-msg
  * @author Typeir

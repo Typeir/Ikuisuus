@@ -14,7 +14,6 @@ import type { RenderQualityLevel } from '@/modules/world-sim/application/service
 
 /**
  * Shared per-frame context passed to all renderers during the update loop.
- * Provides access to scene-wide resources without tight coupling.
  * @interface SceneContext
  * @property {PerspectiveCamera} camera - The active camera
  * @property {Scene} scene - The Three.js scene
@@ -93,8 +92,7 @@ export interface StarRenderConfig {
 }
 
 /**
- * Terrain colour stop for planet surface profile. Defines a colour band
- * that the fragment shader interpolates based on elevation.
+ * Terrain colour stop for planet surface profile.
  * @interface TerrainColorStop
  * @property {string} color - Hex colour for this elevation band
  * @property {number} threshold - Elevation threshold (0–1) separating this band from the next
@@ -279,8 +277,6 @@ export interface EverdarkRenderConfig {
 
 /**
  * Blood ocean world renderer configuration for Urmela.
- * Drives a two-shell architecture: an opaque dark core sphere beneath a
- * semi-transparent, vertex-displaced blood ocean shell with a corona rim.
  *
  * @interface BloodOceanRenderConfig
  * @property {'bloodOcean'} renderer - Discriminant
@@ -325,7 +321,6 @@ export interface BloodOceanRenderConfig {
 
 /**
  * Discriminated union of all renderer configurations.
- * The `renderer` field serves as the discriminant.
  * @typedef {StarRenderConfig | PlanetRenderConfig | GasGiantRenderConfig | RingWorldRenderConfig | TowerWorldRenderConfig | AsteroidBeltRenderConfig | EverdarkRenderConfig | BloodOceanRenderConfig} RenderConfig
  */
 export type RenderConfig =
@@ -367,7 +362,6 @@ export type CelestialBodyType =
 
 /**
  * Complete data definition for a celestial body in the Black Cradle.
- * Loaded from the registry JSON and used by the factory to create scene objects.
  * @interface CelestialBodyData
  * @property {string} id - Unique identifier
  * @property {string} name - Display name
@@ -433,8 +427,7 @@ export interface CelestialRegistryData {
 
 /**
  * Identifies two celestial bodies whose proximity triggers a collision-cloud
- * effect. The pair is keyed by a stable id used as the scene-graph name and
- * as the lookup key for the mediator's effect map.
+ * effect.
  *
  * @interface CollisionPairData
  * @property {string} id - Stable identifier for the pair (e.g. "lansihenki-itahenki")
@@ -468,7 +461,6 @@ export interface ProjectedPosition {
 
 /**
  * Renderer strategy interface for celestial bodies.
- * Each concrete renderer (star, planet, etc.) implements this contract.
  *
  * @interface ICelestialRenderer
  * @property {Function} createMesh - Create the Three.js Object3D for this body
@@ -490,8 +482,6 @@ export interface ICelestialRenderer {
 
 /**
  * Camera command interface for the Command pattern.
- * Each command encapsulates a per-frame camera transition within the render loop.
- * Returns true when the transition is complete.
  * @interface ICameraCommand
  * @property {string} type - Command type identifier
  * @property {Function} execute - Advance the transition by one frame; returns true when done
@@ -505,7 +495,6 @@ export interface ICameraCommand {
 
 /**
  * Camera controller abstraction for dependency inversion.
- * Manages orbit controls, body follow tracking, and camera command execution.
  * @interface ICameraController
  * @property {Function} executeCommand - Start executing a camera command
  * @property {Function} cancelCommand - Cancel the active command

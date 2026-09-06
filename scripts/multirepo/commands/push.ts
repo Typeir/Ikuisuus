@@ -21,7 +21,6 @@ export const meta: CommandMeta = {
 
 /**
  * Pushes the content repo, then the main repo.
- * Detects a stale submodule ref and amends the last main commit before pushing.
  * @param {string[]} args - Arguments forwarded verbatim to `git push`.
  * @returns {Promise<void>} Resolves when both pushes complete.
  */

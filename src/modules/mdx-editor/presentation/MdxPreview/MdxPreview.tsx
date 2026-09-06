@@ -1,5 +1,5 @@
 /**
- * @fileoverview Compile and render MDX preview. Debounces source changes.
+ * @fileoverview Compile and render MDX preview.
  *
  * @module modules/mdx-editor/presentation/MdxPreview/MdxPreview
  * @version 2.0.0
@@ -21,9 +21,7 @@ import cn from '../../../../lib/utils/classNameMerge';
 import styles from './MdxPreview.module.scss';
 
 /**
- * Components for the preview compile. A keyword in the editor carries no
- * compile-time resolution, so it self-resolves through the shard endpoint the
- * way one inside a shard does — the card works while authoring.
+ * Components for the preview compile.
  */
 const previewComponents = {
   ...mdxComponents,
@@ -97,7 +95,6 @@ function PreviewContent({
 
 /**
  * Renders a live preview of MDX source text.
- * Compiles 400ms after source changes; empty source and compile errors return status messages.
  *
  * @component
  * @param {MdxPreviewProps} props - Component properties

@@ -32,6 +32,12 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { SearchField, useScopedSearch } from '@/modules/search';
 import { FilterSelect, NumericInput } from '../../ui';
+import {
+  DataTable,
+  type DataTableCell,
+  type DataTableColumn,
+  type DataTableRow,
+} from '../../ui/dataTable';
 import styles from './metadataTable.module.scss';
 import {
   filterOptionsFor,
@@ -56,7 +62,6 @@ export type { ColumnConfig, MetadataRow } from './metadataTable.types';
  *
  * @description Client component providing text search, per-column filtering
  * (text/select/range), column sort, pagination, and click-to-navigate rows.
- * Uses config functions (getValue, compareValues, render) for data-specific logic.
  *
  * @param {MetadataTableProps} props - Component props
  * @param {MetadataRow[]} props.data - Array of data rows to display
@@ -131,8 +136,7 @@ export default function MetadataTable({
 
   /**
    * Index-backed search scope: rows rank against the shared Pagefind index,
-   * intersected with the slugs this table owns. Null ranks fall back to the
-   * substring filter over `searchKeys`.
+   * intersected with the slugs this table owns.
    */
   const slugOf = useCallback(
     (row: MetadataRow) => getRowSlug(row).split('#')[0],
@@ -152,10 +156,7 @@ export default function MetadataTable({
    * @returns {MetadataRow[]} Filtered array of data rows
    *
    * @description Global search: Pagefind slug ranks when the index answers
-   * with hits, else case-insensitive substring match on any searchKey. An
-   * empty rank map is not authoritative — a stale or partial index must not
-   * veto rows the table data can match. Column filters delegate to
-   * `rowMatchesColumnFilters`.
+   * with hits, else case-insensitive substring match on any searchKey.
    */
   const filteredData = useMemo(() => {
     return data.filter((row) => {
@@ -183,7 +184,6 @@ export default function MetadataTable({
    * @returns {MetadataRow[]} Sorted array of filtered data rows
    *
    * @description Uses column.compareValues if defined, else default (<, >, ===).
-   * null/undefined sort last. Uses sortDirection ('asc' or 'desc').
    */
   const sortedData = useMemo(() => {
     if (!sortKey || !sortDirection) {
@@ -243,7 +243,6 @@ export default function MetadataTable({
    * @param {string} key - Column key to sort by
    *
    * @description Clicking a different column resets to ascending.
-   * Resets pagination to page 1.
    */
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -263,7 +262,7 @@ export default function MetadataTable({
   };
 
   /**
-   * Sets filter value for a column key. Resets pagination to page 1.
+   * Sets filter value for a column key.
    *
    * @function handleFilterChange
    * @param {string} key - Column key being filtered
@@ -298,6 +297,100 @@ export default function MetadataTable({
       })),
     [data],
   );
+
+  const tableColumns: DataTableColumn[] = [
+    ...columns.map(
+      (column): DataTableColumn => ({
+        key: column.key,
+        header: (
+          <span className={styles.headerContent}>
+            <span>{column.label}</span>
+            {column.sortable !== false && sortKey === column.key && (
+              <span className={styles.sortIndicator}>
+                {sortDirection === 'asc'
+                  ? t('sortAscending')
+                  : t('sortDescending')}
+              </span>
+            )}
+          </span>
+        ),
+        className: column.sortable !== false ? styles.sortable : undefined,
+        onHeaderClick:
+          column.sortable !== false ? () => handleSort(column.key) : undefined,
+        sort:
+          sortKey === column.key
+            ? sortDirection === 'asc'
+              ? 'ascending'
+              : 'descending'
+            : 'none',
+      }),
+    ),
+    ...(rowAction
+      ? [
+          {
+            key: 'row-action',
+            header: '',
+            className: styles.rowActionHead,
+            ariaLabel: rowAction.label,
+          },
+        ]
+      : []),
+  ];
+
+  const tableRows: DataTableRow[] = paginatedData.map((row) => {
+    const { href, external } = onRowSelect
+      ? { href: '', external: false }
+      : getRowHref(row);
+    const rowKey = getRowSlug(row);
+    const cells: DataTableCell[] = columns.map((column) => {
+      const value = getCellValue(row, column);
+      const content = column.render
+        ? column.render(value, row)
+        : String(value ?? '-');
+      if (onRowSelect) {
+        return (
+          <button
+            type='button'
+            className={styles.rowButton}
+            onClick={() => onRowSelect(row)}>
+            {content}
+          </button>
+        );
+      }
+      if (external) {
+        return (
+          <a
+            href={href}
+            target='_blank'
+            rel='noopener noreferrer'
+            className={styles.rowLink}>
+            {content}
+          </a>
+        );
+      }
+      return (
+        <LazyPrefetchLink href={href} className={styles.rowLink}>
+          {content}
+        </LazyPrefetchLink>
+      );
+    });
+    if (rowAction) {
+      cells.push({
+        content: (
+          <button
+            type='button'
+            className={styles.rowActionButton}
+            onClick={() => rowAction.onSelect(row)}
+            aria-label={rowAction.label}
+            title={rowAction.label}>
+            {rowAction.icon ?? '↗'}
+          </button>
+        ),
+        className: styles.rowActionCell,
+      });
+    }
+    return { key: rowKey, className: styles.clickableRow, cells };
+  });
 
   return (
     <div
@@ -407,95 +500,12 @@ export default function MetadataTable({
         </div>
       </div>
 
-      <div className={styles.tableWrapper}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  className={column.sortable !== false ? styles.sortable : ''}
-                  onClick={() =>
-                    column.sortable !== false && handleSort(column.key)
-                  }>
-                  <div className={styles.headerContent}>
-                    <span>{column.label}</span>
-                    {column.sortable !== false && sortKey === column.key && (
-                      <span className={styles.sortIndicator}>
-                        {sortDirection === 'asc'
-                          ? t('sortAscending')
-                          : t('sortDescending')}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              ))}
-              {rowAction && (
-                <th
-                  className={styles.rowActionHead}
-                  aria-label={rowAction.label}
-                />
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((row) => {
-              const { href, external } = onRowSelect
-                ? { href: '', external: false }
-                : getRowHref(row);
-              const rowKey = getRowSlug(row);
-              return (
-                <tr key={rowKey} className={styles.clickableRow}>
-                  {columns.map((column) => {
-                    const value = getCellValue(row, column);
-                    const content = column.render
-                      ? column.render(value, row)
-                      : String(value ?? '-');
-                    return (
-                      <td key={`${rowKey}-${column.key}`}>
-                        {onRowSelect ? (
-                          <button
-                            type='button'
-                            className={styles.rowButton}
-                            onClick={() => onRowSelect(row)}>
-                            {content}
-                          </button>
-                        ) : external ? (
-                          <a
-                            href={href}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className={styles.rowLink}>
-                            {content}
-                          </a>
-                        ) : (
-                          <LazyPrefetchLink
-                            href={href}
-                            className={styles.rowLink}>
-                            {content}
-                          </LazyPrefetchLink>
-                        )}
-                      </td>
-                    );
-                  })}
-                  {rowAction && (
-                    <td className={styles.rowActionCell}>
-                      <button
-                        type='button'
-                        className={styles.rowActionButton}
-                        onClick={() => rowAction.onSelect(row)}
-                        aria-label={rowAction.label}
-                        title={rowAction.label}>
-                        {rowAction.icon ?? '↗'}
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        columns={tableColumns}
+        rows={tableRows}
+        className={styles.table}
+        wrapperClassName={styles.tableWrapper}
+      />
 
       {totalPages > 1 && (
         <div className={styles.pagination}>

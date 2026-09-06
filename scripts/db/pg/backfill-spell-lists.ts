@@ -4,9 +4,6 @@
  * from the SpellTable component's `spells` prop, cross-references against the
  * `spells` table in Postgres, and inserts matching `spell_lists` rows.
  *
- * Safe to run multiple times: deletes existing spell_lists for each vocation link
- * before re-inserting (no unique constraint exists on the table).
- *
  * @module scripts/db/pg/backfill-spell-lists
  * @version 1.0.0
  * @since 1.0.0

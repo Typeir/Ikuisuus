@@ -1,7 +1,7 @@
 /**
  * @fileoverview Git primitives for the ik multirepo CLI: wrappers around
  * `git` child processes, dirty-state checks, submodule validation, and
- * summary helpers. All functions operate on absolute repo paths.
+ * summary helpers.
  *
  * @module scripts/multirepo/git
  * @author Typeir
@@ -102,8 +102,7 @@ export function checkSubmodule(): void {
 }
 
 /**
- * Exits when the content repo HEAD is detached. Prints the detached SHA and
- * instructions; never performs an automatic checkout.
+ * Exits when the content repo HEAD is detached.
  */
 export function ensureContentOnBranch(): void {
   const headResult = spawnSync(
@@ -138,8 +137,7 @@ export function ensureContentOnBranch(): void {
 
 /**
  * Attaches the content submodule to `main` when HEAD is detached and the
- * detached commit is an ancestor of `origin/main`. No-op when already on a
- * branch or when the detached HEAD has commits above `origin/main`.
+ * detached commit is an ancestor of `origin/main`.
  *
  * @returns {boolean} `true` when a reattachment occurred, `false` otherwise.
  */

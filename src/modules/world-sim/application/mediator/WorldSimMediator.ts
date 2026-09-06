@@ -58,9 +58,7 @@ const ORBIT_COLOR_DARK = 0x8fd3a1;
 const ORBIT_COLOR_LIGHT = 0x5a8a6a;
 
 /**
- * Coordinates World Sim subsystems. Owns celestial mesh lifecycle, handles
- * interaction raycasting, updates orbits and renderers each frame, tracks
- * projected positions.
+ * Coordinates World Sim subsystems.
  *
  * @class WorldSimMediator
  *
@@ -219,7 +217,7 @@ export class WorldSimMediator {
 
   /**
    * Update phase: advances orbital positions, ticks renderer strategies,
-   * applies quality changes. Runs during RenderPhase.Update.
+   * applies quality changes.
    *
    * @private
    * @param {FrameContext} frameCtx - Shared frame context from the lifecycle
@@ -255,9 +253,7 @@ export class WorldSimMediator {
   }
 
   /**
-   * Post-render projection pass, runs after renderer.render(). Recomputes
-   * occlusion throttled by OCCLUSION_FRAME_STRIDE and updates the projection
-   * bridge.
+   * Post-render projection pass, runs after renderer.render().
    *
    * @private
    */
@@ -398,8 +394,7 @@ export class WorldSimMediator {
   }
 
   /**
-   * Handle the site-wide ik:theme-changed event. Updates orbit ring mesh colors
-   * to match the current theme.
+   * Handle the site-wide ik:theme-changed event.
    *
    * @param {Event} e - CustomEvent with detail.theme ('dark' | 'light')
    */

@@ -1,9 +1,6 @@
 /**
  * @fileoverview Ability Editor Component
  * @description Modal form for creating or editing a character ability.
- * Fields: Name (text), Type (select), Mechanics (textarea + live MDX preview),
- * Description (textarea + live MDX preview). Renders previews via
- * `compileRuntimeSync` + enriched component registry.
  *
  * @module modules/character-builder/presentation/tabs/abilities/AbilityEditor
  * @version 1.0.0
@@ -75,7 +72,7 @@ export interface AbilityEditorProps {
 }
 
 /**
- * Renders raw MDX source for live preview. Silently falls back on compile error.
+ * Renders raw MDX source for live preview.
  *
  * @param {string} source - Raw MDX
  * @returns {ReactNode} Compiled output or null

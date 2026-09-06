@@ -1,7 +1,7 @@
 /**
  * @fileoverview Quantity Popup Component
  * @description Modal dialog for selecting creature import quantity, rendered as a centered
- * overlay. Enter confirms, Escape cancels. Confirm button autofocuses on open.
+ * overlay.
  *
  * @module modules/encounter-planner/presentation/importer/quantityPopup
  * @version 2.0.0
@@ -71,8 +71,6 @@ export interface QuantityPopupProps {
 
 /**
  * Modal dialog for selecting creature import quantity.
- * Autofocuses confirm button when opened.
- * Enter confirms, Escape cancels.
  *
  * @component
  * @param {QuantityPopupProps} props - Component props
@@ -192,7 +190,6 @@ export const QuantityPopup: React.FC<QuantityPopupProps> = ({
 
 /**
  * Validates and normalizes quantity value to ensure it's within bounds.
- * Returns DEFAULT_QUANTITY for invalid values (undefined, NaN, out of range).
  *
  * @function getValidQuantity
  * @param {number | undefined} value - Raw quantity value

@@ -1,6 +1,5 @@
 /**
  * @fileoverview Combat Stat Chips — HP, AC, Initiative, Speed, Tier, Grit.
- * Lock state is persisted on the character as `manualStatOverrides`.
  *
  * @module modules/character-builder/presentation/stats/combatStatChips
  * @version 2.0.0
@@ -28,8 +27,7 @@ import { SpeedChipMemo } from './speedChip';
 import { TierChipMemo } from './tierChip';
 
 /**
- * Six right-side combat stat chips with per-stat lock toggles. Reads the
- * character and write API from the active-sheet context.
+ * Six right-side combat stat chips with per-stat lock toggles.
  *
  * @component
  * @returns {JSX.Element} Rendered chip row

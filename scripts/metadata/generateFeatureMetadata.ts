@@ -2,7 +2,7 @@
  * @fileoverview Monster Feature Metadata Generator
  * @description Reads `.sheet.mdx` monster files, classifies sections, extracts
  * MonsterFeature records, and appends a `features` subsection to each record in
- * existing `.metadata.json` files. Runs after the main metadata generator.
+ * existing `.metadata.json` files.
  *
  * @module scripts/metadata/generateFeatureMetadata
  * @version 2.0.0
@@ -85,8 +85,6 @@ function extractFeaturesFromSection(section: MonsterSection): MonsterFeature[] {
 
 /**
  * Resolves multiattack_refs on features that have a multiattack token.
- * Matches attack names from the multiattack description to child feature IDs
- * by normalized name comparison.
  *
  * @param {MonsterFeature[]} features - All extracted features for one monster
  * @param {string} slug - Monster slug for ID generation
@@ -207,7 +205,6 @@ export function parseMonsterFeaturesSource(
 
 /**
  * Builds a map from feature ID to body text for handler dispatch.
- * Reconstructs body text from classified section line ranges.
  *
  * @param {MonsterSection[]} sections - Classified sections
  * @param {string} slug - Monster slug for ID generation
@@ -236,8 +233,6 @@ function buildFeatureBodyMap(
 
 /**
  * Appends features to all monster .metadata.json files.
- * Reads existing metadata, finds the corresponding .sheet.mdx, extracts
- * features, and writes the features subsection into each metadata record.
  *
  * @param {object} [options] - Optional configuration
  * @param {string} [options.contentDir] - Override content directory

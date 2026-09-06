@@ -11,7 +11,7 @@
 
 import type { PoolClient } from 'pg';
 
-/** File-level content tables. Feature children are addressed through their parent. */
+/** File-level content tables. */
 const TABLES = [
   'bloodlines',
   'feats',

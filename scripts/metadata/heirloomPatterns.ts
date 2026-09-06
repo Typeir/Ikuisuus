@@ -1,8 +1,6 @@
 /**
  * @fileoverview Heirloom Metadata Patterns
  * @description Pre-compiled regex patterns for the heirloom metadata generator.
- * Centralizes weapon title-line parsing, attunement detection, and damage
- * extraction from property sections.
  *
  * @module scripts/metadata/heirloomPatterns
  * @version 1.0.0

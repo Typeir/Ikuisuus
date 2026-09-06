@@ -30,7 +30,6 @@ const WRAPPED_RE = /\[%\s*.*?\s*%\]/g;
 
 /**
  * Splits a line into wrapped and unwrapped segments with position offsets.
- * Unwrapped segments match shapes; wrapped ones are preserved verbatim.
  *
  * @param {string} line - The line to split
  * @returns {Segment[]} Array of segments with text, wrapped flag, and offset in the line
@@ -98,7 +97,7 @@ function hasVariableModifier(line: string): boolean {
 
 /**
  * Processes a single MDX file line by line, applying exclusion rules and
- * target shape matching. Mutates stats in place.
+ * target shape matching.
  *
  * @param {string} filePath - Absolute path to the .mdx file
  * @param {MigrationStats} stats - Running statistics

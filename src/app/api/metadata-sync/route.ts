@@ -3,13 +3,6 @@
  * @description Triggers hash-based incremental metadata sync from filesystem
  * to PostgreSQL.
  *
- * Auth: `x-sync-secret` header compared via constant-time equality against
- * the `METADATA_SYNC_SECRET` environment variable.
- *
- * Body (JSON):
- *   - locale: string (optional, defaults to 'en')
- *   - contentTypes: string[] (optional, defaults to all)
- *
  * @module app/api/metadata-sync/route
  * @version 1.0.0
  * @author Typeir

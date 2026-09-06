@@ -5,12 +5,6 @@
  * structured metadata, for the sidebar SearchBar, the results page, and home-page
  * discovery (featured / of-the-day / random).
  *
- * Exports domain types, application hooks, and presentation components.
- * Infrastructure loaders and deep internal paths are not exported.
- *
- * Locale: v1 indexes `en` only; all layers are locale-parameterized. Never
- * hard-code `'en'` in shared logic.
- *
  * @author Typeir
  * @version 1.0.0
  * @since 8.0.0

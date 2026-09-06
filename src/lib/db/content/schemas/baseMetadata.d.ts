@@ -1,8 +1,6 @@
 /**
  * @fileoverview Base Content Metadata Schema
  * @description Fields every content metadata record carries, whatever its type.
- * Identity fields are written by the generator that parses the file; reading time
- * and version hash are stamped afterwards by `stampSharedFields`.
  *
  * @module lib/db/content/schemas/baseMetadata
  * @version 1.0.0

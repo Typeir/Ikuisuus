@@ -1,7 +1,7 @@
 /**
  * @fileoverview Filesystem Content Source Adapter
  * @description Implements the ContentSourceAdapter interface using the
- * local filesystem. Reads content from `src/content/{locale}/`.
+ * local filesystem.
  *
  * @module lib/db/content/adapters/fs/fsContentSource
  * @author Typeir
@@ -25,7 +25,6 @@ const log = logger.child({ module: 'FsContentSource' });
 
 /**
  * Filesystem-backed content source.
- * Reads content files from `src/content/{locale}/{slugPath}.mdx`.
  */
 export const fsContentSource: ContentSourceAdapter = {
   async fetch(

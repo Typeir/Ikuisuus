@@ -1,7 +1,6 @@
 /**
  * @fileoverview ProficiencyTrack component
- * @description Reusable pip track for proficiency level selection. Renders 4 pips,
- * toggles on click: if current level clicked, sets to 'none'; else sets to clicked level.
+ * @description Reusable pip track for proficiency level selection.
  *
  * @module modules/character-builder/presentation/components/ProficiencyTrack
  * @version 1.0.0
@@ -66,8 +65,7 @@ export function ProficiencyTrack({
   };
 
   /**
-   * Toggles proficiency level. If clicked level matches current, returns 'none'.
-   * Otherwise returns the clicked level.
+   * Toggles proficiency level.
    *
    * @param {TierLevel} clickedLevel - Level pip that was clicked
    * @param {TierLevel} current - Current proficiency level

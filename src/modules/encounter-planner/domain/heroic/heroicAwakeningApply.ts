@@ -36,7 +36,6 @@ const rollFateDie = (): number => {
 
 /**
  * Roll affixes and determine awakening tier.
- * Each d10 roll of 10 ("Reroll") upgrades the tier and grants another roll.
  *
  * @function rollAffixesAndDetermineTier
  * @param {string} [locale='en'] - Locale for affix wiki links
@@ -101,7 +100,6 @@ const rollAffixesAndDetermineTier = (
 
 /**
  * Apply Heroic Awakening to a single combatant.
- * Runs exactly once per combat snapshot at creation.
  *
  * @function applyHeroicAwakening
  * @param {InProgressCombatant} combatant - The combatant to awaken (mutated in place)

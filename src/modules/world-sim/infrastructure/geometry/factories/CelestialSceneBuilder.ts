@@ -103,9 +103,7 @@ export function buildCelestialBodies(
 }
 
 /**
- * Build orbit path lines for all bodies with orbital parameters. Lines for
- * child bodies (with `parentBodyId`) are parented to the parent mesh so they
- * move with the parent. Top-level orbit lines are added to the scene root.
+ * Build orbit path lines for all bodies with orbital parameters.
  *
  * @param {CelestialRegistry} registry - The body data source
  * @param {Map<string, CelestialEntry>} celestials - Existing celestial entries
@@ -171,7 +169,7 @@ export interface CollisionCloudEntry {
 /**
  * Construct one `CollisionCloudEffect` for every collision pair declared in
  * the registry where both referenced bodies are present in the celestials
- * map. Pairs referencing missing bodies are silently skipped.
+ * map.
  *
  * @param {CollisionPairData[]} pairs - Pair definitions from the registry
  * @param {Map<string, CelestialEntry>} celestials - Existing celestials map

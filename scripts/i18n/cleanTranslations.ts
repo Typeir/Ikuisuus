@@ -2,7 +2,6 @@
  * Translation File Cleanup Script
  *
  * @fileoverview Removes individual namespace translation files after merging.
- * Only keeps index.json files. Runs exclusively in Vercel environment.
  *
  * @module scripts/i18n/cleanTranslations
  * @version 1.0.0

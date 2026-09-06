@@ -2,9 +2,7 @@
  * @fileoverview Slot card fixture preview.
  * @description Renders the heirloom fixture through the real wiki article
  * frame so the card can be eyeballed against the live article while the slot
- * components are worked on. The fixture uses the default spelling
- * (attributes); the element form is exercised by the unit tests. Mounted at
- * `/labs/dev/slots` and on the `/labs/dev` canvas.
+ * components are worked on.
  *
  * @module app/[locale]/labs/dev/slots/SlotsPreview
  * @version 0.1.0
@@ -71,11 +69,6 @@ const FIXTURE_DIR = path.resolve('tests/fixtures/slots');
 
 /**
  * Renders the heirloom fixture inside the article frame.
- *
- * `.vercelignore` keeps this whole route out of deployments, and strips
- * `tests/` besides, so the fixture is a local-only file. The guard is the
- * backstop for an environment that ships the route anyway: a missing fixture
- * reports itself rather than failing the build that prerenders this page.
  *
  * @param {object} [props] - Component props
  * @param {string} [props.fixture] - Fixture file name to render

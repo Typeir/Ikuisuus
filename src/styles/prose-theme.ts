@@ -13,7 +13,7 @@
 import type { CSSRuleObject } from 'tailwindcss/types/config';
 
 /**
- * Prose color mappings. Values reference CSS custom properties in globals.scss.
+ * Prose color mappings.
  */
 const proseColorVariables = {
   '--tw-prose-body': 'var(--color-text)',
@@ -35,8 +35,7 @@ const proseColorVariables = {
 } as const;
 
 /**
- * Custom prose layout and element-specific styles. maxWidth set to 150ch.
- * Blockquote overrides set explicit colors for strong, b, and headings.
+ * Custom prose layout and element-specific styles.
  */
 const proseCustomStyles: CSSRuleObject = {
   maxWidth: '150ch',
@@ -54,7 +53,7 @@ const proseCustomStyles: CSSRuleObject = {
 };
 
 /**
- * Complete Tailwind prose theme configuration. Exported for tailwind.config.ts.
+ * Complete Tailwind prose theme configuration.
  */
 export const proseTheme = {
   DEFAULT: {

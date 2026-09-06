@@ -1,9 +1,7 @@
 /**
  * @fileoverview Characters Page
  * @description Renders the roster at /[locale]/utils/characters.
- * Character state comes from the global CharacterSheetProvider in ClientProviders.
  *
-
  * @module app/[locale]/utils/characters/page
  * @version 1.0.0
  * @author Typeir

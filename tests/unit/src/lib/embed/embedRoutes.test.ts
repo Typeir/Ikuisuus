@@ -1,7 +1,7 @@
 /**
  * @fileoverview Embed Route Vocabulary Tests
  * @description Tests detection and pathname rewriting between library and
- * embed route trees. Asserts prefix near-misses are rejected.
+ * embed route trees.
  *
  * @module tests/unit/src/lib/embed/embedRoutes.test
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Monster metadata to dnd5e NPC Actor transformer.
  * @description Maps Ikuisuus MonsterMetadata records to Foundry VTT dnd5e v3
- * NPC Actor JSON documents. Handles ability scores, AC, HP, movement, senses,
- * saving throws, skills, damage/condition traits, and biography HTML.
+ * NPC Actor JSON documents.
  *
  * @module foundry/scripts/transformers/monsterTransformer
  * @version 1.0.0
@@ -27,7 +26,7 @@ import {
     parseLanguages,
 } from '../utils/traitParsers';
 
-/** Feet in one stride. Damocles measures natively in strides; Foundry does not. */
+/** Feet in one stride. */
 const FEET_PER_STRIDE = 5;
 
 /**

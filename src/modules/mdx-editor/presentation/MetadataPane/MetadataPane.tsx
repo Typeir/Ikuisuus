@@ -1,5 +1,5 @@
 /**
- * @fileoverview Show parsed metadata records from API. Manual refresh button.
+ * @fileoverview Show parsed metadata records from API.
  *
  * @module modules/mdx-editor/presentation/MetadataPane/MetadataPane
  * @version 1.0.0

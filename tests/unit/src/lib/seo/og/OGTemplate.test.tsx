@@ -1,7 +1,5 @@
 /**
- * @fileoverview OGTemplate unit tests. Validates the tag line builder
- * helper and verifies the template renders without throwing for key data
- * combinations.
+ * @fileoverview OGTemplate unit tests.
  *
  * @module tests/unit/src/lib/seo/og/OGTemplate.test
  */

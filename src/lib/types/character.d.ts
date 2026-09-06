@@ -2,8 +2,7 @@
  * @fileoverview Character Sheet Types — compatibility shim
  * @description The canonical character model now lives in the
  * character-builder module's domain layer as `CharacterEntity` (one flat
- * JSON structure, no self-referencing objects). This path re-exports it so
- * existing `@/lib/types/character` imports keep working.
+ * JSON structure, no self-referencing objects).
  *
  * @see modules/character-builder/domain/character/characterEntity
  * @version 2.0.0

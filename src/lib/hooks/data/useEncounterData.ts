@@ -1,8 +1,7 @@
 /**
  * @fileoverview Encounter Data Hooks
  * @description Client hooks for encounter planner combobox indexes and
- * spell link hydration. Index hooks use SWR; spell link accumulation
- * uses useEffect.
+ * spell link hydration.
  *
  * @module lib/hooks/data/useEncounterData
  * @author Typeir
@@ -129,7 +128,6 @@ export function useSpellIndex(
 
 /**
  * Loads affix index entries and maps them for GenericCombobox.
- * Filters out affixes whose title is already in `existingAffixes`.
  *
  * @param {string} locale - Current locale
  * @param {string[]} existingAffixes - Existing affix titles to filter out

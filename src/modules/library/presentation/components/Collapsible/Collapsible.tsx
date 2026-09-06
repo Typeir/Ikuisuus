@@ -1,6 +1,6 @@
 /**
  * @fileoverview Collapsible MDX Component
- * @description Collapsible details/summary block for MDX content. Uses native HTML details/summary.
+ * @description Collapsible details/summary block for MDX content.
  *
  * @module modules/library/presentation/components/Collapsible/Collapsible
  * @version 1.0.0
@@ -27,7 +27,6 @@ export interface CollapsibleProps {
 /**
  * @component Collapsible
  * @description Renders a collapsible content block using native details/summary.
- * Summary content is derived from the first heading child inside the component.
  *
  * @param {CollapsibleProps} props
  * @param {boolean} [props.open] - Start expanded

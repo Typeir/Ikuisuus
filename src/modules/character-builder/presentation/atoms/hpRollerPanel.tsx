@@ -1,9 +1,6 @@
 /**
  * @fileoverview HP Roller Panel Component
- * @description Expandable panel for hit die rolling. Shows per-level rolls
- * grouped by vocation with per-die and bulk roll / average / max / set / add /
- * clear actions. All state and operations live in {@link useHpRoller}; this
- * component only renders them.
+ * @description Expandable panel for hit die rolling.
  *
  * @module modules/character-builder/presentation/atoms/hpRollerPanel
  * @version 3.0.0

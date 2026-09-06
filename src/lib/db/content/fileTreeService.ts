@@ -1,8 +1,7 @@
 /**
  * @fileoverview File-Tree Service
  * @description Adapter-agnostic facade for paginated directory listings,
- * stat checks and file retrieval. Provides a small LRU in-memory cache with
- * TTL to reduce directory adapter pressure.
+ * stat checks and file retrieval.
  * @module lib/db/content/fileTreeService
  * @version 1.0.0
  * @author Typeir
@@ -199,7 +198,6 @@ export const listDirectory = async (
 
 /**
  * Attempts to fetch a file's raw content using the content adapter.
- * Accepts slug-like paths or filesystem-style paths and normalizes them.
  *
  * @param {string} locale - Locale code
  * @param {string} relativeFilePath - Path relative to locale or absolute repo path
@@ -267,8 +265,7 @@ export const statPath = async (
 };
 
 /**
- * Clears this module's listing LRU. Cross-cache invalidation goes through
- * `clearServerCaches` in the cache registry, which this is registered with.
+ * Clears this module's listing LRU.
  */
 export const clearCache = (): void => {
   lru.clear();

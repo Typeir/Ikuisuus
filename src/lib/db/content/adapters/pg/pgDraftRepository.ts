@@ -1,8 +1,7 @@
 /**
  * @fileoverview PostgreSQL Draft Repository (MikroORM)
  * @description Implements `DraftRepository` via MikroORM `EntityManager`
- * against the `drafts` table. Enforces single-active-draft-per-slug
- * semantics using upsert logic and handles archival on revalidation.
+ * against the `drafts` table.
  *
  * @module lib/db/content/adapters/pg/pgDraftRepository
  * @version 1.0.0
@@ -97,9 +96,6 @@ const rowToDraft = (row: DraftEntity): DraftMetadata => ({
 
 /**
  * PostgreSQL implementation of the DraftRepository port.
- *
- * Uses MikroORM EntityManager for all persistence operations.
- * Each method forks a fresh EntityManager.
  */
 export const pgDraftRepository: DraftRepository = {
   /**

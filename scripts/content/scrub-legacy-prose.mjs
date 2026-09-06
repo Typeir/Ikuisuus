@@ -1,22 +1,5 @@
 /**
  * @fileoverview Rewrites D&D-inherited prose into the register, mechanically.
- * Each pass is a closed grammar: the corpus writes its save clauses, attack
- * blocks and durations in a dozen shapes, and every shape has one rewrite.
- * A clause outside the grammar is never guessed at — it goes to a review
- * file as a PASSAGE/QUESTION block for a reader, the same shape a swarm
- * agent writes.
- *
- * The save pass is the one that needs syntax. It reads the subject's head
- * noun — head-first, since the corpus writes `creatures [within 2 stride of
- * the frog]` — to pick `saves` or `save`, and carries that number onto the
- * verb after `or`, so `must succeed … or take` becomes `saves … or takes`
- * for a singular subject and `save … or take` for a plural one.
- *
- *   node scripts/content/scrub-legacy-prose.mjs src/content/en/monsters --check
- *   node scripts/content/scrub-legacy-prose.mjs src/content/en/monsters
- *   node scripts/content/scrub-legacy-prose.mjs src/content/en/monsters --pass=attacks,saves
- *
- * Review residue lands in `.ignore/legacy-expressions/review/<file>.md`.
  */
 
 import {
@@ -51,8 +34,7 @@ import { fileURLToPath } from 'node:url';
  */
 
 /**
- * Nouns a save clause's subject can head. Singular forms; the scrub reads a
- * trailing `s` as plural.
+ * Nouns a save clause's subject can head.
  */
 const HEAD_NOUNS =
   'creature|target|enemy|ally|being|attacker|humanoid|construct|player|' +
@@ -152,8 +134,6 @@ function agree(verb, number) {
 
 /**
  * The legacy save clause, from the subject to the end of its sentence.
- * Group `subject` is everything on the line before `must`, trimmed by the
- * caller to the clause start.
  */
 const SAVE = new RegExp(
   '(?<lead>(?:^|[.>|;]\\s*|\\*\\*[^*.;|>]+\\*\\*\\s*)?)' +

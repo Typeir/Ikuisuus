@@ -1,17 +1,7 @@
 /**
  * @fileoverview Keyword Inline MDX Component
  * @description Inline MDX component that renders a rules keyword linked to the
- * heading that defines it. On a page compiled by the server, the link target and
- * the shard id both arrive as props and the card opens from prose the page
- * already carries, costing no request.
- *
- * A keyword written inside a shard has no such props: that prose is compiled in
- * the browser, where there is no index to resolve against. Those resolve
- * themselves from the keyword endpoint when their card opens, which keeps the
- * bake to what a page literally writes instead of following each shard's own
- * references onto the page.
- *
- * Leaving the keyword with Shift held parks the card as a draggable panel.
+ * heading that defines it.
  *
  * @module modules/library/presentation/components/Keyword/Keyword
  * @version 5.0.0
@@ -39,8 +29,7 @@ import { useShardSource } from './useShardSource';
 
 /**
  * The card machinery, loaded on first use so `Draggable` stays out of the
- * initial bundle. Module scope keeps its identity stable across renders; the
- * hydration gate below keeps it out of the server and first client render.
+ * initial bundle.
  */
 const DetachableTooltip = React.lazy<
   React.ComponentType<DetachableTooltipProps>
@@ -53,8 +42,7 @@ const DetachableTooltip = React.lazy<
 const subscribeNever = () => () => {};
 
 /**
- * Whether hydration has completed. False on the server and the hydration
- * render, so both emit identical markup.
+ * Whether hydration has completed.
  *
  * @returns {boolean} True after hydration
  */
@@ -67,8 +55,7 @@ function useHydrated(): boolean {
 }
 
 /**
- * Props for the Keyword component. All values arrive as strings from the MDX
- * attribute layer.
+ * Props for the Keyword component.
  *
  * @typedef {object} KeywordProps
  * @property {string} term - Canonical term, e.g. "damage bonus"
@@ -105,9 +92,7 @@ function referenceOf(term: string, namespace?: string): string {
 }
 
 /**
- * Components a shard's own prose may use. A keyword inside a shard is a keyword:
- * it opens its own card, resolving itself rather than reading props the client
- * compile could not have stamped.
+ * Components a shard's own prose may use.
  *
  * @constant
  */
@@ -139,10 +124,6 @@ interface KeywordCardProps {
 
 /**
  * The card: a title, a link to the full rule, and the compiled definition.
- *
- * Resolution lives here rather than in the trigger, so nothing is requested
- * until a card actually opens, and a nested keyword can take its title and link
- * from the shard it fetches.
  *
  * @param {KeywordCardProps} props - Component props
  * @returns {React.ReactElement | null} The card, or null until it resolves

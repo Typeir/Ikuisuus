@@ -1,5 +1,5 @@
 /**
- * @fileoverview Read/write aspects: list in YAML frontmatter. Preserves order and undo stack.
+ * @fileoverview Read/write aspects: list in YAML frontmatter.
  *
  * @module modules/mdx-editor/domain/frontmatterAspects
  * @version 1.0.0
@@ -36,7 +36,7 @@ export function readFrontmatterAspects(source: string): string[] {
 }
 
 /**
- * Replace frontmatter aspects: with list. Creates block when missing, removes when empty.
+ * Replace frontmatter aspects: with list.
  *
  * @param {string} source - Full MDX buffer
  * @param {string[]} aspects - Aspects to write, in order

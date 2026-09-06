@@ -42,11 +42,6 @@ function shouldIgnoreEntry(name: string): boolean {
 /**
  * Kebabifies a `.mdx` basename while preserving dot-separated segments.
  *
- * Examples:
- * - `abandoned-old-war-machine.sheet` -> `abandoned-old-war-machine.sheet`
- * - `lemao.lol` -> `lemao.lol`
- * - `My File.Draft V2` -> `my-file.draft-v2`
- *
  * @param {string} baseName - Filename without `.mdx` extension
  * @returns {string} Kebab-cased basename with dot segments preserved
  */

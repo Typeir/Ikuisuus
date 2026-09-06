@@ -1,10 +1,7 @@
 /**
  * @fileoverview Draft Content Overlay
  * @description Client component that queries the drafts API for an active draft
- * matching the current page's locale+slug. When a draft exists, it compiles the
- * MDX on the client and renders the result over the server-rendered static
- * content with a slide animation. A toggle button lets users dismiss the draft
- * to see the underlying ISR content.
+ * matching the current page's locale+slug.
  *
  * @module modules/mdx-editor/presentation/DraftOverlay/DraftOverlay
  * @author Typeir

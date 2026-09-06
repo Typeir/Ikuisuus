@@ -11,10 +11,7 @@
  * Usage:
  *   npx tsx scripts/content/scaffoldFromLinks.ts --links scripts/core/links.json --world-root src/content/en/world
  * Options:
- *   --links file.json   JSON array of {term, path}. If omitted, reads JSON from STDIN.
- *   --world-root dir    Destination root for /en/library/world/* (default: src/content/en/world)
- *   --dry               Dry run (prints actions; no writes)
- *   --force             Overwrite existing files (default: skip existing)
+ *   --links file.json   JSON array of {term, path}.
  */
 
 import { createLogger } from '@/lib/logging/logger';

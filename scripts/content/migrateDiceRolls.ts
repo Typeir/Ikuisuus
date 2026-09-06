@@ -1,7 +1,7 @@
 /**
  * @fileoverview Dice Expression Migration Script (CLI)
  * @description Scans MDX files, normalizes dice expressions to canonical
- * `[% NdM + static type %]` form, and wraps them. Dry-run by default.
+ * `[% NdM + static type %]` form, and wraps them.
  *
  * @module scripts/content/migrateDiceRolls
  * @version 1.0.0

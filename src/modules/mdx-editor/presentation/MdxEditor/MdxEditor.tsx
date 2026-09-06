@@ -1,5 +1,5 @@
 /**
- * @fileoverview Full-page MDX editor shell. Edit or New mode via ?slug.
+ * @fileoverview Full-page MDX editor shell.
  *
  * @module modules/mdx-editor/presentation/MdxEditor/MdxEditor
  * @version 3.0.0
@@ -38,7 +38,7 @@ interface MdxEditorProps {
 }
 
 /**
- * Full-page editor. Edit or New mode via ?slug.
+ * Full-page editor.
  *
  * @component
  * @param {MdxEditorProps} props - Component properties

@@ -2,8 +2,6 @@
  * pgTrinketRepository Unit Tests
  *
  * @fileoverview Tests for the MikroORM-backed PostgreSQL trinket repository.
- * Verifies row-mapping from `TrinketEntity` rows (with embedded saving throw)
- * to `TrinketMetadata` domain objects.
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgTrinketRepository
  */
