@@ -81,7 +81,7 @@ const VocationCard: React.FC<VocationProps & { kind: VocationKind }> = ({
 }) => {
   const locale = useLocale();
   const t = useTranslations('library');
-  const { values, kept } = readSlots(children, VOCATION_SLOT_NAMES, slots);
+  const { values, kept } = readSlots(children, VOCATION_SLOT_NAMES, slots, true);
   const names = VOCATION_SLOT_NAMES.filter(
     (name) => values[name] !== undefined,
   );

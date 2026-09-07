@@ -35,6 +35,7 @@ import {
   textOfNodes,
 } from '../headingParts';
 import Collapsible from '../Collapsible/Collapsible';
+import { CostMarkProvider, useCostMark } from './costMarkContext';
 import { cleanChildren, readSlots, slotElementOf } from './slotElements';
 import styles from './slots.module.scss';
 
@@ -147,6 +148,7 @@ const Feature: React.FC<FeatureProps> = ({
   ...slots
 }) => {
   const t = useTranslations('library');
+  const inherited = useCostMark();
   const nodes = cleanChildren(children);
   const headingIndex = nodes.findIndex((node) => isHeadingNode(node));
   const headingNode = headingIndex >= 0 ? nodes[headingIndex] : null;
@@ -179,15 +181,15 @@ const Feature: React.FC<FeatureProps> = ({
       <span className={styles.headingTitle} data-heading-title>
         {parsed.titleNodes}
       </span>
-      {parsed.cost && (
-        <span className={styles.tag} data-feature-tag>
-          {parsed.cost}
+      {cost !== undefined && (
+        <span className={styles.cost} data-feature-cost>
+          {cost}
         </span>
       )}
-      {cost !== undefined && (
+      {parsed.cost && (
         <span className={styles.headingMeta}>
-          <span className={styles.cost} data-feature-cost>
-            {cost}
+          <span className={styles.tag} data-feature-tag>
+            {parsed.cost}
           </span>
         </span>
       )}
@@ -202,7 +204,13 @@ const Feature: React.FC<FeatureProps> = ({
       })}
     </p>
   );
-  const bodyElement = <div data-feature-body>{body}</div>;
+  const resolvedMark =
+    mark === undefined && cost === undefined ? inherited : markOf(mark, cost);
+  const bodyElement = (
+    <div data-feature-body>
+      <CostMarkProvider mark={resolvedMark}>{body}</CostMarkProvider>
+    </div>
+  );
 
   const summary = (
     <>
@@ -216,7 +224,7 @@ const Feature: React.FC<FeatureProps> = ({
     <article
       className={styles.block}
       data-kind={kind}
-      data-mark={markOf(mark, cost)}
+      data-mark={resolvedMark}
       {...(collapsible ? { 'data-collapsible': 'true' } : {})}
       {...((ornament ?? !collapsible) ? {} : { 'data-ornament': 'none' })}
       {...(anchor ? { 'data-anchor': anchor } : {})}>

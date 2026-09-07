@@ -396,11 +396,6 @@
     margin-block: 0.25rem 1rem;
   }
 
-  /* Bottom gap holds the next group heading off the numbers; the heading's
-     own top margin collapses into it. */
-  [data-heirloom-stats] {
-    margin-block: 0.5rem 1.5rem;
-  }
 
   /* The rule closing the primer carries the site's 3rem section gap on both
      sides, and `hr` is a formatting context, so those margins cannot collapse
@@ -424,10 +419,6 @@
       margin-top: 0.25rem;
       margin-bottom: 0.25rem;
     }
-
-    > p[data-slot-grid] {
-      margin-block: 0 0.75em;
-    }
   }
 }
 
@@ -438,6 +429,113 @@ $mdx-mark-glyph-other: '◇ ';
 $mdx-mark-glyph-minor: '⬖ ';
 $mdx-mark-glyph-major: '◆ ';
 $mdx-mark-glyph-deed: '◈ ';
+
+/**
+ * Mixin: mdx-card-face
+ *
+ * A card's ground: an accent rule down the left and a surface fading out to
+ * the right, the face a v1 blockquote card wore. It isolates, so the heading
+ * rules inside — drawn behind their own text, so floated art crosses over
+ * them — paint above this ground instead of under it. The margin is left to
+ * the card, which knows what it sits between.
+ */
+@mixin mdx-card-face {
+  isolation: isolate;
+  border-left: var(--border-width-l) solid var(--color-accent);
+  padding: 0.75rem 1.5rem 0.5rem 1rem;
+  background-color: var(--color-surface);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 0%,
+    var(--color-surface) 85%,
+    var(--color-transparent) 97%
+  );
+}
+
+/**
+ * Mixin: mdx-card-boundaries
+ *
+ * Where a card's edge stops the page's ornament. The knotwork clasps and
+ * stream rails of the sections inside a card, a fold or a quote end at its
+ * edge; the heading rules and cost glyphs that name what is inside do not,
+ * since they are not ornament. A card also reclaims the room a section holds
+ * for a frame it no longer draws, and a block that says it takes no ornament
+ * bares the section around it — a folding block draws its own summary bar, and
+ * the frame would land in its top-left corner on every boon of every bloodline.
+ */
+@mixin mdx-card-boundaries {
+  details,
+  blockquote,
+  [data-spell] {
+    section[data-heading-level] {
+      &::before,
+      &::after,
+      li::before,
+      li::after {
+        content: none !important;
+        display: none !important;
+      }
+
+      [data-stream-rail] {
+        display: none !important;
+      }
+    }
+  }
+
+  [data-spell]::before,
+  [data-spell]::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  [data-spell] section[data-heading-level] {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  [data-spell]
+    section[data-heading-level]:has(> ul, > ol)
+    + section[data-heading-level] {
+    margin-top: 0;
+  }
+
+  section[data-heading-level]:has(> article[data-ornament='none'])::before,
+  section[data-heading-level]:has(> article[data-ornament='none'])::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  section[data-heading-level]:has(> article[data-ornament='none'])
+    > [data-stream-rail] {
+    display: none !important;
+  }
+}
+
+/**
+ * Mixin: mdx-slot-run
+ *
+ * A slot run — a card's stat block, or a block's own slot lines — closes with
+ * the rule a heading draws, in the border colour, since it divides what it
+ * qualifies from what follows rather than naming anything. It sits closer to
+ * that prose than a paragraph would. Include on the card host.
+ */
+@mixin mdx-slot-run {
+  [data-slot-grid] {
+    @include mdx-heading-rule(0.4rem);
+    margin-bottom: 0.4em;
+
+    &::after {
+      color: var(--color-border-secondary);
+    }
+  }
+
+  /* The prose under a slot run opens at the run's own margin. The body wrapper
+     carries no edge of its own, so its first paragraph's top margin collapses
+     through it and against the run, and the larger of the two would win. */
+  [data-slot-grid] + * > :first-child {
+    margin-top: 0;
+  }
+}
 
 /**
  * Mixin: mdx-mark-glyphs

@@ -12,6 +12,7 @@ import {
   firstSentence,
   firstSentenceEnd,
   nukeSource,
+  nukeStyleSource,
   truncateJsdoc,
 } from '../../../../scripts/utils/nuke-jsdoc.mjs';
 
@@ -58,6 +59,42 @@ describe('firstSentenceEnd', () => {
   it('includes a closing quote or paren after the terminator', () => {
     expect(firstSentence('Prints "Done." Then more.')).toBe('Prints "Done."');
     expect(firstSentence('Clamps (to [0, 1].) Then more.')).toBe('Clamps (to [0, 1].)');
+  });
+});
+
+describe('firstSentence with the fallback ladder', () => {
+  it('prefers a terminator over the comma, semicolon and colon', () => {
+    expect(firstSentence('Foo, bar. Baz, qux.', true)).toBe('Foo, bar.');
+    expect(firstSentence('Foo; bar: baz. More.', true)).toBe('Foo; bar: baz.');
+  });
+
+  it('drops the break character and everything after it', () => {
+    expect(firstSentence('Container positions, one per corner', true)).toBe('Container positions');
+    expect(firstSentence('Entrance animation; runs once', true)).toBe('Entrance animation');
+    expect(firstSentence('Moving window: a 2r square', true)).toBe('Moving window');
+  });
+
+  it('runs the ladder to a fixed point, so a second pass cuts nothing', () => {
+    const once = firstSentence('Skeleton: static ink, no sweep', true);
+    expect(once).toBe('Skeleton');
+    expect(firstSentence(once, true)).toBe(once);
+  });
+
+  it('needs whitespace after the break, so pseudo-selectors survive', () => {
+    expect(firstSentence('Nine-slice base for a ::before', true)).toBe(
+      'Nine-slice base for a ::before',
+    );
+    expect(firstSentence('Grid of 1,024 dots', true)).toBe('Grid of 1,024 dots');
+  });
+
+  it('leaves text without any break alone', () => {
+    expect(firstSentence('Responsive adjustments', true)).toBe('Responsive adjustments');
+  });
+
+  it('is off by default', () => {
+    expect(firstSentence('Container positions, one per corner')).toBe(
+      'Container positions, one per corner',
+    );
   });
 });
 
@@ -217,5 +254,129 @@ export const x = { s, t, r, j };
   it('reports an untouched file', () => {
     const source = '/** Fine. */\nexport const a = 1;\n';
     expect(nukeSource(source, 'a.mjs')).toEqual({ text: source, changed: false, count: 0 });
+  });
+});
+
+describe('nukeStyleSource', () => {
+  it('cuts a run of adjacent line comments as one comment', () => {
+    const source = `// Global stylesheet entry point.
+//
+// Nothing but an ordered load list.
+@use 'reset';
+`;
+    const result = nukeStyleSource(source, 'globals.scss');
+    expect(result.count).toBe(1);
+    expect(result.text).toBe(`// Global stylesheet entry point.
+@use 'reset';
+`);
+  });
+
+  it('keeps the indent of an indented run and cuts on the ladder', () => {
+    const source = `.a {
+  // Position variants, one per corner
+  top: 0;
+
+  // Entrance animation
+  bottom: 0;
+}
+`;
+    expect(nukeStyleSource(source, 'a.scss').text).toBe(`.a {
+  // Position variants
+  top: 0;
+
+  // Entrance animation
+  bottom: 0;
+}
+`);
+  });
+
+  it('joins only same-indent neighbours, never across a blank line or code', () => {
+    const source = `// One, two
+.a {
+  color: red;
+}
+// Three, four
+`;
+    const result = nukeStyleSource(source, 'a.scss');
+    expect(result.count).toBe(2);
+    expect(result.text).toBe(`// One
+.a {
+  color: red;
+}
+// Three
+`);
+  });
+
+  it('folds a multi-line block comment onto one line', () => {
+    const source = `/* Moving window: a 2r square centered on the cursor. The mask never changes —
+   it is centered in this element's own box. */
+.aperture {
+  inset: 0;
+}
+`;
+    expect(nukeStyleSource(source, 'a.scss').text)
+      .toBe(`/* Moving window: a 2r square centered on the cursor. */
+.aperture {
+  inset: 0;
+}
+`);
+  });
+
+  it('cuts a trailing comment in place', () => {
+    const source = '.a {\n  animation: none; /* band parks off-left: static fence */\n}\n';
+    expect(nukeStyleSource(source, 'a.scss').text).toBe(
+      '.a {\n  animation: none; /* band parks off-left */\n}\n',
+    );
+  });
+
+  it('cuts a doc block with the ladder', () => {
+    const source = `/**
+ * @fileoverview MDX section mixins, stream rail, first-letter decor
+ * @module styles/mixins
+ */
+`;
+    expect(nukeStyleSource(source, 'a.scss').text).toBe(`/**
+ * @fileoverview MDX section mixins
+ * @module styles/mixins
+ */
+`);
+  });
+
+  it('leaves commented-out code, banners and strings alone', () => {
+    const source = `// --embed-position: absolute;
+/* ── Embed Mode ── */
+.a {
+  // inset: 0;
+  background: url('https://x/y.png'); // fine
+  content: '// not a comment, kept';
+}
+`;
+    expect(nukeStyleSource(source, 'a.scss')).toEqual({
+      text: source,
+      changed: false,
+      count: 0,
+    });
+  });
+
+  it('does not read // as a comment in plain CSS', () => {
+    const source = '.a {\n  color: red; // one, two\n}\n';
+    expect(nukeStyleSource(source, 'a.css').changed).toBe(false);
+  });
+
+  it('is idempotent', () => {
+    const source = `/* Skeleton: static ink, no sweep */
+// Content area, with padding
+.a {
+  color: red;
+}
+`;
+    const once = nukeStyleSource(source, 'a.scss').text;
+    expect(once).toBe(`/* Skeleton */
+// Content area
+.a {
+  color: red;
+}
+`);
+    expect(nukeStyleSource(once, 'a.scss').changed).toBe(false);
   });
 });

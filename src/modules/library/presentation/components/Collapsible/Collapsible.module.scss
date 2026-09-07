@@ -8,14 +8,6 @@
   &[open] .chevron {
     transform: rotate(90deg);
   }
-
-  * {
-    &::before,
-    &::after {
-      content: none !important;
-      display: none !important;
-    }
-  }
 }
 
 .summary {

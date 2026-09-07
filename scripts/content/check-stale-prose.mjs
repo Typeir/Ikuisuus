@@ -146,7 +146,8 @@ export const PATTERNS = [
     family: 'trait',
     severity: 'review',
     label: 'Magic Resistance boilerplate',
-    regex: /advantage on saving throws against spells and other magical effects/i,
+    regex:
+      /advantage on saving throws against spells and other magical effects/i,
     hint: 'boilerplate; a trait keyword once one exists',
   },
   {
@@ -193,8 +194,8 @@ export const PATTERNS = [
     id: 'end-of-your-next-turn',
     family: 'tempo',
     severity: 'review',
-    label: 'until the end of your next turn',
-    regex: /until the end of your next turn/i,
+    label: 'until your next turn ends',
+    regex: /until your next turn ends/i,
     hint: 'the wielder’s turn, a different duration from briefly; usually stays',
   },
   {
@@ -381,7 +382,9 @@ function printSummary(rows, fileCount) {
   const legacy = rows
     .filter((row) => row.severity === 'legacy')
     .reduce((sum, row) => sum + row.hits, 0);
-  console.log(`${fileCount} files, ${total} hits (${legacy} legacy, ${total - legacy} review)\n`);
+  console.log(
+    `${fileCount} files, ${total} hits (${legacy} legacy, ${total - legacy} review)\n`,
+  );
   if (rows.length === 0) return;
   const width = Math.max(...rows.map((row) => row.label.length));
   for (const row of rows) {
@@ -446,7 +449,9 @@ function main() {
     console.log(JSON.stringify({ files: files.length, hits }, null, 2));
   } else if (flags.has('--list')) {
     printList(hits, patterns);
-    console.log(`\n${hits.length} hits in ${new Set(hits.map((h) => h.file)).size} files`);
+    console.log(
+      `\n${hits.length} hits in ${new Set(hits.map((h) => h.file)).size} files`,
+    );
   } else {
     printSummary(summarize(hits, patterns), files.length);
   }

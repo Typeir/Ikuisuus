@@ -17,6 +17,7 @@ import {
 } from '@/modules/library/domain/slots';
 import React, { createContext, useContext, type ReactNode } from 'react';
 import { inlineValue, SlotRow } from './slotElements';
+import styles from './slots.module.scss';
 
 /**
  * The heirloom's header slot values, keyed by slot name.
@@ -80,18 +81,16 @@ const Attributes: React.FC<AttributesProps> = (props) => {
   if (names.length === 0) return null;
 
   return (
-    <ul data-heirloom-stats>
+    <div className={styles.attributesCard} data-heirloom-stats>
       {names.map((name) => (
-        <li key={name}>
-          <SlotRow name={name}>
-            {inlineValue(values[name])}
-            {name === 'damage' && values.versatile !== undefined && (
-              <> ({inlineValue(values.versatile)})</>
-            )}
-          </SlotRow>
-        </li>
+        <SlotRow key={name} name={name}>
+          {inlineValue(values[name])}
+          {name === 'damage' && values.versatile !== undefined && (
+            <> ({inlineValue(values.versatile)})</>
+          )}
+        </SlotRow>
       ))}
-    </ul>
+    </div>
   );
 };
 

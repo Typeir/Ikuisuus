@@ -31,7 +31,9 @@ This is the spec `plans/caveman-jsdoc.swarm.mjs` rewrites files against. The sec
 
 Over budget is a review rejection. If a function description needs a second sentence, the code needs a better name or a smaller function.
 
-`npm run jsdoc:nuke -- --write` cuts every block and every tag in the corpus to its first sentence (`@example` stays whole). Dry run without `--write`; pass paths to limit it.
+`npm run jsdoc:nuke -- --write` cuts every block and every tag in the corpus to its first sentence (`@example` stays whole). Dry run without `--write`; pass paths to limit it. `--code` and `--styles` limit it to source files or stylesheets.
+
+Stylesheets go through the same cut, with two additions. A run of adjacent `//` lines at one indent is cut as a single comment. A comment holding no sentence terminator falls back to a break character — `,`, then `;`, then `:` — run to a fixed point, so `/* Skeleton: static ink, no sweep */` becomes `/* Skeleton */`. A break needs whitespace after it, which spares `::before` and `1,024`. Commented-out declarations, the ones ending in `;`, `{` or `}`, are left alone.
 
 Never leave a JSDoc block empty. One dry sentence is the floor.
 
@@ -97,7 +99,7 @@ Three surfaces, one spec — this file.
 | `.github/scripts/checkJsdocQuality.ts` | Mechanical rules below, via `npm run health:check` |
 | `.paw/gates/jsdocQuality.gate.ts`      | Same rules, `severity: critical`, in real time     |
 | `plans/caveman-jsdoc.swarm.mjs`        | Tone and length, one agent per tracked file        |
-| `scripts/utils/nuke-jsdoc.mjs`         | Length, mechanically: first sentence per member    |
+| `scripts/utils/nuke-jsdoc.mjs`         | Length, mechanically: first sentence per member and per stylesheet comment |
 
 Mechanical rules:
 

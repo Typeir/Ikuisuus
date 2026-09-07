@@ -1,5 +1,8 @@
 /**
- * @fileoverview Cuts every JSDoc block in the corpus to its first sentence.
+ * @fileoverview Cuts every JSDoc block and stylesheet comment in the corpus to its first sentence.
+ * @description Source files cut at a sentence terminator only. Stylesheet comments fall back to a
+ * comma, then a semicolon, then a colon when the comment holds no terminator, and a run of adjacent
+ * `//` lines is cut as one comment.
  *
  * @module scripts/utils/nuke-jsdoc
  * @version 1.0.0
@@ -8,7 +11,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
@@ -17,6 +20,16 @@ import ts from 'typescript';
  * File extensions the nuker parses.
  */
 export const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'];
+
+/**
+ * Stylesheet extensions the nuker parses.
+ */
+export const STYLE_EXTENSIONS = ['.scss', '.sass', '.css'];
+
+/**
+ * Break characters tried, in order, when a comment holds no sentence terminator.
+ */
+export const FALLBACK_BREAKS = [',', ';', ':'];
 
 /**
  * Tags whose text is kept whole.
@@ -44,6 +57,11 @@ const LIST_MARKER = /^[ \t]*(?:\d+\.|[-*+])[ \t]/;
 const ABBREVIATION = /(?:^|[\s([])(?:e\.g|i\.e|cf|vs|viz|approx|et al)$/i;
 const STAR_LINE = /^(\s*)\* ?(.*)$/;
 const FENCE = /^\s*```/;
+const LINE_OPENER = /^\/\/ ?/;
+const COMMENTED_CODE = /[;{}]$/;
+const URL_OPEN = /^url\($/i;
+const IDENT_CHAR = /[\w-]/;
+const RUN_GAP = /^\r?\n[ \t]*$/;
 const SCRIPT_KINDS = {
   '.ts': ts.ScriptKind.TS,
   '.mts': ts.ScriptKind.TS,
@@ -64,13 +82,8 @@ const LITERAL_KINDS = new Set([
   ts.SyntaxKind.JsxText,
 ]);
 
-/**
- * Index just past the first sentence terminator, or -1 without one.
- *
- * @param {string} text - Prose, possibly multi-line
- * @returns {number} Cut index
- */
-export function firstSentenceEnd(text) {
+function scan(text) {
+  const fallback = new Map();
   let i = 0;
   let depth = 0;
   let lineStart = true;
@@ -93,7 +106,7 @@ export function firstSentenceEnd(text) {
       let run = 0;
       while (text[i + run] === '`') run += 1;
       const close = text.indexOf('`'.repeat(run), i + run);
-      if (close === -1) return -1;
+      if (close === -1) return { end: -1, fallback: new Map() };
       i = close + run;
       continue;
     }
@@ -107,6 +120,9 @@ export function firstSentenceEnd(text) {
       i += 1;
       continue;
     }
+    if (depth === 0 && FALLBACK_BREAKS.includes(c) && !fallback.has(c) && /\s/.test(text[i + 1] ?? ' ')) {
+      fallback.set(c, i);
+    }
     if (depth === 0 && TERMINATORS.includes(c)) {
       let j = i;
       while (j < text.length && TERMINATORS.includes(text[j])) j += 1;
@@ -114,24 +130,54 @@ export function firstSentenceEnd(text) {
       while (j < text.length && CLOSERS.includes(text[j])) j += 1;
       const next = text[j];
       const ends = next === undefined || /\s/.test(next);
-      if (ends && !(single && ABBREVIATION.test(text.slice(0, i)))) return j;
+      if (ends && !(single && ABBREVIATION.test(text.slice(0, i)))) return { end: j, fallback };
       i = j;
       continue;
     }
     i += 1;
   }
-  return -1;
+  return { end: -1, fallback };
+}
+
+/**
+ * Index just past the first sentence terminator, or -1 without one.
+ *
+ * @param {string} text - Prose, possibly multi-line
+ * @returns {number} Cut index
+ */
+export function firstSentenceEnd(text) {
+  return scan(text).end;
+}
+
+/**
+ * Index of the first break, and whether the break character itself is kept.
+ *
+ * @param {string} text - Prose, possibly multi-line
+ * @returns {{ end: number, keep: boolean }} Cut index and terminator handling
+ */
+export function firstBreakEnd(text) {
+  const { end, fallback } = scan(text);
+  if (end !== -1) return { end, keep: true };
+  for (const char of FALLBACK_BREAKS) {
+    if (!fallback.has(char)) continue;
+    const at = fallback.get(char);
+    const earlier = firstBreakEnd(text.slice(0, at).trimEnd());
+    return earlier.end === -1 ? { end: at, keep: false } : earlier;
+  }
+  return { end: -1, keep: true };
 }
 
 /**
  * Text up to and including its first sentence terminator.
  *
  * @param {string} text - Prose
- * @returns {string} First sentence, or the text when it has no terminator
+ * @param {boolean} [fallback] - Fall back to the comma, semicolon and colon ladder
+ * @returns {string} First sentence, or the text when it has no break
  */
-export function firstSentence(text) {
-  const end = firstSentenceEnd(text);
-  return end === -1 ? text : text.slice(0, end);
+export function firstSentence(text, fallback = false) {
+  const { end, keep } = fallback ? firstBreakEnd(text) : { end: firstSentenceEnd(text), keep: true };
+  if (end === -1) return text;
+  return keep ? text.slice(0, end) : text.slice(0, end).trimEnd();
 }
 
 function tagOf(line, inside) {
@@ -159,7 +205,7 @@ function splitSections(lines) {
   return sections;
 }
 
-function cutSections(sections) {
+function cutSections(sections, fallback) {
   const out = [];
   let changed = false;
   sections.forEach((section, index) => {
@@ -172,7 +218,7 @@ function cutSections(sections) {
     }
     if (!VERBATIM_TAGS.has(section.tag)) {
       const text = lines.join('\n');
-      const cut = firstSentence(text);
+      const cut = firstSentence(text, fallback);
       if (cut !== text) {
         changed = true;
         lines = cut.split('\n');
@@ -188,15 +234,16 @@ function cutSections(sections) {
  * The block with its description and every tag cut to one sentence.
  *
  * @param {string} block - Full comment text, opener through closer
+ * @param {boolean} [fallback] - Fall back to the comma, semicolon and colon ladder
  * @returns {string} Cut block, or the input when nothing was cut
  */
-export function truncateJsdoc(block) {
+export function truncateJsdoc(block, fallback = false) {
   if (!/^\/\*\*(?!\/)/.test(block) || !block.endsWith('*/')) return block;
   const eol = block.includes('\r\n') ? '\r\n' : '\n';
   const raw = block.slice(3, -2).split(/\r?\n/);
   if (raw.length === 1) {
     const text = raw[0].trim();
-    const cut = firstSentence(text);
+    const cut = firstSentence(text, fallback);
     return cut === text ? block : `/** ${cut} */`;
   }
   const head = raw[0];
@@ -213,7 +260,7 @@ export function truncateJsdoc(block) {
   const headInline = head.trim() !== '';
   const content = parsed.map((line) => line.text);
   if (headInline) content.unshift(head.replace(/^\s/, '').trimEnd());
-  const { lines, changed } = cutSections(splitSections(content));
+  const { lines, changed } = cutSections(splitSections(content), fallback);
   if (!changed || lines.length === 0) return block;
   const starred = lines.map((line) => (line === '' ? `${starIndent}*` : `${starIndent}* ${line}`));
   const out = headInline ? [`/** ${lines[0]}`, ...starred.slice(1)] : ['/**', ...starred];
@@ -276,6 +323,157 @@ export function nukeSource(source, fileName = 'file.ts') {
   return { text, changed: count > 0, count };
 }
 
+function skipQuoted(source, index) {
+  const quote = source[index];
+  let i = index + 1;
+  while (i < source.length) {
+    if (source[i] === '\\') {
+      i += 2;
+      continue;
+    }
+    if (source[i] === quote || source[i] === '\n') return i + 1;
+    i += 1;
+  }
+  return source.length;
+}
+
+function skipUrl(source, index) {
+  let i = index;
+  while (i < source.length) {
+    const c = source[i];
+    if (c === '"' || c === "'") {
+      i = skipQuoted(source, i);
+      continue;
+    }
+    if (c === ')') return i + 1;
+    i += 1;
+  }
+  return source.length;
+}
+
+function styleComments(source, allowLine) {
+  const out = [];
+  let i = 0;
+  while (i < source.length) {
+    const c = source[i];
+    if (c === '"' || c === "'") {
+      i = skipQuoted(source, i);
+      continue;
+    }
+    if (c === '/' && source[i + 1] === '*') {
+      const close = source.indexOf('*/', i + 2);
+      const end = close === -1 ? source.length : close + 2;
+      out.push({ pos: i, end, block: true });
+      i = end;
+      continue;
+    }
+    if (allowLine && c === '/' && source[i + 1] === '/') {
+      const newline = source.indexOf('\n', i);
+      let end = newline === -1 ? source.length : newline;
+      if (source[end - 1] === '\r') end -= 1;
+      out.push({ pos: i, end, block: false });
+      i = end;
+      continue;
+    }
+    if (URL_OPEN.test(source.slice(i, i + 4)) && !IDENT_CHAR.test(source[i - 1] ?? '')) {
+      i = skipUrl(source, i + 4);
+      continue;
+    }
+    i += 1;
+  }
+  return out;
+}
+
+function ownLineIndent(source, pos) {
+  const start = source.lastIndexOf('\n', pos - 1) + 1;
+  const prefix = source.slice(start, pos);
+  return prefix.trim() === '' ? prefix : null;
+}
+
+function groupComments(comments, source) {
+  const groups = [];
+  for (const comment of comments) {
+    const previous = groups[groups.length - 1];
+    const last = previous?.[previous.length - 1];
+    const joins =
+      last &&
+      !last.block &&
+      !comment.block &&
+      ownLineIndent(source, comment.pos) !== null &&
+      RUN_GAP.test(source.slice(last.end, comment.pos)) &&
+      ownLineIndent(source, last.pos) === ownLineIndent(source, comment.pos);
+    if (joins) previous.push(comment);
+    else groups.push([comment]);
+  }
+  return groups;
+}
+
+function eolOf(source) {
+  return source.includes('\r\n') ? '\r\n' : '\n';
+}
+
+function cutLineRun(group, source) {
+  const indent = ownLineIndent(source, group[0].pos) ?? '';
+  const text = group
+    .map(({ pos, end }) => source.slice(pos, end).replace(LINE_OPENER, '').trimEnd())
+    .join('\n')
+    .trim();
+  if (text === '' || COMMENTED_CODE.test(text)) return null;
+  const cut = firstSentence(text, true);
+  if (cut === text) return null;
+  return cut
+    .split('\n')
+    .map((line, index) => `${index === 0 ? '' : indent}//${line === '' ? '' : ` ${line}`}`)
+    .join(eolOf(source));
+}
+
+function cutStyleBlock(comment, source) {
+  const block = source.slice(comment.pos, comment.end);
+  if (/^\/\*\*(?!\/)/.test(block)) {
+    const cut = truncateJsdoc(block, true);
+    return cut === block ? null : cut;
+  }
+  if (!block.endsWith('*/')) return null;
+  const text = block
+    .slice(2, -2)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .join('\n')
+    .trim();
+  if (text === '' || COMMENTED_CODE.test(text)) return null;
+  const cut = firstSentence(text, true);
+  if (cut === text) return null;
+  const indent = `${ownLineIndent(source, comment.pos) ?? ''}   `;
+  const body = cut
+    .split('\n')
+    .map((line, index) => (index === 0 ? line : `${indent}${line}`))
+    .join(eolOf(source));
+  return `/* ${body} */`;
+}
+
+/**
+ * Stylesheet source with every comment cut to its first break.
+ *
+ * @param {string} source - File text
+ * @param {string} [fileName] - Path, deciding whether `//` opens a comment
+ * @returns {{ text: string, changed: boolean, count: number }} Cut text and comment count
+ */
+export function nukeStyleSource(source, fileName = 'file.scss') {
+  const groups = groupComments(styleComments(source, extname(fileName) !== '.css'), source);
+  let text = '';
+  let last = 0;
+  let count = 0;
+  for (const group of groups) {
+    const cut = group[0].block ? cutStyleBlock(group[0], source) : cutLineRun(group, source);
+    if (cut === null) continue;
+    text += source.slice(last, group[0].pos) + cut;
+    last = group[group.length - 1].end;
+    count += 1;
+  }
+  text += source.slice(last);
+  return { text, changed: count > 0, count };
+}
+
 /**
  * Tracked and untracked source files git does not ignore, minus the content submodule.
  *
@@ -287,21 +485,28 @@ export function corpusFiles(inputs = []) {
     encoding: 'utf8',
     maxBuffer: 64 * 1024 * 1024,
   });
-  return out
-    .split('\0')
-    .filter((file) => file && SOURCE_EXTENSIONS.includes(extname(file)) && !file.startsWith('src/content/'));
+  return out.split('\0').filter((file) => {
+    const ext = extname(file);
+    const known = SOURCE_EXTENSIONS.includes(ext) || STYLE_EXTENSIONS.includes(ext);
+    return file && known && !file.startsWith('src/content/') && existsSync(file);
+  });
 }
 
 function main() {
   const args = process.argv.slice(2);
   const write = args.includes('--write');
   const quiet = args.includes('--quiet');
+  const only =
+    (args.includes('--styles') && STYLE_EXTENSIONS) ||
+    (args.includes('--code') && SOURCE_EXTENSIONS) ||
+    null;
   const inputs = args.filter((arg) => !arg.startsWith('--'));
-  const files = corpusFiles(inputs);
+  const files = corpusFiles(inputs).filter((file) => !only || only.includes(extname(file)));
   let blocks = 0;
   let changedFiles = 0;
   for (const file of files) {
-    const result = nukeSource(readFileSync(file, 'utf8'), file);
+    const nuke = STYLE_EXTENSIONS.includes(extname(file)) ? nukeStyleSource : nukeSource;
+    const result = nuke(readFileSync(file, 'utf8'), file);
     if (!result.changed) continue;
     blocks += result.count;
     changedFiles += 1;
@@ -309,7 +514,7 @@ function main() {
     if (write) writeFileSync(file, result.text);
   }
   const mode = write ? 'written' : 'to cut (dry run, pass --write)';
-  console.log(`${blocks} blocks in ${changedFiles} of ${files.length} files ${mode}`);
+  console.log(`${blocks} comments in ${changedFiles} of ${files.length} files ${mode}`);
 }
 
 if (process.argv[1] && basename(process.argv[1]) === basename(fileURLToPath(import.meta.url))) {

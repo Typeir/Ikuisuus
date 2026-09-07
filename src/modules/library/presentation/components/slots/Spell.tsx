@@ -20,6 +20,7 @@ import {
 } from '@/modules/library/domain/slots';
 import { useTranslations } from 'next-intl';
 import React, { type ReactNode } from 'react';
+import { CostMarkProvider } from './costMarkContext';
 import { inlineValue, readSlots, SlotRow } from './slotElements';
 import { capitalize, flagOf } from './text';
 import styles from './slots.module.scss';
@@ -28,6 +29,7 @@ import styles from './slots.module.scss';
  * Props for the spell card: one optional prop per header slot, plus the body.
  */
 export type SpellProps = SlotProps<SpellSlotName> & {
+  name?: string;
   children?: ReactNode;
 };
 
@@ -35,6 +37,7 @@ export type SpellProps = SlotProps<SpellSlotName> & {
  * Slots that print as rows, in display order.
  */
 const ROW_SLOTS: readonly SpellSlotName[] = [
+  'cost',
   'trigger',
   'range',
   'targets',
@@ -100,21 +103,30 @@ function briefLine(
  * Spell card component.
  *
  * @description The card heads with the spell's name, taken from the article's
- * own metadata so no page has to write it twice. What casting it costs stands
- * beside the name, since it is the fact a reader looks for first, and the
- * brief sits at the far edge of the same line. The cost is therefore not
- * repeated among the rows below.
+ * own metadata so no spell page has to write it twice — and only when the
+ * article is that spell, since a card spliced into an heirloom or a monster
+ * would otherwise wear its host's title. A card reused that way names itself
+ * with `name`. What casting it costs stands beside the name, since it is the
+ * fact a reader looks for first, and the brief sits at the far edge of the
+ * same line. The cost is therefore not repeated among the rows below.
  *
  * @param {SpellProps} props - Card props
  * @returns {JSX.Element} The spell section
  */
-const Spell: React.FC<SpellProps> = ({ children, ...slots }) => {
+const Spell: React.FC<SpellProps> = ({ name: given, children, ...slots }) => {
   const t = useTranslations('library.spell');
   const { metadata } = useArticleMetadata();
   const { values, kept } = readSlots(children, SPELL_SLOT_NAMES, slots);
   const brief = briefLine(values.level, values.rarity, values.ritual, t);
-  const rows = ROW_SLOTS.filter((name) => values[name] !== undefined);
-  const name = metadata?.title?.trim() ?? '';
+  const ownPage =
+    metadata?.contentType === 'spells' ? metadata?.title : undefined;
+  const name = (given ?? ownPage ?? '').trim();
+  /* The cost heads a named card, and falls back to a row on one with no head
+     to carry it, so it is never dropped. */
+  const rows = ROW_SLOTS.filter(
+    (slot) =>
+      values[slot] !== undefined && !(slot === 'cost' && name !== ''),
+  );
 
   return (
     <section className={styles.spellCard} data-spell>
@@ -152,7 +164,11 @@ const Spell: React.FC<SpellProps> = ({ children, ...slots }) => {
           ))}
         </p>
       )}
-      <div data-spell-body>{kept}</div>
+      <div data-spell-body>
+        <CostMarkProvider mark={markOf(undefined, values.cost)}>
+          {kept}
+        </CostMarkProvider>
+      </div>
     </section>
   );
 };

@@ -66,6 +66,8 @@ export const FEATURE_SLOTS = {
   charges: 'Charges',
   recharge: 'Recharge',
   deed: 'Deed',
+  accuracy: 'Accuracy',
+  saveDc: 'SaveDc',
   targets: 'Targets',
 } as const;
 

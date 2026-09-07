@@ -35,8 +35,8 @@ const Scaling: React.FC<ScalingProps> = ({ children }) => {
 
   return (
     <section className={styles.tail} data-scaling>
-      <p className={styles.overcastLabel} data-slot-label>
-        {t('slots.progression')}
+      <p className={styles.overcastLabel} data-scaling-label>
+        {t('scaling.heading')}
       </p>
       {children}
     </section>

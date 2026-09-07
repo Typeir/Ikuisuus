@@ -44,28 +44,55 @@ describe('PATTERNS', () => {
 
 describe('the D&D inheritance', () => {
   it.each([
-    ['legacy-save', 'Every creature must succeed on a DC 15 Dexterity saving throw or fall.'],
-    ['legacy-save', 'All creatures in the line must make a Dexterity saving throw'],
-    ['repeat-save', 'It can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.'],
+    [
+      'legacy-save',
+      'Every creature must succeed on a DC 15 Dexterity saving throw or fall.',
+    ],
+    [
+      'legacy-save',
+      'All creatures in the line must make a Dexterity saving throw',
+    ],
+    [
+      'repeat-save',
+      'It can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.',
+    ],
     ['bare-dc-save', 'a DC 13 Constitution saving throw'],
-    ['attack-block', '_Melee Weapon Attack:_ +6 to hit, reach 5 ft., one target.'],
+    [
+      'attack-block',
+      '_Melee Weapon Attack:_ +6 to hit, reach 5 ft., one target.',
+    ],
     ['to-hit', 'a Black Quill Strike (+13 to hit) dealing damage'],
     ['hit-line', '_Hit:_ 6 ([% 1d6 +2 %]) bludgeoning damage.'],
     ['one-target', 'reach [= 1 stride =], one target.'],
     ['spellcaster-level', 'Rubedo is a **17th-level spellcaster**.'],
-    ['spellcasting-ability', 'Its spellcasting ability is Wisdom (spell save DC 26, +18 to hit with spell attacks).'],
+    [
+      'spellcasting-ability',
+      'Its spellcasting ability is Wisdom (spell save DC 26, +18 to hit with spell attacks).',
+    ],
     ['no-components', 'It does not require material components.'],
     ['spells-prepared', 'It has the following spells prepared:'],
     ['slot-notation', '**1st level (4 slots)**:'],
     ['slot-notation', '**2nd level (1/day each)**:'],
     ['upcast', '[_Flame Strike_](/spells/flame-strike) (upcast)'],
-    ['magic-resistance', 'Yskeia has advantage on saving throws against spells and other magical effects.'],
+    [
+      'magic-resistance',
+      'Yskeia has advantage on saving throws against spells and other magical effects.',
+    ],
     ['magic-weapons', "The construct's weapon attacks are magical."],
-    ['siege-monster', 'Yskeia deals quadruple damage to objects and structures.'],
+    [
+      'siege-monster',
+      'Yskeia deals quadruple damage to objects and structures.',
+    ],
     ['no-action-required', 'you may invoke it (no action required)'],
     ['per-day', 'Reprise of the First (1/Day)'],
-    ['end-of-next-turn', 'the target is stunned until the end of its next turn.'],
-    ['end-of-next-turn', 'they become Hopeless until the end of their next turn.'],
+    [
+      'end-of-next-turn',
+      'the target is stunned until the end of its next turn.',
+    ],
+    [
+      'end-of-next-turn',
+      'they become Hopeless until the end of their next turn.',
+    ],
     ['bonus-action', 'As a Bonus Action, you may eat one.'],
     ['magic-action', 'take the Magic action to become Invisible'],
     ['magic-action', 'take the **Magic** action to become Invisible'],
@@ -79,14 +106,29 @@ describe('the D&D inheritance', () => {
 
 describe('the register is not stale', () => {
   it.each([
-    ['a keyworded condition', 'or become [# kw:condition:poisoned #] until cured'],
-    ['the migrated save', 'Targets save Dexterity against DC 16, halving [% 8d6 fire %].'],
-    ['the migrated attack', 'Accuracy +6, reach [= 1 stride =], one creature. On a hit, 6 ([% 1d6 +2 %]).'],
+    [
+      'a keyworded condition',
+      'or become [# kw:condition:poisoned #] until cured',
+    ],
+    [
+      'the migrated save',
+      'Targets save Dexterity against DC 16, halving [% 8d6 fire %].',
+    ],
+    [
+      'the migrated attack',
+      'Accuracy +6, reach [= 1 stride =], one creature. On a hit, 6 ([% 1d6 +2 %]).',
+    ],
     ['briefly', 'the target is [# kw:condition:stunned #] [# kw:briefly #].'],
-    ['a resist', 'The target may [# kw:resist #] at the end of each of its turns.'],
+    [
+      'a resist',
+      'The target may [# kw:resist #] at the end of each of its turns.',
+    ],
     ['a stride', 'Darkvision [= 12 stride =]'],
     ['a recharge', 'charges="1/[# kw:Repose #]"'],
-    ['Major Action', 'As a Major Action, you release a line of scorching wind.'],
+    [
+      'Major Action',
+      'As a Major Action, you release a line of scorching wind.',
+    ],
   ])('%s produces no legacy hit', (_label, line) => {
     const legacy = scanText('probe.mdx', line).filter(
       (hit) => PATTERNS.find((p) => p.id === hit.id)?.severity === 'legacy',
@@ -101,12 +143,12 @@ describe('review versus legacy', () => {
     const sufferer = PATTERNS.find((p) => p.id === 'end-of-next-turn');
     expect(wielder?.severity).toBe('review');
     expect(sufferer?.severity).toBe('legacy');
-    expect(idsFor('you cannot fire it again until the end of your next turn.')).toEqual([
-      'end-of-your-next-turn',
-    ]);
-    expect(idsFor('its AC is reduced until the end of its next turn.')).toEqual([
-      'end-of-next-turn',
-    ]);
+    expect(
+      idsFor('you cannot fire it again until your next turn ends.'),
+    ).toEqual(['end-of-your-next-turn']);
+    expect(idsFor('its AC is reduced until the end of its next turn.')).toEqual(
+      ['end-of-next-turn'],
+    );
   });
 
   it('marks next dawn and immune-until for review, since both can be real durations', () => {
@@ -125,12 +167,18 @@ describe('review versus legacy', () => {
   });
 
   it('keeps the unambiguous condition words legacy', () => {
-    expect(idsFor('or become poisoned until cured')).toEqual(['bare-condition']);
-    expect(idsFor('the target is paralyzed for 1 minute')).toEqual(['bare-condition']);
+    expect(idsFor('or become poisoned until cured')).toEqual([
+      'bare-condition',
+    ]);
+    expect(idsFor('the target is paralyzed for 1 minute')).toEqual([
+      'bare-condition',
+    ]);
   });
 
   it("does not mistake the register's own `one creature` for a D&D attack line", () => {
-    expect(idsFor('Accuracy +6, reach [= 1 stride =], one creature.')).toEqual([]);
+    expect(idsFor('Accuracy +6, reach [= 1 stride =], one creature.')).toEqual(
+      [],
+    );
     expect(idsFor('reach [= 1 stride =], one target.')).toEqual(['one-target']);
   });
 });
@@ -155,7 +203,10 @@ describe('scanText', () => {
   });
 
   it('keeps an excerpt around the match with whitespace collapsed', () => {
-    const [hit] = scanText('x.mdx', 'lead   text   must make a Wisdom saving throw   tail');
+    const [hit] = scanText(
+      'x.mdx',
+      'lead   text   must make a Wisdom saving throw   tail',
+    );
     expect(hit.excerpt).toBe('lead text must make a Wisdom saving throw tail');
   });
 });

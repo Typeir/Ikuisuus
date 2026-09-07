@@ -34,6 +34,8 @@ describe('Spell', () => {
       </Spell>,
     );
     expect(briefText('data-spell-brief')).toMatch(/^3rd-level (?:spell|kind)$/);
+    /* No article names this card, so the cost has no head to sit in and
+       stays a row. */
     expect(printed()).toEqual([
       'cost',
       'range',
@@ -59,6 +61,20 @@ describe('Spell', () => {
       />,
     );
     expect(printed()).toEqual(['cost', 'trigger']);
+  });
+
+  it('lifts the cost into the head of a named card, leaving the rows to the rest', () => {
+    const { container } = render(
+      <ArticleMetadataProvider
+        metadata={{ title: 'Locate', contentType: 'spells' }}>
+        <Spell level='2' cost='1 Major Action' duration='10 minutes' />
+      </ArticleMetadataProvider>,
+    );
+    expect(
+      container.querySelector('h2[data-spell-name] [data-spell-cost]')
+        ?.textContent,
+    ).toContain('1 Major Action');
+    expect(printed()).toEqual(['duration']);
   });
 
   it('reads the element form as well as attributes', () => {
@@ -119,7 +135,8 @@ describe('Spell', () => {
 
   it('heads the card with the article name, the brief beside it', () => {
     const { container } = render(
-      <ArticleMetadataProvider metadata={{ title: "Anaximander's Gift" }}>
+      <ArticleMetadataProvider
+        metadata={{ title: "Anaximander's Gift", contentType: 'spells' }}>
         <Spell level='9' rarity='rare'>
           <p>Prose.</p>
         </Spell>
@@ -143,5 +160,35 @@ describe('Spell', () => {
     );
     expect(container.querySelector('h2[data-spell-name]')).toBeNull();
     expect(briefText('data-spell-brief')).toMatch(/^9th-level (?:spell|kind)$/);
+  });
+
+  it('never wears the title of a page that is not the spell', () => {
+    const { container } = render(
+      <ArticleMetadataProvider
+        metadata={{
+          title: 'Alfanjón of the Crescent Moon',
+          contentType: 'heirlooms',
+        }}>
+        <Spell level='0' />
+      </ArticleMetadataProvider>,
+    );
+    expect(container.querySelector('h2[data-spell-name]')).toBeNull();
+    expect(container.textContent).not.toContain('Alfanjón');
+  });
+
+  it('names itself where it is spliced into another page', () => {
+    const { container } = render(
+      <ArticleMetadataProvider
+        metadata={{
+          title: 'Alfanjón of the Crescent Moon',
+          contentType: 'heirlooms',
+        }}>
+        <Spell name='Lesser Mooncleave' level='0' cost='1 Major Action' />
+      </ArticleMetadataProvider>,
+    );
+    expect(
+      container.querySelector('h2[data-spell-name] [data-heading-title]')
+        ?.textContent,
+    ).toBe('Lesser Mooncleave');
   });
 });

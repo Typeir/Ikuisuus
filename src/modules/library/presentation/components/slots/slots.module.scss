@@ -15,22 +15,27 @@
  */
 
 /* The spell card, which a v1 spell wrote as a blockquote and which keeps that
-   card's face: accent rule down the left, surface fading out to the right. */
+   card's face. */
 .spellCard {
-  isolation: isolate;
-  border-left: 4px solid var(--color-accent);
-  padding-left: 1rem;
-  padding-right: 1.5rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.5rem;
-  margin: 1.5rem 0;
-  background-color: var(--color-surface);
-  background: linear-gradient(
-    90deg,
-    var(--color-surface) 0%,
-    var(--color-surface) 85%,
-    var(--color-transparent) 97%
-  );
+  @include mdx-card-face;
+  margin: 0.25rem 0;
+}
+
+/* An item's numbers, carded like a spell but with no name to head them. Held
+   to half the measure so a floated image keeps its side of the page, and given
+   its own formatting context so it takes the space left beside that image
+   rather than sliding under it. Below desktop the page is one column and the
+   card takes the whole measure back. Doubled selector because the prose scale
+   addresses this element by tag and would otherwise outrank a bare class. */
+.attributesCard.attributesCard {
+  @include mdx-card-face;
+  display: flow-root;
+  max-width: 50%;
+  margin: 0.25rem 0 1rem;
+
+  @include desktop {
+    max-width: none;
+  }
 }
 
 /* The card's head: its glyph and name, what casting it costs beside them, and
@@ -47,50 +52,22 @@
   margin-top: 0;
   padding-top: 0;
 
-  /* Lit the way a rollable number is lit, since it is the first thing a reader
-     looks for, and a shade under it since it is not one. */
-  .cost {
-    font-weight: 600;
-    color: var(--color-actionable);
-    filter: drop-shadow(0 0 1px var(--color-actionable));
-
-    &::before {
-      content: '—';
-      margin-right: 0.35rem;
-    }
-  }
-
   .tag {
     margin-left: auto;
   }
 }
 
-/* A slot run closes with the rule a heading draws, in the border colour: it
-   divides what it qualifies from what follows rather than naming anything, so
-   it does not take the heading's own ink the way a heading's rule does. The
-   card's stat block and a feature's own slot lines both read this way, and
-   both sit closer to the prose under them than a paragraph would. */
-.spellCard [data-slot-grid] {
-  @include mdx-heading-rule(0.4rem);
-  margin-bottom: 0.4em;
-
-  &::after {
-    color: var(--color-border-secondary);
-  }
-}
-
-/* The prose under a slot run opens at the run's own margin. The body wrapper
-   carries no edge of its own, so its first paragraph's top margin collapses
-   through it and against the run, and the larger of the two would win. */
-.spellCard [data-slot-grid] + * > :first-child {
-  margin-top: 0;
+/* The card's stat block and each feature's own slot lines, both closing with
+   the same rule an heirloom's do. */
+.spellCard {
+  @include mdx-slot-run;
 }
 
 /* The block that closes a card by saying how the spell grows. Its header
    carries the rule, as a feature's does, so the block needs only the gap that
    sets it off from the prose above. */
 .spellCard .tail {
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
 }
 
 /* A run that carries no mechanics: colour, illustration, restatement. It takes
@@ -104,7 +81,7 @@
 /* A set of blocks that exclude one another. The lead line says so; the group
    carries no ornament of its own. */
 .choice {
-  margin-block: 1rem;
+  margin-block: 0.5rem;
 }
 
 /* A block sits one level inside whatever holds it, and takes the nested card's
@@ -196,10 +173,20 @@
 }
 
 /* Feature cost: the way boons print BP. */
+/* What using a block costs, beside the name it belongs to. Lit the way a
+   rollable number is lit, since it is the first thing a reader looks for, and
+   a shade under it since it is not one. */
 .cost {
-  font-weight: 400;
+  font-weight: 600;
   font-size: 0.8em;
-  color: var(--color-accent);
+  color: var(--color-actionable);
+  filter: drop-shadow(0 0 1px var(--color-actionable));
+  white-space: nowrap;
+
+  &::before {
+    content: '—';
+    margin-right: 0.35rem;
+  }
 }
 
 /* Stat-block table: the defence row and the ability row a monster sheet opens

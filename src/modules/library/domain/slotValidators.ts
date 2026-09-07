@@ -40,6 +40,21 @@ const BONUS = /^[+-]\d+$/;
 /** A signed bonus, optionally followed by the note a sheet prints beside it, such as `+27 (Wisdom-based)`. */
 const BONUS_WITH_NOTE = /^[+-]\d+(?: \([^()]+\))?$/;
 
+/**
+ * What a block contests with: a sheet's own number, or the terms a page adds
+ * up, such as `your level + your tier bonus`. It is the bonus alone — a save
+ * against it is 10 plus this, and an attack rolls d20 plus this — so a value
+ * that opens with the 10 is stating the DC, not the accuracy.
+ */
+const CONTEST = /^(?:[+-]\d+(?: \([^()]+\))?|[A-Za-z][^+]*(?: \+ [^+]+)*)$/;
+
+/**
+ * What a block's save is taken against: the number a creature sheet prints, or
+ * the sum a page works out. A sheet states the number it rolled against; a
+ * feature whose accuracy varies with the reader states how it is reached.
+ */
+const SAVE_DC = /^(?:\d{1,2}|\d{1,2} (?:plus|\+) .+)$/;
+
 /** A spell level: zero through twelve, or the word cantrip. */
 const SPELL_LEVEL = /^(?:cantrip|\d|1[0-2])$/i;
 
@@ -59,9 +74,15 @@ export const SLOT_RULES: Readonly<Partial<Record<SlotName, SlotRule>>> = {
   },
   xp: { pattern: GROUPED_COUNT, expects: 'a whole number of XP, such as 10000' },
   tierBonus: { pattern: BONUS, expects: 'a signed bonus, such as +4' },
+  saveDc: {
+    pattern: SAVE_DC,
+    expects:
+      'the number a sheet prints, such as 18, or the sum a page works out, such as 10 plus your accuracy',
+  },
   accuracy: {
-    pattern: BONUS_WITH_NOTE,
-    expects: 'a signed bonus, such as +7, with a parenthetical note after it if the attack needs one',
+    pattern: CONTEST,
+    expects:
+      'a signed bonus, such as +7, or the terms it adds up, such as your level + your tier bonus — the bonus alone, since a save against it is 10 plus this',
   },
   hitPoints: {
     pattern: HIT_POINTS,
@@ -87,6 +108,13 @@ export const HOST_SLOT_RULES: Readonly<
     saveDc: {
       pattern: COUNT,
       expects: 'a fixed DC, digits only — a DC that is a formula stays in the prose',
+    },
+  },
+  Attack: {
+    accuracy: {
+      pattern: BONUS_WITH_NOTE,
+      expects:
+        'a signed bonus, such as +7, with a parenthetical note after it if the attack needs one — a sheet prints the number, not how it was reached',
     },
   },
 };

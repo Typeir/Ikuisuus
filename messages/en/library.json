@@ -29,7 +29,6 @@
     "components": "Components",
     "duration": "Duration",
     "overcast": "Overcast",
-    "progression": "Progression",
     "category": "Category",
     "properties": "Properties",
     "price": "Price",
@@ -125,6 +124,9 @@
     "heading": "Spell Lists",
     "lead": "This spell appears on the following spell lists:",
     "name": "{name} Spell List"
+  },
+  "scaling": {
+    "heading": "Progression"
   },
   "monster": {
     "size": "Medium",

@@ -111,7 +111,7 @@
 
     th,
     td {
-      border: 1px solid var(--color-bg);
+      border: var(--border-width-xs) solid var(--color-border);
       padding: 0.75rem;
       text-align: left;
     }
@@ -126,11 +126,6 @@
       opacity: 1;
       border-left-color: var(--color-emphasis);
       background: var(--color-bg);
-
-      th,
-      td {
-        border-color: var(--color-surface);
-      }
 
       th {
         background-color: var(--color-surface);
@@ -182,9 +177,12 @@
     margin-bottom: 1.5rem;
   }
 
+  /* The rule is drawn in the border colour, not in either ground: a header
+     cell is filled with the surface and a body cell shows the page through,
+     so a rule matching either one vanishes against half the table. */
   th,
   td {
-    border: 1px solid var(--color-surface);
+    border: var(--border-width-xs) solid var(--color-border);
     padding: 0.75rem;
     text-align: left;
   }
@@ -205,71 +203,7 @@
   padding-bottom: 5rem;
   overflow-y: clip;
 
-  /* A card is its own ornament boundary: the knotwork clasps and stream rails
-     of the sections inside it stop at the card's edge. A spell card joins the
-     v1 blockquote here, and keeps its heading rules, which are not ornament. */
-  details,
-  blockquote,
-  [data-spell] {
-    section[data-heading-level] {
-      &::before,
-      &::after,
-      li::before,
-      li::after {
-        content: none !important;
-        display: none !important;
-      }
-
-      [data-stream-rail] {
-        display: none !important;
-      }
-    }
-  }
-
-  /* A details or a blockquote takes no decoration at all from its contents. */
-  details,
-  blockquote {
-    section[data-heading-level] *::before,
-    section[data-heading-level] *::after {
-      content: none !important;
-      display: none !important;
-    }
-  }
-
-  /* The clasps the surrounding section would draw on the card itself. */
-  [data-spell]::before,
-  [data-spell]::after {
-    content: none !important;
-    display: none !important;
-  }
-
-  /* A section carries the room its frame needs. Inside a card there is no
-     frame, so the room goes back to the prose and the blocks sit a paragraph
-     apart rather than a section apart. */
-  [data-spell] section[data-heading-level] {
-    padding-bottom: 0;
-    margin-bottom: 0;
-  }
-
-  [data-spell]
-    section[data-heading-level]:has(> ul, > ol)
-    + section[data-heading-level] {
-    margin-top: 0;
-  }
-
-  /* A block that says it takes no ornament keeps the section around it bare:
-     a folding block draws its own summary bar, and the frame would sit in its
-     top-left corner on every boon of every bloodline. */
-  section[data-heading-level]:has(> article[data-ornament='none'])::before,
-  section[data-heading-level]:has(> article[data-ornament='none'])::after {
-    content: none !important;
-    display: none !important;
-  }
-
-  section[data-heading-level]:has(> article[data-ornament='none'])
-    > [data-stream-rail] {
-    display: none !important;
-  }
+  @include mdx-card-boundaries;
 
   section[data-heading-level] {
     position: relative;
@@ -374,6 +308,7 @@
 
   [data-heirloom] {
     @include mdx-slot-card;
+    @include mdx-slot-run;
   }
 
   /* A spell's blocks wear the same cost glyphs an heirloom's blocks wear,
