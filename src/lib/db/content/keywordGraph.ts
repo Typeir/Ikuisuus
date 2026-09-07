@@ -138,9 +138,7 @@ async function buildKeywordGraph(
  * @returns {Promise<KeywordGraph>} The cached graph
  *
  * @description
- * Concurrent callers share one build. A page resolves every keyword it writes
- * in parallel, and the freshness check before the cache lookup yields, so
- * without this each reference would start its own full scan of the locale.
+ * Concurrent callers share one build.
  */
 export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
   await ensureCachesFresh();

@@ -76,7 +76,7 @@ const Overcast: React.FC<{ at?: string; children?: ReactNode }> = ({
   }
 
   return (
-    <section data-overcast data-overcast-at={at}>
+    <section className={styles.tail} data-overcast data-overcast-at={at}>
       <p className={styles.overcastLabel} data-slot-label>
         {label}
       </p>

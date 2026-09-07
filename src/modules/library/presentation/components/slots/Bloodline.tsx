@@ -2,9 +2,7 @@
  * @fileoverview Bloodline card.
  * @description Prints the two Core Features rows as tables, the way a monster
  * prints its defences and its ability scores, then the boon budget, then the
- * page's own content. The row values arrive as child elements rather than
- * attributes, because a cell carries `<Tooltip>` blocks that a quoted
- * attribute would flatten into literal text.
+ * page's own content.
  *
  * @module modules/library/presentation/components/slots/Bloodline
  * @version 0.2.0

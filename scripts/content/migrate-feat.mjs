@@ -1,7 +1,5 @@
 /**
- * @fileoverview Moves a v1 feat onto the `<Feat>` form. A title written
- * `# Epic Boon: Name` fills `category="epic boon"` and becomes `# Name`, since
- * the card prints the category itself.
+ * @fileoverview Moves a v1 feat onto the `<Feat>` form.
  */
 
 import { basename } from 'node:path';

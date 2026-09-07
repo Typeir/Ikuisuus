@@ -35,9 +35,7 @@ import { useShardSource } from './useShardSource';
  *
  * @description
  * Half the length of the `recovery` shard, which sits near the long end of the
- * corpus. Below this a definition is a line or two and a narrow column reads
- * cleanly; above it the narrow column runs long enough that the card becomes a
- * ribbon of text.
+ * corpus.
  */
 const WIDE_SHARD_CHARS = 668;
 

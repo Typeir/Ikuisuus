@@ -21,6 +21,7 @@
   border-left: 4px solid var(--color-accent);
   padding-left: 1rem;
   padding-right: 1.5rem;
+  padding-top: 0.75rem;
   padding-bottom: 0.5rem;
   margin: 1.5rem 0;
   background-color: var(--color-surface);
@@ -32,14 +33,86 @@
   );
 }
 
+/* The card's head: its glyph and name, what casting it costs beside them, and
+   what kind of spell it is at the far edge of the same line. It heads the card,
+   so it does not also take a heading's top gap — and it is written against the
+   card, since a bare class loses to the prose scale's own `h2`. */
+.spellCard .spellHead {
+  @include mdx-heading-rule;
+  @include mdx-mark-glyphs-self;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  margin-top: 0;
+  padding-top: 0;
+
+  /* Lit the way a rollable number is lit, since it is the first thing a reader
+     looks for, and a shade under it since it is not one. */
+  .cost {
+    font-weight: 600;
+    color: var(--color-actionable);
+    filter: drop-shadow(0 0 1px var(--color-actionable));
+
+    &::before {
+      content: '—';
+      margin-right: 0.35rem;
+    }
+  }
+
+  .tag {
+    margin-left: auto;
+  }
+}
+
+/* A slot run closes with the rule a heading draws, in the border colour: it
+   divides what it qualifies from what follows rather than naming anything, so
+   it does not take the heading's own ink the way a heading's rule does. The
+   card's stat block and a feature's own slot lines both read this way, and
+   both sit closer to the prose under them than a paragraph would. */
+.spellCard [data-slot-grid] {
+  @include mdx-heading-rule(0.4rem);
+  margin-bottom: 0.4em;
+
+  &::after {
+    color: var(--color-border-secondary);
+  }
+}
+
+/* The prose under a slot run opens at the run's own margin. The body wrapper
+   carries no edge of its own, so its first paragraph's top margin collapses
+   through it and against the run, and the larger of the two would win. */
+.spellCard [data-slot-grid] + * > :first-child {
+  margin-top: 0;
+}
+
+/* The block that closes a card by saying how the spell grows. Its header
+   carries the rule, as a feature's does, so the block needs only the gap that
+   sets it off from the prose above. */
+.spellCard .tail {
+  margin-top: 1.5rem;
+}
+
+/* A run that carries no mechanics: colour, illustration, restatement. It takes
+   the same face a slot line takes, so a reader scanning for rules reads past
+   it. */
+.lore {
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
 /* A set of blocks that exclude one another. The lead line says so; the group
    carries no ornament of its own. */
 .choice {
   margin-block: 1rem;
 }
 
-/* A block inside a block is a stage of the one around it, and takes the nested
-   card's face so the reader sees where it belongs. */
+/* A block sits one level inside whatever holds it, and takes the nested card's
+   face so the reader sees where it belongs. In a spell card that separates the
+   named effects from the card's own sections, whose headers otherwise read the
+   same; a block inside a block indents again, and reads as a stage of the one
+   around it. */
+.spellCard .block,
 .block .block {
   margin-left: 1.5rem;
   padding-left: 1rem;
@@ -54,11 +127,21 @@
   color: var(--color-emphasis);
 }
 
-/* One slot row: its own line inside the slot-run paragraph. */
+/* One slot row: its own line inside the slot-run paragraph. A slot states a
+   condition on the prose beside it rather than prose of its own, so it sits
+   back from the body in the italic face, at the h6 size, in the secondary
+   text colour. The value takes the heading face; the label keeps the face and
+   the emphasis colour it declares for itself. */
 .row {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
+  font-family: var(--font-headings), var(--font-default);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
 }
 
 /* Slot label: the site's bold face, emphasis colour, and colon separator. */
@@ -150,16 +233,15 @@
   }
 }
 
-/* Overcast written as a block: the label sits above its own content, taking
-   the same weight and colour a slot row's label takes. */
+/* The header of a tail block. It names a block of rules the way a feature
+   heading names one, so it takes the feature heading's face and rule rather
+   than a slot label's. */
 .overcastLabel {
-  margin: 1rem 0 0.35rem;
-  font-weight: 700;
-  font-family: var(--font-default);
-  font-synthesis-weight: none;
-  color: var(--color-emphasis);
-
-  &::after {
-    content: ':';
-  }
+  @include mdx-heading-rule;
+  display: block;
+  margin: 0 0 0.75rem;
+  font-family: var(--font-headings), var(--font-default);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color-accent);
 }

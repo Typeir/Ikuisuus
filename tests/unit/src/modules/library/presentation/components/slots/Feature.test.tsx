@@ -208,4 +208,31 @@ describe('Attack', () => {
     expect(container.querySelector('article')).not.toHaveAttribute('data-collapsible');
     expect(container.querySelector('h6 [data-heading-title]')?.textContent).toBe('Extended Reach');
   });
+
+  it('waives the section ornament when it folds, since it draws its own bar', () => {
+    const { container } = render(
+      <Feature collapsible>
+        <h6>Extended Reach</h6>
+      </Feature>,
+    );
+    expect(container.querySelector('article')).toHaveAttribute('data-ornament', 'none');
+  });
+
+  it('keeps the ornament on a block that does not fold', () => {
+    const { container } = render(
+      <Feature>
+        <h6>Extended Reach</h6>
+      </Feature>,
+    );
+    expect(container.querySelector('article')).not.toHaveAttribute('data-ornament');
+  });
+
+  it('takes the ornament back when the block asks for it', () => {
+    const { container } = render(
+      <Feature collapsible ornament>
+        <h6>Extended Reach</h6>
+      </Feature>,
+    );
+    expect(container.querySelector('article')).not.toHaveAttribute('data-ornament');
+  });
 });

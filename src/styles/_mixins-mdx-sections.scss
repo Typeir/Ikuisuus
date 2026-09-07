@@ -418,32 +418,73 @@
   }
 
   article[data-kind] {
+    @include mdx-mark-glyphs;
+
     > :is(h1, h2, h3, h4, h5, h6) {
       margin-top: 0.25rem;
       margin-bottom: 0.25rem;
-
-      &::before {
-        content: '◇ ';
-      }
-    }
-
-    &[data-mark='minor'] > :is(h1, h2, h3, h4, h5, h6)::before {
-      content: '⬖ ';
-    }
-
-    &[data-mark='major'] > :is(h1, h2, h3, h4, h5, h6)::before {
-      content: '◆ ';
-    }
-
-    /* A deed is spent from a pool the whole encounter shares, so it is marked
-       apart from the action costs rather than among them. */
-    &[data-mark='deed'] > :is(h1, h2, h3, h4, h5, h6)::before {
-      content: '◈ ';
     }
 
     > p[data-slot-grid] {
       margin-block: 0 0.75em;
     }
+  }
+}
+
+/* The glyphs a block wears to say what using it costs. A deed is spent from a
+   pool the whole encounter shares, so it is marked apart from the action costs
+   rather than among them. */
+$mdx-mark-glyph-other: '◇ ';
+$mdx-mark-glyph-minor: '⬖ ';
+$mdx-mark-glyph-major: '◆ ';
+$mdx-mark-glyph-deed: '◈ ';
+
+/**
+ * Mixin: mdx-mark-glyphs
+ *
+ * The cost glyph, drawn rather than typed so a block's heading stays its name
+ * and the mark cannot drift from the cost beside it. Include on the element
+ * carrying `data-mark`; the glyph prints on its heading child.
+ */
+@mixin mdx-mark-glyphs {
+  > :is(h1, h2, h3, h4, h5, h6)::before {
+    content: $mdx-mark-glyph-other;
+  }
+
+  &[data-mark='minor'] > :is(h1, h2, h3, h4, h5, h6)::before {
+    content: $mdx-mark-glyph-minor;
+  }
+
+  &[data-mark='major'] > :is(h1, h2, h3, h4, h5, h6)::before {
+    content: $mdx-mark-glyph-major;
+  }
+
+  &[data-mark='deed'] > :is(h1, h2, h3, h4, h5, h6)::before {
+    content: $mdx-mark-glyph-deed;
+  }
+}
+
+/**
+ * Mixin: mdx-mark-glyphs-self
+ *
+ * The same glyph where the heading itself carries the mark, as a card's own
+ * head does rather than a block nested inside one.
+ */
+@mixin mdx-mark-glyphs-self {
+  &::before {
+    content: $mdx-mark-glyph-other;
+  }
+
+  &[data-mark='minor']::before {
+    content: $mdx-mark-glyph-minor;
+  }
+
+  &[data-mark='major']::before {
+    content: $mdx-mark-glyph-major;
+  }
+
+  &[data-mark='deed']::before {
+    content: $mdx-mark-glyph-deed;
   }
 }
 

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Presentational table: columns and rows in, a scrollable
- * `<table>` out. It carries no look of its own; the context or a class
- * passed in styles it.
+ * `<table>` out.
  * @module lib/components/ui/dataTable/dataTable
  * @version 0.2.0
  * @author Typeir

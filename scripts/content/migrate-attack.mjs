@@ -3,7 +3,7 @@
  * @description Inside an `<Action>`, a bullet list whose items carry an
  * accuracy line becomes one fifth-level block per item, attacks wrapped in
  * `<Attack>`; an action whose body opens with an accuracy line wraps that
- * body. The hit prose is untouched.
+ * body.
  */
 
 import { basename } from 'node:path';

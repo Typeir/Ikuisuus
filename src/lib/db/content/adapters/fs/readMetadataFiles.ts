@@ -40,8 +40,7 @@ const READ_CONCURRENCY = 32;
  * Reads in batches rather than one `Promise.all` over the tree: an empty
  * `subdir` covers every sidecar in the locale, and opening them all at once
  * exhausts the process descriptor table, which fails unrelated reads elsewhere
- * in the server. A file that cannot be read or parsed is skipped so one bad
- * sidecar costs its own record rather than the whole call.
+ * in the server.
  */
 export const readMetadataFiles = async <T>(
   locale: string,

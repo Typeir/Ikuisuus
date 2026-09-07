@@ -105,10 +105,7 @@ export interface SlotEntry {
  * Splits the parent's own slot elements (the element form) out of a node list.
  *
  * @description Takes them as a paragraph made only of them, which is what MDX
- * builds from a run of inline elements. With `standalone`, it also takes an
- * element that stands on its own, which is what MDX builds from a run of lines
- * that each begin with a tag. That is off by default, because a slot element
- * standing alone can be a block in its own right, as an overcast tier is.
+ * builds from a run of inline elements.
  *
  * @param {ReactNode[]} nodes - Cleaned child nodes
  * @param {readonly SlotName[]} names - Slot names the parent accepts

@@ -17,7 +17,7 @@ import styles from './Collapsible.module.scss';
  * Props for the Collapsible component.
  *
  * @property {boolean} [open] - Whether the block starts expanded
- * @property {ReactNode} [summary] - What the closed block shows. Given, it is used as written and every child is body; omitted, the first heading among the children becomes the summary and leaves the body
+ * @property {ReactNode} [summary] - What the closed block shows.
  * @property {string} [anchor] - Anchor for the summary, for a caller that already worked one out from its own heading
  * @property {ReactNode} [children] - The collapsible content
  */

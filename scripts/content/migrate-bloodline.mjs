@@ -2,9 +2,7 @@
  * @fileoverview Lifts a v1 bloodline page into its slot form.
  * @description Wraps the page in `<Bloodline>` carrying the boon budget, wraps
  * each `###` core feature in `<Feature>`, and turns every boon's
- * `<Collapsible>` into `<Feature collapsible>`. The two Core Features tables
- * are left exactly as written: their cells carry `<Tooltip>` blocks, which a
- * quoted attribute would flatten into literal text.
+ * `<Collapsible>` into `<Feature collapsible>`.
  */
 
 import { basename } from 'node:path';
@@ -67,8 +65,7 @@ export function listItems(cell) {
  * The lines one Core Features cell becomes.
  *
  * @description A cell holding a list becomes an idiomatic markdown list, since
- * the raw `<ul>` was only ever there because a table cell cannot hold one. A
- * single item needs no list at all.
+ * the raw `<ul>` was only ever there because a table cell cannot hold one.
  *
  * @param {string} element - Slot element name
  * @param {string} cell - Cell as written
@@ -85,9 +82,7 @@ export function cellLines(element, cell) {
  * Lifts the Core Features tables into slot elements.
  *
  * @description Each column becomes one element holding the cell exactly as
- * written, `<Tooltip>` blocks and all, which an attribute could not carry. Only
- * the tables inside the Core Features section are lifted, so a page that
- * tabulates its beast forms further down keeps those tables.
+ * written, `<Tooltip>` blocks and all, which an attribute could not carry.
  *
  * @param {string[]} lines - Page lines
  * @param {string[]} notes - Notes to append to
@@ -216,8 +211,7 @@ export function relistCells(lines, notes) {
  * Wraps the Boons section in a `<Boons>` block.
  *
  * @description The budget sentence goes with it: every bloodline grants the
- * same points, so the component states them and the page says nothing. A page
- * that departs from the default keeps its number as `points`.
+ * same points, so the component states them and the page says nothing.
  *
  * @param {string[]} lines - Page lines
  * @param {string[]} notes - Notes to append to

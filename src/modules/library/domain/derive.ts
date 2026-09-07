@@ -171,7 +171,6 @@ export function challengeFor(xp: string | number): number | null {
 
 /**
  * The XP band of a rating: from its own XP up to one below the next rating's.
- * The last rating has no upper bound.
  *
  * @param {string | number} challenge - Challenge rating
  * @returns {readonly [number, number | null] | null} Low and high XP, or null for an unknown rating

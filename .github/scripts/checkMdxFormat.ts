@@ -129,10 +129,7 @@ const ATTRIBUTE = /([A-Za-z]\w*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
  * Every slot attribute whose value does not have the shape its card reads.
  *
  * @description Reports the shape a value was written in against the shape the
- * card parses, so a value the card cannot read is visible to the author. This
- * is a measurement of form, not a judgement of the number: it never decides
- * that an authored value is too large, too small, or wrong for its creature.
- * The rule that carries it reports at info severity for that reason.
+ * card parses, so a value the card cannot read is visible to the author.
  *
  * @param {string} content - MDX file content
  * @returns {string | false} The notes joined, or false when every value parses
@@ -157,10 +154,7 @@ export function slotValueFailures(content: string): string | false {
  * Every monster whose written XP sits in a different rating's XP band.
  *
  * @description States where a written XP value falls on the band table beside
- * the rating the block declares. Both numbers are the author's; the balance
- * they express is the author's call, so this reports the two side by side and
- * draws no conclusion about which is correct. It is carried at info severity
- * and never fails a build.
+ * the rating the block declares.
  *
  * @param {string} content - MDX file content
  * @returns {string | false} The notes joined, or false when none differ

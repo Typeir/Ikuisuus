@@ -10,6 +10,8 @@
 
 'use client';
 
+import { useArticleMetadata } from '@/modules/library/application/context/ArticleMetadataContext';
+import { markOf } from '@/modules/library/domain/costMark';
 import { spellLevelPhrase } from '@/modules/library/domain/derive';
 import {
   SPELL_SLOT_NAMES,
@@ -33,7 +35,6 @@ export type SpellProps = SlotProps<SpellSlotName> & {
  * Slots that print as rows, in display order.
  */
 const ROW_SLOTS: readonly SpellSlotName[] = [
-  'cost',
   'trigger',
   'range',
   'targets',
@@ -98,18 +99,46 @@ function briefLine(
 /**
  * Spell card component.
  *
+ * @description The card heads with the spell's name, taken from the article's
+ * own metadata so no page has to write it twice. What casting it costs stands
+ * beside the name, since it is the fact a reader looks for first, and the
+ * brief sits at the far edge of the same line. The cost is therefore not
+ * repeated among the rows below.
+ *
  * @param {SpellProps} props - Card props
  * @returns {JSX.Element} The spell section
  */
 const Spell: React.FC<SpellProps> = ({ children, ...slots }) => {
   const t = useTranslations('library.spell');
+  const { metadata } = useArticleMetadata();
   const { values, kept } = readSlots(children, SPELL_SLOT_NAMES, slots);
   const brief = briefLine(values.level, values.rarity, values.ritual, t);
   const rows = ROW_SLOTS.filter((name) => values[name] !== undefined);
+  const name = metadata?.title?.trim() ?? '';
 
   return (
     <section className={styles.spellCard} data-spell>
-      {brief.length > 0 && (
+      {name !== '' && (
+        <h2
+          className={styles.spellHead}
+          data-spell-name
+          data-mark={markOf(undefined, values.cost)}>
+          <span className={styles.headingTitle} data-heading-title>
+            {name}
+          </span>
+          {values.cost !== undefined && (
+            <span className={styles.cost} data-spell-cost>
+              {inlineValue(values.cost)}
+            </span>
+          )}
+          {brief.length > 0 && (
+            <span className={styles.tag} data-spell-brief>
+              {brief}
+            </span>
+          )}
+        </h2>
+      )}
+      {name === '' && brief.length > 0 && (
         <p className={styles.brief} data-spell-brief>
           <em>{brief}</em>
         </p>

@@ -186,8 +186,7 @@ export const FEAT_SLOTS = {
 
 /**
  * Slots of an attack inside an action: what it rolls with, how far it
- * reaches or ranges, and whom it strikes when that is not one creature. The
- * body is the hit.
+ * reaches or ranges, and whom it strikes when that is not one creature.
  */
 export const ATTACK_SLOTS = {
   accuracy: 'Accuracy',

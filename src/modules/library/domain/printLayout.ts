@@ -22,10 +22,7 @@ export const MAX_PRINT_COLUMNS = 3;
  * @returns {number} Declared count, clamped to the supported range, or {@link DEFAULT_PRINT_COLUMNS}
  *
  * @description
- * Print runs single column unless a document asks for more. Splitting suits a
- * page of continuous prose; the tables, stat blocks and slot components the
- * current corpus is built from break badly across a narrow column, so a
- * document opts into the split rather than inheriting it.
+ * Print runs single column unless a document asks for more.
  *
  * @example
  * printColumnsOf({ printColumns: 2 }); // 2

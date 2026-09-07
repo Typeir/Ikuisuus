@@ -1,8 +1,7 @@
 /**
  * @fileoverview A set of blocks the reader picks from.
  * @description Groups blocks that exclude one another and says how many are
- * taken. Without it a run of blocks reads as a list of grants, which is what a
- * feat's features are; a spell that offers modes needs the opposite reading.
+ * taken.
  *
  * @module modules/library/presentation/components/slots/Choice
  * @version 0.1.0

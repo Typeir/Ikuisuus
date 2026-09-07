@@ -10,6 +10,7 @@
 
 import { createLogger } from '@/lib/logging/logger';
 import { toNativeMeasure, toPlainMeasure } from '@/lib/units/nativeMeasure';
+import { spellListEntries } from '@/modules/library/domain/spellLists';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import { unslotSpell } from './slotForms';
@@ -325,6 +326,25 @@ function parseSpellLists(
 ): { name: string; link: string; specialization?: string }[] {
   const spellLists: { name: string; link: string; specialization?: string }[] =
     [];
+
+  const declared = content.match(
+    /<SpellLists\b[^>]*\bmembers=(?:\{([\s\S]*?)\}|"([^"]*)")/,
+  );
+  if (declared) {
+    const raw = declared[1] ?? declared[2] ?? '';
+    const slugs = (raw.match(/[A-Za-z0-9/-]+/g) ?? []).filter(
+      (slug) => slug !== '',
+    );
+    for (const entry of spellListEntries(slugs, 'en')) {
+      const [, specialization] = entry.slug.split('/');
+      spellLists.push({
+        name: entry.name,
+        link: entry.link,
+        ...(specialization ? { specialization } : {}),
+      });
+    }
+    return spellLists;
+  }
 
   const spellListsMatch = content.match(SPELL_LISTS.section);
   if (!spellListsMatch) return spellLists;

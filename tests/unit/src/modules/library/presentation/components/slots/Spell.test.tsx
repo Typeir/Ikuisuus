@@ -10,6 +10,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
+import { ArticleMetadataProvider } from '@/modules/library/application/context/ArticleMetadataContext';
 import Spell from '@/modules/library/presentation/components/slots/Spell';
 import {
   Cost,
@@ -114,5 +115,33 @@ describe('Spell', () => {
 
     render(<Spell level='2' ritual='false' />);
     expect(briefText('data-spell-brief')).toMatch(/^2nd-level (?:spell|kind)$/);
+  });
+
+  it('heads the card with the article name, the brief beside it', () => {
+    const { container } = render(
+      <ArticleMetadataProvider metadata={{ title: "Anaximander's Gift" }}>
+        <Spell level='9' rarity='rare'>
+          <p>Prose.</p>
+        </Spell>
+      </ArticleMetadataProvider>,
+    );
+    const name = container.querySelector('h2[data-spell-name]');
+    expect(name?.querySelector('[data-heading-title]')?.textContent).toBe(
+      "Anaximander's Gift",
+    );
+    expect(name?.querySelector('[data-spell-brief]')?.textContent).toMatch(
+      /^9th-level Rare (?:spell|kind)$/,
+    );
+    expect(container.querySelector('p[data-spell-brief]')).toBeNull();
+  });
+
+  it('keeps the brief on its own line when there is no article to name it', () => {
+    const { container } = render(
+      <ArticleMetadataProvider metadata={{ contentType: 'spells' }}>
+        <Spell level='9' />
+      </ArticleMetadataProvider>,
+    );
+    expect(container.querySelector('h2[data-spell-name]')).toBeNull();
+    expect(briefText('data-spell-brief')).toMatch(/^9th-level (?:spell|kind)$/);
   });
 });

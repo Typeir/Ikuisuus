@@ -2,8 +2,7 @@
  * @fileoverview Boons section of a bloodline.
  * @description Wraps the boons and states the budget they are bought from, as
  * a tag on the section's own heading, the way a feature heading carries its
- * cost. Every bloodline grants the same budget, so a page writes `points` only
- * when it departs from it.
+ * cost.
  *
  * @module modules/library/presentation/components/slots/Boons
  * @version 0.1.0

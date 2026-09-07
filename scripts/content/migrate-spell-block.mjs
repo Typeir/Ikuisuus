@@ -36,7 +36,7 @@ function bare(text) {
 }
 
 /**
- * Converts one spell file. Overcast lines stay in the body as prose.
+ * Converts one spell file.
  *
  * @param {string} text - File contents
  * @returns {{ text: string, changed: boolean, skipped?: string, notes: string[] }} Result

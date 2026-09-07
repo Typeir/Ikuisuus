@@ -360,8 +360,7 @@ export function unslotFeat(text: string): string {
  * budget off the slots themselves, so only the boons need restoring: it
  * delimits one from the next by the collapsible around it, so a collapsible
  * feature is written back as `<Collapsible>` while every other added tag is
- * blanked in place. Line count is preserved, because a boon records the line
- * range it covers.
+ * blanked in place.
  *
  * @param {string} text - File text
  * @returns {string} Text the boon parser reads as it always did

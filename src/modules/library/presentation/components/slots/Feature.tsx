@@ -15,6 +15,7 @@
 'use client';
 
 import { anchorSlug } from '@/modules/library/domain/anchorSlug';
+import { markOf, type CostMark } from '@/modules/library/domain/costMark';
 import {
   ATTACK_SLOT_NAMES,
   FEATURE_SLOT_NAMES,
@@ -59,13 +60,14 @@ export type FeatureProps = SlotProps<
   mark?: FeatureMark;
   collapsible?: boolean;
   open?: boolean;
+  ornament?: boolean;
   children?: ReactNode;
 };
 
 /**
  * What a block costs to use, as the heading's glyph reports it.
  */
-export type FeatureMark = 'major' | 'minor' | 'deed' | 'other';
+export type FeatureMark = CostMark;
 
 /**
  * Slot names each kind accepts.
@@ -83,32 +85,6 @@ const SLOT_NAMES_BY_KIND: Record<FeatureKind, readonly SlotName[]> = {
  * Deed types whose timing the card writes.
  */
 const DEED_TYPES = ['stratagem', 'act', 'resist', 'lair', 'phase'] as const;
-
-/**
- * Marks read off a cost.
- */
-const COST_MARKS: ReadonlyArray<readonly [RegExp, FeatureMark]> = [
-  [/\bmajor\s+action\b/i, 'major'],
-  [/\bminor\s+action\b/i, 'minor'],
-  [/\bdeeds?\b/i, 'deed'],
-];
-
-/**
- * The block's mark: the author's when given, otherwise the action its cost
- * names, and `other` for a block that costs no action.
- *
- * @param {FeatureMark} [explicit] - Mark the author set
- * @param {ReactNode} cost - The block's cost
- * @returns {FeatureMark} Mark to stamp
- */
-function markOf(
-  explicit: FeatureMark | undefined,
-  cost: ReactNode,
-): FeatureMark {
-  if (explicit) return explicit;
-  if (typeof cost !== 'string') return 'other';
-  return COST_MARKS.find(([pattern]) => pattern.test(cost))?.[1] ?? 'other';
-}
 
 /**
  * Host heading tags by level.
@@ -156,9 +132,7 @@ function constructed(
  *
  * @description Given `collapsible`, the block's own heading becomes the
  * summary of a details element and the slot grid folds away with the prose,
- * rather than sitting above a closed block. `open` starts it expanded. The
- * two go together often enough that a boon writes `<Feature collapsible>`
- * instead of a `<Collapsible>` wrapped around a feature.
+ * rather than sitting above a closed block.
  *
  * @param {FeatureProps} props - Block props
  * @returns {JSX.Element} The feature article
@@ -168,6 +142,7 @@ const Feature: React.FC<FeatureProps> = ({
   mark,
   collapsible = false,
   open = false,
+  ornament,
   children,
   ...slots
 }) => {
@@ -243,6 +218,7 @@ const Feature: React.FC<FeatureProps> = ({
       data-kind={kind}
       data-mark={markOf(mark, cost)}
       {...(collapsible ? { 'data-collapsible': 'true' } : {})}
+      {...((ornament ?? !collapsible) ? {} : { 'data-ornament': 'none' })}
       {...(anchor ? { 'data-anchor': anchor } : {})}>
       {collapsible ? (
         <Collapsible summary={summary} anchor={anchor ?? undefined} open={open}>
@@ -312,7 +288,6 @@ Pool.displayName = 'Pool';
 
 /**
  * Attack block inside an action: accuracy, reach or range, targets, then the hit as prose.
- * A heading names it when the action holds several.
  *
  * @param {Omit<FeatureProps, 'kind'>} props - Block props
  * @returns {JSX.Element} The attack article

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the Bloodline card.
  * @description The card prints the two Core Features rows as tables, then the
- * boon budget, then the page's own content. Values arrive as child elements,
- * so a cell can hold a component.
+ * boon budget, then the page's own content.
  *
  * @module tests/unit/src/modules/library/presentation/components/slots/Bloodline.test
  * @version 0.2.0
