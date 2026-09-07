@@ -205,13 +205,17 @@
   padding-bottom: 5rem;
   overflow-y: clip;
 
+  /* A card is its own ornament boundary: the knotwork clasps and stream rails
+     of the sections inside it stop at the card's edge. A spell card joins the
+     v1 blockquote here, and keeps its heading rules, which are not ornament. */
   details,
-  blockquote {
+  blockquote,
+  [data-spell] {
     section[data-heading-level] {
       &::before,
       &::after,
-      *::before,
-      *::after {
+      li::before,
+      li::after {
         content: none !important;
         display: none !important;
       }
@@ -220,6 +224,23 @@
         display: none !important;
       }
     }
+  }
+
+  /* A details or a blockquote takes no decoration at all from its contents. */
+  details,
+  blockquote {
+    section[data-heading-level] *::before,
+    section[data-heading-level] *::after {
+      content: none !important;
+      display: none !important;
+    }
+  }
+
+  /* The clasps the surrounding section would draw on the card itself. */
+  [data-spell]::before,
+  [data-spell]::after {
+    content: none !important;
+    display: none !important;
   }
 
   section[data-heading-level] {

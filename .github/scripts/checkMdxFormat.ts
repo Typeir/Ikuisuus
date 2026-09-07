@@ -377,10 +377,28 @@ async function loadSlotComponents(
     return names;
   }
 
+  /* The schema is split across sibling modules once it outgrows one file, so
+     each one it imports is read the same way. */
+  const siblings: string[] = [];
+  for (const match of content.matchAll(/from\s+'\.\/([\w.-]+)'/g)) {
+    try {
+      siblings.push(
+        await fs.readFile(
+          path.join(path.dirname(schemaFile), `${match[1]}.ts`),
+          'utf-8',
+        ),
+      );
+    } catch {
+      /* a sibling that does not resolve contributes no names */
+    }
+  }
+
   /* Every slot table maps a slot name to its authored element name, and the
-     schema file holds nothing else shaped that way. */
-  for (const match of content.matchAll(/:\s*'([A-Z][\w$]*)'/g)) {
-    names.add(match[1]);
+     schema files hold nothing else shaped that way. */
+  for (const source of [content, ...siblings]) {
+    for (const match of source.matchAll(/:\s*'([A-Z][\w$]*)'/g)) {
+      names.add(match[1]);
+    }
   }
 
   const blocks = content.match(

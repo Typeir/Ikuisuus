@@ -1,24 +1,35 @@
 /**
  * @fileoverview Bloodline card.
- * @description Wraps a bloodline page. The card states the boon budget and
- * otherwise hands the page's own content straight through, because a
- * bloodline's ability scores, speeds, senses, size, creature types and age
- * live in its two Core Features tables, whose cells carry `<Tooltip>` blocks
- * that a quoted attribute would flatten into literal text.
+ * @description Prints the two Core Features rows as tables, the way a monster
+ * prints its defences and its ability scores, then the boon budget, then the
+ * page's own content. The row values arrive as child elements rather than
+ * attributes, because a cell carries `<Tooltip>` blocks that a quoted
+ * attribute would flatten into literal text.
  *
  * @module modules/library/presentation/components/slots/Bloodline
- * @version 0.1.0
+ * @version 0.2.0
  * @author Typeir
  * @since 2026-09-07
  */
 
+'use client';
+
+import {
+  DataTable,
+  type DataTableColumn,
+  type DataTableRow,
+} from '@/lib/components/ui/dataTable';
 import {
   BLOODLINE_SLOT_NAMES,
+  BLOODLINE_TABLES,
+  slotLabelKey,
   type BloodlineSlotName,
   type SlotProps,
 } from '@/modules/library/domain/slots';
+import { useTranslations } from 'next-intl';
 import React, { type ReactNode } from 'react';
 import { readSlots, slotElementOf } from './slotElements';
+import styles from './slots.module.scss';
 
 /**
  * Props for the card: one optional prop per slot, plus the body.
@@ -32,29 +43,47 @@ export type BloodlineProps = SlotProps<BloodlineSlotName> & {
 /**
  * Bloodline card component.
  *
+ * @description Reads its slots in the standalone form, because each Core
+ * Features value is written on its own line and MDX hands those over as
+ * elements standing alone rather than as one paragraph.
+ *
  * @param {BloodlineProps} props - Card props
  * @returns {JSX.Element} The bloodline section
  */
 const Bloodline: React.FC<BloodlineProps> = ({ children, ...slots }) => {
-  const { values, kept } = readSlots(
-    React.Children.toArray(children),
-    BLOODLINE_SLOT_NAMES,
-    slots,
-  );
-  const entries = BLOODLINE_SLOT_NAMES.filter(
-    (name) => values[name] !== undefined,
-  );
+  const t = useTranslations('library');
+  const { values, kept } = readSlots(children, BLOODLINE_SLOT_NAMES, slots, true);
+
+  const tables = BLOODLINE_TABLES.map((names) =>
+    names.filter((name) => values[name] !== undefined),
+  ).filter((names) => names.length > 0);
 
   return (
     <section data-bloodline='true'>
-      {entries.length > 0 && (
-        <p data-slot-grid>
-          {entries.map((name) => {
-            const Slot = slotElementOf(name);
-            return <Slot key={name}>{values[name] as ReactNode}</Slot>;
-          })}
-        </p>
-      )}
+      {tables.map((names, index) => {
+        const columns: DataTableColumn[] = names.map((name) => ({
+          key: name,
+          header: t(slotLabelKey(name, 'Bloodline')),
+        }));
+        const rows: DataTableRow[] = [
+          {
+            key: 'values',
+            cells: names.map((name) => ({
+              content: values[name] as ReactNode,
+              dataAttributes: { slot: name },
+            })),
+          },
+        ];
+        return (
+          <DataTable
+            key={names.join('-')}
+            columns={columns}
+            rows={rows}
+            className={styles.statTable}
+            dataAttributes={{ 'bloodline-core': String(index + 1) }}
+          />
+        );
+      })}
       {kept}
     </section>
   );

@@ -13,6 +13,11 @@
 'use client';
 
 import {
+  DataTable,
+  type DataTableColumn,
+  type DataTableRow,
+} from '@/lib/components/ui/dataTable';
+import {
   abilityCell,
   challengeFor,
   challengeLabel,
@@ -79,7 +84,7 @@ function textOf(value: ReactNode): string | null {
  * @param {readonly MonsterSlotName[]} props.names - Slots to print, in order
  * @param {Partial<Record<MonsterSlotName, ReactNode>>} props.values - Values
  * @param {(name: MonsterSlotName) => ReactNode} props.cell - Cell renderer
- * @param {string} props.mark - Data attribute naming the table
+ * @param {string} props.mark - Data attribute naming the table, without the `data-` prefix
  * @returns {JSX.Element} The table
  */
 function SlotTable({
@@ -95,27 +100,26 @@ function SlotTable({
 }): React.JSX.Element {
   const t = useTranslations('library');
   const present = names.filter((name) => values[name] !== undefined);
+  const columns: DataTableColumn[] = present.map((name) => ({
+    key: name,
+    header: t(slotLabelKey(name, 'Monster')),
+  }));
+  const rows: DataTableRow[] = [
+    {
+      key: 'values',
+      cells: present.map((name) => ({
+        content: cell(name),
+        dataAttributes: { slot: name },
+      })),
+    },
+  ];
   return (
-    <table className={styles.statTable} {...{ [mark]: '' }}>
-      <thead>
-        <tr>
-          {present.map((name) => (
-            <th key={name} scope='col'>
-              {t(slotLabelKey(name, 'Monster'))}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          {present.map((name) => (
-            <td key={name} data-slot={name}>
-              {cell(name)}
-            </td>
-          ))}
-        </tr>
-      </tbody>
-    </table>
+    <DataTable
+      columns={columns}
+      rows={rows}
+      className={styles.statTable}
+      dataAttributes={{ [mark]: 'true' }}
+    />
   );
 }
 
@@ -183,7 +187,7 @@ const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
           names={DEFENCE_SLOTS}
           values={values}
           cell={(name) => inlineValue(values[name])}
-          mark='data-monster-defences'
+          mark='monster-defences'
         />
       )}
 
@@ -197,7 +201,7 @@ const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
               ? abilityCell(score)
               : inlineValue(score);
           }}
-          mark='data-monster-abilities'
+          mark='monster-abilities'
         />
       )}
 

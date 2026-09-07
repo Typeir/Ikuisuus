@@ -239,6 +239,7 @@ const Feature: React.FC<FeatureProps> = ({
 
   return (
     <article
+      className={styles.block}
       data-kind={kind}
       data-mark={markOf(mark, cost)}
       {...(collapsible ? { 'data-collapsible': 'true' } : {})}

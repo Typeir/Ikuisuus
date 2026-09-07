@@ -41,6 +41,7 @@ import {
     PROFICIENCY,
     SECTION,
 } from './bloodlinePatterns';
+import { DEFAULT_BOON_POINTS } from '@/modules/library/domain/bloodlineSlots';
 import { SLUG, TEXT, UTILITY } from './parsingPatterns';
 import { unslotBloodline } from './slotForms';
 
@@ -556,30 +557,57 @@ function parseCoreFeatures(content: string): {
     age: undefined as string | undefined,
   };
 
-  const sectionMatch = content.match(SECTION.coreFeatures);
-  if (!sectionMatch) return result;
+  const slot = (name: string): string[] =>
+    slotItems(content, name);
 
-  const section = sectionMatch[1];
-  const dataRows = section
-    .split('\n')
-    .filter((line) => line.startsWith('|') && line.includes('<ul>'));
-
-  if (dataRows[0]) {
-    const cells = parseTableRow(dataRows[0]);
-    result.abilityScores = parseListItems(cells[0] || '');
-    result.movementSpeeds = parseListItems(cells[1] || '').map((v) => toNativeMeasure(v));
-    result.senses = parseListItems(cells[2] || '').map((v) => toNativeMeasure(v));
-  }
-
-  if (dataRows[1]) {
-    const cells = parseTableRow(dataRows[1]);
-    result.size = parseListItems(cells[0] || '');
-    result.creatureTypes = parseListItems(cells[1] || '');
-    const ageItems = parseListItems(cells[2] || '');
-    result.age = ageItems[0];
-  }
+  result.abilityScores = slot('AbilityScores');
+  result.movementSpeeds = slot('Speeds').map((v) => toNativeMeasure(v));
+  result.senses = slot('Senses').map((v) => toNativeMeasure(v));
+  result.size = slot('Size');
+  result.creatureTypes = slot('CreatureTypes');
+  result.age = slot('Age')[0];
 
   return result;
+}
+
+/**
+ * The values a Core Features slot element holds.
+ *
+ * @description A cell states either one value or a markdown list of them, and
+ * either may carry a tooltip, whose trigger is the value and whose body is the
+ * note behind it.
+ *
+ * @param {string} content - Full MDX content
+ * @param {string} element - Slot element name
+ * @returns {string[]} Values, in the order written
+ */
+function slotItems(content: string, element: string): string[] {
+  const block = content.match(
+    new RegExp(`<${element}>([\\s\\S]*?)</${element}>`),
+  );
+  if (!block) return [];
+  const inner = block[1];
+  const listed = inner.includes('<li>')
+    ? parseListItems(inner)
+    : inner
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.startsWith('- '))
+        .map((line) => line.slice(2));
+  const raw = listed.length > 0 ? listed : [inner];
+  return raw.map((value) => plainValue(value)).filter((value) => value !== '');
+}
+
+/**
+ * The text of one written value, tooltip trigger included, markup stripped.
+ *
+ * @param {string} value - Value as written
+ * @returns {string} Its text
+ */
+function plainValue(value: string): string {
+  const tooltip = value.match(MARKUP.tooltipText);
+  const text = tooltip ? tooltip[1] : value;
+  return text.replace(MARKUP.htmlTag, '').trim();
 }
 
 /**
@@ -590,6 +618,9 @@ function parseCoreFeatures(content: string): {
  * @returns {number | undefined} Budget number or undefined
  */
 function parseBoonBudget(content: string): number | undefined {
+  const declared = content.match(/<Boons\s+points="(\d+)"/);
+  if (declared) return parseInt(declared[1], 10);
+  if (/<Boons[\s>]/.test(content)) return DEFAULT_BOON_POINTS;
   const match = content.match(BOON.budgetPattern);
   return match ? parseInt(match[1], 10) : undefined;
 }
@@ -799,13 +830,17 @@ async function parseBloodlineFile(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const body = unslotBloodline(blankFrontmatter(raw));
+    // Taggers read prose, and a converted page keeps its Core Features values
+    // in slot elements, so they read the restored form too.
+    const restored = unslotBloodline(raw);
+    const body = blankFrontmatter(restored);
     const lines = body.split('\n').map((l) => l.trim());
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);
     const description = parseDescription(body);
     const coreFeatures = parseCoreFeatures(body);
-    const boonBudget = parseBoonBudget(body);
+    // The budget is on the Boons tag, which the shim blanks away.
+    const boonBudget = parseBoonBudget(raw);
     const boons = parseBoons(body, sharedData);
     const boonTags = boons.flatMap((boon) => boon.tags);
     const features = parseCoreFeatureShards(body, slug, sharedData);
@@ -835,7 +870,7 @@ async function parseBloodlineFile(
       features,
       tags: Array.from(
         new Set([
-          ...extractAllTags(raw, filePath, sharedData, {
+          ...extractAllTags(restored, filePath, sharedData, {
             contentType: 'generic',
           }),
           ...boonTags,

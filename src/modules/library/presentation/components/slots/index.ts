@@ -12,6 +12,8 @@
 import { SLOT_ELEMENT_NAMES } from '@/modules/library/domain/slots';
 import Attributes from './Attributes';
 import Bloodline from './Bloodline';
+import Boons from './Boons';
+import Choice from './Choice';
 import Feat from './Feat';
 import Feature, { Action, Attack, Curse, Pool, Trait } from './Feature';
 import Heirloom, { Trinket } from './Heirloom';
@@ -41,6 +43,8 @@ export const slotComponents: Record<string, unknown> = {
   Vocation,
   Specialization,
   Bloodline,
+  Boons,
+  Choice,
   Progression,
   Column,
   Row,

@@ -354,37 +354,26 @@ export function unslotFeat(text: string): string {
 }
 
 /**
- * Restores a bloodline's boon budget sentence from the `<Bloodline>` tag and
- * unwraps the blocks the conversion added.
+ * Unwraps the blocks a bloodline conversion added.
  *
- * @description The generator reads the budget from a sentence and delimits one
- * boon from the next by the collapsible around it, so a collapsible feature is
- * written back as `<Collapsible>` while a plain one is blanked. The budget
- * sentence takes the opening tag's line, which keeps the line count, because a
- * boon records the line range it covers.
+ * @description The generator reads the Core Features values and the boon
+ * budget off the slots themselves, so only the boons need restoring: it
+ * delimits one from the next by the collapsible around it, so a collapsible
+ * feature is written back as `<Collapsible>` while every other added tag is
+ * blanked in place. Line count is preserved, because a boon records the line
+ * range it covers.
  *
  * @param {string} text - File text
- * @returns {string} Text on the v1 form
+ * @returns {string} Text the boon parser reads as it always did
  */
 export function unslotBloodline(text: string): string {
   const lines = text.split('\n');
-  const at = findTag(lines, 'Bloodline');
-  if (at < 0) return text;
-  const tag = readHostTag(lines, at);
-  if (!tag) return text;
-
-  const points = textAttr(tag, 'boonPoints');
-  splice(
-    lines,
-    tag.start,
-    tag.end,
-    points ? [`You have a budget of **${points} Boon Points**.`] : [],
-  );
+  if (findTag(lines, 'Bloodline') < 0) return text;
 
   const open: boolean[] = [];
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i];
-    if (/^\s*<\/Bloodline>\s*$/.test(line)) {
+    if (/^\s*<\/?(?:Bloodline|Boons)\b[^>]*>\s*$/.test(line)) {
       lines[i] = '';
       continue;
     }

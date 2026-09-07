@@ -102,17 +102,24 @@ export interface SlotEntry {
 }
 
 /**
- * Splits paragraphs made only of the parent's own slot elements (the element
- * form) out of a node list.
+ * Splits the parent's own slot elements (the element form) out of a node list.
+ *
+ * @description Takes them as a paragraph made only of them, which is what MDX
+ * builds from a run of inline elements. With `standalone`, it also takes an
+ * element that stands on its own, which is what MDX builds from a run of lines
+ * that each begin with a tag. That is off by default, because a slot element
+ * standing alone can be a block in its own right, as an overcast tier is.
  *
  * @param {ReactNode[]} nodes - Cleaned child nodes
  * @param {readonly SlotName[]} names - Slot names the parent accepts
+ * @param {boolean} [standalone] - Also take a slot element that stands alone
  * @returns {{ entries: SlotEntry[]; kept: ReactNode[] }} Slot entries, and the
- * nodes that remain once slot paragraphs are removed
+ * nodes that remain once the slot elements are removed
  */
 export function splitSlotRuns(
   nodes: ReactNode[],
   names: readonly SlotName[],
+  standalone = false,
 ): {
   entries: SlotEntry[];
   kept: ReactNode[];
@@ -122,6 +129,16 @@ export function splitSlotRuns(
   const accepted = new Set<SlotName>(names);
 
   for (const node of nodes) {
+    const own = standalone ? slotNameOf(node) : null;
+    if (own !== null && accepted.has(own)) {
+      entries.push({
+        name: own,
+        value: (node as React.ReactElement<{ children?: ReactNode }>).props
+          .children,
+      });
+      continue;
+    }
+
     const isParagraph =
       React.isValidElement(node) &&
       typeof node.type === 'string' &&
@@ -242,9 +259,10 @@ export function readSlots<N extends SlotName>(
   children: ReactNode,
   names: readonly N[],
   props: Partial<Record<N, SlotValue>>,
+  standalone = false,
 ): SlotReading<N> {
   const nodes = cleanChildren(children);
-  const { entries, kept } = splitSlotRuns(nodes, names);
+  const { entries, kept } = splitSlotRuns(nodes, names, standalone);
   const values = Object.fromEntries(
     collectSlotEntries(names, props, entries).map((entry) => [
       entry.name,
@@ -357,5 +375,8 @@ export const {
   Prerequisite,
   Ability,
   Repeatable,
-  BoonPoints,
+  AbilityScores,
+  Speeds,
+  CreatureTypes,
+  Age,
 } = slotElements;

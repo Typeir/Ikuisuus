@@ -14,6 +14,46 @@
  * @since 2026-09-02
  */
 
+/* The spell card, which a v1 spell wrote as a blockquote and which keeps that
+   card's face: accent rule down the left, surface fading out to the right. */
+.spellCard {
+  isolation: isolate;
+  border-left: 4px solid var(--color-accent);
+  padding-left: 1rem;
+  padding-right: 1.5rem;
+  padding-bottom: 0.5rem;
+  margin: 1.5rem 0;
+  background-color: var(--color-surface);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 0%,
+    var(--color-surface) 85%,
+    var(--color-transparent) 97%
+  );
+}
+
+/* A set of blocks that exclude one another. The lead line says so; the group
+   carries no ornament of its own. */
+.choice {
+  margin-block: 1rem;
+}
+
+/* A block inside a block is a stage of the one around it, and takes the nested
+   card's face so the reader sees where it belongs. */
+.block .block {
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+  border-left: var(--border-width-s) solid var(--color-border-secondary);
+}
+
+/* What the group asks of the reader, above the blocks it fences. */
+.choiceLead {
+  font-family: var(--font-default);
+  font-weight: 700;
+  font-synthesis-weight: none;
+  color: var(--color-emphasis);
+}
+
 /* One slot row: its own line inside the slot-run paragraph. */
 .row {
   display: flex;
@@ -82,11 +122,11 @@
 /* Stat-block table: the defence row and the ability row a monster sheet opens
    with. Columns size to their content and the block scrolls rather than
    forcing the article wider on a narrow screen. */
+/* Fills the width its wrapper is given. The wrapper carries overflow-x, so it
+   establishes a block formatting context and takes the space left beside a
+   float rather than sliding under one or pushing it away. */
 .statTable {
-  display: block;
-  width: max-content;
-  max-width: 100%;
-  overflow-x: auto;
+  width: 100%;
   margin-block: 0.75rem;
   border-collapse: collapse;
 
@@ -94,7 +134,6 @@
   td {
     padding: 0.25rem 0.9rem;
     text-align: center;
-    white-space: nowrap;
   }
 
   th {

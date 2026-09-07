@@ -14,6 +14,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   foldBoons,
+  liftCoreTables,
   migrateBloodline,
   readBudget,
   wrapCoreFeatures,
@@ -91,6 +92,41 @@ describe('wrapCoreFeatures', () => {
   });
 });
 
+describe('liftCoreTables', () => {
+  it('turns each column into an element, and a raw list into a markdown one', () => {
+    const notes: string[] = [];
+    const out = liftCoreTables(PAGE.split('\n'), notes).join('\n');
+    expect(notes).toContain('core table cells lifted: 2');
+    expect(out).toContain('<AbilityScores>DEX +2</AbilityScores>');
+    expect(out).toContain('<Speeds>Walk: [= 6 stride =]</Speeds>');
+    expect(out).not.toContain('| **Ability Scores** |');
+    expect(out).not.toContain('<ul>');
+  });
+
+  it('writes a many-item cell as an idiomatic markdown list', () => {
+    const notes: string[] = [];
+    const lines = [
+      '## Core Features',
+      '',
+      '| **Ability Scores** |',
+      '| --- |',
+      '| <ul><li>DEX +2</li><li>CHA +1</li></ul> |',
+      '',
+      '## Boons',
+    ];
+    expect(liftCoreTables(lines, notes).join('\n')).toContain(
+      '<AbilityScores>\n\n- DEX +2\n- CHA +1\n\n</AbilityScores>',
+    );
+  });
+
+  it('keeps a table whose columns it does not know', () => {
+    const notes: string[] = [];
+    const lines = ['## Core Features', '', '| **Wingspan** |', '| --- |', '| Broad |', '', '## Boons'];
+    expect(liftCoreTables(lines, notes).join('\n')).toContain('| **Wingspan** |');
+    expect(notes).toContain('core table kept, unknown column: wingspan');
+  });
+});
+
 describe('foldBoons', () => {
   it('turns each collapsible into a collapsible feature, keeping the open flag', () => {
     const notes: string[] = [];
@@ -101,16 +137,27 @@ describe('foldBoons', () => {
 });
 
 describe('migrateBloodline', () => {
-  it('wraps the page from Core Features on, and moves the budget onto the tag', () => {
+  it('wraps the page from Core Features on, and the boons in their own section', () => {
     const { text, changed } = migrateBloodline(PAGE);
     expect(changed).toBe(true);
-    expect(text).toContain('<Bloodline boonPoints="10">');
+    expect(text).toContain('<Bloodline>');
     expect(text.trimEnd().endsWith('</Bloodline>')).toBe(true);
-    expect(text).not.toContain('You have a budget of');
     expect(text).not.toMatch(/<\/?Collapsible/);
-    // the lede stays outside the wrapper, the tables stay exactly as written
+    // the budget is the default, so the section states it and the page does not
+    expect(text).toContain('<Boons>');
+    expect(text).toContain('</Boons>');
+    expect(text).not.toContain('You have a budget of');
+    expect(text).not.toContain('boonPoints');
+    // the lede stays outside the wrapper
     expect(text).toMatch(/They came from beyond the Black Cradle\.[\s\S]*<Bloodline/);
-    expect(text).toContain('| <ul><li>DEX +2</li></ul> | <ul><li>Walk: [= 6 stride =]</li></ul> |');
+    expect(text).toContain('<AbilityScores>DEX +2</AbilityScores>');
+    // the boons close inside the bloodline, not after it
+    expect(text.indexOf('</Boons>')).toBeLessThan(text.indexOf('</Bloodline>'));
+  });
+
+  it('keeps a budget that departs from the default', () => {
+    const page = PAGE.replace('**10 Boon Points**', '**14 Boon Points**');
+    expect(migrateBloodline(page).text).toContain('<Boons points="14">');
   });
 
   it('is idempotent, and folds a shared boon list without wrapping it', () => {

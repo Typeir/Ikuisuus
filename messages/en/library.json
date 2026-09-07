@@ -70,7 +70,10 @@
     "castingTime": "Casting Time",
     "ritual": "Ritual",
     "xp": "XP",
-    "boonPoints": "Boon Points"
+    "abilityScores": "Ability Scores",
+    "speeds": "Movement Speeds",
+    "creatureTypes": "Creature Types",
+    "age": "Age"
   },
   "heirloom": {
     "kind": "Heirloom",
@@ -133,5 +136,12 @@
       "origin": "Origin",
       "epicBoon": "Epic Boon"
     }
+  },
+  "bloodline": {
+    "boonBudget": "{points} BP"
+  },
+  "choice": {
+    "one": "Choose one:",
+    "pick": "Choose {pick}:"
   }
 }

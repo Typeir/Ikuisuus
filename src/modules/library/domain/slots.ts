@@ -9,6 +9,8 @@
  * @since 2026-09-03
  */
 
+import { BLOODLINE_SLOT_NAMES, BLOODLINE_SLOTS, type BloodlineSlotName } from './bloodlineSlots';
+
 /**
  * Header slots of an heirloom.
  */
@@ -173,19 +175,6 @@ export function featCategoryKey(category: string): string {
 }
 
 /**
- * Header slots of a bloodline.
- *
- * @description A bloodline states one number of its own: the points a
- * character has to spend on its boons. Its ability scores, speeds, senses,
- * size, creature types and age stay in the two Core Features tables, because
- * those cells carry `<Tooltip>` blocks that a quoted attribute would flatten
- * into literal text.
- */
-export const BLOODLINE_SLOTS = {
-  boonPoints: 'BoonPoints',
-} as const;
-
-/**
  * Header slots of a feat.
  */
 export const FEAT_SLOTS = {
@@ -246,11 +235,6 @@ export type VocationSlotName = keyof typeof VOCATION_SLOTS;
  * Specialization slot names.
  */
 export type SpecializationSlotName = VocationSlotName;
-
-/**
- * Bloodline slot names.
- */
-export type BloodlineSlotName = keyof typeof BLOODLINE_SLOTS;
 
 /**
  * Feat slot names.
@@ -362,13 +346,6 @@ export const VOCATION_SLOT_NAMES = Object.keys(
 ) as VocationSlotName[];
 
 /**
- * Bloodline slot names in schema order.
- */
-export const BLOODLINE_SLOT_NAMES = Object.keys(
-  BLOODLINE_SLOTS,
-) as BloodlineSlotName[];
-
-/**
  * Specialization slot names in display order; the vocation card's own list.
  */
 export const SPECIALIZATION_SLOT_NAMES: readonly SpecializationSlotName[] =
@@ -466,3 +443,5 @@ export const SLOT_HOSTS: Readonly<
 };
 
 export { SLOT_LABEL_OVERRIDES, slotLabelKey } from './slotLabels';
+export { BLOODLINE_SLOTS, BLOODLINE_SLOT_NAMES, BLOODLINE_TABLES, type BloodlineSlotName } from './bloodlineSlots';
+

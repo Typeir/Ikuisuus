@@ -108,7 +108,7 @@ const Spell: React.FC<SpellProps> = ({ children, ...slots }) => {
   const rows = ROW_SLOTS.filter((name) => values[name] !== undefined);
 
   return (
-    <section data-spell>
+    <section className={styles.spellCard} data-spell>
       {brief.length > 0 && (
         <p className={styles.brief} data-spell-brief>
           <em>{brief}</em>
