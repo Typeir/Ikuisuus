@@ -354,6 +354,58 @@ export function unslotFeat(text: string): string {
 }
 
 /**
+ * Restores a bloodline's boon budget sentence from the `<Bloodline>` tag and
+ * unwraps the blocks the conversion added.
+ *
+ * @description The generator reads the budget from a sentence and delimits one
+ * boon from the next by the collapsible around it, so a collapsible feature is
+ * written back as `<Collapsible>` while a plain one is blanked. The budget
+ * sentence takes the opening tag's line, which keeps the line count, because a
+ * boon records the line range it covers.
+ *
+ * @param {string} text - File text
+ * @returns {string} Text on the v1 form
+ */
+export function unslotBloodline(text: string): string {
+  const lines = text.split('\n');
+  const at = findTag(lines, 'Bloodline');
+  if (at < 0) return text;
+  const tag = readHostTag(lines, at);
+  if (!tag) return text;
+
+  const points = textAttr(tag, 'boonPoints');
+  splice(
+    lines,
+    tag.start,
+    tag.end,
+    points ? [`You have a budget of **${points} Boon Points**.`] : [],
+  );
+
+  const open: boolean[] = [];
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (/^\s*<\/Bloodline>\s*$/.test(line)) {
+      lines[i] = '';
+      continue;
+    }
+    const opening = line.match(/^\s*<Feature\b([^>]*)>\s*$/);
+    if (opening) {
+      const collapsible = /\bcollapsible\b/.test(opening[1]);
+      open.push(collapsible);
+      lines[i] = collapsible
+        ? `<Collapsible${/\bopen\b/.test(opening[1]) ? ' open' : ''}>`
+        : '';
+      continue;
+    }
+    if (/^\s*<\/Feature>\s*$/.test(line)) {
+      lines[i] = open.pop() ? '</Collapsible>' : '';
+    }
+  }
+  blankBlockTags(lines);
+  return lines.join('\n');
+}
+
+/**
  * Restores a trinket's category line under the title and its bold stat lines
  * at the end from the `<Trinket>` tag.
  *

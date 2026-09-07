@@ -357,4 +357,5 @@ export const {
   Prerequisite,
   Ability,
   Repeatable,
+  BoonPoints,
 } = slotElements;

@@ -17,6 +17,7 @@ import {
   featRepeatable,
   ordinal,
   readHostTag,
+  unslotBloodline,
   unslotFeat,
   unslotMonster,
   unslotSpell,
@@ -260,6 +261,23 @@ describe('featRepeatable', () => {
     expect(featRepeatable('# X\n\n<Feat\n  category="origin"\n  repeatable="true">\n\n</Feat>\n')).toBe(true);
     expect(featRepeatable('# X\n\n<Feat category="origin">\n\n</Feat>\n')).toBe(false);
     expect(featRepeatable('# X\n\nNo tag.\n')).toBe(false);
+  });
+});
+
+describe('unslotBloodline', () => {
+  it('writes the budget sentence back and returns each boon to a collapsible, keeping line count', () => {
+    const source =
+      '# Empyrean\n\n<Bloodline boonPoints="10">\n\n## Core Features\n\n<Feature>\n\n### Languages\n\nCommon.\n\n</Feature>\n\n## Boons\n\n<Feature collapsible>\n\n###### Extended Reach <span>6 BP</span>\n\nLonger limbs.\n\n</Feature>\n\n<Feature collapsible open>\n\n###### First Step <span>5 BP</span>\n\nYou move first.\n\n</Feature>\n\n</Bloodline>\n';
+    const text = unslotBloodline(source);
+    expect(text.split('\n').length).toBe(source.split('\n').length);
+    expect(text).toContain('You have a budget of **10 Boon Points**.');
+    expect(text).toContain('<Collapsible>\n\n###### Extended Reach <span>6 BP</span>');
+    expect(text).toContain('<Collapsible open>\n\n###### First Step <span>5 BP</span>');
+    expect(text).toContain('</Collapsible>');
+    expect(text).not.toMatch(/<\/?(?:Bloodline|Feature)\b/);
+    // a plain core feature wrapper is blanked, not turned into a collapsible
+    expect(text).toContain('## Core Features\n\n\n\n### Languages');
+    expect(unslotBloodline('No tag here.')).toBe('No tag here.');
   });
 });
 

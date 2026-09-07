@@ -42,6 +42,7 @@ import {
     SECTION,
 } from './bloodlinePatterns';
 import { SLUG, TEXT, UTILITY } from './parsingPatterns';
+import { unslotBloodline } from './slotForms';
 
 const log = createLogger({ component: 'BloodlineMetadataGenerator' });
 
@@ -798,7 +799,7 @@ async function parseBloodlineFile(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const body = blankFrontmatter(raw);
+    const body = unslotBloodline(blankFrontmatter(raw));
     const lines = body.split('\n').map((l) => l.trim());
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);

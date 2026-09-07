@@ -33,6 +33,7 @@ import {
   parseHeading,
   textOfNodes,
 } from '../headingParts';
+import Collapsible from '../Collapsible/Collapsible';
 import { cleanChildren, readSlots, slotElementOf } from './slotElements';
 import styles from './slots.module.scss';
 
@@ -56,6 +57,8 @@ export type FeatureProps = SlotProps<
 > & {
   kind?: FeatureKind;
   mark?: FeatureMark;
+  collapsible?: boolean;
+  open?: boolean;
   children?: ReactNode;
 };
 
@@ -151,12 +154,20 @@ function constructed(
 /**
  * Feature block component.
  *
+ * @description Given `collapsible`, the block's own heading becomes the
+ * summary of a details element and the slot grid folds away with the prose,
+ * rather than sitting above a closed block. `open` starts it expanded. The
+ * two go together often enough that a boon writes `<Feature collapsible>`
+ * instead of a `<Collapsible>` wrapped around a feature.
+ *
  * @param {FeatureProps} props - Block props
  * @returns {JSX.Element} The feature article
  */
 const Feature: React.FC<FeatureProps> = ({
   kind = 'feature',
   mark,
+  collapsible = false,
+  open = false,
   children,
   ...slots
 }) => {
@@ -208,21 +219,42 @@ const Feature: React.FC<FeatureProps> = ({
     </Tag>
   ) : null;
 
+  const grid = rows.length > 0 && (
+    <p data-slot-grid>
+      {rows.map((entry) => {
+        const Slot = slotElementOf(entry.name);
+        return <Slot key={entry.name}>{entry.value}</Slot>;
+      })}
+    </p>
+  );
+  const bodyElement = <div data-feature-body>{body}</div>;
+
+  const summary = (
+    <>
+      <span data-heading-title>{parsed.titleNodes}</span>
+      {parsed.cost && <span data-feature-tag>{parsed.cost}</span>}
+      {cost !== undefined && <span data-feature-cost>{cost}</span>}
+    </>
+  );
+
   return (
     <article
       data-kind={kind}
       data-mark={markOf(mark, cost)}
+      {...(collapsible ? { 'data-collapsible': 'true' } : {})}
       {...(anchor ? { 'data-anchor': anchor } : {})}>
-      {headingElement}
-      {rows.length > 0 && (
-        <p data-slot-grid>
-          {rows.map((entry) => {
-            const Slot = slotElementOf(entry.name);
-            return <Slot key={entry.name}>{entry.value}</Slot>;
-          })}
-        </p>
+      {collapsible ? (
+        <Collapsible summary={summary} anchor={anchor ?? undefined} open={open}>
+          {grid}
+          {bodyElement}
+        </Collapsible>
+      ) : (
+        <>
+          {headingElement}
+          {grid}
+          {bodyElement}
+        </>
       )}
-      <div data-feature-body>{body}</div>
     </article>
   );
 };

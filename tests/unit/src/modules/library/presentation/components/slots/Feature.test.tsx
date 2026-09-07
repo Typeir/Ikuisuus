@@ -174,4 +174,38 @@ describe('Attack', () => {
     expect(container.querySelector('[data-slot="range"] [data-slot-value]')?.textContent).toBe('[= 6 stride =]');
     expect(container.querySelector('[data-slot="targets"] [data-slot-value]')?.textContent).toBe('up to two targets');
   });
+
+  it('folds into a details block when collapsible, keeping the heading as the summary', () => {
+    const { container } = render(
+      <Feature collapsible cost='1 Minor Action' targets='you'>
+        <h6>
+          Extended Reach <span>6 BP</span>
+        </h6>
+        <p>Prose body.</p>
+      </Feature>,
+    );
+    const article = container.querySelector('article');
+    expect(article).toHaveAttribute('data-collapsible', 'true');
+    expect(article).toHaveAttribute('data-anchor', 'extended-reach');
+    const summary = container.querySelector('details > summary');
+    expect(summary?.textContent).toContain('Extended Reach');
+    expect(summary?.textContent).toContain('6 BP');
+    expect(summary).toHaveAttribute('data-anchor', 'extended-reach');
+    expect(container.querySelector('h1, h2, h3, h4, h5, h6')).toBeNull();
+    // the slot grid folds away with the prose rather than sitting above it
+    expect(container.querySelector('details [data-slot-grid]')).not.toBeNull();
+    expect(container.querySelector('details [data-feature-body]')?.textContent).toBe('Prose body.');
+  });
+
+  it('keeps its heading and shows the grid outside any details block when not collapsible', () => {
+    const { container } = render(
+      <Feature cost='1 Minor Action'>
+        <h6>Extended Reach</h6>
+        <p>Prose body.</p>
+      </Feature>,
+    );
+    expect(container.querySelector('details')).toBeNull();
+    expect(container.querySelector('article')).not.toHaveAttribute('data-collapsible');
+    expect(container.querySelector('h6 [data-heading-title]')?.textContent).toBe('Extended Reach');
+  });
 });

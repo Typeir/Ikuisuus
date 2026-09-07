@@ -17,10 +17,14 @@ import styles from './Collapsible.module.scss';
  * Props for the Collapsible component.
  *
  * @property {boolean} [open] - Whether the block starts expanded
+ * @property {ReactNode} [summary] - What the closed block shows. Given, it is used as written and every child is body; omitted, the first heading among the children becomes the summary and leaves the body
+ * @property {string} [anchor] - Anchor for the summary, for a caller that already worked one out from its own heading
  * @property {ReactNode} [children] - The collapsible content
  */
 export interface CollapsibleProps {
   open?: boolean;
+  summary?: ReactNode;
+  anchor?: string;
   children?: ReactNode;
 }
 
@@ -41,10 +45,14 @@ export interface CollapsibleProps {
  */
 const Collapsible: React.FC<CollapsibleProps> = ({
   open = false,
+  summary,
+  anchor,
   children,
 }) => {
   const nodes = React.Children.toArray(children);
-  const headingIndex = nodes.findIndex((node) => isHeadingNode(node));
+  const headingIndex = summary
+    ? -1
+    : nodes.findIndex((node) => isHeadingNode(node));
   const headingNode = headingIndex >= 0 ? nodes[headingIndex] : null;
 
   const parsedHeading =
@@ -61,16 +69,22 @@ const Collapsible: React.FC<CollapsibleProps> = ({
       ? nodes.filter((_, index) => index !== headingIndex)
       : nodes;
 
+  const summaryAnchor = anchor ?? parsedHeading.anchor;
+
   return (
     <details className={styles.collapsible} open={open || undefined}>
       <summary
         className={styles.summary}
-        {...(parsedHeading.anchor && { 'data-anchor': parsedHeading.anchor })}
+        {...(summaryAnchor && { 'data-anchor': summaryAnchor })}
       >
         <span>
-          {parsedHeading.titleNodes}
-          {parsedHeading.cost && (
-            <span className={styles.cost}>{parsedHeading.cost}</span>
+          {summary ?? (
+            <>
+              {parsedHeading.titleNodes}
+              {parsedHeading.cost && (
+                <span className={styles.cost}>{parsedHeading.cost}</span>
+              )}
+            </>
           )}
         </span>
         <ChevronRight className={styles.chevron} size={14} aria-hidden='true' />

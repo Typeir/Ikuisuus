@@ -173,6 +173,19 @@ export function featCategoryKey(category: string): string {
 }
 
 /**
+ * Header slots of a bloodline.
+ *
+ * @description A bloodline states one number of its own: the points a
+ * character has to spend on its boons. Its ability scores, speeds, senses,
+ * size, creature types and age stay in the two Core Features tables, because
+ * those cells carry `<Tooltip>` blocks that a quoted attribute would flatten
+ * into literal text.
+ */
+export const BLOODLINE_SLOTS = {
+  boonPoints: 'BoonPoints',
+} as const;
+
+/**
  * Header slots of a feat.
  */
 export const FEAT_SLOTS = {
@@ -235,6 +248,11 @@ export type VocationSlotName = keyof typeof VOCATION_SLOTS;
 export type SpecializationSlotName = VocationSlotName;
 
 /**
+ * Bloodline slot names.
+ */
+export type BloodlineSlotName = keyof typeof BLOODLINE_SLOTS;
+
+/**
  * Feat slot names.
  */
 export type FeatSlotName = keyof typeof FEAT_SLOTS;
@@ -254,6 +272,7 @@ export type SlotName =
   | SpellSlotName
   | MonsterSlotName
   | VocationSlotName
+  | BloodlineSlotName
   | FeatSlotName
   | AttackSlotName;
 
@@ -267,6 +286,7 @@ export type SlotElementName =
   | (typeof SPELL_SLOTS)[SpellSlotName]
   | (typeof MONSTER_SLOTS)[MonsterSlotName]
   | (typeof VOCATION_SLOTS)[VocationSlotName]
+  | (typeof BLOODLINE_SLOTS)[BloodlineSlotName]
   | (typeof FEAT_SLOTS)[FeatSlotName]
   | (typeof ATTACK_SLOTS)[AttackSlotName];
 
@@ -292,6 +312,7 @@ export const SLOT_ELEMENT_NAMES: Record<SlotName, SlotElementName> = {
   ...SPELL_SLOTS,
   ...MONSTER_SLOTS,
   ...VOCATION_SLOTS,
+  ...BLOODLINE_SLOTS,
   ...FEAT_SLOTS,
   ...ATTACK_SLOTS,
 };
@@ -339,6 +360,13 @@ export const MONSTER_SLOT_NAMES = Object.keys(
 export const VOCATION_SLOT_NAMES = Object.keys(
   VOCATION_SLOTS,
 ) as VocationSlotName[];
+
+/**
+ * Bloodline slot names in schema order.
+ */
+export const BLOODLINE_SLOT_NAMES = Object.keys(
+  BLOODLINE_SLOTS,
+) as BloodlineSlotName[];
 
 /**
  * Specialization slot names in display order; the vocation card's own list.
@@ -399,6 +427,7 @@ export const SLOT_NAMES: SlotName[] = [
     ...SPELL_SLOT_NAMES,
     ...MONSTER_SLOT_NAMES,
     ...VOCATION_SLOT_NAMES,
+    ...BLOODLINE_SLOT_NAMES,
     ...FEAT_SLOT_NAMES,
     ...ATTACK_SLOT_NAMES,
   ]),
@@ -431,6 +460,7 @@ export const SLOT_HOSTS: Readonly<
   Monster: MONSTER_SLOTS,
   Vocation: VOCATION_SLOTS,
   Specialization: SPECIALIZATION_SLOTS,
+  Bloodline: BLOODLINE_SLOTS,
   Feat: FEAT_SLOTS,
   Attack: ATTACK_SLOTS,
 };

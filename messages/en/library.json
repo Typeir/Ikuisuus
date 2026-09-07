@@ -69,7 +69,8 @@
     "repeatable": "Repeatable",
     "castingTime": "Casting Time",
     "ritual": "Ritual",
-    "xp": "XP"
+    "xp": "XP",
+    "boonPoints": "Boon Points"
   },
   "heirloom": {
     "kind": "Heirloom",
