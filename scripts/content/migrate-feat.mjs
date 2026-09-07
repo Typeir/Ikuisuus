@@ -1,5 +1,7 @@
 /**
- * @fileoverview Moves a v1 feat onto the `<Feat>` form.
+ * @fileoverview Moves a v1 feat onto the `<Feat>` form. A title written
+ * `# Epic Boon: Name` fills `category="epic boon"` and becomes `# Name`, since
+ * the card prints the category itself.
  */
 
 import { basename } from 'node:path';
@@ -16,11 +18,14 @@ import {
 } from './migrate-shared.mjs';
 
 const PREREQUISITE = /^_Prer+equisites?:\s*(.+?)_\s*$/i;
+const NO_PREREQUISITE = /^_No (?:attribute )?prerequisite\.?_\s*$/i;
 const ORIGIN = /^_Origin Feat_\s*$/i;
 const ITALIC = /^_.+_\s*$/;
-const ABILITY_NAME = '[A-Z][a-z]+';
+const REPEATABLE_KEY = /^(?:multiSelect|repeatable):\s*true/;
+const ABILITY_NAME =
+  '\\**(?:Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\\**';
 const ABILITY = new RegExp(
-  `^Increase your (${ABILITY_NAME}(?:, ${ABILITY_NAME})*(?:,? or ${ABILITY_NAME})?) score by 1\\.\\s*$`,
+  `^Increase your \\**\\s*(${ABILITY_NAME}(?:,\\s*${ABILITY_NAME})*(?:,?\\s+or\\s+${ABILITY_NAME})?)\\s*(?:score\\s*)?by 1\\**(?:,?\\s*(?:up )?to a maximum of \\**\\d+\\**)?\\.?\\s*$`,
 );
 
 /**
@@ -78,9 +83,8 @@ export function migrateFeat(text) {
   const slots = {};
   const consumed = new Set();
   const fmEnd = frontmatterEnd(lines);
-  if (lines.slice(0, Math.max(fmEnd, 0)).some((line) => /^multiSelect:\s*true/.test(line))) {
-    slots.repeatable = true;
-  }
+  const flagAt = lines.findIndex((line, i) => i < fmEnd && REPEATABLE_KEY.test(line));
+  if (flagAt >= 0) slots.repeatable = true;
 
   for (let i = titleAt + 1; i < lines.length; i += 1) {
     const line = lines[i];
@@ -97,6 +101,10 @@ export function migrateFeat(text) {
       consumed.add(i);
       continue;
     }
+    if (NO_PREREQUISITE.test(line)) {
+      consumed.add(i);
+      continue;
+    }
     if (/prerequisite/i.test(line)) {
       notes.push(`kept as prose: ${line.trim()}`);
       continue;
@@ -108,15 +116,18 @@ export function migrateFeat(text) {
     if (i <= titleAt) return;
     const ability = line.match(ABILITY);
     if (ability && slots.ability === undefined) {
-      slots.ability = ability[1];
+      slots.ability = ability[1].replace(/\*/g, '').replace(/\s+/g, ' ').trim();
       consumed.add(i);
     } else if (/^Increase your\b/.test(line)) {
       notes.push(`ability line kept as prose: ${line.trim()}`);
     }
   });
 
-  if (slots.category === undefined && /^Epic Boon\b/i.test(lines[titleAt].slice(2))) {
-    notes.push('title says Epic Boon; no category written');
+  const head = lines.slice(0, titleAt + 1).filter((_, i) => i !== flagAt);
+  const epic = lines[titleAt].match(/^# Epic Boon:\s*(.+?)\s*$/i);
+  if (epic) {
+    slots.category = 'epic boon';
+    head[titleAt] = `# ${epic[1]}`;
   }
 
   const ordered = {
@@ -125,7 +136,6 @@ export function migrateFeat(text) {
     ability: slots.ability,
     repeatable: slots.repeatable,
   };
-  const head = lines.slice(0, titleAt + 1);
   const body = lines.slice(titleAt + 1).filter((_, j) => !consumed.has(titleAt + 1 + j));
 
   const out = [

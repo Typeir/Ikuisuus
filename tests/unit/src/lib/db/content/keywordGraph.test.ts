@@ -125,6 +125,50 @@ describe('keywordGraph', () => {
       expect(listLinks).toHaveBeenCalledTimes(1);
     });
 
+    it('should build once when every keyword on a page resolves in parallel', async () => {
+      let release: (value: unknown) => void = () => {};
+      listLinks.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            release = resolve;
+          }),
+      );
+
+      const loads = Promise.all(
+        Array.from({ length: 19 }, () => loadKeywordGraph('en')),
+      );
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      release([RULES]);
+
+      const graphs = await loads;
+
+      expect(listLinks).toHaveBeenCalledTimes(1);
+      expect(new Set(graphs).size).toBe(1);
+    });
+
+    it('should discard a build that a clear superseded', async () => {
+      let release: (value: unknown) => void = () => {};
+      listLinks.mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            release = resolve;
+          }),
+      );
+
+      const superseded = loadKeywordGraph('en');
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      clearKeywordGraphCache();
+      release([RULES]);
+      await superseded;
+
+      listLinks.mockResolvedValue([RULES, SPELL_A]);
+      const fresh = await loadKeywordGraph('en');
+
+      expect(listLinks).toHaveBeenCalledTimes(2);
+      expect(fresh.consumers.get('kw--resist')).toEqual([SPELL_A.file]);
+    });
+
     it('should skip a record with no file path', async () => {
       listLinks.mockResolvedValue([
         { link: '/library/orphan', consumes: ['kw--resist'] },

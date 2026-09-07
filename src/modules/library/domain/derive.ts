@@ -170,6 +170,27 @@ export function challengeFor(xp: string | number): number | null {
 }
 
 /**
+ * The XP band of a rating: from its own XP up to one below the next rating's.
+ * The last rating has no upper bound.
+ *
+ * @param {string | number} challenge - Challenge rating
+ * @returns {readonly [number, number | null] | null} Low and high XP, or null for an unknown rating
+ *
+ * @example
+ * xpBand(1); // [200, 449]
+ * xpBand('1/2'); // [100, 199]
+ * xpBand(35); // [425000, null]
+ */
+export function xpBand(challenge: string | number): readonly [number, number | null] | null {
+  const value = challengeValue(challenge);
+  if (value === null) return null;
+  const index = XP_BY_CHALLENGE.findIndex(([rating]) => rating === value);
+  if (index < 0) return null;
+  const next = XP_BY_CHALLENGE[index + 1];
+  return [XP_BY_CHALLENGE[index][1], next ? next[1] - 1 : null];
+}
+
+/**
  * A challenge rating as a sheet writes it: the low ratings as fractions.
  *
  * @param {number} rating - Challenge rating

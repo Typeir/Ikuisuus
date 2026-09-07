@@ -78,7 +78,9 @@ describe('T2 shortcodes render in slots', () => {
     const heading = html.match(/<h4[^>]*data-anchor="lunar-dissolution"[^>]*>[\s\S]*?<\/h4>/)?.[0] ?? '';
     expect(heading).toContain('data-feature-cost');
     expect(heading).toContain('1 Minor Action');
-    expect(html).not.toContain('data-slot="cost"');
+    const article = html.match(/<article[^>]*data-anchor="lunar-dissolution"[\s\S]*?<\/article>/)?.[0] ?? '';
+    expect(article).toContain('data-feature-cost');
+    expect(article).not.toContain('data-slot="cost"');
     expect(html).toContain('data-slot="targets"');
   });
 

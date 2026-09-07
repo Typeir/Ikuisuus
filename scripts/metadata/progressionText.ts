@@ -12,6 +12,7 @@ import {
   buildProgression,
   parseLevels,
   parseSpecialization,
+  splitList,
   type ColumnEntry,
   type ColumnSpec,
 } from '@/modules/library/domain/progression';
@@ -34,7 +35,7 @@ const COLUMN_OPEN = /^\s*<Column\b([^>]*?)(\/?)>\s*$/;
 const COLUMN_CLOSE = /^\s*<\/Column>\s*$/;
 const ROW = /^\s*<Row\b([^>]*)>(.*?)<\/Row>\s*$/;
 const LABEL = /\blabel=(?:"([^"]*)"|'([^']*)')/;
-const VALUES = /\bvalues=\{\[([\s\S]*?)\]\}/;
+const VALUES = /\bvalues=(?:"([^"]*)"|'([^']*)')/;
 const AT = /\bat=(?:"(\d+)"|'(\d+)'|\{(\d+)\})/;
 const UNIQUE = /\bunique\b(?!=["'{]?false)/;
 const LEVEL_HEADING = /^#{1,6}\s+(\d+)(?:st|nd|rd|th)\s+Level\s+[–—-]\s+(.+?)\s*$/i;
@@ -51,20 +52,6 @@ function plain(text: string): string {
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
     .replace(/\*\*/g, '')
     .trim();
-}
-
-/**
- * Items of an array literal such as `["12", "14", 3]`.
- *
- * @param {string} inner - Text between the brackets
- * @returns {string[]} Items as text
- */
-function arrayItems(inner: string): string[] {
-  const items: string[] = [];
-  for (const match of inner.matchAll(/"([^"]*)"|'([^']*)'|([^,\s"']+)/g)) {
-    items.push(match[1] ?? match[2] ?? match[3]);
-  }
-  return items;
 }
 
 /**
@@ -107,7 +94,7 @@ function columnsOf(lines: string[]): ColumnSpec<string>[] {
       const label = plain(column[1].match(LABEL)?.[1] ?? column[1].match(LABEL)?.[2] ?? '');
       const values = column[1].match(VALUES);
       if (values || column[2] === '/') {
-        columns.push({ label, values: values ? arrayItems(values[1]) : [] });
+        columns.push({ label, values: values ? splitList(values[1] ?? values[2]) : [] });
         open = null;
       } else {
         open = { label, entries: [] };

@@ -6,6 +6,9 @@
  * ("Vocation Features").
  *
  * @module tests/unit/scripts/metadata/generateVocationMetadata.test
+ * @version 1.0.0
+ * @author Typeir
+ * @since 2026-09-07
  */
 
 import { parseFeatureTable } from '@scripts/metadata/generateVocationMetadata';
@@ -72,7 +75,6 @@ describe('parseFeatureTable', () => {
       EXTENDED_TABLE_STRIDER,
     );
 
-    // Should NOT extract Lay of the Land numbers (3, 5) as feature names
     expect(features).toHaveLength(7);
     expect(features[0]).toEqual({ level: 1, name: 'Spellcasting' });
     expect(features[1]).toEqual({ level: 1, name: 'Lay of the Land' });
@@ -83,7 +85,6 @@ describe('parseFeatureTable', () => {
     expect(features[6]).toEqual({ level: 5, name: 'Lay of the Land' });
     expect(hasSpellSlots).toBe(true);
 
-    // Guard: no numeric-only feature names leaked from wrong column
     const numericOnlyNames = features.filter((f) => /^\d+$/.test(f.name));
     expect(numericOnlyNames).toHaveLength(0);
   });
@@ -110,13 +111,11 @@ describe('parseFeatureTable', () => {
     expect(features[3]).toEqual({ level: 2, name: 'Unarmored Movement' });
     expect(features[4]).toEqual({ level: 2, name: 'Uncanny Metabolism' });
 
-    // Guard: no dice expression leaked from Martial Arts column
     const diceNames = features.filter((f) => /\[%/.test(f.name));
     expect(diceNames).toHaveLength(0);
   });
 
   it('falls back to column 2 when no Features header found', () => {
-    // Table with no Features/Vocation Features header — legacy fallback
     const legacyTable = `
 | Level | Tier Bonus | Stuff                                   | Extra |
 | ----- | ---------- | --------------------------------------- | ----- |
@@ -125,7 +124,6 @@ describe('parseFeatureTable', () => {
 `;
     const { features } = parseFeatureTable(legacyTable);
 
-    // Falls back to col 2 ("Stuff")
     expect(features).toHaveLength(3);
     expect(features[0]).toEqual({ level: 1, name: 'Rage' });
     expect(features[1]).toEqual({ level: 1, name: 'Unarmored Defense' });

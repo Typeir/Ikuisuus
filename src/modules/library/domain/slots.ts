@@ -48,6 +48,7 @@ export const BLOCK_COMPONENTS = [
   'Curse',
   'Action',
   'Pool',
+  'Attack',
 ] as const;
 
 /**
@@ -80,7 +81,6 @@ export const POOL_SLOTS = {
 export const SPELL_SLOTS = {
   level: 'Level',
   rarity: 'Rarity',
-  school: 'School',
   ritual: 'Ritual',
   cost: 'Cost',
   trigger: 'Trigger',
@@ -183,6 +183,18 @@ export const FEAT_SLOTS = {
 } as const;
 
 /**
+ * Slots of an attack inside an action: what it rolls with, how far it
+ * reaches or ranges, and whom it strikes when that is not one creature. The
+ * body is the hit.
+ */
+export const ATTACK_SLOTS = {
+  accuracy: 'Accuracy',
+  reach: 'Reach',
+  range: 'Range',
+  targets: 'Targets',
+} as const;
+
+/**
  * Heirloom slot names.
  */
 export type HeirloomSlotName = keyof typeof HEIRLOOM_SLOTS;
@@ -228,6 +240,11 @@ export type SpecializationSlotName = VocationSlotName;
 export type FeatSlotName = keyof typeof FEAT_SLOTS;
 
 /**
+ * Attack slot names.
+ */
+export type AttackSlotName = keyof typeof ATTACK_SLOTS;
+
+/**
  * Every slot name.
  */
 export type SlotName =
@@ -237,7 +254,8 @@ export type SlotName =
   | SpellSlotName
   | MonsterSlotName
   | VocationSlotName
-  | FeatSlotName;
+  | FeatSlotName
+  | AttackSlotName;
 
 /**
  * Every authored element name.
@@ -249,7 +267,8 @@ export type SlotElementName =
   | (typeof SPELL_SLOTS)[SpellSlotName]
   | (typeof MONSTER_SLOTS)[MonsterSlotName]
   | (typeof VOCATION_SLOTS)[VocationSlotName]
-  | (typeof FEAT_SLOTS)[FeatSlotName];
+  | (typeof FEAT_SLOTS)[FeatSlotName]
+  | (typeof ATTACK_SLOTS)[AttackSlotName];
 
 /**
  * A slot value as MDX hands it to the parent: a string attribute, the
@@ -274,6 +293,7 @@ export const SLOT_ELEMENT_NAMES: Record<SlotName, SlotElementName> = {
   ...MONSTER_SLOTS,
   ...VOCATION_SLOTS,
   ...FEAT_SLOTS,
+  ...ATTACK_SLOTS,
 };
 
 /**
@@ -332,6 +352,13 @@ export const SPECIALIZATION_SLOT_NAMES: readonly SpecializationSlotName[] =
 export const FEAT_SLOT_NAMES = Object.keys(FEAT_SLOTS) as FeatSlotName[];
 
 /**
+ * Attack slot names in display order.
+ */
+export const ATTACK_SLOT_NAMES = Object.keys(
+  ATTACK_SLOTS,
+) as AttackSlotName[];
+
+/**
  * The six ability scores a monster sheet carries, in sheet order.
  */
 export const ABILITY_SLOTS: readonly MonsterSlotName[] = [
@@ -373,6 +400,7 @@ export const SLOT_NAMES: SlotName[] = [
     ...MONSTER_SLOT_NAMES,
     ...VOCATION_SLOT_NAMES,
     ...FEAT_SLOT_NAMES,
+    ...ATTACK_SLOT_NAMES,
   ]),
 ];
 
@@ -404,25 +432,7 @@ export const SLOT_HOSTS: Readonly<
   Vocation: VOCATION_SLOTS,
   Specialization: SPECIALIZATION_SLOTS,
   Feat: FEAT_SLOTS,
+  Attack: ATTACK_SLOTS,
 };
 
-/**
- * A host's own word for a shared slot.
- */
-export const SLOT_LABEL_OVERRIDES: Readonly<
-  Record<string, Readonly<Partial<Record<SlotName, string>>>>
-> = {
-  Spell: { cost: 'castingTime' },
-};
-
-/**
- * Message-catalogue key of a slot's label, under the `library` namespace.
- *
- * @param {SlotName} name - Slot name
- * @param {string} [host] - Host component name, when it renames the slot
- * @returns {string} Catalogue key
- */
-export function slotLabelKey(name: SlotName, host?: string): string {
-  const override = host ? SLOT_LABEL_OVERRIDES[host]?.[name] : undefined;
-  return `slots.${override ?? name}`;
-}
+export { SLOT_LABEL_OVERRIDES, slotLabelKey } from './slotLabels';

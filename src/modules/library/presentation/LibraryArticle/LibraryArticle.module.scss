@@ -44,7 +44,7 @@ $title-rule-gap: 0.35rem;
 
   @media print {
     max-width: 100%;
-    column-count: 2;
+    column-count: var(--print-columns, 1);
     column-gap: 1.7rem;
     column-rule: 1px solid var(--color-secondary);
 
@@ -96,6 +96,16 @@ $title-rule-gap: 0.35rem;
       break-after: avoid;
       break-inside: avoid;
       column-span: none;
+    }
+
+    /* A section or a slot card reads as one unit, so it asks to land whole.
+       The request is dropped for a block taller than the page has room for,
+       which is the intent: prefer to stay together, break rather than clip.
+       Scoped to descendants, so the page's own article is not asking to be
+       unbreakable. */
+    section,
+    article {
+      break-inside: avoid;
     }
 
     p {

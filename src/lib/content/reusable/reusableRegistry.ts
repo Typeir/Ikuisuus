@@ -19,6 +19,9 @@ import { REGEX_EXTENSION, stripContentSuffix } from '@/lib/constants/content';
 /** True when the file declares `reusable: true`. */
 const HAS_FLAG = /^\s*reusable\s*:\s*true\s*$/m;
 
+/** Maximum number of files read concurrently during discovery. */
+const DISCOVERY_CONCURRENCY = 32;
+
 /**
  * A discovered reusable file.
  *
@@ -85,26 +88,29 @@ export async function discoverReusables(
   const files = await listMdxFiles(contentRoot);
   const found = new Map<string, ReusableEntry>();
 
-  await Promise.all(
-    files.map(async (filePath) => {
-      const raw = await fs.readFile(filePath, 'utf8');
-      if (!HAS_FLAG.test(raw)) {
-        return;
-      }
+  for (let i = 0; i < files.length; i += DISCOVERY_CONCURRENCY) {
+    const batch = files.slice(i, i + DISCOVERY_CONCURRENCY);
+    await Promise.all(
+      batch.map(async (filePath) => {
+        const raw = await fs.readFile(filePath, 'utf8');
+        if (!HAS_FLAG.test(raw)) {
+          return;
+        }
 
-      const parsed = parseReusableRegions(raw);
-      if (!parsed.isReusable) {
-        return;
-      }
+        const parsed = parseReusableRegions(raw);
+        if (!parsed.isReusable) {
+          return;
+        }
 
-      found.set(componentNameFromPath(filePath), {
-        name: componentNameFromPath(filePath),
-        filePath,
-        body: parsed.body,
-        regions: parsed.regions,
-      });
-    }),
-  );
+        found.set(componentNameFromPath(filePath), {
+          name: componentNameFromPath(filePath),
+          filePath,
+          body: parsed.body,
+          regions: parsed.regions,
+        });
+      }),
+    );
+  }
 
   cache.set(contentRoot, found);
   return found;

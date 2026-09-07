@@ -14,22 +14,19 @@ import { parseSpellSource } from '@scripts/metadata/generateSpellMetadata';
 import { parseTrinketSource } from '@scripts/metadata/generateTrinketMetadata';
 import { loadSharedData } from '@scripts/metadata/sharedData';
 import {
+  featRepeatable,
   ordinal,
-  parentVocationOf,
-  readElementSlots,
   readHostTag,
   unslotFeat,
   unslotMonster,
   unslotSpell,
   unslotTrinket,
-  unslotVocation,
 } from '@scripts/metadata/slotForms';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { migrateFeat } from '../../../../scripts/content/migrate-feat.mjs';
 import { migrateMonsterSheet } from '../../../../scripts/content/migrate-monster-sheet.mjs';
 import { migrateSpellBlock } from '../../../../scripts/content/migrate-spell-block.mjs';
 import { migrateTrinket } from '../../../../scripts/content/migrate-trinket.mjs';
-import { migrateVocation } from '../../../../scripts/content/migrate-vocation.mjs';
 
 let sharedData: Awaited<ReturnType<typeof loadSharedData>>;
 
@@ -143,37 +140,6 @@ Increase your Strength or Dexterity score by 1.
 - **Bypass Cover.** Your ranged weapon attacks ignore half cover.
 `;
 
-const VOCATION = `# Rogue
-
-Rogues rely on cunning.
-
----
-
-## Core Rogue Traits
-
-| Trait                          | Value                          |
-| ------------------------------ | ------------------------------ |
-| **Primary Ability**            | Dexterity                      |
-| **Hit Point Die**              | d8 per Rogue level             |
-| **Saving Throw Proficiencies** | Dexterity and Intelligence     |
-| **Skill Proficiencies**        | Choose 4: Acrobatics, Stealth  |
-| **Weapon Proficiencies**       | Simple weapons                 |
-| **Armor Training**             | Light armor                    |
-| **Starting Equipment**         | (A) Leather Armor, 8 GP<br/>(B) 100 GP |
-
----
-
-## 1st Level – Expertise
-
-Choose two skill proficiencies.
-
-<Collapsible>
-## 3rd Level – Steady Aim
-
-Aim.
-</Collapsible>
-`;
-
 /**
  * Metadata fields a round trip must keep.
  *
@@ -195,15 +161,6 @@ describe('readHostTag', () => {
     });
     expect(readHostTag(['<Feat repeatable>'], 0)?.attrs).toEqual({ repeatable: true });
     expect(readHostTag(['plain text'], 0)).toBeNull();
-  });
-
-  it('reads element-form slots in the paragraph after a tag', () => {
-    const lines = ['<Vocation armor="None">', '', '<Equipment>(A) 8 GP<br/>(B) 100 GP</Equipment>', '<Trades>Any</Trades>', '', 'Prose'];
-    expect(readElementSlots(lines, 1)).toEqual({
-      slots: { equipment: '(A) 8 GP<br/>(B) 100 GP', trades: 'Any' },
-      end: 3,
-    });
-    expect(readElementSlots(['', 'Prose'], 0)).toEqual({ slots: {}, end: -1 });
   });
 });
 
@@ -297,32 +254,24 @@ describe('unslotFeat', () => {
   });
 });
 
-describe('unslotVocation', () => {
-  it('restores the core traits table and the level headings, keeping line count', () => {
-    const converted = migrateVocation(VOCATION).text;
-    const text = unslotVocation(converted);
-    expect(text.split('\n').length).toBe(converted.split('\n').length);
-    expect(text).toContain('| Trait | Value |\n| **Primary Ability** | Dexterity |\n| **Hit Point Die** | d8 per Rogue level |');
-    expect(text).toContain('| **Starting Equipment** | (A) Leather Armor, 8 GP<br/>(B) 100 GP |');
-    expect(text).toContain('\n## 1st Level – Expertise\n');
-    expect(text).toMatch(/<Collapsible>\n+## 3rd Level – Steady Aim\n/);
-    expect(text).not.toMatch(/<\/?(Vocation|Feature|Equipment)/);
-    const featureLine = text.split('\n').findIndex((l) => l === '## 1st Level – Expertise');
-    const convertedLine = converted.split('\n').findIndex((l) => l === '## Expertise');
-    expect(featureLine).toBe(convertedLine);
+describe('featRepeatable', () => {
+  it('reads the bare flag and a quoted true, and is false without a tag or flag', () => {
+    expect(featRepeatable('# X\n\n<Feat repeatable>\n\nBody.\n\n</Feat>\n')).toBe(true);
+    expect(featRepeatable('# X\n\n<Feat\n  category="origin"\n  repeatable="true">\n\n</Feat>\n')).toBe(true);
+    expect(featRepeatable('# X\n\n<Feat category="origin">\n\n</Feat>\n')).toBe(false);
+    expect(featRepeatable('# X\n\nNo tag.\n')).toBe(false);
   });
+});
 
-  it('passes a file without tags through untouched', () => {
-    expect(unslotVocation(VOCATION)).toBe(VOCATION);
-  });
-
-  it('blanks a specialization host and reads its parent, keeping line count', () => {
-    const source = '# Arcane Trickster\n\n<Specialization vocation="rogue">\n\n<Feature level="3">\n\n## Cunning Spellcasting\n\nYou cast.\n\n</Feature>\n\n</Specialization>\n';
-    const text = unslotVocation(source);
+describe('unslotMonster attacks and spell lists', () => {
+  it('writes each attack back as its accuracy sentence and blanks the spell list, keeping line count', () => {
+    const source =
+      '<Monster\n  size="Large"\n  type="Beast"\n  alignment="Unaligned">\n\n<Action>\n\n#### Multiattack\n\n<Attack accuracy="+7" reach="[= 3 stride =]">\n\n##### Lash\n\nOn a hit, 13.\n\n</Attack>\n\n<Attack accuracy="+9" reach="[= 2 stride =]" range="[= 12 stride =]" targets="up to two targets">\n\nOn a hit, 8.\n\n</Attack>\n\n<SpellList spells="omen, chill">\n  <Column label="Cost" values="At Will, 1" />\n</SpellList>\n\n</Action>\n\n</Monster>\n';
+    const text = unslotMonster(source);
     expect(text.split('\n').length).toBe(source.split('\n').length);
-    expect(text).toContain('\n## 3rd Level – Cunning Spellcasting\n');
-    expect(text).not.toMatch(/<\/?(Specialization|Feature)/);
-    expect(parentVocationOf(source)).toBe('rogue');
-    expect(parentVocationOf('# Bare\n\nNo tag.\n')).toBeUndefined();
+    expect(text).toContain('\nAccuracy +7, reach [= 3 stride =], one creature.\n');
+    expect(text).toContain('\nAccuracy +9, reach [= 2 stride =] or range [= 12 stride =], up to two targets.\n');
+    expect(text).toContain('\n##### Lash\n');
+    expect(text).not.toMatch(/<\/?(Attack|SpellList|Column|Monster|Action)/);
   });
 });

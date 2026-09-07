@@ -14,3 +14,17 @@
  * @constant {number}
  */
 export const ENCOUNTER_SAVE_INDICATOR_MS = 300;
+
+/**
+ * Grace period between the pointer leaving a hover surface's trigger and the
+ * surface beginning to close (ms).
+ *
+ * @constant {number}
+ *
+ * @description
+ * WCAG 2.1 SC 1.4.13 (Content on Hover or Focus) requires that content raised
+ * by hover stay available while the pointer travels onto it. Entering either
+ * the trigger or the surface cancels a close already counting down, so this is
+ * the window a reader has to cross the gap between them.
+ */
+export const TOOLTIP_HIDE_DELAY_MS = 300;

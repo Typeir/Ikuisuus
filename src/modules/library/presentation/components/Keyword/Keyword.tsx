@@ -25,7 +25,27 @@ import React, {
 import DiceRoll from '../DiceRoll';
 import Unit from '../Unit';
 import styles from './Keyword.module.scss';
+import { useKeywordShard } from './KeywordShardContext';
 import { useShardSource } from './useShardSource';
+
+/**
+ * Prose length, in characters, past which a card is laid out wide.
+ *
+ * @constant
+ *
+ * @description
+ * Half the length of the `recovery` shard, which sits near the long end of the
+ * corpus. Below this a definition is a line or two and a narrow column reads
+ * cleanly; above it the narrow column runs long enough that the card becomes a
+ * ribbon of text.
+ */
+const WIDE_SHARD_CHARS = 668;
+
+/** Card width in pixels for a shard shorter than {@link WIDE_SHARD_CHARS}. */
+const CARD_MAX_WIDTH = 250;
+
+/** Card width in pixels for a shard at or past {@link WIDE_SHARD_CHARS}. */
+const WIDE_CARD_MAX_WIDTH = 512;
 
 /**
  * The card machinery, loaded on first use so `Draggable` stays out of the
@@ -112,6 +132,7 @@ const shardComponents = {
  * @property {string} [heading] - Card title stamped at compile time
  * @property {string} [href] - Route stamped at compile time
  * @property {string} fallbackTitle - Title used until a heading is known
+ * @property {(chars: number) => void} onResolved - Reports the prose length once the shard is in hand, so the frame can widen for a long one
  */
 interface KeywordCardProps {
   term: string;
@@ -120,6 +141,7 @@ interface KeywordCardProps {
   heading?: string;
   href?: string;
   fallbackTitle: string;
+  onResolved: (chars: number) => void;
 }
 
 /**
@@ -135,6 +157,7 @@ const KeywordCard: React.FC<KeywordCardProps> = ({
   heading,
   href,
   fallbackTitle,
+  onResolved,
 }) => {
   const locale = useLocale();
   const t = useTranslations('keywords');
@@ -142,6 +165,10 @@ const KeywordCard: React.FC<KeywordCardProps> = ({
   const [compile, setCompile] = useState<typeof CompileRuntimeSync | null>(
     null,
   );
+
+  useEffect(() => {
+    if (shard) onResolved(shard.source.length);
+  }, [shard, onResolved]);
 
   /* Loaded here rather than imported: this mounts when a card opens, so the MDX
      compiler stays out of the graph of every page that has a keyword in it. */
@@ -206,12 +233,20 @@ export const Keyword: React.FC<KeywordProps> = ({
   const locale = useLocale();
   const t = useTranslations('keywords');
   const hydrated = useHydrated();
+  const baked = useKeywordShard(templateId);
+  const [fetchedChars, setFetchedChars] = useState(0);
   const label = display ?? term;
 
   /* A nested keyword carries no compile-time resolution, so its card is the
      only thing that can find one. Elsewhere a missing shard id means the index
      resolved nothing, and the term stays plain text. */
   const hasCard = Boolean(templateId) || nested;
+
+  /* The page's baked shard answers immediately; a card that fetches its prose
+     reports back and widens on the same render that fills it. */
+  const chars = baked?.source.length ?? fetchedChars;
+  const maxWidth =
+    chars >= WIDE_SHARD_CHARS ? WIDE_CARD_MAX_WIDTH : CARD_MAX_WIDTH;
 
   if (!href && !hasCard) {
     return <span>{label}</span>;
@@ -251,9 +286,11 @@ export const Keyword: React.FC<KeywordProps> = ({
             heading={heading}
             href={href}
             fallbackTitle={label}
+            onResolved={setFetchedChars}
           />
         }
         title={title}
+        maxWidth={maxWidth}
         className={styles.tooltip}
         panelClassName={styles.panel}
         closeLabel={t('close', { term: title })}>

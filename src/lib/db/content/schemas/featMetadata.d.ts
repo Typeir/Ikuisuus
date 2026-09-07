@@ -51,7 +51,7 @@ export interface FeatAbilityIncrease {
  * @property {FeatAbilityIncrease} [abilityIncrease] - Parsed ability score increase
  * @property {FeatFeature[]} [features] - Named mechanics parsed from bold bullet items
  * @property {string[]} [grants] - Tag-based proficiency grants (e.g. `weapon:martial`, `skill:persuasion:expertise`)
- * @property {boolean} [multiSelect] - When true, the feat may be selected more than once (e.g. Ability Score Improvement).
+ * @property {boolean} [repeatable] - When true, the feat may be selected more than once (e.g. Ability Score Improvement).
  */
 export interface FeatMetadata extends BaseMetadata {
   prerequisite?: string;
@@ -59,7 +59,7 @@ export interface FeatMetadata extends BaseMetadata {
   abilityIncrease?: FeatAbilityIncrease;
   features?: FeatFeature[];
   grants?: string[];
-  multiSelect?: boolean;
+  repeatable?: boolean;
   tags: string[];
   indexVersion?: number;
 }

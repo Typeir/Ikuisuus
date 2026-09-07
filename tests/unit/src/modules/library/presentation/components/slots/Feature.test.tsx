@@ -11,6 +11,7 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import Feature, {
+  Attack,
   Curse,
   Trait,
 } from '@/modules/library/presentation/components/slots/Feature';
@@ -143,5 +144,34 @@ describe('Feature', () => {
     expect(container.querySelector('h4 [data-feature-cost]')?.textContent).toBe(
       '1 Minor Action',
     );
+  });
+});
+
+describe('Attack', () => {
+  it('prints accuracy and reach as slot lines under the heading, and the hit as prose', () => {
+    const { container } = render(
+      <Attack accuracy='+7' reach='[= 3 stride =]'>
+        <h5>Lash</h5>
+        <p>On a hit, 13.</p>
+      </Attack>,
+    );
+    const article = container.querySelector('article');
+    expect(article).toHaveAttribute('data-kind', 'attack');
+    expect(article).toHaveAttribute('data-anchor', 'lash');
+    expect(container.querySelector('h5 [data-heading-title]')?.textContent).toBe('Lash');
+    expect(container.querySelector('[data-slot="accuracy"] [data-slot-value]')?.textContent).toBe('+7');
+    expect(container.querySelector('[data-slot="reach"] [data-slot-value]')?.textContent).toBe('[= 3 stride =]');
+    expect(container.querySelector('[data-feature-body]')?.textContent).toBe('On a hit, 13.');
+  });
+
+  it('renders without a heading inside a bare action, range and targets as lines', () => {
+    const { container } = render(
+      <Attack accuracy='+8' range='[= 6 stride =]' targets='up to two targets'>
+        <p>On a hit, 5.</p>
+      </Attack>,
+    );
+    expect(container.querySelector('h1, h2, h3, h4, h5, h6')).toBeNull();
+    expect(container.querySelector('[data-slot="range"] [data-slot-value]')?.textContent).toBe('[= 6 stride =]');
+    expect(container.querySelector('[data-slot="targets"] [data-slot-value]')?.textContent).toBe('up to two targets');
   });
 });

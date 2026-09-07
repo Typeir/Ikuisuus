@@ -24,7 +24,7 @@ const PAGE = `# Rogue
     <Row at="1">[% 1d6 %]</Row>
     <Row at="3">[% 2d6 %]</Row>
   </Column>
-  <Column label="Abandon" values={["12", "14", 18]} />
+  <Column label="Abandon" values="12, 14, 18" />
 </Progression>
 
 <Feature level="1">

@@ -17,6 +17,7 @@ import {
 } from '@/modules/library/application/use-cases';
 import { DraftOverlay } from '@/modules/mdx-editor/presentation/DraftOverlay/DraftOverlay';
 import { EditPageButton } from '@/modules/mdx-editor/presentation/EditPageButton/EditPageButton';
+import { printColumnsOf } from '@/modules/library/domain/printLayout';
 import { notFound, redirect } from 'next/navigation';
 import type { JSX } from 'react';
 import { HashNavigationProvider, SectionTrack } from '../components';
@@ -105,6 +106,7 @@ export const LibraryContent = async ({
       <ArticleMetadataProvider metadata={resolved.articleMetadata}>
         <LibraryArticle
           streamText={resolved.streamText}
+          printColumns={printColumnsOf(resolved.evalResult.frontmatter)}
           titleAction={
             <EditPageButton slug={resolved.slugPath} locale={locale} />
           }>

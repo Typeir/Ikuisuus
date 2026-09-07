@@ -19,7 +19,7 @@
  * @property {string} rule - Rule identifier within this check
  * @property {string} message - Human-readable violation description
  * @property {string} [suggestion] - Actionable fix suggestion
- * @property {'critical' | 'warning'} [severity] - Per-finding severity override
+ * @property {'critical' | 'warning' | 'info'} [severity] - Per-finding severity override; `info` states a measurement for the author to read and never fails the check
  * @property {boolean} [indirectFix] - True if this finding cannot be fixed by editing the violated file
  */
 export interface CheckFailure {
@@ -28,7 +28,7 @@ export interface CheckFailure {
   rule: string;
   message: string;
   suggestion?: string;
-  severity?: 'critical' | 'warning';
+  severity?: 'critical' | 'warning' | 'info';
   indirectFix?: boolean;
 }
 

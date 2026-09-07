@@ -19,6 +19,7 @@ import {
   signed,
   spellLevelPhrase,
   tierBonusFor,
+  xpBand,
   xpFor,
   xpValue,
 } from '@/modules/library/domain/derive';
@@ -112,6 +113,16 @@ describe('XP_BY_CHALLENGE', () => {
       expect(XP_BY_CHALLENGE[i][0]).toBeGreaterThan(XP_BY_CHALLENGE[i - 1][0]);
       expect(XP_BY_CHALLENGE[i][1]).toBeGreaterThan(XP_BY_CHALLENGE[i - 1][1]);
     }
+  });
+});
+
+describe('xpBand', () => {
+  it('runs from a rating’s XP to one below the next, open at the top', () => {
+    expect(xpBand(1)).toEqual([200, 449]);
+    expect(xpBand('1/2')).toEqual([100, 199]);
+    expect(xpBand(0)).toEqual([10, 24]);
+    expect(xpBand(35)).toEqual([425000, null]);
+    expect(xpBand('x')).toBeNull();
   });
 });
 

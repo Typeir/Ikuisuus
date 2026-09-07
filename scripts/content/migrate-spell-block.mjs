@@ -4,7 +4,7 @@
 
 import { basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { frontmatterEnd, openingTag, runCli, titleOf, trimBlank } from './migrate-shared.mjs';
+import { openingTag, runCli, titleOf, trimBlank } from './migrate-shared.mjs';
 
 /**
  * Blockquote header label → spell slot.
@@ -22,8 +22,7 @@ const LABELLED = /^\*\*([^*]+?)\*\*:\s*(.*?)\s*$/;
 const NAME_LINE = /^\*\*(.+?)\*\*\s*$/;
 const CANTRIP = /^_cantrip_\s*$/i;
 const LEVELLED = /^_(\d+)(?:st|nd|rd|th)-level (legendary )?spell(?: \((ritual)\))?_\s*$/i;
-const OVERCAST = /^\*\*Overcast(?: \(([^()]*)\))?:(?: ([^*]+?))?\*\*\s*(.*)$/;
-const SCHOOL_ASPECT = /^\s*-\s*school:(\S+)\s*$/;
+const OVERCAST_LINE = /^\*\*Overcast/;
 
 /**
  * Text with markdown emphasis and surrounding space removed, for comparing a
@@ -37,61 +36,7 @@ function bare(text) {
 }
 
 /**
- * Splits the body at its overcast lines into `<Overcast>` elements.
- *
- * @param {string[]} body - Unquoted body lines
- * @param {string[]} notes - Notes to append to
- * @returns {{ body: string[], overcast?: string }} Rewritten body, and the
- * attribute value when a lone closing line took that form
- */
-function liftOvercast(body, notes) {
-  const marks = [];
-  body.forEach((line, i) => {
-    if (!/^\*\*Overcast/.test(line)) return;
-    const match = line.match(OVERCAST);
-    if (!match) {
-      notes.push(`overcast line kept as prose: ${line.trim()}`);
-      return;
-    }
-    const text = match[2] ? `**${match[2]}** ${match[3]}` : match[3];
-    marks.push({ at: i, tier: match[1], text: text.trim() ? text : '', named: Boolean(match[2]) });
-  });
-  if (marks.length === 0) return { body };
-
-  const only = marks[0];
-  const tailIsBlank = body.slice(only.at + 1).every((line) => line.trim() === '');
-  if (marks.length === 1 && !only.tier && !only.named && only.text && tailIsBlank) {
-    return { body: body.slice(0, only.at), overcast: only.text.trim() };
-  }
-
-  const out = [];
-  let i = 0;
-  while (i < body.length) {
-    const mark = marks.find((m) => m.at === i);
-    if (!mark) {
-      out.push(body[i]);
-      i += 1;
-      continue;
-    }
-    const open = mark.tier ? `<Overcast at="${mark.tier}">` : '<Overcast>';
-    const owns = mark.tier || !mark.text;
-    let end = i + 1;
-    if (owns) {
-      while (end < body.length && !marks.some((m) => m.at === end)) end += 1;
-    }
-    const content = trimBlank([mark.text, ...body.slice(i + 1, end)].filter((l) => l !== undefined));
-    if (content.length === 1 && !/^\|/.test(content[0])) {
-      out.push(`${open}${content[0].trim()}</Overcast>`);
-    } else {
-      out.push(open, '', ...content, '', '</Overcast>');
-    }
-    i = end;
-  }
-  return { body: out };
-}
-
-/**
- * Converts one spell file.
+ * Converts one spell file. Overcast lines stay in the body as prose.
  *
  * @param {string} text - File contents
  * @returns {{ text: string, changed: boolean, skipped?: string, notes: string[] }} Result
@@ -142,14 +87,6 @@ export function migrateSpellBlock(text) {
     }
   }
 
-  const fmEnd = frontmatterEnd(lines);
-  const schools = lines
-    .slice(0, fmEnd < 0 ? 0 : fmEnd)
-    .map((line) => line.match(SCHOOL_ASPECT)?.[1])
-    .filter(Boolean);
-  if (schools.length === 1) slots.school = schools[0];
-  else if (schools.length > 1) notes.push(`several school aspects (${schools.join(', ')}); none copied`);
-
   for (; i < inner.length; i += 1) {
     const labelled = inner[i].match(LABELLED);
     const slot = labelled && HEADER_SLOTS[labelled[1].trim().toLowerCase()];
@@ -157,9 +94,9 @@ export function migrateSpellBlock(text) {
     slots[slot] = labelled[2];
   }
 
-  let body = inner.slice(i);
+  const body = inner.slice(i);
   if (slots.targets === undefined) {
-    const firstOvercast = body.findIndex((line) => /^\*\*Overcast/.test(line));
+    const firstOvercast = body.findIndex((line) => OVERCAST_LINE.test(line));
     const at = body.findIndex((line, j) => {
       const labelled = line.match(LABELLED);
       return labelled && labelled[1].trim().toLowerCase() === 'targets' && (firstOvercast < 0 || j < firstOvercast);
@@ -171,19 +108,15 @@ export function migrateSpellBlock(text) {
     }
   }
 
-  const lifted = liftOvercast(trimBlank(body), notes);
-  body = lifted.body;
   const ordered = {
     level: slots.level,
     rarity: slots.rarity,
-    school: slots.school,
     ritual: slots.ritual,
     cost: slots.cost,
     components: slots.components,
     duration: slots.duration,
     range: slots.range,
     targets: slots.targets,
-    overcast: lifted.overcast,
   };
 
   const head = trimBlank(lines.slice(0, start));

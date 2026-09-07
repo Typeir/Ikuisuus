@@ -11,6 +11,7 @@
 'use client';
 
 import draggableStyles from '@/lib/components/ui/draggable/draggable.module.scss';
+import { TOOLTIP_HIDE_DELAY_MS } from '@/lib/constants/delays';
 import { cn } from '@/lib/utils/classNameMerge';
 import { useDrag } from '@/lib/components/ui/draggable/useDrag';
 import { useEscapeDismiss } from '@/lib/hooks/useEscapeDismiss';
@@ -48,7 +49,7 @@ import styles from './detachableTooltip.module.scss';
  * @property {string} [title] - Card title, shown in the handle and used as its accessible name
  * @property {TooltipPlacement} [placement] - Preferred side of the trigger
  * @property {number} [showDelay] - Delay before the card opens, in ms
- * @property {number} [hideDelay] - Delay before the card closes, in ms
+ * @property {number} [hideDelay=TOOLTIP_HIDE_DELAY_MS] - Grace period before the card starts closing, in ms
  * @property {number} [maxWidth] - Maximum width of the card, in px
  * @property {boolean} [disabled] - When true, the card never opens
  * @property {string} [className] - Extra class for the card
@@ -90,7 +91,7 @@ export function DetachableTooltip({
   title,
   placement = 'top',
   showDelay = 200,
-  hideDelay = 0,
+  hideDelay = TOOLTIP_HIDE_DELAY_MS,
   maxWidth = 250,
   disabled = false,
   className = '',

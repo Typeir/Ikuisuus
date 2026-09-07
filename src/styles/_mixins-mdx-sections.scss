@@ -212,6 +212,24 @@
       animation: none;
     }
   }
+
+  /* A gradient clipped to the glyph is a background image, and print drops
+     background images: the letter arrives with a transparent fill over nothing
+     and the initial goes missing. Paint it solid instead, and drop the two
+     bloom layers, which are gradients on the same terms. Last in the mixin so
+     these win on source order over the rules above at equal specificity. */
+  @media print {
+    color: var(--color-accent) !important;
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    -webkit-text-fill-color: var(--color-accent) !important;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
 }
 
 @mixin mdx-first-letter-headroom($size: 4.5em) {

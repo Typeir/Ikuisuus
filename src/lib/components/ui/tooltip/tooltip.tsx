@@ -23,6 +23,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './tooltip.module.scss';
+import { TOOLTIP_HIDE_DELAY_MS } from '@/lib/constants/delays';
 import { useEscapeDismiss } from '@/lib/hooks/useEscapeDismiss';
 import { useMounted } from '@/lib/hooks/useMounted';
 import { useTooltipAnchor, type TooltipPlacement } from './useTooltipAnchor';
@@ -36,7 +37,7 @@ export type { TooltipPlacement } from './useTooltipAnchor';
  * @property {ReactNode} content - Tooltip content (text or ReactNode)
  * @property {TooltipPlacement} [placement='top'] - Placement preference (will flip if insufficient space)
  * @property {number} [showDelay=200] - Delay before showing tooltip in ms
- * @property {number} [hideDelay=100] - Grace period before the exit starts, in ms.
+ * @property {number} [hideDelay=TOOLTIP_HIDE_DELAY_MS] - Grace period before the exit starts, in ms.
  * @property {number} [maxWidth=300] - Maximum width of tooltip in px
  * @property {boolean} [disabled=false] - Whether tooltip is disabled
  * @property {ReactElement} children - Trigger element (must accept ref and event handlers)
@@ -86,7 +87,7 @@ export const Tooltip = memo(function Tooltip({
   content,
   placement = 'top',
   showDelay = 200,
-  hideDelay = 100,
+  hideDelay = TOOLTIP_HIDE_DELAY_MS,
   maxWidth = 250,
   disabled = false,
   children,

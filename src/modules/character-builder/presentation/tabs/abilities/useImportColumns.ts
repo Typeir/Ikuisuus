@@ -51,13 +51,13 @@ export function useImportColumns(): Record<ImportTab, ColumnConfig[]> {
           row.hasPrerequisite ? (row.prerequisite ?? '—') : '—',
       },
       {
-        key: 'multiSelect',
+        key: 'repeatable',
         label: tFeatColumns('repeatable'),
         sortable: true,
         filterable: true,
         filterType: 'select',
-        getValue: (row) => (row.multiSelect ? tCommon('yes') : tCommon('no')),
-        render: (_value, row) => (row.multiSelect ? tCommon('yes') : '—'),
+        getValue: (row) => (row.repeatable ? tCommon('yes') : tCommon('no')),
+        render: (_value, row) => (row.repeatable ? tCommon('yes') : '—'),
       },
       {
         key: 'description',

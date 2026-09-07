@@ -5,6 +5,9 @@
  * corresponding test files.
  *
  * @module .github/scripts/check-test-gaps
+ * @version 2.0.0
+ * @author Typeir
+ * @since 3.0.0
  */
 
 import { execSync } from 'node:child_process';
@@ -31,7 +34,7 @@ const EXCLUDED_PATTERNS = [
 /**
  * Run a git command and return stdout, or empty string on failure.
  *
- * @param command Git command to run
+ * @param {string} command - Git command to run
  * @returns Trimmed stdout
  */
 function safeGitOutput(command: string): string {
@@ -145,8 +148,6 @@ async function hasTestFile(
     }
   }
 
-  // Fallback: check if any test file imports a module whose basename matches
-  // the source file's basename (case-insensitive).
   if (!importIndexCache) {
     importIndexCache = await buildImportIndex(rootDir);
   }
@@ -226,7 +227,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
  */
 async function main(): Promise<void> {
   const result = await runCheck();
-  console.log(JSON.stringify(result, null, 2));
+  process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   process.exit(result.passed ? 0 : 1);
 }
 

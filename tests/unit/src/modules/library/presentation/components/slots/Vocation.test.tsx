@@ -9,7 +9,7 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import Vocation, {
   Specialization,
 } from '@/modules/library/presentation/components/slots/Vocation';
@@ -19,7 +19,44 @@ import {
 } from '@/modules/library/presentation/components/slots/slotElements';
 import { printed } from './cardQueries';
 
+vi.mock('next-intl', async (importOriginal) => {
+  const { createRealMessageIntlMock } = await import('../../../../../../../setup/intlMock');
+  const library = (await import('../../../../../../../../messages/en/library.json')).default;
+  return createRealMessageIntlMock(await importOriginal<Record<string, unknown>>(), { library });
+});
+
 describe('Vocation', () => {
+  it('prints the heading above a Trait and Description table with the vocation labels', () => {
+    render(
+      <Vocation
+        saves='Strength and Constitution'
+        skills='Choose 2: Athletics'
+        trades='Smithing'
+        weapons='Simple and Martial weapons'>
+        <h2>Core Berserker Traits</h2>
+        <p>Body.</p>
+      </Vocation>,
+    );
+    const section = document.querySelector('[data-vocation]');
+    expect(section?.children[0].tagName).toBe('H2');
+    expect(section?.children[0].textContent).toBe('Core Berserker Traits');
+    expect(Array.from(document.querySelectorAll('th[scope="col"]')).map((th) => th.textContent)).toEqual([
+      'Trait',
+      'Description',
+    ]);
+    expect(Array.from(document.querySelectorAll('th[scope="row"]')).map((th) => th.textContent)).toEqual([
+      'Saving Throw Proficiencies',
+      'Skill Proficiencies',
+      'Trade Proficiencies',
+      'Weapon Proficiencies',
+    ]);
+    expect(document.querySelector('[data-slot="saves"] [data-slot-value]')?.textContent).toBe(
+      'Strength and Constitution',
+    );
+    expect(document.querySelector('[data-vocation-body]')?.textContent).toBe('Body.');
+    expect(document.querySelector('[data-vocation-body] h2')).toBeNull();
+  });
+
   it('prints the core traits in schema order', () => {
     render(
       <Vocation

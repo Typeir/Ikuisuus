@@ -3,6 +3,7 @@
     "cost": "Cost",
     "trigger": "Trigger",
     "targets": "Targets",
+    "accuracy": "Accuracy",
     "recharge": "Recharge",
     "rarity": "Rarity",
     "attunement": "Attunement",
@@ -25,7 +26,6 @@
     "deed": "Deed",
     "max": "Maximum",
     "level": "Level",
-    "school": "School",
     "components": "Components",
     "duration": "Duration",
     "overcast": "Overcast",
@@ -60,6 +60,10 @@
     "weapons": "Weapons",
     "armor": "Armor Training",
     "equipment": "Starting Equipment",
+    "savingThrowProficiencies": "Saving Throw Proficiencies",
+    "skillProficiencies": "Skill Proficiencies",
+    "tradeProficiencies": "Trade Proficiencies",
+    "weaponProficiencies": "Weapon Proficiencies",
     "prerequisite": "Prerequisite",
     "ability": "Ability",
     "repeatable": "Repeatable",
@@ -97,6 +101,19 @@
     "features": "Features",
     "feat": "Feat",
     "specializationFeature": "{label} Feature",
+    "none": "—"
+  },
+  "vocationTraits": {
+    "trait": "Trait",
+    "description": "Description"
+  },
+  "spellList": {
+    "spell": "Spell",
+    "level": "Level",
+    "castingTime": "Casting Time",
+    "range": "Range",
+    "duration": "Duration",
+    "cantrip": "Cantrip",
     "none": "—"
   },
   "monster": {

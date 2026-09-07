@@ -64,7 +64,8 @@ locales.forEach((locale) => {
     return;
   }
 
-  fs.writeFileSync(outputPath, newContent, 'utf-8');
+  fs.writeFileSync(`${outputPath}.tmp`, newContent, 'utf-8');
+  fs.renameSync(`${outputPath}.tmp`, outputPath);
 
   log.message('✅ Merged files into index.json (namespaced)', {
     locale,

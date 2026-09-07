@@ -291,3 +291,15 @@ export function featuresText<T>(
   const names = features.map((f) => (typeof f.value === 'string' ? f.value : text(f.value)));
   return names.length ? names.join(', ') : '—';
 }
+
+/**
+ * Items of a comma-separated attribute value, trimmed; empty items stay as
+ * empty cells, and an empty or missing value is no list at all.
+ *
+ * @param {string} [text] - Attribute value
+ * @returns {string[]} Items
+ */
+export function splitList(text?: string): string[] {
+  if (text === undefined || text.trim() === '') return [];
+  return text.split(',').map((item) => item.trim());
+}

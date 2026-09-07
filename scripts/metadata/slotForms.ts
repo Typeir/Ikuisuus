@@ -29,9 +29,8 @@ export interface HostTag {
 
 const TAG_OPEN = /^<([A-Z]\w*)\b/;
 const ATTRIBUTE = /([\w-]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|\{([^}]*)\}))?/g;
-const ELEMENT_SLOT = /^<([A-Z]\w*)>(.*)<\/\1>\s*$/;
-const FEATURE_OPEN = /^<Feature\b([^>]*)>\s*$/;
-const BLOCK_LINE = /^<\/?(?:Trait|Action|Feature|Overcast)\b[^>]*>\s*$/;
+const BLOCK_LINE = /^<\/?(?:Trait|Action|Feature|Overcast|Attack|SpellList)\b[^>]*>\s*$/;
+const TABLE_LINE = /^\s*(?:<\/?Column\b[^>]*>|<Row\b[^>]*>.*<\/Row>)\s*$/;
 const OVERCAST_INLINE = /^<Overcast(?:\s+at=(?:"([^"]*)"|'([^']*)'))?>(.*)<\/Overcast>\s*$/;
 const OVERCAST_OPEN = /^<Overcast(?:\s+at=(?:"([^"]*)"|'([^']*)'))?>\s*$/;
 
@@ -61,39 +60,13 @@ export function readHostTag(lines: string[], start: number): HostTag | null {
 }
 
 /**
- * Reads element-form slots written in the paragraph after a tag:
- * `<Equipment>…</Equipment>` lines, one per slot.
- *
- * @param {string[]} lines - File lines
- * @param {number} from - Line after the opening tag
- * @returns {{ slots: Record<string, string>, end: number }} Slots keyed by
- * lower-camel name, and the last line consumed (`from - 1` when none)
- */
-export function readElementSlots(
-  lines: string[],
-  from: number,
-): { slots: Record<string, string>; end: number } {
-  const slots: Record<string, string> = {};
-  let i = from;
-  while (i < lines.length && lines[i].trim() === '') i += 1;
-  let end = from - 1;
-  for (; i < lines.length; i += 1) {
-    const match = lines[i].match(ELEMENT_SLOT);
-    if (!match) break;
-    slots[match[1][0].toLowerCase() + match[1].slice(1)] = match[2].trim();
-    end = i;
-  }
-  return { slots, end };
-}
-
-/**
  * Text of an attribute, or undefined for a flag or an absent one.
  *
  * @param {HostTag} tag - Tag
  * @param {string} name - Attribute name
  * @returns {string | undefined} Trimmed text
  */
-function textAttr(tag: HostTag, name: string): string | undefined {
+export function textAttr(tag: HostTag, name: string): string | undefined {
   const value = tag.attrs[name];
   return typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined;
 }
@@ -107,7 +80,7 @@ function textAttr(tag: HostTag, name: string): string | undefined {
  * @param {number} end - Last line to replace
  * @param {string[]} replacement - New lines
  */
-function splice(lines: string[], start: number, end: number, replacement: string[]): void {
+export function splice(lines: string[], start: number, end: number, replacement: string[]): void {
   const span = end - start + 1;
   const padded = [...replacement];
   while (padded.length < span) padded.push('');
@@ -145,7 +118,7 @@ function capitalize(word: string): string {
  * @param {number} [from] - Line to start from
  * @returns {number} Line index
  */
-function findTag(lines: string[], name: string, from = 0): number {
+export function findTag(lines: string[], name: string, from = 0): number {
   const pattern = new RegExp(`^<${name}\\b`);
   for (let i = from; i < lines.length; i += 1) if (pattern.test(lines[i])) return i;
   return -1;
@@ -221,6 +194,29 @@ export function unslotSpell(text: string): string {
   }
   blankBlockTags(lines);
   return lines.join('\n');
+}
+
+/**
+ * Writes every `<Attack>` tag back as the accuracy sentence the generator
+ * reads, and blanks the `<SpellList>` columns and rows around it.
+ *
+ * @param {string[]} lines - File lines, mutated
+ */
+function restoreAttacks(lines: string[]): void {
+  let from = 0;
+  for (;;) {
+    const at = findTag(lines, 'Attack', from);
+    if (at < 0) break;
+    const tag = readHostTag(lines, at);
+    if (!tag) break;
+    const reach = textAttr(tag, 'reach');
+    const range = textAttr(tag, 'range');
+    const span = [reach && `reach ${reach}`, range && `range ${range}`].filter(Boolean).join(' or ');
+    const parts = [`Accuracy ${textAttr(tag, 'accuracy') ?? ''}`.trim(), span, textAttr(tag, 'targets') ?? 'one creature'];
+    splice(lines, tag.start, tag.end, [`${parts.filter(Boolean).join(', ')}.`]);
+    from = tag.start + 1;
+  }
+  for (let i = 0; i < lines.length; i += 1) if (TABLE_LINE.test(lines[i])) lines[i] = '';
 }
 
 /**
@@ -311,8 +307,23 @@ export function unslotMonster(text: string): string {
     from = tag.start + Math.max(header.length, tag.end - tag.start + 1);
   }
   for (let i = 0; i < lines.length; i += 1) if (/^<\/Monster>\s*$/.test(lines[i])) lines[i] = '';
+  restoreAttacks(lines);
   blankBlockTags(lines);
   return lines.join('\n');
+}
+
+/**
+ * Whether the `<Feat>` tag carries the repeatable flag.
+ *
+ * @param {string} text - File text
+ * @returns {boolean} True when repeatable
+ */
+export function featRepeatable(text: string): boolean {
+  const lines = text.split('\n');
+  const at = findTag(lines, 'Feat');
+  if (at < 0) return false;
+  const value = readHostTag(lines, at)?.attrs.repeatable;
+  return value === true || value === 'true';
 }
 
 /**
@@ -372,90 +383,4 @@ export function unslotTrinket(text: string): string {
   const close = lines.findIndex((line) => /^<\/Trinket>\s*$/.test(line));
   if (close >= 0) lines.splice(close, 1, ...(statLines.length ? statLines : ['']));
   return lines.join('\n');
-}
-
-const TRAIT_ROWS: Array<[string, string]> = [
-  ['primaryAbility', 'Primary Ability'],
-  ['hitDie', 'Hit Point Die'],
-  ['saves', 'Saving Throw Proficiencies'],
-  ['skills', 'Skill Proficiencies'],
-  ['trades', 'Trade Proficiencies'],
-  ['weapons', 'Weapon Proficiencies'],
-  ['armor', 'Armor Training'],
-  ['equipment', 'Starting Equipment'],
-];
-
-/**
- * The parent vocation a `<Specialization vocation="…">` tag names.
- *
- * @param {string} text - File text
- * @returns {string | undefined} Parent slug, or undefined without the tag
- */
-export function parentVocationOf(text: string): string | undefined {
-  const lines = text.split('\n');
-  const at = findTag(lines, 'Specialization');
-  const tag = at >= 0 ? readHostTag(lines, at) : null;
-  return tag ? textAttr(tag, 'vocation') : undefined;
-}
-
-/**
- * Restores a vocation's core traits table from the `<Vocation>` tag and its
- * element-form slots, and its `## Nth Level – Name` headings from
- * `<Feature level="N">` blocks.
- *
- * @param {string} text - File text
- * @returns {string} Text on the v1 form
- */
-export function unslotVocation(text: string): string {
-  const lines = text.split('\n');
-  let changed = false;
-
-  const specAt = findTag(lines, 'Specialization');
-  const spec = specAt >= 0 ? readHostTag(lines, specAt) : null;
-  if (spec) {
-    splice(lines, spec.start, spec.end, []);
-    changed = true;
-  }
-
-  const at = findTag(lines, 'Vocation');
-  const tag = at >= 0 ? readHostTag(lines, at) : null;
-  if (tag) {
-    const elements = readElementSlots(lines, tag.end + 1);
-    const values: Record<string, string | undefined> = { ...elements.slots };
-    for (const [slot] of TRAIT_ROWS) values[slot] = textAttr(tag, slot) ?? values[slot];
-    const rows = TRAIT_ROWS.filter(([slot]) => values[slot] !== undefined).map(
-      ([slot, label]) => `| **${label}** | ${values[slot]} |`,
-    );
-    const end = Math.max(tag.end, elements.end);
-    splice(lines, tag.start, end, rows.length ? ['| Trait | Value |', ...rows] : []);
-    changed = true;
-  }
-
-  for (let i = 0; i < lines.length; i += 1) {
-    if (/^<\/(?:Vocation|Specialization)>\s*$/.test(lines[i])) {
-      lines[i] = '';
-      changed = true;
-      continue;
-    }
-    const open = lines[i].match(FEATURE_OPEN);
-    if (!open) continue;
-    const level = open[1].match(/\blevel=(?:"(\d+)"|'(\d+)')/);
-    const value = level ? level[1] ?? level[2] : undefined;
-    lines[i] = '';
-    changed = true;
-    if (value === undefined) continue;
-    let j = i + 1;
-    while (j < lines.length && lines[j].trim() === '') j += 1;
-    const heading = lines[j]?.match(/^(#{1,6})\s+(.*?)\s*$/);
-    if (heading && !/\bLevel\b/.test(heading[2])) {
-      lines[j] = `${heading[1]} ${ordinal(Number(value))} Level – ${heading[2]}`;
-    }
-  }
-  for (let i = 0; i < lines.length; i += 1) {
-    if (/^<\/Feature>\s*$/.test(lines[i])) {
-      lines[i] = '';
-      changed = true;
-    }
-  }
-  return changed ? lines.join('\n') : text;
 }

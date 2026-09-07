@@ -60,7 +60,6 @@ function rarityWord(rarity: ReactNode): string | null {
  *
  * @param {ReactNode} level - Level slot
  * @param {ReactNode} rarity - Rarity slot
- * @param {ReactNode} school - School slot
  * @param {ReactNode} ritual - Ritual slot
  * @param {(key: string) => string} t - Translator over `library.spell`
  * @returns {ReactNode[]} Brief fragments; empty when no brief slot was written
@@ -68,26 +67,22 @@ function rarityWord(rarity: ReactNode): string | null {
 function briefLine(
   level: ReactNode,
   rarity: ReactNode,
-  school: ReactNode,
   ritual: ReactNode,
   t: (key: string) => string,
 ): ReactNode[] {
   const phrase =
     level === undefined ? null : spellLevelPhrase(String(inlineValue(level)));
-  const named =
-    typeof school === 'string' ? capitalize(school.trim()) : school;
   const rare = rarityWord(rarity);
-  const kind = named === undefined ? t('kind') : named;
-  const rareKind: ReactNode[] = rare ? [`${rare} `, kind] : [kind];
+  const rareKind: ReactNode[] = rare ? [`${rare} `, t('kind')] : [t('kind')];
 
   const parts: ReactNode[] =
     phrase === 'Cantrip'
-      ? named === undefined && !rare
-        ? [t('cantrip')]
-        : [...(rare ? [`${rare} `] : []), ...(named === undefined ? [] : [named, ' ']), t('cantrip').toLowerCase()]
+      ? rare
+        ? [`${rare} `, t('cantrip').toLowerCase()]
+        : [t('cantrip')]
       : phrase
         ? [`${phrase} `, ...rareKind]
-        : named !== undefined || rare
+        : rare
           ? rareKind
           : [];
 
@@ -109,7 +104,7 @@ function briefLine(
 const Spell: React.FC<SpellProps> = ({ children, ...slots }) => {
   const t = useTranslations('library.spell');
   const { values, kept } = readSlots(children, SPELL_SLOT_NAMES, slots);
-  const brief = briefLine(values.level, values.rarity, values.school, values.ritual, t);
+  const brief = briefLine(values.level, values.rarity, values.ritual, t);
   const rows = ROW_SLOTS.filter((name) => values[name] !== undefined);
 
   return (

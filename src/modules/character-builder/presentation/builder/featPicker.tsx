@@ -198,7 +198,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
           <div className={pickerStyles.pickerScroll}>
             <ul className={styles.boonList} aria-label={t("featAvailableAria")}>
               {displayedFeats.map((feat) => {
-                const multi = feat.multiSelect === true;
+                const multi = feat.repeatable === true;
                 const count = multi ? countFor(feat.slug) : 0;
                 const selected = multi ? count > 0 : isSelected(feat.slug);
                 const isExpanded = expandedFeats.has(feat.slug);
@@ -215,7 +215,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
                     expanded={isExpanded}
                     readOnly={readOnly}
                     onToggle={() => handleToggle(feat)}
-                    multiSelect={
+                    repeatable={
                       multi
                         ? {
                             count,

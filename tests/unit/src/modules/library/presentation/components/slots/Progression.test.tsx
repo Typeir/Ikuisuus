@@ -27,14 +27,17 @@ vi.mock('next-intl', async (importOriginal) => {
  * @returns {string[]} Cell texts
  */
 const row = (level: number): string[] =>
-  Array.from(document.querySelectorAll('tbody tr')[level - 1].querySelectorAll('td')).map((td) => td.textContent ?? '');
+  Array.from(document.querySelectorAll('[data-progression] tbody tr')[level - 1].querySelectorAll('td')).map(
+    (td) => td.textContent ?? '',
+  );
 
 /**
- * Header texts.
+ * Header texts of the progression table.
  *
  * @returns {string[]} Header cell texts
  */
-const headers = (): string[] => Array.from(document.querySelectorAll('th')).map((th) => th.textContent ?? '');
+const headers = (): string[] =>
+  Array.from(document.querySelectorAll('[data-progression] th')).map((th) => th.textContent ?? '');
 
 describe('Progression', () => {
   it('builds the table from the card headings, the attributes and the columns', () => {
@@ -67,13 +70,13 @@ describe('Progression', () => {
               <Row at='3'>2d6</Row>
             </p>
           </Column>
-          <Column label='Abandon' values={['12', '14']} />
+          <Column label='Abandon' values='12, 14' />
         </Progression>
       </Vocation>,
     );
     expect(document.querySelector('table[data-progression="third"]')).not.toBeNull();
     expect(headers()).toEqual(['Level', 'Tier Bonus', 'Features', 'Sneak Attack', 'Abandon', '1st', '2nd', '3rd', '4th']);
-    expect(document.querySelectorAll('tbody tr')).toHaveLength(20);
+    expect(document.querySelectorAll('[data-progression] tbody tr')).toHaveLength(20);
     expect(row(1)).toEqual(['1', '+1', 'Expertise, Sneak Attack', '1d6', '12', '—', '—', '—', '—']);
     expect(row(2)).toEqual(['2', '+1', '—', '1d6', '14', '—', '—', '—', '—']);
     expect(row(3)).toEqual(['3', '+1', 'Steady Aim', '2d6', '14', '2', '—', '—', '—']);
@@ -82,13 +85,13 @@ describe('Progression', () => {
     expect(row(7)[2]).toBe('—');
     expect(row(9)[2]).toBe('Specialization Feature');
     expect(row(20)).toEqual(['20', '+7', '—', '2d6', '14', '4', '3', '3', '1']);
-    expect(document.querySelector('tbody tr td em')?.textContent).toBe('1d6');
+    expect(document.querySelector('[data-progression] tbody tr td em')?.textContent).toBe('1d6');
   });
 
   it('runs to the level asked for and prints nothing for an unknown casting kind', () => {
     render(
       <Progression levels='3' casting='psionic'>
-        <Column label='Dice' values={[1, 2]} />
+        <Column label='Dice' values='1, 2' />
       </Progression>,
     );
     expect(document.querySelector('table[data-progression="none"]')).not.toBeNull();

@@ -14,7 +14,13 @@ import { fileURLToPath } from 'node:url';
 import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
-import { xpFor, xpValue } from '@/modules/library/domain/derive';
+import {
+  challengeFor,
+  challengeLabel,
+  challengeValue,
+  xpBand,
+  xpValue,
+} from '@/modules/library/domain/derive';
 import { SLOT_HOSTS, type SlotName } from '@/modules/library/domain/slots';
 import { slotFailure } from '@/modules/library/domain/slotValidators';
 import type {
@@ -80,8 +86,8 @@ interface FormatRule {
   message: string;
   /** Fix suggestion */
   suggestion: string;
-  /** Rule severity */
-  severity: 'critical' | 'warning';
+  /** Rule severity; `info` states a measurement and never fails the check */
+  severity: 'critical' | 'warning' | 'info';
   /** Content types this rule applies to — omit to apply to all */
   appliesTo?: string[];
 }
@@ -120,37 +126,66 @@ const HOST_TAG = new RegExp(
 const ATTRIBUTE = /([A-Za-z]\w*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
 
 /**
- * Every slot attribute whose value fails its shape rule, and every monster
- * whose written XP disagrees with the XP table for its rating.
+ * Every slot attribute whose value does not have the shape its card reads.
+ *
+ * @description Reports the shape a value was written in against the shape the
+ * card parses, so a value the card cannot read is visible to the author. This
+ * is a measurement of form, not a judgement of the number: it never decides
+ * that an authored value is too large, too small, or wrong for its creature.
+ * The rule that carries it reports at info severity for that reason.
  *
  * @param {string} content - MDX file content
- * @returns {string | false} The failures joined, or false when every value passes
+ * @returns {string | false} The notes joined, or false when every value parses
  */
 export function slotValueFailures(content: string): string | false {
   const problems: string[] = [];
   for (const tag of content.matchAll(HOST_TAG)) {
     const host = tag[1];
     const slots = SLOT_HOSTS[host];
-    const written: Record<string, string> = {};
     for (const attribute of tag[2].matchAll(ATTRIBUTE)) {
       const name = attribute[1];
       if (!(name in slots)) continue;
       const value = attribute[2] ?? attribute[3] ?? '';
-      written[name] = value;
       const why = slotFailure(name as SlotName, value, host);
       if (why) problems.push(`<${host} ${name}="${value}"> expects ${why}`);
     }
-    if (host === 'Monster' && written.challenge && written.xp) {
-      const expected = xpFor(written.challenge);
-      const actual = xpValue(written.xp);
-      if (expected !== null && actual !== null && expected !== actual) {
-        problems.push(
-          `<Monster challenge="${written.challenge}" xp="${written.xp}"> — the XP table gives ${expected} for that rating`,
-        );
-      }
-    }
   }
   return problems.length > 0 ? problems.join('; ') : false;
+}
+
+/**
+ * Every monster whose written XP sits in a different rating's XP band.
+ *
+ * @description States where a written XP value falls on the band table beside
+ * the rating the block declares. Both numbers are the author's; the balance
+ * they express is the author's call, so this reports the two side by side and
+ * draws no conclusion about which is correct. It is carried at info severity
+ * and never fails a build.
+ *
+ * @param {string} content - MDX file content
+ * @returns {string | false} The notes joined, or false when none differ
+ */
+export function xpBandNotes(content: string): string | false {
+  const notes: string[] = [];
+  for (const tag of content.matchAll(HOST_TAG)) {
+    if (tag[1] !== 'Monster') continue;
+    const written: Record<string, string> = {};
+    for (const attribute of tag[2].matchAll(ATTRIBUTE)) {
+      written[attribute[1]] = attribute[2] ?? attribute[3] ?? '';
+    }
+    if (!written.challenge || !written.xp) continue;
+    const band = xpBand(written.challenge);
+    const rating = challengeValue(written.challenge);
+    const actual = xpValue(written.xp);
+    const falls = actual === null ? null : challengeFor(actual);
+    if (band && rating !== null && actual !== null && falls !== rating) {
+      const high = band[1] === null ? 'up' : `–${band[1]}`;
+      notes.push(
+        `<Monster challenge="${written.challenge}" xp="${written.xp}"> — CR ${written.challenge} runs ${band[0]}${high} XP; ${written.xp} sits in the CR ${challengeLabel(falls ?? rating)} band`,
+      );
+    }
+  }
+  return notes.length > 0 ? notes.join('; ') : false;
 }
 
 const RULES: FormatRule[] = [
@@ -284,8 +319,16 @@ const RULES: FormatRule[] = [
     check: slotValueFailures,
     message: 'A slot value is not the shape its card derives from',
     suggestion:
-      'Write the value the way the slot expects; the card works its derived numbers out from it',
-    severity: 'warning',
+      'Write the value the way the slot expects if you want the card to derive from it; the value stands as authored either way',
+    severity: 'info',
+  },
+  {
+    name: 'monster-xp-band',
+    check: xpBandNotes,
+    message: 'Written XP sits in a different rating band than the written CR',
+    suggestion:
+      'Both numbers are as authored; change one only if the pairing was unintended',
+    severity: 'info',
   },
   {
     name: 'spell-missing-blockquote-stat-block',
@@ -535,6 +578,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
   const contentBasenames = buildContentBasenameSet(files);
   const allFailures: CheckFailure[] = [];
   let criticalCount = 0;
+  let actionableCount = 0;
 
   for (const absPath of files) {
     const relPath = path.relative(rootDir, absPath).replace(/\\/g, '/');
@@ -549,13 +593,16 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
     for (const v of violations) {
       allFailures.push(v);
       if (v.severity === 'critical') criticalCount++;
+      if (v.severity !== 'info') actionableCount++;
     }
   }
 
+  // An info finding states a measurement for the author to read. It never
+  // decides that authored content is wrong, so it never fails the check.
   return {
     check: 'mdx-format',
-    severity: criticalCount > 0 ? 'critical' : 'warning',
-    passed: allFailures.length === 0,
+    severity: criticalCount > 0 ? 'critical' : actionableCount > 0 ? 'warning' : 'info',
+    passed: actionableCount === 0,
     failures: allFailures,
     stats: {
       total_files_checked: files.length,

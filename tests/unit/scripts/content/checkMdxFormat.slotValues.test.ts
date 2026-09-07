@@ -10,7 +10,10 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { slotValueFailures } from '../../../../.github/scripts/checkMdxFormat';
+import {
+  slotValueFailures,
+  xpBandNotes,
+} from '../../../../.github/scripts/checkMdxFormat';
 
 describe('slotValueFailures', () => {
   it('lets a well-formed monster through', () => {
@@ -33,14 +36,9 @@ describe('slotValueFailures', () => {
     );
   });
 
-  it('names XP that disagrees with the table for its rating', () => {
-    expect(slotValueFailures('<Monster challenge="8" xp="7200">')).toMatch(
-      /the XP table gives 3900/,
-    );
-  });
-
-  it('accepts XP written with thousands separators', () => {
-    expect(slotValueFailures('<Monster challenge="13" xp="10,000">')).toBe(false);
+  it('leaves the XP band alone, since a rating and its XP are both authored', () => {
+    expect(slotValueFailures('<Monster challenge="8" xp="7200">')).toBe(false);
+    expect(slotValueFailures('<Monster challenge="2" xp="420">')).toBe(false);
   });
 
   it('wants a monster save DC fixed, and leaves an item DC free', () => {
@@ -69,5 +67,29 @@ describe('slotValueFailures', () => {
     const result = slotValueFailures('<Monster str="a" dex="b">');
     expect(result).toMatch(/str="a"/);
     expect(result).toMatch(/dex="b"/);
+  });
+});
+
+describe('xpBandNotes', () => {
+  it('states the band a written XP falls in beside the written rating', () => {
+    expect(xpBandNotes('<Monster challenge="8" xp="7200">')).toMatch(
+      /CR 8 runs 3900–4999 XP; 7200 sits in the CR 11 band/,
+    );
+    expect(xpBandNotes('<Monster challenge="2" xp="420">')).toMatch(
+      /sits in the CR 1 band/,
+    );
+  });
+
+  it('says nothing when the XP sits in its own rating band', () => {
+    expect(xpBandNotes('<Monster challenge="7" xp="3,100">')).toBe(false);
+    expect(xpBandNotes('<Monster challenge="1/2" xp="199">')).toBe(false);
+    expect(xpBandNotes('<Monster challenge="35" xp="900000">')).toBe(false);
+    expect(xpBandNotes('<Monster challenge="13" xp="10,000">')).toBe(false);
+  });
+
+  it('says nothing for a host that is not a monster or a block missing either value', () => {
+    expect(xpBandNotes('<Spell challenge="8" xp="7200">')).toBe(false);
+    expect(xpBandNotes('<Monster challenge="8">')).toBe(false);
+    expect(xpBandNotes('<Monster xp="7200">')).toBe(false);
   });
 });

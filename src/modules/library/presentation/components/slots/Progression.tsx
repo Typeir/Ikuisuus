@@ -3,7 +3,7 @@
  * declares: `<Progression>` attributes, its `<Column>` children, and the
  * feature headings of the enclosing card.
  * @module modules/library/presentation/components/slots/Progression
- * @version 0.1.0
+ * @version 0.2.0
  * @author Typeir
  * @since 2026-09-06
  */
@@ -16,41 +16,18 @@ import {
   buildProgression,
   parseLevels,
   parseSpecialization,
+  splitList,
   type ColumnEntry,
   type ColumnSpec,
   type FeatureCell,
 } from '@/modules/library/domain/progression';
 import { useTranslations } from 'next-intl';
 import React, { type ReactNode } from 'react';
-import { cleanChildren } from './slotElements';
+import { elementsNamed, type ColumnProps, type RowProps } from './columns';
 import { flagOf } from './text';
 import { useVocationFeatures } from './vocationFeatures';
 
-/**
- * Props of a column: a label, and either one value per level or Row children.
- *
- * @property {string} label - Column heading
- * @property {readonly (string | number)[]} [values] - One value per level from level 1
- * @property {ReactNode} [children] - Row elements
- */
-export interface ColumnProps {
-  label: string;
-  values?: readonly (string | number)[];
-  children?: ReactNode;
-}
-
-/**
- * Props of a row: where it starts, whether it stays there, and its value.
- *
- * @property {string | number} [at] - Level the value starts at
- * @property {unknown} [unique] - Print at this level only
- * @property {ReactNode} [children] - Value
- */
-export interface RowProps {
-  at?: string | number;
-  unique?: unknown;
-  children?: ReactNode;
-}
+export type { ColumnProps, RowProps } from './columns';
 
 /**
  * Props of the table.
@@ -70,7 +47,7 @@ export interface ProgressionProps {
 }
 
 /**
- * A column of the table; renders nothing itself.
+ * A column of a declared table; renders nothing itself.
  *
  * @returns {null} Nothing
  */
@@ -86,29 +63,6 @@ export const Row: React.FC<RowProps> = () => null;
 Row.displayName = 'Row';
 
 /**
- * Elements of one component type among nodes, looking through paragraphs
- * and fragments.
- *
- * @param {ReactNode} nodes - Nodes
- * @param {string} name - Component display name
- * @returns {React.ReactElement<P>[]} Matching elements in order
- */
-function elementsNamed<P>(nodes: ReactNode, name: string): React.ReactElement<P>[] {
-  const out: React.ReactElement<P>[] = [];
-  for (const node of cleanChildren(nodes)) {
-    if (!React.isValidElement(node)) continue;
-    const type = node.type as { displayName?: string; name?: string } | string;
-    const typeName = typeof type === 'string' ? type : type.displayName || type.name || '';
-    if (typeName === name) {
-      out.push(node as React.ReactElement<P>);
-    } else if (typeName === 'p' || typeName === '' || type === React.Fragment) {
-      out.push(...elementsNamed<P>((node.props as { children?: ReactNode }).children, name));
-    }
-  }
-  return out;
-}
-
-/**
  * The column specs the children declare.
  *
  * @param {ReactNode} children - Progression children
@@ -117,7 +71,7 @@ function elementsNamed<P>(nodes: ReactNode, name: string): React.ReactElement<P>
 function columnsOf(children: ReactNode): ColumnSpec<ReactNode>[] {
   return elementsNamed<ColumnProps>(children, 'Column').map((column) => {
     const { label, values } = column.props;
-    if (values) return { label, values: values.map((v) => String(v)) };
+    if (values !== undefined) return { label, values: splitList(values) };
     const entries: ColumnEntry<ReactNode>[] = elementsNamed<RowProps>(column.props.children, 'Row').map((row) => {
       const at = row.props.at === undefined ? undefined : Number(row.props.at);
       return {

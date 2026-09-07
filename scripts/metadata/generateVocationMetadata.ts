@@ -13,17 +13,15 @@
 import { isIndexFile } from '@/lib/constants/content';
 import { createLogger } from '@/lib/logging/logger';
 import { formatDie } from '@/lib/utils/diceUtils';
-import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
 import { progressionFromText } from './progressionText';
-import { unslotVocation } from './slotForms';
+import { unslotVocation } from './vocationForms';
 import path from 'path';
 import {
     applyAuthoredFeatureAspects,
   stampAnchors,
     blankFrontmatter,
-    clean,
     extractAllTags,
     getMetaSubdir,
     parseDescription,
@@ -36,391 +34,27 @@ import {
 import { extractFeatureGrants } from './extraction/grantsExtractor';
 import { tagRangedFeatures, type RangedFeature } from './featureAspects';
 import { GameData } from './gameData';
-import { LIST, SLUG, TEXT } from './parsingPatterns';
-import { CASTING, FEATURE, TABLE } from './vocationPatterns';
+import { SLUG, TEXT } from './parsingPatterns';
+import {
+    parseCoreTraits,
+    parseFeatureTable,
+    parseFixedTrades,
+    parseHitDie,
+    parseProficiencies,
+    parseSavingThrows,
+    parseSkillProficiencies,
+} from './vocationParsers';
+import {
+    classifyArchetype,
+    classifyProgression,
+    findFeatureLineRange,
+    parseSpecializations,
+    parseSpellcastingAbility,
+} from './vocationSpellcasting';
+
+export { parseFeatureTable } from './vocationParsers';
 
 const log = createLogger({ component: 'VocationMetadataGenerator' });
-
-/** Known spellcasting progression keywords */
-const FULL_CASTER_HEADERS = [
-  '1st',
-  '2nd',
-  '3rd',
-  '4th',
-  '5th',
-  '6th',
-  '7th',
-  '8th',
-  '9th',
-];
-const HALF_CASTER_HEADERS = ['1st', '2nd', '3rd', '4th', '5th'];
-
-/**
- * Parses the Core Traits table into structured proficiency data.
- *
- * @param {string} raw - Full MDX file content
- * @returns {Record<string, string>} Map of trait name → value
- */
-function parseCoreTraits(raw: string): Record<string, string> {
-  const traits: Record<string, string> = {};
-  const lines = raw.split(TEXT.lineSplit);
-
-  let inTable = false;
-  for (const line of lines) {
-    if (TABLE.coreTraits.test(line) || TABLE.traitHeader.test(line)) {
-      inTable = true;
-      continue;
-    }
-    if (inTable && TABLE.separator.test(line)) continue;
-    if (inTable && line.startsWith('|')) {
-      const cells = line
-        .split('|')
-        .map((c) => c.trim())
-        .filter(Boolean);
-      if (cells.length >= 2) {
-        const key = cells[0].replace(TEXT.boldStrip, '').trim();
-        traits[key] = cells[1].trim();
-      }
-    } else if (inTable && !line.startsWith('|')) {
-      inTable = false;
-    }
-  }
-  return traits;
-}
-
-/**
- * Extracts the hit die's face count from a traits value.
- *
- * @param {string} value - Raw hit die text (e.g. "d12 per Berserker level")
- * @returns {number} Face count (e.g. 12), or 0 when the traits declare none
- */
-function parseHitDie(value: string): number {
-  const match = value.match(FEATURE.hitDie);
-  if (!match) return 0;
-  const faces = Number.parseInt(match[1], 10);
-  return Number.isFinite(faces) && faces > 0 ? faces : 0;
-}
-
-/**
- * Parses saving throw proficiencies from the Core Traits table.
- *
- * @param {string} value - Raw saving throw text (e.g. "Strength and Constitution")
- * @returns {string[]} Array of abilities
- */
-function parseSavingThrows(value: string): string[] {
-  return value
-    .replace(TEXT.boldStrip, '')
-    .split(LIST.andSplit)
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-/** Maps spelled-out numbers used in "Pick two"/"Choose three" phrasing to digits. */
-const WORD_NUMBERS: Record<string, number> = {
-  one: 1,
-  two: 2,
-  three: 3,
-  four: 4,
-  five: 5,
-  six: 6,
-  seven: 7,
-  eight: 8,
-  nine: 9,
-  ten: 10,
-};
-
-/**
- * Extracts the number of picks from a "Choose N" / "Pick N" / "Choose any N"
- * phrase, accepting a digit or a spelled-out number and defaulting to 2.
- *
- * @param {string} text - Clean skill text (markdown already stripped)
- * @returns {number} Number of base skill picks
- */
-function parseChoiceCount(text: string): number {
-  const match = text.match(FEATURE.skillCount);
-  if (!match) return 2;
-  const token = match[1].toLowerCase();
-  return WORD_NUMBERS[token] ?? parseInt(token, 10) ?? 2;
-}
-
-/**
- * Parses skill proficiencies into count and choices.
- *
- * @param {string} value - Raw skill text (e.g. "Choose 2: Animal Handling, Athletics, ...")
- * @returns {{ count: number; choices: string[] }}
- */
-function parseSkillProficiencies(value: string): {
-  count: number;
-  choices: string[];
-} {
-  const cleaned = stripInlineMarkdown(value);
-  const count = parseChoiceCount(cleaned);
-  if (!cleaned.includes(':')) return { count, choices: [] };
-
-  const afterColon = cleaned.split(':')[1];
-  const choices = afterColon
-    .split(LIST.orSplit)
-    .map((s) => s.replace(LIST.orPrefix, '').trim())
-    .filter(Boolean);
-
-  return { count, choices };
-}
-
-/**
- * Splits a proficiency line into individual items.
- *
- * @param {string} value - Raw proficiency text (e.g. "Simple and Martial weapons")
- * @returns {string[]} Array of proficiency items
- */
-function parseProficiencies(value: string): string[] {
-  const cleaned = stripInlineMarkdown(value).trim();
-  if (!cleaned || cleaned.toLowerCase() === 'none') return [];
-  return cleaned
-    .split(LIST.andOrSplit)
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-/**
- * Extracts fixed trade display names from a raw "Trade Proficiencies" cell.
- *
- * @param {string} value - Raw Trade Proficiencies cell (markdown links intact)
- * @returns {string[]} Deduped fixed-trade display names
- */
-function parseFixedTrades(value: string): string[] {
-  if (!value) return [];
-  const withoutQualifiers = value.replace(
-    /\((?:[^()]|\([^()]*\))*?(?:\bany\b|\bchoose\b|\bor\b)(?:[^()]|\([^()]*\))*\)/gi,
-    ' ',
-  );
-  const out: string[] = [];
-  const linkRe = /\[([^\]]+)\]\(([^)]*)\)/g;
-  let match: RegExpExecArray | null;
-  while ((match = linkRe.exec(withoutQualifiers)) !== null) {
-    if (/\/tools\/[a-z0-9-]+/i.test(match[2])) {
-      out.push(stripInlineMarkdown(match[1]).trim());
-    }
-  }
-  return [...new Set(out)];
-}
-
-/**
- * Splits a markdown table row into cells, dropping only the empty fragments the
- * outer pipes produce.
- *
- * @param {string} line - Raw table row (starts and ends with `|`)
- * @returns {string[]} Trimmed cells with interior blanks preserved
- */
-function splitTableRow(line: string): string[] {
-  const parts = line.split('|').map((c) => c.trim());
-  if (parts[0] === '') parts.shift();
-  if (parts[parts.length - 1] === '') parts.pop();
-  return parts;
-}
-
-/**
- * Parses the vocation feature table and extracts feature entries.
- *
- * @param {string} raw - Full MDX file content
- * @returns {{ features: Array<{ level: number; name: string }>; hasSpellSlots: boolean; headers: string[] }}
- */
-export function parseFeatureTable(raw: string): {
-  features: Array<{ level: number; name: string }>;
-  hasSpellSlots: boolean;
-  headers: string[];
-} {
-  const lines = raw.split(TEXT.lineSplit);
-  const features: Array<{ level: number; name: string }> = [];
-  let headers: string[] = [];
-  let inTable = false;
-  let headerParsed = false;
-  /** Column index of the "Features" / "Vocation Features" header */
-  let featureColIdx = -1;
-
-  for (const line of lines) {
-    if (!inTable && TABLE.featuresHeader.test(line)) {
-      inTable = true;
-      headers = splitTableRow(line);
-      featureColIdx = headers.findIndex((h) => TABLE.featuresColumn.test(h));
-      if (featureColIdx < 0) {
-        featureColIdx = 2;
-      }
-      continue;
-    }
-    if (inTable && TABLE.separator.test(line)) {
-      headerParsed = true;
-      continue;
-    }
-    if (inTable && headerParsed && line.startsWith('|')) {
-      const cells = splitTableRow(line);
-
-      const level = parseInt(cells[0], 10);
-      if (isNaN(level) || !cells[featureColIdx]) continue;
-
-      const featureCell = cells[featureColIdx]
-        .replace(TABLE.markdownLink, '$1')
-        .replace(TEXT.boldStrip, '');
-
-      const featureNames = featureCell
-        .split(LIST.commaSplit)
-        .map((f) => f.trim())
-        .filter((f) => f && f !== '-' && f !== '\\-' && f !== '–');
-
-      for (const name of featureNames) {
-        features.push({ level, name: clean(name) });
-      }
-    } else if (inTable && headerParsed && !line.startsWith('|')) {
-      break;
-    }
-  }
-
-  const hasSpellSlots = headers.some((h) => TABLE.spellSlotColumn.test(h));
-  const hasPactSlots = headers.some(
-    (h) => CASTING.spellSlotsLabel.test(h) || CASTING.slotLevelLabel.test(h),
-  );
-
-  return { features, hasSpellSlots: hasSpellSlots || hasPactSlots, headers };
-}
-
-/**
- * Detects spellcasting ability from the Spellcasting feature collapsible block.
- *
- * @param {string} raw - Full MDX file content
- * @returns {string | null} Spellcasting ability name or null
- */
-function parseSpellcastingAbility(raw: string): string | null {
-  const abilityPatterns = [
-    CASTING.abilityBold,
-    CASTING.abilityIs,
-    CASTING.abilityReversed,
-    CASTING.modifierRef,
-    CASTING.dcModifier,
-  ];
-
-  const spellcastingSection = raw.match(CASTING.section);
-  const searchText = spellcastingSection ? spellcastingSection[0] : raw;
-
-  for (const pattern of abilityPatterns) {
-    const match = searchText.match(pattern);
-    if (match) {
-      const ability = match[1];
-      const abilities = [
-        'Strength',
-        'Dexterity',
-        'Constitution',
-        'Intelligence',
-        'Wisdom',
-        'Charisma',
-      ];
-      const found = abilities.find(
-        (a) => a.toLowerCase() === ability.toLowerCase(),
-      );
-      if (found) return found;
-    }
-  }
-
-  return null;
-}
-
-/**
- * Classifies spellcasting progression based on table headers.
- *
- * @param {string[]} headers - Feature table headers
- * @param {string} raw - Full MDX file content
- * @returns {string | null} Progression type: "Full" | "Half" | "Third" | "Pact" | null
- */
-function classifyProgression(headers: string[], raw: string): string | null {
-  if (CASTING.pactMagic.test(raw)) return 'Pact';
-
-  const slotHeaders = headers.filter((h) => TABLE.spellSlotColumn.test(h));
-  if (slotHeaders.length === 0) return null;
-
-  const has9th = slotHeaders.some((h) => h.includes('9th'));
-  const has5th = slotHeaders.some((h) => h.includes('5th'));
-
-  if (has9th) return 'Full';
-  if (has5th) return 'Half';
-  return 'Third';
-}
-
-/**
- * Extracts specialization slugs from the specialization table links.
- *
- * @param {string} raw - Full MDX file content
- * @returns {string[]} Array of specialization slugs
- */
-function parseSpecializations(raw: string): string[] {
-  const slugs: string[] = [];
-  const matches = raw.matchAll(new RegExp(FEATURE.specializationLink, 'g'));
-  for (const match of matches) {
-    slugs.push(match[1]);
-  }
-  return slugs;
-}
-
-/**
- * Determines the archetype from the spellcasting progression.
- *
- * @param {string | null} progression - Spellcasting progression or null
- * @returns {string} Archetype label
- */
-function classifyArchetype(progression: string | null): string {
-  if (!progression) return 'Martial';
-  if (progression === 'Full') return 'Full Caster';
-  if (progression === 'Half') return 'Half Caster';
-  if (progression === 'Pact') return 'Pact Caster';
-  return 'Third Caster';
-}
-
-/**
- * Scans MDX lines for a heading matching `featureName` and returns the 1-indexed
- * start and end lines of its heading block (up to the next equal-or-higher heading).
- *
- * @param {string[]} lines - MDX file split by newline
- * @param {string} featureName - Feature display name to search for
- * @returns {{ startLine: number; endLine: number; heading: string } | null} Line range and the raw heading text (level prefix kept, bold stripped), or null if not found
- */
-function findFeatureLineRange(
-  lines: string[],
-  featureName: string,
-): { startLine: number; endLine: number; heading: string } | null {
-  const target = featureName.replace(/\*\*/g, '').trim().toLowerCase();
-  let startIdx = -1;
-  let headingLevel = 0;
-  let heading = '';
-
-  for (let i = 0; i < lines.length; i++) {
-    const m = /^(#{1,6})\s+(.+)$/.exec(lines[i]);
-    if (!m) continue;
-    const headingText = m[2].replace(/\*\*/g, '').trim().toLowerCase();
-    const stripped = headingText
-      .replace(/^\d+(?:st|nd|rd|th)?\s+level\b\s*[-–—:]?\s*/i, '')
-      .trim();
-    if (headingText === target || stripped === target) {
-      startIdx = i;
-      headingLevel = m[1].length;
-      heading = m[2].replace(/\*\*/g, '').trim();
-      break;
-    }
-  }
-
-  if (startIdx < 0) return null;
-
-  let endIdx = lines.length - 1;
-  for (let i = startIdx + 1; i < lines.length; i++) {
-    const m = /^(#{1,6})\s+/.exec(lines[i]);
-    if (m && m[1].length <= headingLevel) {
-      endIdx = i - 1;
-      break;
-    }
-  }
-
-  while (endIdx > startIdx && lines[endIdx].trim() === '') {
-    endIdx--;
-  }
-
-  return { startLine: startIdx + 1, endLine: endIdx + 1, heading };
-}
 
 /**
  * Generates tags for a vocation based on its properties.

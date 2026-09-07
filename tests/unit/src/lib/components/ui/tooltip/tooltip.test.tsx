@@ -4,6 +4,7 @@
  */
 
 import { Tooltip, withTooltip } from '@/lib/components/ui/tooltip';
+import { TOOLTIP_HIDE_DELAY_MS } from '@/lib/constants/delays';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -528,6 +529,25 @@ describe('Tooltip', () => {
       expect(screen.getByRole('tooltip')).toBeInTheDocument();
     });
 
+    it('stays open for the whole grace period after the pointer leaves', () => {
+      render(
+        <Tooltip content='Reachable'>
+          <button>Hover me</button>
+        </Tooltip>,
+      );
+
+      open();
+      fireEvent.mouseLeave(screen.getByRole('button'));
+
+      /* Past the exit transition but inside the grace period, so a reader
+         crossing the gap slowly still finds the surface (WCAG 1.4.13). */
+      act(() => {
+        vi.advanceTimersByTime(TOOLTIP_HIDE_DELAY_MS - 50);
+      });
+
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+
     it('holds open while the pointer rests on it', () => {
       render(
         <Tooltip content='Readable'>
@@ -561,7 +581,7 @@ describe('Tooltip', () => {
       /* The grace period sets `exiting`; the exit transition is only scheduled
          once that render commits, so it needs a tick of its own. */
       act(() => {
-        vi.advanceTimersByTime(150);
+        vi.advanceTimersByTime(TOOLTIP_HIDE_DELAY_MS + 50);
       });
       act(() => {
         vi.advanceTimersByTime(200);

@@ -166,6 +166,23 @@ describe('resolveShards', () => {
       expect(result['Memorize Spell']).toContain('memorize any spell');
       expect(result['Memorize Spell']).not.toContain('Arcane Mastery');
     });
+
+    it('prefers an exact heading over an earlier suffix match', () => {
+      const mdx = `# Rest and Recovery\n\nIntro prose.\n\n## Recovery\n\nThe actual block.\n`;
+      const result = resolveShards(
+        mdx,
+        [{ name: 'Recovery', anchor: 'recovery' }],
+        ['recovery'],
+      );
+      expect(result['recovery']).toContain('The actual block.');
+      expect(result['recovery']).not.toContain('Intro prose.');
+    });
+
+    it('falls back to a suffix match when no exact heading exists', () => {
+      const mdx = `# Rest and Recovery\n\nIntro prose only.\n`;
+      const result = resolveShards(mdx, [{ name: 'Recovery' }], ['Recovery']);
+      expect(result['Recovery']).toContain('Intro prose only.');
+    });
   });
 
   describe('key filtering', () => {

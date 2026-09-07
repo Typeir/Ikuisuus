@@ -11,6 +11,7 @@
 
 'use client';
 
+import { TOOLTIP_HIDE_DELAY_MS } from '@/lib/constants/delays';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
@@ -25,7 +26,7 @@ export const TOOLTIP_EXIT_DURATION = 150;
  *
  * @interface TooltipVisibilityOptions
  * @property {number} [showDelay] - Delay before opening, in ms
- * @property {number} [hideDelay] - Delay before the exit phase begins, in ms
+ * @property {number} [hideDelay=TOOLTIP_HIDE_DELAY_MS] - Grace period before the exit phase begins, in ms
  * @property {number} [exitDuration] - Length of the exit phase, in ms
  * @property {boolean} [disabled] - When true, `show` is inert
  */
@@ -72,7 +73,7 @@ export interface TooltipVisibility {
  */
 export function useTooltipVisibility({
   showDelay = 200,
-  hideDelay = 0,
+  hideDelay = TOOLTIP_HIDE_DELAY_MS,
   exitDuration = TOOLTIP_EXIT_DURATION,
   disabled = false,
 }: TooltipVisibilityOptions = {}): TooltipVisibility {

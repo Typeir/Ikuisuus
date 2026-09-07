@@ -60,8 +60,8 @@ const ASI_FEAT = {
   file: 'src/content/en/character-creation/feats/ability-score-improvement.mdx',
   link: '/library/character-creation/feats/ability-score-improvement',
   hasPrerequisite: false,
-  multiSelect: true,
-  tags: ['multi-select'],
+  repeatable: true,
+  tags: ['repeatable'],
 };
 
 /**

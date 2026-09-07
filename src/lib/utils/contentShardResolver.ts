@@ -159,7 +159,7 @@ function clampToElementBoundary(block: string): string {
  *
  * @function extractByHeadingText
  * @param {string[]} lines - File lines array
- * @param {string} heading - Heading text to search for (exact or suffix match)
+ * @param {string} heading - Heading text to search for
  * @returns {string | null} Extracted heading block text or null when not found
  */
 function extractByHeadingText(lines: string[], heading: string): string | null {
@@ -167,19 +167,24 @@ function extractByHeadingText(lines: string[], heading: string): string | null {
   let startIdx = -1;
   let headingLevel = 0;
 
-  for (let i = 0; i < lines.length; i++) {
-    const match = /^(#{1,6})\s+(.+)$/.exec(lines[i]);
-    if (!match) continue;
-    const text = match[2]
-      .replace(/<[^>]+>[^<]*<\/[^>]+>/g, '')
-      .replace(/<[^>]+>/g, '')
-      .trim()
-      .toLowerCase();
-    if (text === target || text.endsWith(target)) {
-      startIdx = i;
-      headingLevel = match[1].length;
-      break;
+  /* Strict pass first: an exact heading anywhere on the page wins over a
+     suffix match, which would otherwise grab a containing heading. */
+  for (const exact of [true, false]) {
+    for (let i = 0; i < lines.length; i++) {
+      const match = /^(#{1,6})\s+(.+)$/.exec(lines[i]);
+      if (!match) continue;
+      const text = match[2]
+        .replace(/<[^>]+>[^<]*<\/[^>]+>/g, '')
+        .replace(/<[^>]+>/g, '')
+        .trim()
+        .toLowerCase();
+      if ((exact && text === target) || (!exact && text.endsWith(target))) {
+        startIdx = i;
+        headingLevel = match[1].length;
+        break;
+      }
     }
+    if (startIdx >= 0) break;
   }
 
   if (startIdx < 0) return null;

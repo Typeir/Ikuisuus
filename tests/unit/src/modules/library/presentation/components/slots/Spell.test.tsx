@@ -2,9 +2,9 @@
  * @fileoverview Unit tests for the spell card.
  *
  * @module tests/unit/src/modules/library/presentation/components/slots/Spell.test
- * @version 0.1.0
+ * @version 0.3.0
  * @author Typeir
- * @since 2026-09-05
+ * @since 2026-09-03
  */
 
 import { render, screen } from '@testing-library/react';
@@ -15,16 +15,14 @@ import {
   Cost,
   Duration,
   Level,
-  School,
 } from '@/modules/library/presentation/components/slots/slotElements';
 import { briefText, printed } from './cardQueries';
 
 describe('Spell', () => {
-  it('writes the brief from level and school, and rows from the rest', () => {
+  it('writes the brief from the level, and rows from the rest', () => {
     render(
       <Spell
         level='3'
-        school='evocation'
         cost='1 Major Action'
         components='V, S, M (a ball of bat guano and sulfur)'
         duration='Instantaneous'
@@ -34,7 +32,7 @@ describe('Spell', () => {
         <p>A bright streak flashes.</p>
       </Spell>,
     );
-    expect(briefText('data-spell-brief')).toBe('3rd-level Evocation');
+    expect(briefText('data-spell-brief')).toMatch(/^3rd-level (?:spell|kind)$/);
     expect(printed()).toEqual([
       'cost',
       'range',
@@ -47,8 +45,8 @@ describe('Spell', () => {
   });
 
   it('calls a level-zero spell a cantrip', () => {
-    render(<Spell level='0' school='evocation' />);
-    expect(briefText('data-spell-brief')).toBe('Evocation cantrip');
+    render(<Spell level='0' />);
+    expect(briefText('data-spell-brief')).toMatch(/^cantrip$/i);
   });
 
   it('carries a trigger beside the cost for a reaction spell', () => {
@@ -67,14 +65,13 @@ describe('Spell', () => {
       <Spell>
         <p>
           <Level>2</Level>
-          <School>abjuration</School>
           <Cost>1 Minor Action</Cost>
           <Duration>1 hour</Duration>
         </p>
         <p>Body prose.</p>
       </Spell>,
     );
-    expect(briefText('data-spell-brief')).toBe('2nd-level Abjuration');
+    expect(briefText('data-spell-brief')).toMatch(/^2nd-level (?:spell|kind)$/);
     expect(printed()).toEqual(['cost', 'duration']);
     expect(screen.getByText('Body prose.')).toBeInTheDocument();
   });
@@ -89,37 +86,33 @@ describe('Spell', () => {
     expect(document.querySelector('[data-slot-grid]')).toBeNull();
   });
 
-  it('speaks a rarity above common between level and school, and none for common', () => {
-    render(<Spell level='10' rarity='legendary' school='evocation' />);
-    expect(briefText('data-spell-brief')).toBe('10th-level Legendary Evocation');
-    document.body.innerHTML = '';
-
+  it('speaks a rarity above common after the level, and none for common', () => {
     render(<Spell level='10' rarity='legendary' />);
     expect(briefText('data-spell-brief')).toMatch(/^10th-level Legendary (?:spell|kind)$/);
     document.body.innerHTML = '';
 
-    render(<Spell level='0' rarity='rare' school='evocation' />);
-    expect(briefText('data-spell-brief')).toBe('Rare Evocation cantrip');
+    render(<Spell level='0' rarity='rare' />);
+    expect(briefText('data-spell-brief')).toBe('Rare cantrip');
     document.body.innerHTML = '';
 
-    render(<Spell level='3' rarity='common' school='evocation' />);
-    expect(briefText('data-spell-brief')).toBe('3rd-level Evocation');
-    document.body.innerHTML = '';
-
-    render(<Spell level='3' rarity='Common' />);
+    render(<Spell level='3' rarity='common' />);
     expect(briefText('data-spell-brief')).toMatch(/^3rd-level (?:spell|kind)$/);
+    document.body.innerHTML = '';
+
+    render(<Spell rarity='Legendary' />);
+    expect(briefText('data-spell-brief')).toMatch(/^Legendary (?:spell|kind)$/);
   });
 
   it('reads the ritual flag bare, and reads the negated word', () => {
-    render(<Spell level='2' school='divination' ritual />);
-    expect(briefText('data-spell-brief')).toBe('2nd-level Divination (ritual)');
+    render(<Spell level='2' ritual />);
+    expect(briefText('data-spell-brief')).toMatch(/^2nd-level (?:spell|kind) \(ritual\)$/);
     document.body.innerHTML = '';
 
-    render(<Spell level='2' school='divination' ritual={false} />);
-    expect(briefText('data-spell-brief')).toBe('2nd-level Divination');
+    render(<Spell level='2' ritual={false} />);
+    expect(briefText('data-spell-brief')).toMatch(/^2nd-level (?:spell|kind)$/);
     document.body.innerHTML = '';
 
-    render(<Spell level='2' school='divination' ritual='false' />);
-    expect(briefText('data-spell-brief')).toBe('2nd-level Divination');
+    render(<Spell level='2' ritual='false' />);
+    expect(briefText('data-spell-brief')).toMatch(/^2nd-level (?:spell|kind)$/);
   });
 });

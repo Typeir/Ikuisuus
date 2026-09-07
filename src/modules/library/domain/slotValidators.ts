@@ -37,6 +37,9 @@ const CHALLENGE = /^(?:\d+|1\/(?:8|4|2))$/;
 /** A signed bonus, as a sheet prints one. */
 const BONUS = /^[+-]\d+$/;
 
+/** A signed bonus, optionally followed by the note a sheet prints beside it, such as `+27 (Wisdom-based)`. */
+const BONUS_WITH_NOTE = /^[+-]\d+(?: \([^()]+\))?$/;
+
 /** A spell level: zero through twelve, or the word cantrip. */
 const SPELL_LEVEL = /^(?:cantrip|\d|1[0-2])$/i;
 
@@ -56,6 +59,10 @@ export const SLOT_RULES: Readonly<Partial<Record<SlotName, SlotRule>>> = {
   },
   xp: { pattern: GROUPED_COUNT, expects: 'a whole number of XP, such as 10000' },
   tierBonus: { pattern: BONUS, expects: 'a signed bonus, such as +4' },
+  accuracy: {
+    pattern: BONUS_WITH_NOTE,
+    expects: 'a signed bonus, such as +7, with a parenthetical note after it if the attack needs one',
+  },
   hitPoints: {
     pattern: HIT_POINTS,
     expects: 'a whole number of hit points, with the dice in parentheses if you like',

@@ -1,7 +1,7 @@
 /**
  * @fileoverview FeatTable tests
  * @description Verifies the feat library table renders loading, empty, and data
- * states and flags repeatable feats via the multiSelect column.
+ * states and flags repeatable feats via the repeatable column.
  *
  * @module tests/unit/src/modules/metadata-tables/presentation/FeatTable/FeatTable.test
  * @version 1.0.0
@@ -79,7 +79,7 @@ describe('FeatTable', () => {
           slug: 'ability-score-improvement',
           title: 'Ability Score Improvement',
           hasPrerequisite: false,
-          multiSelect: true,
+          repeatable: true,
         },
       ],
       isLoading: false,
@@ -88,7 +88,7 @@ describe('FeatTable', () => {
     render(<FeatTable />);
     expect(screen.getByText('Ability Score Improvement')).toBeInTheDocument();
     expect(screen.getByText('Tough')).toBeInTheDocument();
-    // repeatable column renders tCommon('yes') for the multiSelect feat only
+    // repeatable column renders tCommon('yes') for the repeatable feat only
     expect(screen.getByText('yes')).toBeInTheDocument();
   });
 });

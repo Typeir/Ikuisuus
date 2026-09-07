@@ -54,10 +54,13 @@ export const FULL_CASTER_SLOTS: readonly (readonly number[])[] = [
 ];
 
 /**
- * Slot counts for levels 1 to 20 of a half caster.
+ * Slot counts for levels 1 to 20 of a half caster, which begins at level 2.
+ *
+ * @description A half caster casts nothing at first level, so a shallow dip
+ * into one buys no spells.
  */
 export const HALF_CASTER_SLOTS: readonly (readonly number[])[] = [
-  [2],
+  [],
   [2],
   [3],
   [3],

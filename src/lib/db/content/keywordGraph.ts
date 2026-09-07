@@ -42,7 +42,24 @@ export interface KeywordGraph {
 /** Cached graph per locale. */
 const cache = new Map<string, KeywordGraph>();
 
-registerServerCache('keyword-graph', () => cache.clear());
+/** Builds still running, per locale, shared by every caller that arrives during one. */
+const inflight = new Map<string, Promise<KeywordGraph>>();
+
+/** Incremented on every clear, so a build started before it cannot repopulate the cache. */
+let generation = 0;
+
+/**
+ * Drops the cached graph and abandons any build already running.
+ *
+ * @returns {void}
+ */
+const dropGraphs = (): void => {
+  generation += 1;
+  cache.clear();
+  inflight.clear();
+};
+
+registerServerCache('keyword-graph', dropGraphs);
 
 /**
  * Trims a route to the comparable form: no locale prefix, no trailing slash.
@@ -57,17 +74,21 @@ export function normalizeRoute(route: string): string {
 }
 
 /**
- * Builds the graph for a locale, reading every metadata record once.
+ * Reads every link record for a locale and folds it into a graph.
  *
  * @param {string} locale - Locale code
- * @returns {Promise<KeywordGraph>} The cached graph
+ * @param {number} startedAt - Generation the build began in
+ * @returns {Promise<KeywordGraph>} The graph, cached when the generation still holds
+ *
+ * @description
+ * The result is cached only when no clear happened while the read was in
+ * flight; a build from a superseded generation is returned to its own callers
+ * and then discarded.
  */
-export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
-  await ensureCachesFresh();
-
-  const cached = cache.get(locale);
-  if (cached) return cached;
-
+async function buildKeywordGraph(
+  locale: string,
+  startedAt: number,
+): Promise<KeywordGraph> {
   const records: KeywordLink[] =
     await keywordLinkRepository.listLinks(locale);
 
@@ -106,8 +127,38 @@ export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
     }
   }
 
-  cache.set(locale, graph);
+  if (generation === startedAt) cache.set(locale, graph);
   return graph;
+}
+
+/**
+ * Builds the graph for a locale, reading every metadata record once.
+ *
+ * @param {string} locale - Locale code
+ * @returns {Promise<KeywordGraph>} The cached graph
+ *
+ * @description
+ * Concurrent callers share one build. A page resolves every keyword it writes
+ * in parallel, and the freshness check before the cache lookup yields, so
+ * without this each reference would start its own full scan of the locale.
+ */
+export async function loadKeywordGraph(locale: string): Promise<KeywordGraph> {
+  await ensureCachesFresh();
+
+  const cached = cache.get(locale);
+  if (cached) return cached;
+
+  const pending = inflight.get(locale);
+  if (pending) return pending;
+
+  const build = buildKeywordGraph(locale, generation);
+  inflight.set(locale, build);
+
+  try {
+    return await build;
+  } finally {
+    if (inflight.get(locale) === build) inflight.delete(locale);
+  }
 }
 
 /**
@@ -194,5 +245,5 @@ export async function consumerRoutesFor(
  * @returns {void}
  */
 export function clearKeywordGraphCache(): void {
-  cache.clear();
+  dropGraphs();
 }

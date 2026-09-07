@@ -12,7 +12,7 @@
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
-import { unslotFeat } from './slotForms';
+import { featRepeatable, unslotFeat } from './slotForms';
 import path from 'path';
 import {
     blankFrontmatter,
@@ -234,13 +234,13 @@ async function parseFeatFile(
       ? { [title]: frontmatterGrants as string[] }
       : (frontmatterGrants as Record<string, string[]> | undefined);
     const grants = extractFeatureGrants(title, body, grantsMap);
-    const multiSelect = frontmatter.multiSelect === true;
+    const repeatable = frontmatter.repeatable === true || featRepeatable(raw);
     const tagSet = new Set(
       extractAllTags(raw, filePath, sharedData, {
         contentType: 'generic',
       }),
     );
-    if (multiSelect) tagSet.add('multi-select');
+    if (repeatable) tagSet.add('repeatable');
     const tags = Array.from(tagSet).sort();
 
     const metadata: Record<string, unknown> = {
@@ -260,7 +260,7 @@ async function parseFeatFile(
     if (abilityIncrease) metadata.abilityIncrease = abilityIncrease;
     if (features.length > 0) metadata.features = features;
     if (grants.length > 0) metadata.grants = grants;
-    if (multiSelect) metadata.multiSelect = true;
+    if (repeatable) metadata.repeatable = true;
 
     return metadata;
   } catch (error) {

@@ -273,6 +273,9 @@ function buildFilteredResult(
   beforeKey: string,
 ): CheckResult {
   const severity = getSeverityForFailures(result, failures);
+  const levelOf = (failure: CheckResult['failures'][number]): string =>
+    failure.severity ?? result.severity;
+  const actionable = failures.filter((failure) => levelOf(failure) !== 'info');
   const nextStats = {
     ...result.stats,
     violations_found: failures.length,
@@ -283,31 +286,27 @@ function buildFilteredResult(
     Object.prototype.hasOwnProperty.call(result.stats, 'warning_violations')
   ) {
     const criticalCount = failures.filter(
-      (failure) =>
-        (failure.severity ??
-          (result.severity === 'info' ? 'warning' : result.severity)) ===
-        'critical',
+      (failure) => levelOf(failure) === 'critical',
     ).length;
     nextStats.critical_violations = criticalCount;
-    nextStats.warning_violations = failures.length - criticalCount;
+    nextStats.warning_violations = actionable.length - criticalCount;
   }
   if (
     Object.prototype.hasOwnProperty.call(result.stats, 'critical') ||
     Object.prototype.hasOwnProperty.call(result.stats, 'warnings')
   ) {
     const criticalCount = failures.filter(
-      (failure) =>
-        (failure.severity ??
-          (result.severity === 'info' ? 'warning' : result.severity)) ===
-        'critical',
+      (failure) => levelOf(failure) === 'critical',
     ).length;
     nextStats.critical = criticalCount;
-    nextStats.warnings = failures.length - criticalCount;
+    nextStats.warnings = actionable.length - criticalCount;
   }
 
+  // An info finding is a measurement the author reads, so it is reported but
+  // never fails a check.
   return {
     ...result,
-    passed: failures.length === 0,
+    passed: actionable.length === 0,
     severity,
     failures,
     stats: nextStats,

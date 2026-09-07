@@ -59,7 +59,7 @@ Odd heading.
 `;
 
 describe('migrateVocation', () => {
-  it('turns the core table into the tag, with the br row in element form', () => {
+  it('turns the core table into the tag, its heading first inside, the br row in element form', () => {
     const result = migrateVocation(VOCATION);
     expect(result.text).toContain(`---
 
@@ -72,13 +72,14 @@ describe('migrateVocation', () => {
   weapons="Simple weapons"
   armor="Light armor">
 
+## Core Rogue Traits
+
 <Equipment>(A) Leather Armor, 8 GP<br/>(B) 100 GP</Equipment>
 
 ---
 
 ## Becoming a Rogue
 `);
-    expect(result.text).not.toContain('## Core Rogue Traits');
     expect(result.text).not.toContain('| **Primary Ability**');
     expect(result.text.trimEnd().endsWith('</Vocation>')).toBe(true);
   });

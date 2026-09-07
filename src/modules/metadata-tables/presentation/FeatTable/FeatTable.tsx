@@ -65,15 +65,15 @@ export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
         render: (value) => truncateWords(String(value ?? ''), 100) || '—',
       },
       {
-        key: 'multiSelect',
+        key: 'repeatable',
         label: tColumns('repeatable'),
         sortable: true,
         filterable: true,
         filterType: 'select',
         getValue: (row) =>
-          (row as FeatMetadata).multiSelect ? tCommon('yes') : tCommon('no'),
+          (row as FeatMetadata).repeatable ? tCommon('yes') : tCommon('no'),
         render: (_value, row) =>
-          (row as FeatMetadata).multiSelect ? tCommon('yes') : '—',
+          (row as FeatMetadata).repeatable ? tCommon('yes') : '—',
       },
       {
         key: 'description',

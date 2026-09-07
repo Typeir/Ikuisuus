@@ -16,8 +16,10 @@
 
 import { anchorSlug } from '@/modules/library/domain/anchorSlug';
 import {
+  ATTACK_SLOT_NAMES,
   FEATURE_SLOT_NAMES,
   POOL_SLOT_NAMES,
+  type AttackSlotName,
   type FeatureSlotName,
   type PoolSlotName,
   type SlotName,
@@ -42,13 +44,16 @@ export type FeatureKind =
   | 'trait'
   | 'curse'
   | 'action'
-  | 'pool';
+  | 'pool'
+  | 'attack';
 
 /**
  * Props for the Feature component: one optional prop per feature slot, the
  * block kind, and the heading, optional slot run, and prose as children.
  */
-export type FeatureProps = SlotProps<FeatureSlotName | PoolSlotName> & {
+export type FeatureProps = SlotProps<
+  FeatureSlotName | PoolSlotName | AttackSlotName
+> & {
   kind?: FeatureKind;
   mark?: FeatureMark;
   children?: ReactNode;
@@ -68,6 +73,7 @@ const SLOT_NAMES_BY_KIND: Record<FeatureKind, readonly SlotName[]> = {
   curse: FEATURE_SLOT_NAMES,
   action: FEATURE_SLOT_NAMES,
   pool: POOL_SLOT_NAMES,
+  attack: ATTACK_SLOT_NAMES,
 };
 
 /**
@@ -92,7 +98,10 @@ const COST_MARKS: ReadonlyArray<readonly [RegExp, FeatureMark]> = [
  * @param {ReactNode} cost - The block's cost
  * @returns {FeatureMark} Mark to stamp
  */
-function markOf(explicit: FeatureMark | undefined, cost: ReactNode): FeatureMark {
+function markOf(
+  explicit: FeatureMark | undefined,
+  cost: ReactNode,
+): FeatureMark {
   if (explicit) return explicit;
   if (typeof cost !== 'string') return 'other';
   return COST_MARKS.find(([pattern]) => pattern.test(cost))?.[1] ?? 'other';
@@ -161,8 +170,7 @@ const Feature: React.FC<FeatureProps> = ({
       : { titleNodes: [] as ReactNode[], cost: null, anchor: null };
 
   const titleText = textOfNodes(parsed.titleNodes).trim();
-  const anchor =
-    parsed.anchor ?? (titleText ? anchorSlug(titleText) : null);
+  const anchor = parsed.anchor ?? (titleText ? anchorSlug(titleText) : null);
 
   const bodyNodes =
     headingIndex >= 0
@@ -268,5 +276,18 @@ export const Pool: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
 );
 
 Pool.displayName = 'Pool';
+
+/**
+ * Attack block inside an action: accuracy, reach or range, targets, then the hit as prose.
+ * A heading names it when the action holds several.
+ *
+ * @param {Omit<FeatureProps, 'kind'>} props - Block props
+ * @returns {JSX.Element} The attack article
+ */
+export const Attack: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
+  <Feature kind='attack' {...props} />
+);
+
+Attack.displayName = 'Attack';
 
 export default Feature;

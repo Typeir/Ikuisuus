@@ -16,7 +16,8 @@ describe('spell fixture', () => {
   it('compiles to a spell card with its brief and rows', async () => {
     const html = await renderNamed('spell.mdx');
     expect(html).toContain('data-spell="true"');
-    expect(html).toContain('3rd-level Evocation');
+    expect(html).toMatch(/data-spell-brief="true"><em>3rd-level (?:spell|kind)</);
+    expect(html).not.toContain('Evocation');
     expect(html).toContain('data-slot="cost"');
     expect(html).toContain('1 Major Action');
     expect(html).toContain('data-slot="overcast"');

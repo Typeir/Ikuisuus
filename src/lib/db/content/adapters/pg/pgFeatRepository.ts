@@ -83,7 +83,7 @@ const rowToFeat = (row: FeatEntity): FeatMetadata => {
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map(toFeatFeature)
       : undefined,
-    multiSelect: tags.includes('multi-select') || undefined,
+    repeatable: tags.includes('repeatable') || undefined,
     grants: nonEmpty(row.grants ?? []),
     tags,
     indexVersion: orUndef(row.indexVersion),

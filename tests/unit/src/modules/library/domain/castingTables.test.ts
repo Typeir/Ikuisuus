@@ -68,6 +68,14 @@ describe('castingColumns', () => {
     expect(castingColumns('half', 20).columns).toHaveLength(5);
   });
 
+  it('gives a half caster nothing at first level, so a shallow dip buys no spells', () => {
+    const half = castingColumns('half', 20);
+    expect(half.cells[0]).toEqual(['', '', '', '', '']);
+    expect(half.cells[1]).toEqual(['2', '', '', '', '']);
+    expect(half.cells[2]).toEqual(['3', '', '', '', '']);
+    expect(half.cells[19]).toEqual(['4', '3', '3', '3', '2']);
+  });
+
   it('prints the two named columns of a point or pact caster, empty past the table', () => {
     const points = castingColumns('points', 22);
     expect(points.columns).toEqual(['Spell Points', 'Max Spell Level']);

@@ -67,7 +67,7 @@ describe('migrateProgression', () => {
     <Row at="3">[% 2d6 %]</Row>
     <Row at="5">[% 3d6 %]</Row>
   </Column>
-  <Column label="Cantrips" values={["2", "2", "2", "3", "3", "3"]} />
+  <Column label="Cantrips" values="2, 2, 2, 3, 3, 3" />
 </Progression>
 
 <Feature level="1">`);
@@ -165,7 +165,7 @@ describe('migrateProgression', () => {
 </Vocation>
 `;
     const result = migrateProgression(page);
-    expect(result.text).toContain('<Progression casting="points" feats="2" levels="2">\n  <Column label="Sorcery Points" values={["", "2"]} />\n</Progression>');
+    expect(result.text).toContain('<Progression casting="points" feats="2" levels="2">\n  <Column label="Sorcery Points" values=", 2" />\n</Progression>');
     expect(result.notes).toEqual(['column Sorcery Points sat before Features; it prints after']);
   });
 });

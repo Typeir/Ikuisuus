@@ -1,25 +1,30 @@
 /**
  * @fileoverview Vocation and specialization card.
- * @description The core traits table, one slot per row.
+ * @description The core traits table as the page wrote it: an optional
+ * heading, then one trait per row with its description, the labels the
+ * vocation's own.
  *
  * @module modules/library/presentation/components/slots/Vocation
- * @version 0.2.0
+ * @version 0.3.0
  * @author Typeir
  * @since 2026-09-04
  */
 
 'use client';
 
+import { DataTable, type DataTableCellSpec, type DataTableRow } from '@/lib/components/ui/dataTable';
 import { CONTENT_SUBDIRS } from '@/lib/constants/contentPaths';
 import {
+  slotLabelKey,
   VOCATION_SLOT_NAMES,
   type SlotProps,
   type VocationSlotName,
 } from '@/modules/library/domain/slots';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import React, { type ReactNode } from 'react';
-import { inlineValue, readSlots, SlotRow } from './slotElements';
+import { isHeadingNode } from '../headingParts';
+import { inlineValue, readSlots } from './slotElements';
 import { capitalize } from './text';
 import { collectFeatureHeadings, VocationFeaturesContext } from './vocationFeatures';
 
@@ -75,28 +80,49 @@ const VocationCard: React.FC<VocationProps & { kind: VocationKind }> = ({
   ...slots
 }) => {
   const locale = useLocale();
+  const t = useTranslations('library');
   const { values, kept } = readSlots(children, VOCATION_SLOT_NAMES, slots);
-  const rows = VOCATION_SLOT_NAMES.filter(
+  const names = VOCATION_SLOT_NAMES.filter(
     (name) => values[name] !== undefined,
   );
   const host = kind === 'specialization' ? 'Specialization' : 'Vocation';
   const features = collectFeatureHeadings(kept);
+  const headingIndex = kept.findIndex((node) => isHeadingNode(node));
+  const heading = headingIndex >= 0 ? kept[headingIndex] : null;
+  const body = headingIndex >= 0 ? kept.filter((_, index) => index !== headingIndex) : kept;
+
+  const rows: DataTableRow[] = names.map((name) => {
+    const label: DataTableCellSpec = {
+      content: t(slotLabelKey(name, host)),
+      header: true,
+      dataAttributes: { 'slot-label': name },
+    };
+    const value: DataTableCellSpec = {
+      content: (
+        <span data-slot-value>
+          {name === 'vocation' ? parentLink(values[name], locale) : inlineValue(values[name])}
+        </span>
+      ),
+      dataAttributes: { slot: name },
+    };
+    return { key: name, cells: [label, value] };
+  });
 
   return (
     <VocationFeaturesContext.Provider value={features}>
       <section data-vocation data-kind={kind}>
+        {heading}
         {rows.length > 0 && (
-          <p data-slot-grid data-vocation-traits>
-            {rows.map((name) => (
-              <SlotRow key={name} name={name} host={host}>
-                {name === 'vocation'
-                  ? parentLink(values[name], locale)
-                  : inlineValue(values[name])}
-              </SlotRow>
-            ))}
-          </p>
+          <DataTable
+            columns={[
+              { key: 'trait', header: t('vocationTraits.trait') },
+              { key: 'description', header: t('vocationTraits.description') },
+            ]}
+            rows={rows}
+            dataAttributes={{ 'slot-grid': 'traits', 'vocation-traits': kind }}
+          />
         )}
-        <div data-vocation-body>{kept}</div>
+        <div data-vocation-body>{body}</div>
       </section>
     </VocationFeaturesContext.Provider>
   );

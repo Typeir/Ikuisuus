@@ -45,7 +45,8 @@ const LEVEL_HEADING = /^## (\d+)(?:st|nd|rd|th) Level [–—-] (.+?)\s*$/;
 const OTHER_LEVEL_HEADING = /^## .*\bLevel\b/;
 
 /**
- * Replaces the core traits table with the opening tag.
+ * Replaces the core traits table with the opening tag, keeping its heading as
+ * the tag's first child so the card prints it above the table it draws.
  *
  * @param {string[]} lines - File lines
  * @param {string[]} notes - Notes to append to
@@ -80,17 +81,18 @@ function liftTraitsTable(lines, notes) {
 
   let headingAt = start - 1;
   while (headingAt > 0 && lines[headingAt].trim() === '') headingAt -= 1;
-  const removeFrom = CORE_HEADING.test(lines[headingAt] ?? '') ? headingAt : start;
+  const heading = CORE_HEADING.test(lines[headingAt] ?? '') ? lines[headingAt] : null;
+  const removeFrom = heading ? headingAt : start;
 
   const ordered = Object.fromEntries(SLOT_ORDER.map((name) => [name, slots[name]]));
-  const tag = [...openingTag('Vocation', ordered)];
-  if (elements.length) tag.push('', ...elements);
 
   return [
     ...trimBlank(lines.slice(0, removeFrom)),
     '',
-    ...tag,
+    ...openingTag('Vocation', ordered),
     '',
+    ...(heading ? [heading, ''] : []),
+    ...(elements.length ? [...elements, ''] : []),
     ...trimBlank(lines.slice(end + 1)),
     '',
     '</Vocation>',

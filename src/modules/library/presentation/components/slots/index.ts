@@ -12,12 +12,13 @@
 import { SLOT_ELEMENT_NAMES } from '@/modules/library/domain/slots';
 import Attributes from './Attributes';
 import Feat from './Feat';
-import Feature, { Action, Curse, Pool, Trait } from './Feature';
+import Feature, { Action, Attack, Curse, Pool, Trait } from './Feature';
 import Heirloom, { Trinket } from './Heirloom';
 import Monster from './Monster';
 import Overcast from './Overcast';
 import Progression, { Column, Row } from './Progression';
 import Spell from './Spell';
+import SpellList from './SpellList';
 import Vocation, { Specialization } from './Vocation';
 import * as slotModule from './slotElements';
 
@@ -32,6 +33,7 @@ export const slotComponents: Record<string, unknown> = {
   Curse,
   Action,
   Pool,
+  Attack,
   Spell,
   Trinket,
   Monster,
@@ -40,6 +42,7 @@ export const slotComponents: Record<string, unknown> = {
   Progression,
   Column,
   Row,
+  SpellList,
   Feat,
   ...Object.fromEntries(
     Object.values(SLOT_ELEMENT_NAMES).map((elementName) => [

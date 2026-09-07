@@ -39,7 +39,7 @@ import { AspectGlyphs } from '@/modules/library/presentation/components/Aspects/
  * @property {string} expandLabel - Accessible label for the expand button
  * @property {string} [openLabel] - Accessible label for the open-source button (only used when `onFocus` is provided)
  * @property {ReactNode} [subOptions] - Optional sub-option selector rendered beneath the card row
- * @property {FeatureCardMultiSelect} [multiSelect] - When present, the primary button adds an instance, a count chip and remove button appear, and `onToggle`/`selected` are ignored
+ * @property {FeatureCardRepeatable} [repeatable] - When present, the primary button adds an instance, a count chip and remove button appear, and `onToggle`/`selected` are ignored
  * @property {string[]} [aspects] - Aspects of the feature, shown as glyphs under the row
  */
 export interface FeatureCardProps {
@@ -59,14 +59,14 @@ export interface FeatureCardProps {
   expandLabel: string;
   openLabel?: string;
   subOptions?: ReactNode;
-  multiSelect?: FeatureCardMultiSelect;
+  repeatable?: FeatureCardRepeatable;
   aspects?: string[];
 }
 
 /**
  * Repeatable-selection controls for a {@link FeatureCard}.
  *
- * @interface FeatureCardMultiSelect
+ * @interface FeatureCardRepeatable
  * @property {number} count - How many instances are currently selected
  * @property {() => void} onAdd - Adds one instance (fired by the primary button)
  * @property {() => void} onRemove - Removes one instance (fired by the remove button)
@@ -74,7 +74,7 @@ export interface FeatureCardProps {
  * @property {string} removeLabel - Accessible label for the remove button
  * @property {string} countLabel - Rendered count chip text (e.g. `×2`)
  */
-export interface FeatureCardMultiSelect {
+export interface FeatureCardRepeatable {
   count: number;
   onAdd: () => void;
   onRemove: () => void;
@@ -104,7 +104,7 @@ export interface FeatureCardMultiSelect {
  * @param {string} props.expandLabel - Accessible label for the expand button
  * @param {string} [props.openLabel] - Accessible label for the open-source button
  * @param {ReactNode} [props.subOptions] - Optional sub-option selector rendered beneath the card row
- * @param {FeatureCardMultiSelect} [props.multiSelect] - Repeatable-selection controls; when present the primary button adds an instance and a count chip + remove button appear
+ * @param {FeatureCardRepeatable} [props.repeatable] - Repeatable-selection controls; when present the primary button adds an instance and a count chip + remove button appear
  * @param {string[]} [props.aspects] - Aspects shown as glyphs under the row
  * @returns {JSX.Element} Rendered feature card
  */
@@ -125,14 +125,14 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   expandLabel,
   openLabel,
   subOptions,
-  multiSelect,
+  repeatable,
   aspects,
 }) => {
-  const isSelected = multiSelect ? multiSelect.count > 0 : selected;
+  const isSelected = repeatable ? repeatable.count > 0 : selected;
 
   const handlePrimary = () => {
     if (readOnly) return;
-    if (multiSelect) multiSelect.onAdd();
+    if (repeatable) repeatable.onAdd();
     else onToggle();
   };
 
@@ -149,20 +149,20 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           onClick={handlePrimary}
           aria-disabled={readOnly}
           aria-pressed={isSelected}
-          title={multiSelect ? multiSelect.addLabel : undefined}>
+          title={repeatable ? repeatable.addLabel : undefined}>
           <span className={styles.boonName}>{label}</span>
           {badge && <span className={styles.boonBpBadge}>{badge}</span>}
-          {multiSelect && multiSelect.count > 0 && (
-            <span className={styles.boonBpBadge}>{multiSelect.countLabel}</span>
+          {repeatable && repeatable.count > 0 && (
+            <span className={styles.boonBpBadge}>{repeatable.countLabel}</span>
           )}
         </button>
         <div className={expandStyles.boonActions}>
-          {multiSelect && multiSelect.count > 0 && !readOnly && (
+          {repeatable && repeatable.count > 0 && !readOnly && (
             <button
               type='button'
               className={expandStyles.boonExpandBtn}
-              onClick={multiSelect.onRemove}
-              aria-label={multiSelect.removeLabel}>
+              onClick={repeatable.onRemove}
+              aria-label={repeatable.removeLabel}>
               <Minus size={14} aria-hidden='true' />
             </button>
           )}

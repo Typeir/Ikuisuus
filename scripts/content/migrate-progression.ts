@@ -132,10 +132,10 @@ function quoted(value: string): string {
  * @returns {string[]} Lines
  */
 function columnLines(column: ColumnSpec<string>): string[] {
-  if (column.values) {
-    return [`  <Column label=${quoted(column.label)} values={[${column.values.map((v) => JSON.stringify(v)).join(', ')}]} />`];
+  if (column.values && column.values.every((v) => !v.includes(',') && !v.includes('"'))) {
+    return [`  <Column label=${quoted(column.label)} values="${column.values.join(', ')}" />`];
   }
-  const rows = (column.entries ?? []).map(
+  const rows = (column.entries ?? (column.values ? compress(column.values) : [])).map(
     (e) => `    <Row${e.at === undefined ? '' : ` at="${e.at}"`}${e.unique ? ' unique' : ''}>${e.value}</Row>`,
   );
   return [`  <Column label=${quoted(column.label)}>`, ...rows, '  </Column>'];
