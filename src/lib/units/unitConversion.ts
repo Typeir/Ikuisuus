@@ -303,7 +303,7 @@ export function convertFraction(
 
 /**
  * Builds every system's rendering of a measure in fixed stride, metric,
- * imperial order, for use as an accessible label and tooltip.
+ * imperial order
  *
  * @param {number} value - The native quantity, a whole number
  * @param {UnitName} unit - The native unit

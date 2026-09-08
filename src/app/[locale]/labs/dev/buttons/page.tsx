@@ -1,9 +1,6 @@
 /**
  * @fileoverview Button catalogue at /[locale]/labs/dev/buttons.
- * @description Shows the whole button surface: the canonical variants from
- * `buttons.module.scss` with their reach through both distribution channels, then
- * every bespoke class actually applied to a `<button>` elsewhere, split by whether it
- * was built on a canonical mixin or hand-rolled.
+ * @description Shows the whole button surface
  *
  * @module app/[locale]/labs/dev/buttons/page
  * @version 2.0.0

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Progression table of a vocation, built from what the page
- * declares: `<Progression>` attributes, its `<Column>` children, and the
- * feature headings of the enclosing card.
+ * declares
  * @module modules/library/presentation/components/slots/Progression
  * @version 0.2.0
  * @author Typeir

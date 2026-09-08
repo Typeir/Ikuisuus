@@ -47,7 +47,7 @@ export function countGrantedSkillProficiencies(
 
 /**
  * Free skill picks the character still has to assign (skill/proficient group of
- * the unified unassigned tally), clamped at 0.
+ * the unified unassigned tally)
  *
  * @function countUnspentSkillProficiencies
  * @param {CharacterSheet} character - Character to inspect
@@ -64,7 +64,7 @@ export function countUnspentSkillProficiencies(
 }
 
 /**
- * Free skill picks the player has assigned: granted minus unassigned.
+ * Free skill picks the player has assigned
  *
  * @function countSpentSkillProficiencies
  * @param {CharacterSheet} character - Character to inspect
@@ -81,7 +81,7 @@ export function countSpentSkillProficiencies(
 
 /**
  * Row-keys per table to hint — the options of every `oneOf` grant in the
- * character's assignable grants, unioned per table.
+ * character's assignable grants
  *
  * @function deriveProficiencyHints
  * @param {CharacterSheet} character - Character to inspect

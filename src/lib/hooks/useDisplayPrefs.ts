@@ -1,8 +1,7 @@
 /**
  * Display Preference Hooks
  *
- * @fileoverview React hooks for reader display preferences: text scale,
- * article measure, constrained hue, and the two section decorators.
+ * @fileoverview React hooks for reader display preferences
  *
  * @module lib/hooks/useDisplayPrefs
  * @version 1.0.0

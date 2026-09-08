@@ -1,8 +1,7 @@
 /**
  * @fileoverview Values a card works out rather than reads.
  * @description Numbers a sheet would otherwise hand-maintain beside the number
- * they come from: an ability modifier beside its score, a tier bonus beside a
- * challenge rating, an ordinal beside a level.
+ * they come from
  *
  * @module modules/library/domain/derive
  * @version 0.1.0
@@ -42,7 +41,7 @@ export function signed(modifier: number): string {
 }
 
 /**
- * An ability score as a sheet prints it: the score, then its modifier.
+ * An ability score as a sheet prints it
  *
  * @param {string | number} score - Ability score
  * @returns {string} Score and modifier, or the score alone when it is not a number
@@ -147,8 +146,7 @@ export function xpValue(xp: string | number): number | null {
 }
 
 /**
- * Challenge rating for an XP value: the rating whose XP band the value falls
- * in, each band running from a rating's XP up to the next rating's.
+ * Challenge rating for an XP value
  *
  * @param {string | number} xp - XP value
  * @returns {number | null} Challenge rating, or null when the XP is unreadable
@@ -170,7 +168,7 @@ export function challengeFor(xp: string | number): number | null {
 }
 
 /**
- * The XP band of a rating: from its own XP up to one below the next rating's.
+ * The XP band of a rating
  *
  * @param {string | number} challenge - Challenge rating
  * @returns {readonly [number, number | null] | null} Low and high XP, or null for an unknown rating
@@ -190,7 +188,7 @@ export function xpBand(challenge: string | number): readonly [number, number | n
 }
 
 /**
- * A challenge rating as a sheet writes it: the low ratings as fractions.
+ * A challenge rating as a sheet writes it
  *
  * @param {number} rating - Challenge rating
  * @returns {string} Rating text
@@ -207,8 +205,7 @@ export function challengeLabel(rating: number): string {
 }
 
 /**
- * Tier bonus for a challenge rating: one step per three rating, rounded up,
- * never below one.
+ * Tier bonus for a challenge rating
  *
  * @param {string | number} challenge - Challenge rating
  * @returns {number | null} Tier bonus, or null when the rating is unreadable
@@ -258,4 +255,43 @@ export function spellLevelPhrase(level: string | number): string | null {
   const value = Number(text);
   if (!Number.isFinite(value)) return null;
   return value === 0 ? 'Cantrip' : `${ordinal(value)}-level`;
+}
+
+/**
+ * A DC and the working behind it.
+ *
+ * @interface DerivedDc
+ * @property {number | null} total - The DC itself, when the accuracy is a number
+ * @property {string} working - How that number is reached
+ */
+export interface DerivedDc {
+  total: number | null;
+  working: string;
+}
+
+/**
+ * The DC a block's accuracy sets, with the calculation that reaches it.
+ *
+ * @description Every DC in the game is ten plus the accuracy behind it. The
+ * card prints the number a reader needs and the working beside it, so the rule
+ * is learnt from the same line that answers the question. An accuracy written
+ * as a formula has no total to print, and gives only the working.
+ *
+ * @param {string} accuracy - Accuracy as the block declares it
+ * @returns {DerivedDc | null} The DC, or null when there is no accuracy to add to
+ *
+ * @example
+ * saveDcFrom('+10'); // { total: 20, working: '10 + accuracy(10)' }
+ * saveDcFrom('your level + your tb');
+ * // { total: null, working: '10 + accuracy(your level + your tb)' }
+ */
+export function saveDcFrom(accuracy: string): DerivedDc | null {
+  const written = accuracy.trim().replace(/^\+\s*/, '');
+  if (written === '') return null;
+
+  const value = Number(written);
+  return {
+    total: Number.isFinite(value) ? 10 + value : null,
+    working: `10 + accuracy(${written})`,
+  };
 }

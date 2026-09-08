@@ -71,7 +71,9 @@ describe('parseAlwaysPreparedSpells', () => {
   });
 
   it('returns undefined without the always-prepared keyword', () => {
-    expect(parseAlwaysPreparedSpells('# Fighter\n\nNo table.\n')).toBeUndefined();
+    expect(
+      parseAlwaysPreparedSpells('# Fighter\n\nNo table.\n'),
+    ).toBeUndefined();
   });
 });
 
@@ -97,7 +99,7 @@ Spell save DC uses your Charisma modifier.
     const full = `
 ## Arcane Trickster
 
-spellcasting ability is Intelligence
+casting ability is Intelligence
 
 | Level | 8th | 9th |
 | ----- | --- | --- |
@@ -110,7 +112,9 @@ spellcasting ability is Intelligence
   });
 
   it('returns undefined without a spellcasting heading or slot table', () => {
-    expect(parseSpecializationSpellcasting('# Fighter\n\nNo magic.\n')).toBeUndefined();
+    expect(
+      parseSpecializationSpellcasting('# Fighter\n\nNo magic.\n'),
+    ).toBeUndefined();
     expect(
       parseSpecializationSpellcasting('## Spellcasting\n\nNo table yet.\n'),
     ).toBeUndefined();

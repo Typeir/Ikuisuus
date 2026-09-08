@@ -12,9 +12,7 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 021: adds `spell_lists.specialization` and backfills it for
- * rows whose `link` targets a `.specialization` page, deriving the slug from the
- * link's basename (`…/want-of-knowledge.specialization` → `want-of-knowledge`).
+ * Applies migration 021
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}
@@ -34,7 +32,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 021: drops the `specialization` column.
+ * Reverts migration 021
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}

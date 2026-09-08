@@ -1,8 +1,7 @@
 /**
  * @fileoverview Slot card test harness.
  * @description Reads the heirloom fixture, compiles sources through the static
- * pipeline with the attribute rewrite on (as production would), and renders
- * them to markup.
+ * pipeline with the attribute rewrite on (as production would)
  *
  * @module tests/unit/src/modules/library/slots/harness
  * @version 0.3.0
@@ -62,7 +61,7 @@ export async function renderNamed(
 }
 
 /**
- * Component registry: production components plus the slot card components.
+ * Component registry
  *
  * @param {Record<string, unknown>} [overrides] - Registry overrides
  * @returns {Record<string, unknown>} Merged registry

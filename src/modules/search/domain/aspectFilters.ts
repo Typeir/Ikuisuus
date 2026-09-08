@@ -8,7 +8,7 @@
  * @since 2026-08-05
  */
 
-/** Shape Pagefind expects: one array of accepted values per filter key. */
+/** Shape Pagefind expects */
 export type PagefindFilters = Record<string, string[]>;
 
 /**

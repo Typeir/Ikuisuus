@@ -12,19 +12,19 @@
 /** Regex to match `[% ... %]` delimited dice expressions in text. */
 export const DICE_EXPR_REGEX = /\[%\s*(.*?)\s*%\]/g;
 
-/** Regex to match valid special roll type shortcodes: KH1, KL1, DL1, DH1. */
+/** Regex to match valid special roll type shortcodes */
 const SPECIAL_REGEX = /;(KH1|KL1|DL1|DH1)/g;
 
-/** Regex to match a signed integer modifier: +N or -N with optional whitespace after sign. */
+/** Regex to match a signed integer modifier */
 const MODIFIER_REGEX = /^([+-]\s*\d+)/;
 
-/** Regex to match the leading dice notation: NdM where N and M are positive integers. */
+/** Regex to match the leading dice notation */
 const DICE_REGEX = /^(\d+d\d+)/;
 
 /** Set of valid special roll type shortcodes. */
 const VALID_SPECIALS = new Set(['KH1', 'KL1', 'DL1', 'DH1']);
 
-/** Regex to match dice notation anywhere in text: NdM. */
+/** Regex to match dice notation anywhere in text */
 const INNER_DICE_REGEX = /(\d+d\d+)/;
 
 /**

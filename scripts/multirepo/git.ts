@@ -1,7 +1,5 @@
 /**
- * @fileoverview Git primitives for the ik multirepo CLI: wrappers around
- * `git` child processes, dirty-state checks, submodule validation, and
- * summary helpers.
+ * @fileoverview Git primitives for the ik multirepo CLI
  *
  * @module scripts/multirepo/git
  * @author Typeir

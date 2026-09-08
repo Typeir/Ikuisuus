@@ -1,8 +1,6 @@
 /**
  * @fileoverview BoonSubOptions Unit Tests
- * @description Verifies the variable-cost boon sub-option selector: radio vs
- * checkbox by mode, cost/effect display, onChange wiring, readOnly disabling,
- * and dice-shortcode stripping.
+ * @description Verifies the variable-cost boon sub-option selector
  *
  * @module tests/unit/src/modules/character-builder/presentation/builder/boonSubOptions.test
  * @version 1.0.0
@@ -145,7 +143,9 @@ describe('BoonSubOptions', () => {
         onChange={vi.fn()}
       />,
     );
-    expect(container.querySelectorAll('span[title="damage: fire"]')).toHaveLength(1);
+    expect(
+      container.querySelectorAll('span[aria-label="damage: fire"]'),
+    ).toHaveLength(1);
     expect(container.querySelectorAll('a')).toHaveLength(0);
   });
 });

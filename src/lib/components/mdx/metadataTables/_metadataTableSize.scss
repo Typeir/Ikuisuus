@@ -1,8 +1,4 @@
 // Compact ('s') density variant + per-row action-cell styles for MetadataTable.
-// Split into this partial (and @use'd back into metadataTable.module.scss) so the
-// core module stays within the file-length budget. Selectors are nested under
-// .metadataTable so they hash into the same CSS module and out-specify the base
-// rules regardless of emit order.
 
 .metadataTable {
   .rowActionHead {

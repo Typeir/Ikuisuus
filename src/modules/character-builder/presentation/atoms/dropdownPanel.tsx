@@ -23,7 +23,7 @@ import { createPortal } from 'react-dom';
  *
  * @interface DropdownPanelProps
  * @property {string} triggerLabel - Accessible `aria-label` for the ▾ trigger button
- * @property {React.ReactNode} [badge] - Optional node rendered as a sibling before the trigger (e.g. count badge, `+` indicator)
+ * @property {React.ReactNode} [badge] - Optional node rendered as a sibling before the trigger (e.g. count badge
  * @property {string} [triggerClassName] - Class name applied to the ▾ button
  * @property {string} [panelClassName] - Class name applied to the floating panel container
  * @property {string} [panelRole] - ARIA `role` for the panel container; defaults to `'region'`
@@ -48,7 +48,7 @@ export interface DropdownPanelProps {
  * @component
  * @param {DropdownPanelProps} props - Component props
  * @param {string} props.triggerLabel - Accessible `aria-label` for the ▾ trigger button
- * @param {React.ReactNode} [props.badge] - Optional node rendered as a sibling before the trigger (e.g. count badge, `+` indicator)
+ * @param {React.ReactNode} [props.badge] - Optional node rendered as a sibling before the trigger (e.g. count badge
  * @param {string} [props.triggerClassName] - Class name applied to the ▾ button
  * @param {string} [props.panelClassName] - Class name applied to the floating panel container
  * @param {string} [props.panelRole='region'] - ARIA `role` for the panel container; defaults to `'region'`

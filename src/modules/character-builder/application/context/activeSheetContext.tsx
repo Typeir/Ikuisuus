@@ -1,7 +1,6 @@
 /**
  * @fileoverview Active Sheet Context
- * @description Owns the sheet session state: draft lifecycle, edit-mode flag,
- * and active tab.
+ * @description Owns the sheet session state
  * @module modules/character-builder/application/context/activeSheetContext
  * @version 2.0.0
  * @author Typeir

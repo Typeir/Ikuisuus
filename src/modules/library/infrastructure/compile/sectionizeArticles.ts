@@ -1,5 +1,5 @@
 /**
- * @fileoverview Sectionize helpers: anchor registry, text helpers, entry→article pass.
+ * @fileoverview Sectionize helpers
  *
  * @module modules/library/infrastructure/compile/sectionizeArticles
  * @version 1.0.0
@@ -65,7 +65,7 @@ export function textOf(node: RootContent | ElementContent): string {
 
 
 /**
- * Anchor registry: first use is bare slug, repeats prefixed with parent anchor.
+ * Anchor registry
  */
 export class Anchors {
   private readonly used = new Set<string>();

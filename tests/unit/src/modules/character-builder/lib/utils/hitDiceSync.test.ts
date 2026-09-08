@@ -1,9 +1,6 @@
 /**
  * @fileoverview hitDiceSync Unit Tests
- * @description Covers the single-source-of-truth hit-dice reconciliation:
- * backfill (average, primary-L1 max), healing never-rolled dice, pruning removed
- * levels/vocations, preserving deliberate rolls, hpMax/tierBonus derivation, and
- * idempotency.
+ * @description Covers the single-source-of-truth hit-dice reconciliation
  *
  * @module tests/unit/src/modules/character-builder/lib/utils/hitDiceSync.test
  * @version 1.0.0

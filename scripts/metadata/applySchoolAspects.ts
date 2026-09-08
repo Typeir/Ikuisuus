@@ -1,5 +1,5 @@
 /**
- * @fileoverview Migrate: hardcode school: into spell frontmatter aspects.
+ * @fileoverview Migrate
  * @description One-shot bridge for school → form migration; idempotent.
  *
  * @module scripts/metadata/applySchoolAspects

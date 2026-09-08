@@ -68,7 +68,7 @@ const precompileMdx = async (
 };
 
 /**
- * Main script execution: precompile all MDX files in src/content into src/compiled-content.
+ * Main script execution
  */
 const run = async (): Promise<void> => {
   const locales = ['en'];

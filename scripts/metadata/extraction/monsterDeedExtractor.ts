@@ -10,6 +10,7 @@
 
 import type { MonsterFeature } from '@/lib/types/feature';
 import { plain } from '../textUtils';
+import { enclosingOpenTags } from './monsterFeatureExtractor';
 import { MONSTER, SECTIONS } from './featurePatterns';
 import {
   enrichFromBody,
@@ -54,7 +55,7 @@ function enrichDeedAct(
 }
 
 /**
- * Extracts legendary deed: act features from H4 sub-headings or bullet-list format.
+ * Extracts legendary deed
  *
  * @param {MonsterSection} section - Classified deed:act section
  * @returns {MonsterFeature[]} Extracted deed features
@@ -67,7 +68,9 @@ export function extractDeedActs(section: MonsterSection): MonsterFeature[] {
     const features: MonsterFeature[] = [];
     for (const sub of subs) {
       const raw = sub.lines.join('\n');
-      const costMatch = sub.name.match(MONSTER.deedCost);
+      const costMatch =
+        sub.name.match(MONSTER.deedCost) ??
+        (sub.tag ?? '').match(MONSTER.deedCostSlot);
       const cost = costMatch ? parseInt(costMatch[1], 10) : 1;
       const cleanName = sub.name.replace(MONSTER.deedCost, '').trim();
       const feat = baseDeedFeature(cleanName);
@@ -108,7 +111,7 @@ export function extractDeedActs(section: MonsterSection): MonsterFeature[] {
 }
 
 /**
- * Extracts legendary deed: stratagem features with declare/resolve parsing.
+ * Extracts legendary deed
  *
  * @param {MonsterSection} section - Classified deed:stratagem section
  * @returns {MonsterFeature[]} Extracted stratagem features
@@ -144,7 +147,7 @@ export function extractDeedStratagems(
 }
 
 /**
- * Extracts legendary deed: lair features.
+ * Extracts legendary deed
  *
  * @param {MonsterSection} section - Classified deed:lair section
  * @returns {MonsterFeature[]} Extracted lair features
@@ -174,7 +177,7 @@ export function extractDeedLair(section: MonsterSection): MonsterFeature[] {
 }
 
 /**
- * Extracts legendary deed: phase features with HP thresholds and added features.
+ * Extracts legendary deed
  *
  * @param {MonsterSection} section - Classified deed:phase section
  * @returns {MonsterFeature[]} Extracted phase features
@@ -325,12 +328,15 @@ function splitByPhaseHeadings(lines: string[]): PhaseBlock[] {
  * @property {string[]} lines - Content lines
  * @property {number} startOffset - 0-based start index within parent lines
  * @property {number} endOffset - Exclusive 0-based end index within parent lines
+ * @property {string} [tag] - Opening tag of the block the heading sits inside,
+ * where the deed states its cost
  */
 interface DeedSubSection {
   name: string;
   lines: string[];
   startOffset: number;
   endOffset: number;
+  tag?: string;
 }
 
 /**
@@ -350,11 +356,13 @@ function splitBySubHeadings(lines: string[]): DeedSubSection[] {
         current.endOffset = idx;
         result.push(current);
       }
+      const tag = enclosingOpenTags(lines, idx);
       current = {
         name: plain(match[1]),
         lines: [],
         startOffset: idx,
         endOffset: lines.length,
+        ...(tag ? { tag } : {}),
       };
       continue;
     }

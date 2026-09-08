@@ -1,6 +1,6 @@
 /**
  * @fileoverview Feature Extractor Types
- * @description TypeScript interfaces for feature extraction: game features, monster mechanics, spells, items, boons.
+ * @description TypeScript interfaces for feature extraction
  *
  * @version 1.0.0
  * @author Typeir
@@ -102,7 +102,7 @@ export interface RechargeToken {
  * Token representing a parsed action type.
  *
  * @interface ActionToken
- * @property {string} type - Action type: action, minor_action, reaction, free, passive
+ * @property {string} type - Action type
  */
 export interface ActionToken {
   type: string;
@@ -152,12 +152,12 @@ export interface AttackToken {
  * Token representing a parsed hit/damage line from a monster stat block.
  *
  * @interface HitToken
- * @property {number} average - Average damage
+ * @property {number} [average] - Average damage, where the block states one
  * @property {string} dice - Dice expression (e.g., "2d8 + 4")
  * @property {string} [type] - Damage type
  */
 export interface HitToken {
-  average: number;
+  average?: number;
   dice: string;
   type?: string;
 }
@@ -260,8 +260,8 @@ export type FeatureFlag =
  * @interface Feature
  * @property {string} id - Stable slug (e.g., "rimelord/avalanche-blade")
  * @property {string} name - Display name
- * @property {{ start: number; end: number; archetype: string }} [source] - Source location in the MDX file — 0-based start/end line of the enclosing section, plus section archetype ('H' for standard sections, 'M' for deed sections)
- * @property {string} [trigger] - Action economy type: action, minor_action, reaction, free, passive
+ * @property {{ start: number; end: number; archetype: string }} [source] - Source location in the MDX file — 0-based start/end line of the enclosing section
+ * @property {string} [trigger] - Action economy type
  * @property {{ type?: string; range?: number; area?: RangeToken; scope?: string }} [target] - Target descriptor
  * @property {DamageToken} [damage] - Damage descriptor
  * @property {{ dice: DiceToken; modifier?: string }} [healing] - Healing descriptor
@@ -272,7 +272,7 @@ export type FeatureFlag =
  * @property {{ type: string; cost?: number | string; max?: number | string; recharge?: RechargeToken }} [resource] - Resource cost/pool descriptor
  * @property {{ level: number; value: string }[]} [scaling] - Level-based scaling data
  * @property {Feature[]} [children] - Nested sub-features (spells, forms, options)
- * @property {string} [pick_mode] - Selection mode: choose_one, pick_any, random
+ * @property {string} [pick_mode] - Selection mode
  * @property {number} [confidence] - Quality score 0.0–1.0 (separate rollout phase)
  * @property {FeatureFlag[]} flags - Structural/quality flags
  * @property {string[]} [tags] - Aspects derived from this feature alone, not from the whole stat block
@@ -319,7 +319,7 @@ export interface Feature {
  * @property {{ category: 'act' | 'stratagem' | 'lair' | 'phase'; cost?: number; declare_resolve?: boolean }} [legendary_deed] - Legendary deed data
  * @property {{ hp_threshold: number | 'slain'; name: string; features_added: string[]; features_modified: string[] }} [phase] - Phase trigger data
  * @property {{ min: number; max: number; charges?: number; custom?: string }} [recharge] - Recharge notation data
- * @property {{ level: number; ability: string; dc: number; attack_bonus: number; slots: Record<number, number>; spells?: string[] }} [spellcasting] - Spellcasting block data
+ * @property {{ ability: string; dc: number; attack_bonus: number; slots: Record<number, number>; spells?: string[] }} [spellcasting] - Spellcasting block data
  * @property {{ name: string; effects: string[]; cure?: string }} [custom_condition] - Custom condition definition
  * @property {'shared_body' | 'shared_hp' | 'aspect' | 'tethered' | 'angelical_link' | 'summoned'} [relationship] - Relationship to other entities
  * @property {boolean} [auto_fail_saves] - Whether the creature auto-fails all saves
@@ -361,7 +361,6 @@ export interface MonsterFeature extends Omit<
     custom?: string;
   };
   spellcasting?: {
-    level: number;
     ability: string;
     dc: number;
     attack_bonus: number;

@@ -90,7 +90,7 @@ const WORD_NUMBERS: Record<string, number> = {
 
 /**
  * Extracts the number of picks from a "Choose N" / "Pick N" / "Choose any N"
- * phrase, accepting a digit or a spelled-out number and defaulting to 2.
+ * phrase
  *
  * @param {string} text - Clean skill text (markdown already stripped)
  * @returns {number} Number of base skill picks
@@ -105,7 +105,7 @@ function parseChoiceCount(text: string): number {
 /**
  * Parses skill proficiencies into count and choices.
  *
- * @param {string} value - Raw skill text (e.g. "Choose 2: Animal Handling, Athletics, ...")
+ * @param {string} value - Raw skill text (e.g. "Choose 2
  * @returns {{ count: number; choices: string[] }}
  */
 function parseSkillProficiencies(value: string): {

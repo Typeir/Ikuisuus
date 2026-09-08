@@ -1,8 +1,7 @@
 /**
  * @fileoverview Rules Metadata Generator
  * @description Parses `.mdx` files in `src/content/{locale}/rules/` and emits
- * `.metadata.json` sidecars with slug, title, link, description, and
- * folder-derived tags/category.
+ * `.metadata.json` sidecars with slug, title
  *
  * @module scripts/metadata/generateRulesMetadata
  * @version 1.0.0
@@ -74,19 +73,30 @@ function deriveRulesLink(filePath: string, slug: string): string {
 }
 
 /**
- * Derives display tags from the file's subfolder path under `rules/`.
+ * Derives display tags from the file's subfolder path.
+ *
+ * @description Under `rules/` the first folder is the chapter the page belongs
+ * to
  *
  * @param {string} filePath - Absolute path to the rules file
- * @returns {string[]} Humanised folder tags
+ * @returns {string[]} Humanised folder tags, most specific group first when the
+ * file lives outside `rules/`
  */
 function deriveRulesFolderTags(filePath: string): string[] {
   const segments = filePath.replace(/\\/g, '/').split('/').filter(Boolean);
+  const humanise = (s: string) => s.replace(/[-_]+/g, ' ').toLowerCase();
   const rulesIdx = segments.lastIndexOf('rules');
-  if (rulesIdx === -1) return [];
+
+  if (rulesIdx === -1) {
+    const contentIdx = segments.lastIndexOf('content');
+    if (contentIdx === -1) return [];
+    const folders = segments.slice(contentIdx + 2, -1);
+    return folders.length === 0 ? [] : folders.reverse().map(humanise);
+  }
 
   const folders = segments.slice(rulesIdx + 1, -1);
   if (folders.length === 0) return ['rules'];
-  return folders.map((s) => s.replace(/[-_]+/g, ' ').toLowerCase());
+  return folders.map(humanise);
 }
 
 /**

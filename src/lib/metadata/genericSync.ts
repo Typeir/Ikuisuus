@@ -1,7 +1,7 @@
 /**
  * @fileoverview Definition-driven metadata sync.
  * @description Upserts a content table from metadata records using MikroORM
- * property metadata for the mapping, so no per-type field list exists.
+ * property metadata for the mapping
  *
  * @module lib/metadata/genericSync
  * @version 1.0.0

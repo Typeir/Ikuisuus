@@ -79,7 +79,7 @@ function parseModifier(mod: string): number {
 }
 
 /**
- * Applies the KH1 special: keeps only the highest die result.
+ * Applies the KH1 special
  *
  * @param {number[]} results - Array of die results
  * @returns {number[]} Array containing only the highest result
@@ -91,7 +91,7 @@ function applyKH1(results: number[]): number[] {
 }
 
 /**
- * Applies the KL1 special: keeps only the lowest die result.
+ * Applies the KL1 special
  *
  * @param {number[]} results - Array of die results
  * @returns {number[]} Array containing only the lowest result
@@ -103,7 +103,7 @@ function applyKL1(results: number[]): number[] {
 }
 
 /**
- * Applies the DL1 special: drops the lowest die result.
+ * Applies the DL1 special
  *
  * @param {number[]} results - Array of die results
  * @returns {number[]} Array with the lowest result removed
@@ -115,7 +115,7 @@ function applyDL1(results: number[]): number[] {
 }
 
 /**
- * Applies the DH1 special: drops the highest die result.
+ * Applies the DH1 special
  *
  * @param {number[]} results - Array of die results
  * @returns {number[]} Array with the highest result removed

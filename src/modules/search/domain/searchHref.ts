@@ -1,8 +1,7 @@
 /**
  * @fileoverview Search URL builder.
  * @description One place that turns a query and a set of aspect filters
- * into the `/search` URL, so the bar, the filter row and the suggestions
- * agree on the shape (`?q=…&aspect=group:value&aspect=…`).
+ * into the `/search` URL
  *
  * @module modules/search/domain/searchHref
  * @version 1.0.0

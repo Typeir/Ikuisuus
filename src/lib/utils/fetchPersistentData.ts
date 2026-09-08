@@ -9,7 +9,7 @@
  * @since 1.0.0
  *
  * @description
- * Lookup priority order: cookies, sessionStorage, localStorage.
+ * Lookup priority order
  */
 
 import { readCookie } from './storePersistentData';

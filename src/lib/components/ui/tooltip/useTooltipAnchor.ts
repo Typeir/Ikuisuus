@@ -1,7 +1,6 @@
 /**
  * @fileoverview Tooltip Anchoring
- * @description Binds a floating surface to its trigger: CSS anchor positioning
- * where supported, {@link useAnchoredPosition} otherwise.
+ * @description Binds a floating surface to its trigger
  *
  * @module lib/components/ui/tooltip/useTooltipAnchor
  * @version 1.0.0

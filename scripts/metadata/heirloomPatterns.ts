@@ -11,15 +11,15 @@
 /**
  * Weapon title-line parsing patterns.
  *
- * @property {RegExp} nameBeforeParen - Name before parenthesis: "Longsword ("
- * @property {RegExp} enhancementMod - Enhancement modifier: "Longsword +2"
- * @property {RegExp} mastery - Mastery extraction: "Mastery: Cleave"
- * @property {RegExp} masteryEnd - End mastery capture: "Special:", "Range:", etc.
- * @property {RegExp} range - Range variant: "Range 30/120"
- * @property {RegExp} reach - Reach variant: "Reach (10 ft.)"
- * @property {RegExp} special - Special property: "Special: on crit..."
- * @property {RegExp} typeExtract - Type with optional paren: "Longsword (props)"
- * @property {RegExp} reachInParens - Reach in parentheses: "reach (10 ft.)"
+ * @property {RegExp} nameBeforeParen - Name before parenthesis
+ * @property {RegExp} enhancementMod - Enhancement modifier
+ * @property {RegExp} mastery - Mastery extraction
+ * @property {RegExp} masteryEnd - End mastery capture
+ * @property {RegExp} range - Range variant
+ * @property {RegExp} reach - Reach variant
+ * @property {RegExp} special - Special property
+ * @property {RegExp} typeExtract - Type with optional paren
+ * @property {RegExp} reachInParens - Reach in parentheses
  */
 export const WEAPON = {
   nameBeforeParen: /^(.+?)\s*\(/i,
@@ -36,8 +36,8 @@ export const WEAPON = {
 /**
  * Mastery clause normalisation and self-definition patterns.
  *
- * @property {RegExp} note - Trailing em/en-dash note: "— see Weapon Mastery"
- * @property {RegExp} none - Placeholder naming no mastery: "None"
+ * @property {RegExp} note - Trailing em/en-dash note
+ * @property {RegExp} none - Placeholder naming no mastery
  * @property {RegExp} sectionHeading - H2–H6 heading with text capture
  * @property {RegExp} sectionName - Weapon Mastery section heading text
  * @property {RegExp} definitionLabel - Bold label opening a mastery definition bullet
@@ -62,7 +62,7 @@ export const ATTUNEMENT = {
 /**
  * Italic metadata line patterns used in heirloom header parsing.
  *
- * @property {RegExp} line - Italic line: "_text_"
+ * @property {RegExp} line - Italic line
  * @property {RegExp} subtypeFormat - "Type, Subtype (properties)" format
  * @property {RegExp} propertyOrApplies - "property" or "applies" keyword filter
  */
@@ -85,14 +85,16 @@ export const DAMAGE = {
 /**
  * Type property parsing patterns for heirloom classification.
  *
- * @property {RegExp} parenContent - Extract parenthesized content: "(properties)"
- * @property {RegExp} masterySpecialGuard - Guard: skip Mastery/Special items
+ * @property {RegExp} parenContent - Extract parenthesized content
+ * @property {RegExp} masterySpecialGuard - Guard
+ * @property {RegExp} qualifiedProperty - Leading property word of a qualified clause
  * @property {RegExp} twoPartFormat - "Type, Subtype" comma-split format
  * @property {RegExp} beforeParen - Text before first parenthesis
  */
 export const TYPE_PARSING = {
   parenContent: /\(([^)]+)\)/i,
   masterySpecialGuard: /^(Mastery|Special):/i,
+  qualifiedProperty: /^([a-z-]+)\s+\S/i,
   twoPartFormat: /^([^,]+),\s*([^,]+)$/,
   beforeParen: /^([^(]+)/,
 } as const;

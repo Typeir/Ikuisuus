@@ -1,8 +1,6 @@
 /* ============================================
    FOUC PREVENTION
-   Hide body until theme is applied via data-theme attribute.
-   The inline script in <head> sets data-theme before first paint.
-============================================ */
+   Hide body until theme is applied via data-theme attribute. */
 html:not([data-theme]) body {
   visibility: hidden;
 }

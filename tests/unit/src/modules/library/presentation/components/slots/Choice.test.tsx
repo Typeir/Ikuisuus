@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for the Choice group.
  * @description The group fences blocks that exclude one another and says how
- * many are taken, so a run of them cannot read as a list of grants.
+ * many are taken
  *
  * @module tests/unit/src/modules/library/presentation/components/slots/Choice.test
  * @version 0.1.0

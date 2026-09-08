@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the button catalogue page.
  * @description Verifies the bare primary is prepended, canonical reach counts both
- * doors, a variant dead through both doors is flagged, bespoke entries are split by
- * channel, and state modifiers are listed separately.
+ * doors, a variant dead through both doors is flagged
  *
  * @module tests/unit/src/app/[locale]/labs/dev/buttons/page.test
  * @version 2.0.0

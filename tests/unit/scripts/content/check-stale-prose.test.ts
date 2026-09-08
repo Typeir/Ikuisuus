@@ -1,8 +1,7 @@
 /**
  * @fileoverview Tests for the stale-prose checker.
  * @description One authored line per pattern proves it matches, and the
- * near-misses prove the register's own phrasing does not: a keyword-wrapped
- * condition is not bare, and "your next turn" is review rather than legacy.
+ * near-misses prove the register's own phrasing does not
  *
  * @module tests/unit/scripts/content/check-stale-prose.test
  * @version 0.1.0
@@ -67,7 +66,7 @@ describe('the D&D inheritance', () => {
     ['spellcaster-level', 'Rubedo is a **17th-level spellcaster**.'],
     [
       'spellcasting-ability',
-      'Its spellcasting ability is Wisdom (spell save DC 26, +18 to hit with spell attacks).',
+      'Its casting ability is Wisdom (spell save DC 26, +18 to hit with spell attacks).',
     ],
     ['no-components', 'It does not require material components.'],
     ['spells-prepared', 'It has the following spells prepared:'],

@@ -84,8 +84,7 @@ const vocationXpFloor = (
 };
 
 /**
- * Applies a computed draft to the state: writes to the draft alone while
- * editing, otherwise to the saved character with `dirty` set.
+ * Applies a computed draft to the state
  *
  * @function applyWrite
  * @param {SheetReducerState} state - Previous state

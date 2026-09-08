@@ -1,7 +1,7 @@
 /**
  * @fileoverview Reader preferences modal.
  * @description Text scale, article measure, constrained hue, the two section
- * decorators, a second theme control, immersive mode, and the unit switcher.
+ * decorators, a second theme control
  *
  * @module lib/components/preferences/PreferencesModal
  * @version 1.1.0

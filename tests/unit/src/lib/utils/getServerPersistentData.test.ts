@@ -2,7 +2,7 @@
  * Tests for getServerPersistentData utility
  *
  * @fileoverview Unit tests for server-side persistent data reading from cookies
- * Tests cookie decoding, JSON parsing, error handling, and expanded paths extraction
+ * Tests cookie decoding
  */
 
 import {

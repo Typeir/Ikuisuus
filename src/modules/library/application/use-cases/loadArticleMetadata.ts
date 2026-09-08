@@ -161,8 +161,7 @@ async function resolveVocationRoute(
 }
 
 /**
- * Anchor of a heading or feature name: the same slug the sectionizer stamps
- * on the matching `<section>`/`<article>`, measure-normalised.
+ * Anchor of a heading or feature name
  *
  * @param {string} text - Heading text or feature name
  * @returns {string} Anchor slug
@@ -172,8 +171,7 @@ function anchorOf(text: string): string {
 }
 
 /**
- * Collects the sub-records of one stat block that carry their own aspects,
- * keyed by anchor.
+ * Collects the sub-records of one stat block that carry their own aspects
  *
  * @param {TaggedRecord} record - The loaded metadata record
  * @param {string[]} shardKeys - Fields to read
@@ -212,10 +210,7 @@ function sectionsOf(
 }
 
 /**
- * Builds the article's aspect index from its records: every stat block title
- * becomes a record entry carrying that block's tags, features are keyed
- * record-scoped and bare, and bare keys shared across records union their
- * tags as a fallback for a row whose record cannot be told apart.
+ * Builds the article's aspect index from its records
  *
  * @param {TaggedRecord[]} records - All records of the file, in file order
  * @param {string[]} shardKeys - Fields holding sub-records

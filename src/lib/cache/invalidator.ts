@@ -1,7 +1,6 @@
 /**
  * @fileoverview Cache Invalidator Port
- * @description The framework-facing half of invalidation: busting a tagged
- * Data Cache entry and re-rendering a route.
+ * @description The framework-facing half of invalidation
  *
  * @module lib/cache/invalidator
  * @version 1.0.0

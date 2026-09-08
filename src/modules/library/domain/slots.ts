@@ -1,7 +1,6 @@
 /**
  * @fileoverview Slot schema for the library's card components.
- * @description One table per parent component: slot name → authored element
- * name.
+ * @description One table per parent component
  *
  * @module modules/library/domain/slots
  * @version 0.3.0
@@ -41,8 +40,7 @@ export const HEIRLOOM_SLOTS = {
 } as const;
 
 /**
- * Components that are entries of an heirloom: each opens with its own heading
- * and sectionizes as a nested section of the group around it.
+ * Components that are entries of an heirloom
  */
 export const BLOCK_COMPONENTS = [
   'Feature',
@@ -54,9 +52,7 @@ export const BLOCK_COMPONENTS = [
 ] as const;
 
 /**
- * Slots of a feature, trait, or curse, in display order: whether it is
- * available at all, what a use costs, what opens the window, how many uses
- * there are, how they come back, when the use resolves, and who it reaches.
+ * Slots of a feature, trait, or curse, in display order
  */
 export const FEATURE_SLOTS = {
   level: 'Level',
@@ -72,7 +68,7 @@ export const FEATURE_SLOTS = {
 } as const;
 
 /**
- * Slots of a pool: how much it holds and how it refills.
+ * Slots of a pool
  */
 export const POOL_SLOTS = {
   max: 'Max',
@@ -131,8 +127,7 @@ export const MONSTER_SLOTS = {
 } as const;
 
 /**
- * Header slots of a vocation: the core traits table, one row per slot, and
- * `vocation`, the parent a specialization names by slug.
+ * Header slots of a vocation
  */
 export const VOCATION_SLOTS = {
   vocation: 'Parent',
@@ -147,8 +142,7 @@ export const VOCATION_SLOTS = {
 } as const;
 
 /**
- * Header slots of a specialization: the vocation's table, of which a
- * specialization writes the parent alone.
+ * Header slots of a specialization
  */
 export const SPECIALIZATION_SLOTS = VOCATION_SLOTS;
 
@@ -187,8 +181,7 @@ export const FEAT_SLOTS = {
 } as const;
 
 /**
- * Slots of an attack inside an action: what it rolls with, how far it
- * reaches or ranges, and whom it strikes when that is not one creature.
+ * Slots of an attack inside an action
  */
 export const ATTACK_SLOTS = {
   accuracy: 'Accuracy',
@@ -276,9 +269,7 @@ export type SlotElementName =
   | (typeof ATTACK_SLOTS)[AttackSlotName];
 
 /**
- * A slot value as MDX hands it to the parent: a string attribute, the
- * fragment the attribute rewrite built from a shortcode-bearing string, or
- * element children.
+ * A slot value as MDX hands it to the parent
  */
 export type SlotValue = unknown;
 

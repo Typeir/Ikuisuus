@@ -1,7 +1,6 @@
 /**
  * @fileoverview Icon Component Unit Tests
- * @description Unit tests for the Icon component: rendering, unknown-type
- * handling, and prop passthrough.
+ * @description Unit tests for the Icon component
  *
  * @module tests/unit/src/lib/components/icon/icon.test
  * @version 1.0.0

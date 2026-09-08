@@ -1,8 +1,6 @@
 /* ============================================
    SEARCH RESULT ATOMS — "The Archivist's Index"
-   Occult grimoire / card-catalog aesthetic.
-   All colors via CSS custom properties (no literals).
-============================================ */
+   Occult grimoire / card-catalog aesthetic. */
 
 @use 'mixins-mdx-sections' as mdx;
 @use 'mixins-button' as btn;
@@ -151,8 +149,7 @@ a:hover .resultTitle {
   text-decoration: none;
   color: inherit;
   position: relative;
-  /* A virtualized list sets the pitch; rows never change size on hover, so
-     nothing below them moves. */
+  /* A virtualized list sets the pitch; rows never change size on hover */
   height: var(--search-row-height, auto);
   --row-scale: 1.05;
   --row-translate: 2px;
@@ -160,10 +157,7 @@ a:hover .resultTitle {
     background var(--search-anim-duration, 200ms) var(--springy-bezier),
     transform var(--search-anim-duration, 200ms) var(--springy-bezier);
 
-  /* A result list runs to hundreds of rows. The ticker below is invisible at
-     rest, so it is paused and left off the compositor until a row is actually
-     hovered — otherwise every row holds a promoted layer it never shows. Same
-     reason there is no resting `will-change` on the row. */
+  /* A result list runs to hundreds of rows. */
   > [data-stream-rail] {
     @include mdx.mdx-stream-rail(right);
     max-height: 100%;
@@ -285,8 +279,7 @@ a:hover .resultTitle {
 
 /* ---- Card header line ----
    The card variant nests the sigil in the type-label line instead of giving
-   it its own flex column, so the content column owns the card's full width.
-   Narrow cards then wrap the title normally instead of breaking mid-word. */
+   it its own flex column */
 .cardHeader {
   flex-wrap: nowrap;
   align-items: center;

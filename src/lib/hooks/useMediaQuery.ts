@@ -13,7 +13,7 @@
 import { useSyncExternalStore } from 'react';
 
 /**
- * Matches viewport widths below the desktop breakpoint (max-width: 1023.98px).
+ * Matches viewport widths below the desktop breakpoint (max-width
  */
 export const MOBILE_VIEWPORT_QUERY = '(max-width: 1023.98px)';
 

@@ -96,7 +96,7 @@ function parseSkill(skillStr: string): { key: string; bonus: number } | null {
  * @param {number} bonus - Total skill bonus
  * @param {number} mod - Ability modifier
  * @param {number} prof - tier bonus
- * @returns {number} Multiplier: 0, 0.5, 1, or 2
+ * @returns {number} Multiplier
  */
 function computeSkillProf(bonus: number, mod: number, prof: number): number {
   const diff = bonus - mod;

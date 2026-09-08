@@ -3,10 +3,7 @@
   color: var(--color-text-secondary);
 }
 
-/* Column count tracks the container, not the viewport: the grid shares its
-   row with ArchivistPanel, so viewport breakpoints hand it three columns in
-   a space that only fits one. `min()` keeps the track from overflowing a
-   container narrower than the floor. */
+/* Column count tracks the container, not the viewport */
 .featuredGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));

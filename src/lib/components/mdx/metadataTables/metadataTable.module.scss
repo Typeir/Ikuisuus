@@ -18,6 +18,8 @@
 
   .searchBar {
     width: 100%;
+    position: relative;
+
     .searchInput {
       width: 100%;
       max-width: 600px;
@@ -113,6 +115,18 @@
     border-collapse: collapse;
     margin: 0rem !important;
     font-size: 0.95rem;
+
+    &.fixedLayout {
+      table-layout: fixed;
+
+      /* Declared widths are shares of the table, so the padding is what a
+         narrow column has left to spend on its own text. */
+      th,
+      td {
+        overflow-wrap: break-word;
+        padding-inline: 0.5rem;
+      }
+    }
 
     thead {
       background-color: var(--color-bg-secondary);
@@ -224,8 +238,7 @@
     border-top: var(--border-width-xs) solid var(--color-secondary);
 
     // Bare <button> = primary CTA — it already renders as the actionable/green
-    // primary via the global rule. Local class keeps only table-specific sizing
-    // + the disabled state (the global rule has no :disabled handling).
+    // primary via the global rule.
     .paginationButton {
       padding: 0.5rem 1rem;
       font-size: 0.9rem;

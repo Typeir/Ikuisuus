@@ -1,7 +1,7 @@
 /**
  * @fileoverview Combatant Stats Grid Component
  * @description Renders editable ability score grid (STR, DEX, CON, INT, WIS, CHA)
- * with inline editing, keyboard navigation, and modifier display.
+ * with inline editing
  * @module modules/encounter-planner/presentation/combatantRow/combatantStatsGrid
  * @version 1.0.0
  * @author Typeir

@@ -13,12 +13,7 @@
 }
 
 /* `::marker` takes only colour, content and font properties, so the glyph sat on
-   the text baseline with no way to lift it. Drawing it as a `::before` inside a
-   flex row centres it against the label instead.
-
-   Scoped to rows holding a link so it reaches leaf pages only. Loading skeletons
-   are `<li>` without one, and without this they picked up a marker they should
-   never have and became flex items, which re-resolved their percentage widths. */
+   the text baseline with no way to lift it. */
 .accordion li:not(:has(.label)):has(a) {
   display: flex;
   align-items: center;
@@ -117,8 +112,7 @@
 }
 
 /* Virtualized rows mount as they scroll into the window; @starting-style fades
-   each new row in instead of popping it. Transition, not @keyframes — keyframes
-   would restart from their own `from` on every style recalc. */
+   each new row in instead of popping it. */
 .leafFade {
   opacity: 1;
   transition: opacity 0.12s ease-out;
@@ -134,10 +128,7 @@
   }
 }
 
-/* A folder that owns a `main` page wraps its label in this link. Left as
-   `inline-block` the wrapper shrank to the text, which pulled the arrow in from
-   the right edge and cut the open-state underline short — so folders with an
-   index page looked unlike folders without one. Leaf links carry `.block`. */
+/* A folder that owns a `main` page wraps its label in this link. */
 .link-item:has(.label) {
   display: block;
 }

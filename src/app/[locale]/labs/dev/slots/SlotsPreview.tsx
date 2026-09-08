@@ -31,8 +31,7 @@ import { resolveStreamText } from '@/modules/library/presentation/components/uti
 
 /**
  * The production article each fixture borrows its frame from — metadata,
- * aspects, stream text — so a monster fixture sits in a monster's page and a
- * spell fixture in a spell's.
+ * aspects
  */
 const FRAME_ARTICLES: Readonly<Record<string, readonly string[]>> = {
   'alfanjon.mdx': ['items', 'heirlooms', 'alfanjon-of-the-crescent-moon'],

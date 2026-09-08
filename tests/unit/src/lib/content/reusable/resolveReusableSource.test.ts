@@ -1,8 +1,7 @@
 /**
  * @fileoverview resolveReusableSource tests
  * @description Asserts that every PascalCase tag in authored content resolves
- * to a registered component or reusable region, and that each compile entry
- * point calls resolveReusableSource.
+ * to a registered component or reusable region
  *
  * @module tests/unit/lib/content/reusable/resolveReusableSource
  * @version 1.0.0

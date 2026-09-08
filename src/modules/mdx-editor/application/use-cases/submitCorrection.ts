@@ -71,7 +71,7 @@ export interface SubmitCorrectionResult {
 }
 
 /**
- * Executes correction submission flow: persist draft, create branch, commit file, open PR, and audit.
+ * Executes correction submission flow
  *
  * @param {SubmitCorrectionPayload} payload - Submission payload.
  * @returns {Promise<SubmitCorrectionResult>} Submission outcome.

@@ -1,9 +1,7 @@
 /**
  * @fileoverview Anchored Surface Mixins
  * @description The positioning contract a floating surface shares with
- * `useAnchoredPosition`: laid out at the viewport origin so the hook's
- * `translate3d` is the whole position, and handed to the engine's own anchor
- * positioning where it exists. Used by the tooltip and by the keyword card.
+ * `useAnchoredPosition`
  *
  * @module styles/mixins-anchored-surface
  */
@@ -17,8 +15,7 @@
   will-change: transform;
 }
 
-/* Native anchor positioning, where the engine has it. The hook stands down and
-   the engine keeps the surface in place, including the flip. */
+/* Native anchor positioning, where the engine has it. */
 @mixin anchored-surface-native {
   top: auto;
   left: auto;
@@ -29,7 +26,7 @@
 /**
  * Places the surface on one side of its anchor under native anchor positioning.
  *
- * @param {string} $side - top, bottom, left or right
+ * @param {string} $side - top
  * @param {length} $gap - Space between surface and anchor
  */
 @mixin anchored-surface-side($side, $gap: 8px) {

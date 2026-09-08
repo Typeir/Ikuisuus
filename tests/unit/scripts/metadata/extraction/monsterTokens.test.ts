@@ -1,8 +1,6 @@
 /**
  * @fileoverview Unit tests for Monster-Specific Token Recognizers
- * @description Validates the 8 monster token recognizer functions: attack
- * lines, hit lines, multiattack, deed costs, phase thresholds,
- * declare/resolve markers, auto-fail, and charge-recharge notations.
+ * @description Validates the 8 monster token recognizer functions
  *
  * @version 1.0.0
  * @author Typeir

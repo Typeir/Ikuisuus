@@ -1,6 +1,5 @@
 /**
- * @fileoverview Heirlooms v2 migration: one member per heirloom, each
- * rewriting its file in place into the v2 card format.
+ * @fileoverview Heirlooms v2 migration
  */
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';

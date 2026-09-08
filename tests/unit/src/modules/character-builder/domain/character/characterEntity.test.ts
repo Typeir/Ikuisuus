@@ -1,7 +1,6 @@
 /**
  * @fileoverview Character Entity Domain Tests
- * @description Unit tests for the canonical single-JSON character entity:
- * serialization round-trips, deep cloning, and the structural guard.
+ * @description Unit tests for the canonical single-JSON character entity
  *
  * @module tests/unit/src/modules/character-builder/domain/character/characterEntity.test
  * @version 1.0.0

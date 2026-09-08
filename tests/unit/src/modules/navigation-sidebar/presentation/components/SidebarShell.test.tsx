@@ -2,7 +2,7 @@
  * @fileoverview Tests for SidebarShell component
  * @module tests/unit/src/modules/navigation-sidebar/presentation/components/SidebarShell.test
  * @description The shell renders inside the `@sidebar` slot, which cannot be handed
- * a client callback, so it reads the menu and expansion stores itself.
+ * a client callback
  */
 
 import {

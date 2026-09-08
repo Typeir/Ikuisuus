@@ -1,8 +1,7 @@
 /**
  * @fileoverview PipCheckbox tests.
  * @description Verifies the pip renders as checkbox/radio with the label as its
- * accessible name, reflects the checked state, and calls `onChange` with the
- * negated value on activation.
+ * accessible name
  *
  * @module tests/unit/src/modules/character-builder/presentation/components/PipCheckbox.test
  * @version 1.0.0

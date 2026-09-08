@@ -1,5 +1,5 @@
 /**
- * @fileoverview Rehype plugin: wraps content between headings in sections, entries in articles.
+ * @fileoverview Rehype plugin
  *
  * @module modules/library/infrastructure/compile/rehypeSectionize
  * @version 2.1.0
@@ -19,7 +19,7 @@ import type { Plugin } from 'unified';
  *
  * @property {string} [streamText] - Stream string for terminal-stream animation
  * @property {boolean} [articles=true] - Run entry → article pass
- * @property {readonly string[]} [entryComponents] - MDX components that are entries: one that opens with a heading is wrapped in a section of that heading's level, beside its siblings, with its anchor claimed
+ * @property {readonly string[]} [entryComponents] - MDX components that are entries
  */
 export type RehypeSectionizeOptions = {
   streamText?: string;
@@ -268,8 +268,7 @@ function streamRail(side: 'left' | 'right'): Element {
 }
 
 /**
- * Whether a node is one of a section's entries: a list, or an entry component
- * wrapped in its own section.
+ * Whether a node is one of a section's entries
  *
  * @param {ElementContent} node - Child node of a section
  * @returns {boolean} True when the node is an entry holder
@@ -284,8 +283,7 @@ function isEntryChild(node: ElementContent): boolean {
 }
 
 /**
- * Adds rails to every heading section: a left rail always, a right rail when
- * the section holds entries.
+ * Adds rails to every heading section
  *
  * @param {Parent} node - Node whose subtree to walk
  */
@@ -311,7 +309,7 @@ function addStreamRails(node: Parent): void {
 /* ────────────────────────────  Plugin  ─────────────────────────────── */
 
 /**
- * Plugin: sections, articles, then stream rails.
+ * Plugin
  *
  * @param {RehypeSectionizeOptions} [opts] - Plugin options
  * @returns {(tree: Root) => void} Transformer

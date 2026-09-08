@@ -1,8 +1,6 @@
 /**
  * Vocation Selector styles — bloodline, vocation, and specialization
- * selector panel. View mode shows identity pills; edit mode shows dropdowns
- * and hosts the BoonPicker sub-panel.
- * All colors via CSS variables — no color literals.
+ * selector panel.
  */
 
 @use '@/styles/mixins-disabled' as *;
@@ -23,10 +21,7 @@
 
 /** =====================================================================
  * Summary panel — a single bordered container that holds the collapsible
- * summary bar (header) and, when expanded, the bloodline + vocation pickers,
- * so the pickers read as living inside the summary instead of spawning as
- * sibling nodes on expand.
- * ===================================================================== */
+ * summary bar (header) and */
 
 .summaryPanel {
   display: flex;
@@ -59,8 +54,7 @@
 
 /** =====================================================================
  * Collapsible summary bar — full-width single-line identity digest with
- * expand chevron. Terminal label conventions; ellipsis on overflow.
- * ===================================================================== */
+ * expand chevron. */
 
 .identitySummary {
   display: flex;
@@ -78,8 +72,7 @@
     border-color 0.15s ease,
     transform 0.15s ease;
 
-  /* Explicit transform: the base-layer `button:hover` scale(1.05) is huge
-     on a full-width bar — cap the growth at 2%. */
+  /* Explicit transform */
   &:hover,
   &:focus-visible {
     background: var(--color-surface);
@@ -252,8 +245,7 @@
   min-width: 24rem;
 }
 
-/* Vertical separator between the vocation picker and the level spinner.
- * Rendered as an inline 1px pipe using the existing border token. */
+/* Vertical separator between the vocation picker and the level spinner. */
 .levelDivider {
   flex-shrink: 0;
   width: 1px;
@@ -292,7 +284,7 @@
   }
 }
 
-/* Corner slot for the rhombus remove IconButton. Layout only. */
+/* Corner slot for the rhombus remove IconButton. */
 .removeSlot {
   position: absolute;
   top: -0.35rem;
@@ -308,8 +300,7 @@
 
 /** =====================================================================
  * Proficiency summary — compact digest of grants beneath a selected
- * vocation (saves, skills, tools, armor, weapons).
- * ===================================================================== */
+ * vocation (saves */
 
 .profSummary {
   display: flex;
@@ -339,9 +330,7 @@
 
 /** =====================================================================
  * Stacked mode (≤768px) — selector comboboxes span the full container
- * width with their labels above, so dropdown triggers never overflow
- * the panel horizontally. Entry blocks give up their 33% single-row cap.
- * ===================================================================== */
+ * width with their labels above */
 
 @include desktop {
   .selectorRow {

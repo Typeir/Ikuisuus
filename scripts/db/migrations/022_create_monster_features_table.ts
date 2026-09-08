@@ -12,8 +12,7 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 022: creates the `monster_features` table and its
- * `monster_id` index.
+ * Applies migration 022
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}
@@ -40,8 +39,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 022: drops the `monster_features` table (cascade removes
- * the index automatically).
+ * Reverts migration 022
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}

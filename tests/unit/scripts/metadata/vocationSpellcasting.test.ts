@@ -1,6 +1,6 @@
 /**
  * @fileoverview Vocation spellcasting parser unit tests.
- * @description Covers spellcasting ability and progression detection,
+ * @description Covers casting ability and progression detection,
  * specialization slug extraction, archetype labels and feature line ranges.
  *
  * @module tests/unit/scripts/metadata/vocationSpellcasting.test
@@ -16,18 +16,21 @@ import {
   parseSpecializations,
   parseSpellcastingAbility,
 } from '@scripts/metadata/vocationSpellcasting';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 describe('parseSpellcastingAbility', () => {
   it('reads the bold ability label', () => {
-    expect(
-      parseSpellcastingAbility('**Spellcasting Ability**: Wisdom'),
-    ).toBe('Wisdom');
+    expect(parseSpellcastingAbility('**Casting ability**: Wisdom')).toBe(
+      'Wisdom',
+    );
   });
 
   it('reads reversed and modifier phrasing', () => {
     expect(
-      parseSpellcastingAbility('Intelligence is your spellcasting ability'),
+      parseSpellcastingAbility('Intelligence is your casting ability'),
     ).toBe('Intelligence');
     expect(
       parseSpellcastingAbility('Spell save DC uses your Charisma modifier'),
@@ -43,9 +46,7 @@ describe('classifyProgression', () => {
   it('classifies full, half and third casters from slot headers', () => {
     expect(classifyProgression(['1st', '9th'], 'no pact')).toBe('Full');
     expect(classifyProgression(['1st', '5th'], 'no pact')).toBe('Half');
-    expect(classifyProgression(['1st', '2nd', '3rd'], 'no pact')).toBe(
-      'Third',
-    );
+    expect(classifyProgression(['1st', '2nd', '3rd'], 'no pact')).toBe('Third');
   });
 
   it('prefers pact magic over slot columns', () => {
@@ -60,14 +61,29 @@ describe('classifyProgression', () => {
 });
 
 describe('parseSpecializations', () => {
-  it('collects specialization slugs from library links', () => {
-    const raw =
-      'Choose the [Berserker](/en/library/character-creation/vocations/warrior/berserker.specialization) or the [Champion](/en/library/character-creation/vocations/warrior/champion.specialization).';
-    expect(parseSpecializations(raw)).toEqual(['berserker', 'champion']);
+  it('reads the specialization pages beside the vocation', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'specializations-'));
+    await writeFile(join(dir, 'warrior.vocation.mdx'), '# Warrior\n');
+    await writeFile(join(dir, 'champion.specialization.mdx'), '# Champion\n');
+    await writeFile(join(dir, 'berserker.specialization.mdx'), '# Berserker\n');
+    await writeFile(join(dir, 'spells.list.mdx'), '# Spells\n');
+
+    await expect(
+      parseSpecializations(join(dir, 'warrior.vocation.mdx')),
+    ).resolves.toEqual(['berserker', 'champion']);
+
+    await rm(dir, { recursive: true, force: true });
   });
 
-  it('returns an empty list without specialization links', () => {
-    expect(parseSpecializations('No links here.')).toEqual([]);
+  it('returns an empty list for a vocation with none written', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'specializations-'));
+    await writeFile(join(dir, 'shaman.vocation.mdx'), '# Shaman\n');
+
+    await expect(
+      parseSpecializations(join(dir, 'shaman.vocation.mdx')),
+    ).resolves.toEqual([]);
+
+    await rm(dir, { recursive: true, force: true });
   });
 });
 

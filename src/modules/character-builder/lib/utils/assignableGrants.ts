@@ -1,6 +1,5 @@
 /**
- * @fileoverview Derived array of every unassigned benefit a character owes: base
- * skill picks, feature choice grants, and feat/ASI slots.
+ * @fileoverview Derived array of every unassigned benefit a character owes
  * @description Pure derivation from the character; nothing is stored.
  *
  * @module modules/character-builder/lib/utils/assignableGrants
@@ -179,9 +178,7 @@ function featSlug(shard: CharacterShard): string {
 }
 
 /**
- * Collects every assignable benefit: the primary vocation's base skill picks,
- * feature choice grants (choice-kind tags on active shards), and earned feat/ASI
- * slots.
+ * Collects every assignable benefit
  *
  * @function collectAssignableGrants
  * @param {CharacterSheet} character - Character to inspect

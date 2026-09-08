@@ -1,8 +1,7 @@
 /**
  * @fileoverview VocationTab Tests
  * @description Smoke tests for the vocation tab — empty state, inner section
- * tabs (Vocation / Specialization), and outer entry tabs for multiclass
- * characters.
+ * tabs (Vocation / Specialization)
  *
  * @module tests/unit/src/modules/character-builder/presentation/tabs/vocationTab.test
  * @version 2.0.0

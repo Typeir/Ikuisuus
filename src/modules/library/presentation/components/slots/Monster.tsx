@@ -39,7 +39,7 @@ import { inlineValue, readSlots, SlotRow } from './slotElements';
 import styles from './slots.module.scss';
 
 /**
- * Props for the stat block: one optional prop per slot, plus the body.
+ * Props for the stat block
  */
 export type MonsterProps = SlotProps<MonsterSlotName> & {
   children?: ReactNode;
@@ -78,7 +78,7 @@ function textOf(value: ReactNode): string | null {
 }
 
 /**
- * A table of slot columns: labels across the head, values across the body.
+ * A table of slot columns
  *
  * @param {object} props - Table props
  * @param {readonly MonsterSlotName[]} props.names - Slots to print, in order
@@ -131,7 +131,7 @@ function SlotTable({
  */
 const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
   const defaults = useTranslations('library.monster');
-  const { values, kept } = readSlots(children, MONSTER_SLOT_NAMES, slots);
+  const { values, kept } = readSlots(children, MONSTER_SLOT_NAMES, slots, true);
 
   const hasIdentity = IDENTITY_SLOTS.some((name) => values[name] !== undefined);
   const identity = (name: MonsterSlotName): ReactNode =>

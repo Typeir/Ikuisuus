@@ -7,12 +7,7 @@
  * @since 1.0.0
  *
  * @description
- * Static routes (expansion from URL only):
- * - /[locale]/library/** (MDX content pages)
- *
- * Dynamic routes (persistence allowed):
- * - /[locale]/utils/** (tools like encounter planner)
- * - /[locale] (home page)
+ * Static routes (expansion from URL only)
  *
  * @example
  * ```typescript

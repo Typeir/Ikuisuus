@@ -1,6 +1,5 @@
 /**
- * @fileoverview A creature's spell list: the spells it names, their metadata,
- * and whatever columns the page declares about them.
+ * @fileoverview A creature's spell list
  * @module modules/library/presentation/components/slots/SpellList
  * @version 0.1.0
  * @author Typeir
@@ -35,7 +34,7 @@ export interface SpellListProps {
 const SOURCES = ['/api/spells'];
 
 /**
- * A slug as a title: words capitalised.
+ * A slug as a title
  *
  * @param {string} slug - Spell slug
  * @returns {string} Title

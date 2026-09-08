@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for Trinket Table Wrapper component
  * @module tests/unit/src/lib/components/mdx/metadataTables/trinketTableWrapper.test
  * @description Tests TrinketTableWrapper rendering across loading, error,
- * empty, and data states (damage + type, conditions).
+ * empty, and data states (damage + type
  *
  * @version 2.0.0
  * @author Typeir

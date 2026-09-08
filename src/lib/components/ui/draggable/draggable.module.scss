@@ -1,8 +1,6 @@
 /**
  * @fileoverview Draggable Container Styles
  * @description SCSS module for the generic draggable container.
- * Handles drag handle appearance, cursor states, resize handle,
- * close button, and base positioning.
  */
 
 .draggable {
@@ -31,8 +29,7 @@
     cursor: grabbing;
   }
 
-  /* The handle is focusable so it can be moved by arrow key, so it needs a
-     visible focus ring like any other control. */
+  /* The handle is focusable so it can be moved by arrow key */
   &:focus-visible {
     outline: var(--outline-width) solid var(--color-accent);
     outline-offset: -2px;

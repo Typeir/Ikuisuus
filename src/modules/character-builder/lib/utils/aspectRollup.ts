@@ -1,8 +1,6 @@
 /**
  * @fileoverview Aspect roll-up and filtering over character shards.
- * @description Pure helpers: count aspects across selected shards, list the
- * aspects present in a picker's items, and test an item against a set of
- * required aspects (every selected aspect must be present).
+ * @description Pure helpers
  *
  * @module modules/character-builder/lib/utils/aspectRollup
  * @version 1.0.0
@@ -28,7 +26,7 @@ export interface AspectCount {
 }
 
 /**
- * Sort key: vocabulary group order, then value.
+ * Sort key
  *
  * @param {string} aspect - Raw token
  * @returns {[number, string]} Sortable tuple

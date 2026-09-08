@@ -1,7 +1,7 @@
 /**
  * Client-only providers for the app layout.
  *
- * @fileoverview Supplies client-only providers: internationalization and persistent UI state.
+ * @fileoverview Supplies client-only providers
  * @module app/[locale]/ClientProviders
  * @version 2.1.0
  * @author Typeir
@@ -49,8 +49,7 @@ interface ClientProvidersProps {
  * @returns {JSX.Element} Nested provider tree with children
  *
  * @description
- * Nests providers outermost-to-innermost: NextIntlClientProvider, SwrProvider,
- * PersistentUiProvider, CharacterSheetProvider, ResponsiveLayoutShell.
+ * Nests providers outermost-to-innermost
  */
 export default function ClientProviders({
   locale,

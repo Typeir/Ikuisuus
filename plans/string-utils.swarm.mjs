@@ -1,7 +1,5 @@
 /**
- * @fileoverview String-utils consolidation sweep: one member per file, each
- * repoints hand-rolled string/dice/path/classname helpers onto the canonical
- * implementations.
+ * @fileoverview String-utils consolidation sweep
  */
 
 const CANON = [

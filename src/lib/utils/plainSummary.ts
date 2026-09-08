@@ -12,9 +12,7 @@
 import { stripInlineMarkdown } from './stripInlineMarkdown';
 
 /**
- * Reduces inline-markdown source to plain display text: resolves `[% … %]`
- * shortcode wrappers, strips inline markdown, and collapses whitespace/newlines
- * to single spaces.
+ * Reduces inline-markdown source to plain display text
  *
  * @function toPlainSummary
  * @param {string} text - Source text that may contain shortcodes/markdown

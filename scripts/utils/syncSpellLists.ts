@@ -1,8 +1,7 @@
 /**
  * @fileoverview Spell List Sync - Cross-references custom spell files with class spell lists
  * @description Reads all custom spell .mdx files in src/content/en/spells/, extracts the
- * "Spell Lists" section to determine which classes should have each spell, then checks
- * the corresponding class spells.mdx and adds any missing spell slugs.
+ * "Spell Lists" section to determine which classes should have each spell
  *
  * @version 1.0.0
  * @since 1.0.0

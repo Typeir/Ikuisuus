@@ -1,7 +1,7 @@
 /**
  * @fileoverview Keyword Link Repository Port + Factory
  * @description Selects the backend that answers which files define and which
- * files ingest a shard, and exports a resolved instance.
+ * files ingest a shard
  *
  * @module lib/db/content/repositories/keywordLinkRepository
  * @version 1.0.0
@@ -43,7 +43,7 @@ export interface KeywordLinkRepository {
   listLinks(locale: string): Promise<KeywordLink[]>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+/** @property {string} metadataBackend - Active backend */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Active aspect filters on the search page.
  * @description Renders the aspects the search is filtered by as genuine
- * aspect pills (pressed; clicking one drops it), a clear-all, and a button
- * that opens the vocabulary editor from the MDX editor to pick filters.
+ * aspect pills (pressed; clicking one drops it)
  *
  * @module modules/search/presentation/AspectFilters/SearchAspectFilters
  * @version 1.0.0

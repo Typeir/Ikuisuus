@@ -63,7 +63,7 @@ const makeChar = (
 
 /**
  * Reads the character from the sheet context, runs `syncHitDiceLog` in an
- * effect, and renders only `CombatStatChips`.
+ * effect
  *
  * @function Harness
  * @returns {JSX.Element} The harness element

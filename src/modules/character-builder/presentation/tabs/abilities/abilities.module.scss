@@ -34,8 +34,7 @@
 }
 
 /* Card — shares the FeaturedGrid catalog-card language (`.rowCard` in
-   search/presentation/atoms): surface frame, 4px radius, accent border on
-   hover, type-colored sigil + mono type label above the title. */
+   search/presentation/atoms) */
 .abilityCard {
   border: var(--border-width-xs) solid var(--color-border);
   border-radius: var(--border-round-s);

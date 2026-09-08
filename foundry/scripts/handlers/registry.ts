@@ -1,9 +1,7 @@
 /**
  * @fileoverview Parser registry for Foundry feature handlers.
  * @description Discovers all `@parser`-decorated classes, builds a dispatch
- * table from their `@handler`-decorated methods, and provides a single
- * `dispatch()` entry point that routes a feature ID + body text to the
- * correct handler method.
+ * table from their `@handler`-decorated methods
  *
  * @module foundry/scripts/handlers/registry
  * @version 1.0.0

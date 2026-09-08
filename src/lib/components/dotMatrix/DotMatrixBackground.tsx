@@ -1,6 +1,5 @@
 /**
- * @fileoverview Renders the flashlight-reveal background: an outer reveal
- * div wrapping an aperture div around a pattern field.
+ * @fileoverview Renders the flashlight-reveal background
  * @module lib/components/dotMatrix/DotMatrixBackground
  * @author Typeir
  * @version 0.2.0

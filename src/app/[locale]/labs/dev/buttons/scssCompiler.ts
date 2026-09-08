@@ -1,8 +1,7 @@
 /**
  * @fileoverview Compiles project SCSS to resolved CSS rules for the labs catalogue.
  * @description Loads `sass` lazily so it never enters a production server bundle, and
- * mirrors the `next.config.ts` resolution setup: `src/styles` on `loadPaths` plus an
- * importer for the `@/` alias.
+ * mirrors the `next.config.ts` resolution setup
  *
  * @module app/[locale]/labs/dev/buttons/scssCompiler
  * @version 1.0.0
@@ -97,7 +96,7 @@ export async function compileScss(file: string): Promise<CssRule[]> {
 
 /**
  * Merges every rule whose selector targets the class, ignoring state and
- * pseudo-element variants, into a single declaration block.
+ * pseudo-element variants
  *
  * @function baseDeclarations
  * @param {CssRule[]} rules - Rules from one compiled stylesheet.

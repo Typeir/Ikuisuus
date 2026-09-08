@@ -2,7 +2,7 @@
  * Drafts API + Revalidation Integration Tests
  *
  * @fileoverview Integration tests for the draft CRUD API and the
- * revalidation endpoint's draft archival behavior, with mocked DB layer.
+ * revalidation endpoint's draft archival behavior
  *
  * @module tests/integration/src/app/api/drafts
  */

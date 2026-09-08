@@ -1,7 +1,6 @@
 /**
  * @fileoverview unitExpressionParser Unit Tests
- * @description Tests for the pure parser of `[= ... =]` unit expression syntax,
- * covering whole and fractional quantities, unit names, flags, and malformed input.
+ * @description Tests for the pure parser of `[= ... =]` unit expression syntax
  *
  * @module tests/unit/src/lib/md/unitExpressionParser.test
  * @version 1.0.0

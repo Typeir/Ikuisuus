@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit Tests — content-webhook API route
  * @description Validates the POST handler for the content repo webhook including
- * secret validation, action dispatch, IP ban logic, and error handling.
+ * secret validation
  *
  * @module tests/unit/src/app/api/content-webhook/route.test
  */

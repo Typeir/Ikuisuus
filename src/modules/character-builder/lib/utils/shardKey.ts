@@ -23,7 +23,7 @@ export function anchorOf(text: string): string {
 }
 
 /**
- * Key of a metadata entry: its stamped anchor, else the anchor of its name.
+ * Key of a metadata entry
  *
  * @param {{ anchor?: string; heading?: string; name: string }} entry - Boon, feature or option
  * @returns {string} Entry key
@@ -37,7 +37,7 @@ export function entryKey(entry: {
 }
 
 /**
- * Key of a saved shard: its stored anchor, else the anchor of its heading.
+ * Key of a saved shard
  *
  * @param {Pick<CharacterShard, 'key' | 'heading'>} shard - Character shard
  * @returns {string} Shard key

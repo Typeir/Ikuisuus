@@ -1,8 +1,7 @@
 /**
  * Responsive Layout Shell Component
  *
- * @fileoverview Provides a 3-region sidebar layout: header with logo and theme toggle,
- * scrollable library navigation tree, and tools footer with locale/archive links.
+ * @fileoverview Provides a 3-region sidebar layout
  *
  * @module app/[locale]/utils/responsiveLayoutShell
  * @version 1.1.0
@@ -90,7 +89,7 @@ function BaseResponsiveLayoutShell({
   useThemeChangedEvent();
 
   /**
-   * In embed mode, render only the bare page content — no sidebar, no header.
+   * In embed mode, render only the bare page content — no sidebar
    */
   if (isEmbed) {
     return (

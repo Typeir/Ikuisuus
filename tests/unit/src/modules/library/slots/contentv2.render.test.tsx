@@ -1,7 +1,7 @@
 /**
  * @fileoverview Content-v2 fixtures through the real compile pipeline.
  * @description Each fixture is compiled by `compileStatic` with the attribute
- * rewrite on, exactly as a page is, and rendered to markup.
+ * rewrite on, exactly as a page is
  *
  * @module tests/unit/src/modules/library/slots/contentv2.render.test
  * @version 0.1.0

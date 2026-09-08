@@ -1,14 +1,12 @@
 @use 'mixins' as *;
 
-/* health:check-ignore-file no-color-literals, * */
+/* health:check-ignore-file no-color-literals */
 
 @include skeleton-sweep-keyframes;
 
 /* ============================================
    DETAILS SECTION INHERITANCE
-   Override all details section elements to use contextual variables.
-   Target HTML elements directly since they are scoped module classes.
-============================================ */
+   Override all details section elements to use contextual variables. */
 .awakened {
   /* All input fields within details section */
   input {
@@ -37,7 +35,7 @@
     }
   }
 
-  /* Text content: headings, titles, labels */
+  /* Text content */
   strong,
   b,
   .heading,
@@ -46,7 +44,7 @@
     color: var(--ha-ctx-text) !important;
   }
 
-  /* Specific to column titles (BUFFS, ITEMS, SPELLS, AFFIXES) */
+  /* Specific to column titles (BUFFS */
   [class*='ColumnTitle'] {
     color: var(--ha-ctx-accent) !important;
     border-bottom-color: var(--ha-ctx-divider) !important;
@@ -76,11 +74,7 @@
    LEGENDARY TIER - Gold shimmer with scoped vars
 ============================================ */
 .awakened--legendary {
-  /* Static gradient base; motion lives on the ::before light strip.
-     The strip needs a stacking context (isolation) so its z-index: -1
-     paints above the card background but below all content — one
-     compositor layer per card, no per-element animation. Portaled
-     dropdowns escape the overflow clip (they render to document.body). */
+  /* Static gradient base; motion lives on the ::before light strip. */
   position: relative;
   overflow: hidden;
   isolation: isolate;

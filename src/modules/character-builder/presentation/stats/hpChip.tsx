@@ -1,6 +1,5 @@
 /**
- * @fileoverview HP stat chip: current/max HP with temp HP display, Hit Dice
- * counter, and HP roller panel.
+ * @fileoverview HP stat chip
  *
  * @module modules/character-builder/presentation/stats/hpChip
  * @version 1.0.0

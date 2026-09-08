@@ -11,11 +11,11 @@
 /**
  * HTML and MDX markup patterns for table-cell content.
  *
- * @property {RegExp} listItem - HTML list item: {@literal <li>content</li>}
- * @property {RegExp} tooltipText - Tooltip display: {@literal <Tooltip><span>text</span>}
+ * @property {RegExp} listItem - HTML list item
+ * @property {RegExp} tooltipText - Tooltip display
  * @property {RegExp} htmlTag - Any HTML tag for stripping
  * @property {RegExp} tooltipWrapper - Full Tooltip wrapper with both spans
- * @property {RegExp} markdownLink - Markdown link: [text](url)
+ * @property {RegExp} markdownLink - Markdown link
  */
 export const MARKUP = {
   listItem: /<li>([\s\S]*?)<\/li>/g,
@@ -29,7 +29,7 @@ export const MARKUP = {
 /**
  * Section boundary detection patterns.
  *
- * @property {RegExp} boons - Boons section start: "## Boons"
+ * @property {RegExp} boons - Boons section start
  * @property {RegExp} h2Heading - Any H2 heading (section boundary)
  * @property {RegExp} coreFeatures - Core Features section with content capture
  */
@@ -42,11 +42,11 @@ export const SECTION = {
 /**
  * Boon heading parsing patterns.
  *
- * @property {RegExp} spanHeading - Span-annotated: "##### Name {@literal <span>3 BP</span>}"
- * @property {RegExp} plainHeading - Plain heading: "##### Name"
- * @property {RegExp} inlineCost - Inline BP cost suffix: "Name (3 BP)"
- * @property {RegExp} bpValue - Numeric BP value: "3 BP"
- * @property {RegExp} budgetPattern - Budget declaration: "budget of **10 Boon Points**"
+ * @property {RegExp} spanHeading - Span-annotated
+ * @property {RegExp} plainHeading - Plain heading
+ * @property {RegExp} inlineCost - Inline BP cost suffix
+ * @property {RegExp} bpValue - Numeric BP value
+ * @property {RegExp} budgetPattern - Budget declaration
  * @property {RegExp} headingGuard - H5/H6 heading level guard
  */
 export const BOON = {

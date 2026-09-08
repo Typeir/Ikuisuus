@@ -1,7 +1,7 @@
 /**
  * @fileoverview ChevronScroll tests
  * @description Verifies children render in a labelled tablist scroller with two
- * chevron buttons, and that both chevrons disable when the strip cannot scroll.
+ * chevron buttons
  *
  * @module tests/unit/src/lib/components/ui/chevronScroll/ChevronScroll.test
  * @version 1.0.0

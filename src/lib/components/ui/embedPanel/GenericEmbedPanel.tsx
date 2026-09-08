@@ -1,7 +1,7 @@
 /**
  * @fileoverview Draggable iframe embed panel.
  * @description A context-agnostic Draggable wrapper that embeds iframe content,
- * handling drag, resize, close, and loading state.
+ * handling drag, resize, close
  *
  * @module lib/components/ui/embedPanel/GenericEmbedPanel
  * @version 1.0.0
@@ -25,8 +25,7 @@ export { buildEmbedUrl };
 const SKELETON_PROSE = ['92%', '85%', '95%', '72%'];
 
 /**
- * Page-shaped placeholder shown while an embed loads: a title line, prose
- * lines, and one rectangle.
+ * Page-shaped placeholder shown while an embed loads
  *
  * @returns {JSX.Element} The skeleton block
  */

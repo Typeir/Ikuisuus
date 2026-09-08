@@ -97,6 +97,8 @@ The **Black Cradle** is the solar system forged from the remains of the Golden O
 
 **Key Idea**: Three.js owns the 3D canvas. React owns all DOM UI. A thin **Bridge Layer** projects 3D world-space positions to 2D screen coordinates every frame, so DOM panels can follow celestial bodies or landmasses without being rendered inside WebGL.
 
+**Comments here are long on purpose.** The math is incomprehensible without them, so the one-sentence JSDoc budget does not apply to this module or its tests. `scripts/utils/nuke-jsdoc.mjs` hardcodes `world-sim` in `EXCLUDED_DIRS` and skips every file under it — write the whole derivation.
+
 ---
 
 ## 3. Technology Choices

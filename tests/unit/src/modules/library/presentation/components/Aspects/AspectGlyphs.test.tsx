@@ -25,21 +25,26 @@ describe('AspectGlyphs', () => {
     expect(container.firstChild).toBeNull();
   });
 
+  /**
+   * A glyph drops its label, so the name lives in the accessible name and in
+   * the tooltip.
+   */
   it('should render one link glyph per aspect', () => {
     const { container } = render(
       <AspectGlyphs tags={['damage:fire', 'tempo:reactive']} />,
     );
     expect(container.querySelectorAll('a')).toHaveLength(2);
-    expect(container.querySelector('a')?.getAttribute('title')).toBe(
+    expect(container.querySelector('a')?.getAttribute('aria-label')).toBe(
       'damage: fire',
     );
+    expect(container.querySelector('a')?.getAttribute('title')).toBeNull();
   });
 
   it('should render inert spans when asked', () => {
     const { container } = render(<AspectGlyphs tags={['damage:fire']} inert />);
     expect(container.querySelectorAll('a, button')).toHaveLength(0);
     expect(
-      container.querySelectorAll('span[title="damage: fire"]'),
+      container.querySelectorAll('span[aria-label="damage: fire"]'),
     ).toHaveLength(1);
   });
 
@@ -47,7 +52,7 @@ describe('AspectGlyphs', () => {
     const { container } = render(
       <AspectGlyphs tags={['damage:fire', 'damage:frost', 'tempo:reactive']} max={2} inert />,
     );
-    expect(container.querySelectorAll('span[title]')).toHaveLength(3);
+    expect(container.querySelectorAll('span[aria-label]')).toHaveLength(2);
     const more = container.querySelector('span[title="tempo: reactive"]');
     expect(more?.textContent).toBe('+1');
   });

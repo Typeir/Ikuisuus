@@ -14,7 +14,7 @@ import type { Item } from '@/modules/navigation-sidebar/domain/types';
  *
  * @param {string} itemPath - Path of the item to fetch children for
  * @param {string} locale - Locale code for API call
- * @returns {Promise<Item[]>} Array of items (WalkNode structure from API); empty on a network error, a non-2xx status, or a non-array body
+ * @returns {Promise<Item[]>} Array of items (WalkNode structure from API); empty on a network error
  */
 export async function fetchStubChildren(
   itemPath: string,

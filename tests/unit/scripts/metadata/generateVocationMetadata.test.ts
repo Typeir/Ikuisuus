@@ -1,9 +1,7 @@
 /**
  * @fileoverview Vocation Metadata Generator Unit Tests
  * @description Tests parseFeatureTable against vocation progression tables
- * with varying column layouts: standard (Features at col 2), extended
- * (extra columns before Features), and alternative header naming
- * ("Vocation Features").
+ * with varying column layouts
  *
  * @module tests/unit/scripts/metadata/generateVocationMetadata.test
  * @version 1.0.0
@@ -15,7 +13,7 @@ import { parseFeatureTable } from '@scripts/metadata/generateVocationMetadata';
 import { describe, expect, it } from 'vitest';
 
 /**
- * Standard layout: Features column immediately follows Tier Bonus.
+ * Standard layout
  */
 const STANDARD_TABLE = `
 | Level | Tier Bonus | Features                                | Rages | Rage Damage |
@@ -26,7 +24,7 @@ const STANDARD_TABLE = `
 `;
 
 /**
- * Extended layout: extra column(s) before Features.
+ * Extended layout
  */
 const EXTENDED_TABLE_STRIDER = `
 | Level | Tier Bonus | Lay of the Land | Features                                      | Prepared Spells | 1st | 2nd |
@@ -37,7 +35,7 @@ const EXTENDED_TABLE_STRIDER = `
 `;
 
 /**
- * Alternative header: "Vocation Features" instead of "Features".
+ * Alternative header
  */
 const VOCATION_FEATURES_TABLE = `
 | Level | Tier Bonus | Vocation Features                  | Invocations |
@@ -47,7 +45,7 @@ const VOCATION_FEATURES_TABLE = `
 `;
 
 /**
- * Monk-style: multiple interleaved columns before "Vocation Features".
+ * Monk-style
  */
 const MONK_TABLE = `
 | Level | PB | Martial Arts | Focus | Movement | Vocation Features                                    |

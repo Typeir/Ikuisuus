@@ -107,13 +107,30 @@ export function recognizeDC(text: string): DCToken | null {
  * @returns {SaveToken | null} Parsed save token or null
  */
 export function recognizeSave(text: string): SaveToken | null {
-  const match = text.match(SAVES.savingThrow);
-  if (!match) return null;
-  const rawAbility = match[1].toLowerCase();
-  const ability = ABILITY_MAP[rawAbility] ?? rawAbility;
-  if (!ABILITY_SHORTS.has(ability)) return null;
-  const dc = recognizeDC(text);
-  return { ability, dc: dc ?? {} };
+  const scanner = new RegExp(SAVES.savingThrow.source, 'gi');
+
+  for (
+    let match = scanner.exec(text);
+    match !== null;
+    match = scanner.exec(text)
+  ) {
+    /* The words before the match decide whether the block imposes this save or
+       merely speaks of one, so a mention is skipped and the scan carries on to
+       the save the block actually calls for. */
+    if (SAVES.notImposed.test(text.slice(0, match.index))) continue;
+
+    /* The pattern carries a branch per grammar, so only one group captures. */
+    const named = match.slice(1).find((group) => group !== undefined);
+    if (!named) continue;
+
+    const ability = ABILITY_MAP[named.toLowerCase()] ?? named.toLowerCase();
+    if (!ABILITY_SHORTS.has(ability)) continue;
+
+    const dc = recognizeDC(text);
+    return { ability, dc: dc ?? {} };
+  }
+
+  return null;
 }
 
 /**

@@ -1,7 +1,6 @@
 /**
  * @fileoverview useIsPathExpanded Tests
- * @description Covers the per-path read and its re-render isolation: a
- * dispatch on one path leaves subscribers of other paths untouched.
+ * @description Covers the per-path read and its re-render isolation
  *
  * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useIsPathExpanded.test
  * @version 1.0.0

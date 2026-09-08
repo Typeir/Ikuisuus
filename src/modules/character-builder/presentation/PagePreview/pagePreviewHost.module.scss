@@ -31,9 +31,7 @@
 
 /** =====================================================================
  * Phone mode — one full-screen console frame at a time with a compact
- * pager instead of stacked draggables. Sits below the shell's fixed
- * title bar so site navigation stays reachable.
- * ===================================================================== */
+ * pager instead of stacked draggables. */
 
 .mobileHost {
   position: fixed;

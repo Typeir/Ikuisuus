@@ -24,7 +24,7 @@ const INTER_REGULAR_CSS_URL =
 /** Resolves a single `.woff2` / `.woff` / `.ttf` src URL from a Google Fonts CSS response. */
 const FONT_SRC_RE = /url\(([^)]+)\)\s+format\(['"]?(woff2?|truetype)['"]?\)/;
 
-/** Module-level font cache: keyed by CSS URL → ArrayBuffer. */
+/** Module-level font cache */
 const fontCache = new Map<string, ArrayBuffer>();
 
 /**
@@ -79,9 +79,7 @@ async function loadLocalFont(fileName: string): Promise<ArrayBuffer> {
 }
 
 /**
- * Returns satori font descriptors for the card: the site's Junicode heading
- * face and Empyrean Initialem drop-cap read from `public/fonts`, plus Inter
- * for body text.
+ * Returns satori font descriptors for the card
  *
  * @returns {Promise<import('satori').Font[]>} Array of satori font configs
  */
@@ -105,7 +103,7 @@ async function loadFonts(): Promise<import('satori').Font[]> {
  * Renders an OG card to a compressed PNG buffer.
  *
  * @param {OGTemplateProps} props - Data and optional image URL for the card
- * @returns {Promise<Uint8Array<ArrayBuffer>>} Compressed PNG image data (target: < 600 KB)
+ * @returns {Promise<Uint8Array<ArrayBuffer>>} Compressed PNG image data (target
  */
 export async function renderOgCard(
   props: OGTemplateProps,

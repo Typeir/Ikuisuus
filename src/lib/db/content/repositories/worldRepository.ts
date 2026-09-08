@@ -37,7 +37,7 @@ export interface WorldRepository {
   getBySlug(locale: string, slug: string): Promise<WorldMetadata | null>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+/** @property {string} metadataBackend - Active backend */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**

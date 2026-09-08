@@ -1,8 +1,6 @@
 /**
  * @fileoverview proficiencyRowKey tests
- * @description Verifies mapping of vocation grant names to table row-keys:
- * skill/trade names camelize to `skills.<camel>` / `tools.<camel>`, trade links
- * resolve via their href slug, and wildcard/category tokens return null.
+ * @description Verifies mapping of vocation grant names to table row-keys
  *
  * @module tests/unit/src/modules/character-builder/lib/utils/proficiencyRowKey.test
  * @version 1.0.0

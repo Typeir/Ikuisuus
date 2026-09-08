@@ -11,8 +11,8 @@
 /**
  * Spell stat-block line detection patterns.
  *
- * @property {RegExp} italicHeader - Italic header: "> *1st-Level Evocation*"
- * @property {RegExp} levelPrefix - Spell level: "1st-Level", "2nd-Level", etc.
+ * @property {RegExp} italicHeader - Italic header
+ * @property {RegExp} levelPrefix - Spell level
  * @property {RegExp} componentsLine - "Components" line detection
  * @property {RegExp} componentsStrip - Strip the "Components" header
  * @property {RegExp} castingTimeLine - "Casting Time" line detection
@@ -41,7 +41,7 @@ export const STAT_BLOCK = {
  * @property {RegExp} verbal - Verbal component marker
  * @property {RegExp} somatic - Somatic component marker
  * @property {RegExp} material - Material component marker
- * @property {RegExp} materialDesc - Material description: "M (a pinch of sulfur)"
+ * @property {RegExp} materialDesc - Material description
  */
 export const COMPONENTS = {
   verbal: /\bV\b/i,
@@ -93,7 +93,7 @@ export const SPELL_TAGS = {
  * Spell list extraction patterns.
  *
  * @property {RegExp} section - "#### Spell Lists" section boundary
- * @property {RegExp} link - Spell list link: "[_Wizard Spell List_](/path)"
+ * @property {RegExp} link - Spell list link
  * @property {RegExp} nameSuffix - "Spell List" suffix to strip from names
  */
 export const SPELL_LISTS = {

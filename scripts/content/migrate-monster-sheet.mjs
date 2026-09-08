@@ -54,7 +54,7 @@ const CHALLENGE = /^(\d+(?:\/\d+)?)(?:\s*\(([\d,.]+)\s*XP\))?$/i;
 const SAVE_DC = /spell save dc\**\s*:?\s*\**\s*(\d+)/gi;
 
 /**
- * Tier bonus the challenge rating implies: one step per three, floor one.
+ * Tier bonus the challenge rating implies
  *
  * @param {string} challenge - Rating text
  * @returns {number | null} Bonus, or null when unreadable
@@ -68,7 +68,7 @@ export function tierBonusFor(challenge) {
 }
 
 /**
- * Reads the v1 header: which lines it occupies and what slots they hold.
+ * Reads the v1 header
  *
  * @param {string[]} lines - File lines
  * @returns {object} Slots, consumed indices, tag position, body start and notes — or a skip reason

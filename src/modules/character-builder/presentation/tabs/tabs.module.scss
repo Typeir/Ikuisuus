@@ -125,8 +125,7 @@
   gap: 0.4rem;
 }
 
-/* Table styling atomized → src/styles/tables.module.scss (`tbl.dataTable`).
-   Column widths below stay local (structural, honoured by table-layout: fixed). */
+/* Table styling atomized → src/styles/tables.module.scss (`tbl.dataTable`). */
 .equipmentColName {
   width: 100%;
 }
@@ -141,13 +140,12 @@
 }
 
 /* Wide enough for the borderless trash button so its hover glow never
-   clips against the cell edge under table-layout: fixed. */
+   clips against the cell edge under table-layout */
 .equipmentColAction {
   width: 2.4rem;
 }
 
-/* Matches the attacks-table remove treatment: borderless trash glyph
-   that recolors to danger on hover — nothing to clip. */
+/* Matches the attacks-table remove treatment */
 .equipmentRow {
   display: flex;
   align-items: center;

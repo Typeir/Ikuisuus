@@ -1,7 +1,7 @@
 /**
  * @fileoverview Symbol-keyed metadata registry for the in-house ORM decorators.
  * @description Stores ORM decorator metadata on a class object under a
- * module-private Symbol keyed by class reference, immune to name mangling.
+ * module-private Symbol keyed by class reference
  * @module lib/db/orm/schema/registry
  * @version 1.0.0
  * @author Typeir

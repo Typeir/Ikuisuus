@@ -32,8 +32,7 @@
   }
 }
 
-// Bare <button> = primary CTA (color + hover from the global rule). Local class
-// carries only essential layout + the disabled state (global has no :disabled).
+// Bare <button> = primary CTA (color + hover from the global rule).
 .submitButton {
   padding: 0.5rem 1.5rem;
   white-space: nowrap;

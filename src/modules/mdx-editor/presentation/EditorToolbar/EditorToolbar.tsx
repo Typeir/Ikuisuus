@@ -273,8 +273,7 @@ const SAMPLE_LABEL_KEYS: Record<string, string> = {
 };
 
 /**
- * Sample insertion dropdown built on the FilterSelect atom: choosing a
- * content-type template replaces the whole buffer, undo-ably.
+ * Sample insertion dropdown built on the FilterSelect atom
  *
  * @component
  * @param {object} props - Component properties

@@ -2,9 +2,7 @@
  * Frontmatter Isolation Integration Tests
  *
  * @fileoverview Guards the shared frontmatter handling used by every metadata
- * generator: YAML fields must never reach extracted metadata, and blanking the
- * block must leave source line numbers intact so recorded line ranges keep
- * resolving against the original `.mdx`.
+ * generator
  *
  * @module tests/integration/frontmatter-extraction
  * @version 1.0.0

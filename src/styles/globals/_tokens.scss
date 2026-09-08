@@ -8,13 +8,18 @@
 
 :root {
   --springy-bezier: #{$transition-ease-springy};
+
+  /* Motion. Enter and exit ease out: quick off the mark reads as answering
+     the click, calm at the end reads as arriving. */
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  /* Ease in is for what leaves and does not come back: it holds, then goes. */
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --dur-2: 180ms;
+  --dur-3: 240ms;
+  --dur-4: 300ms;
 }
 
-/* Typeface roles. `next/font` in `src/app/fonts` writes `--font-initialem` and
-   `--font-junicode` onto the root element. `--font-default` is the body stack
-   and the tail of every role's fallback chain; `--font-mono` backs the code
-   and data surfaces. Headings use Junicode, whose glyphs sit closest to the
-   ornament lettering in Empyrean Initialem. */
+/* Typeface roles. */
 :root {
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
@@ -25,10 +30,7 @@
   --font-headings: var(--font-junicode), 'Times New Roman', Times, serif;
 }
 
-/* Safe-area insets. `env()` resolves to 0px wherever the UA does not expose
-   them, so these are safe to consume unconditionally. They are only non-zero
-   once the document opts into `viewport-fit=cover` (set in the root
-   layout's viewport export). */
+/* Safe-area insets. */
 :root {
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-right: env(safe-area-inset-right, 0px);
@@ -41,9 +43,7 @@
   );
 }
 
-/* Corner radii. One scale, consumed by every rounded corner on the site, so
-   the whole UI can be squared off by editing this block alone
-  */
+/* Corner radii. */
 :root {
   --border-round-xs: 0px;
   --border-round-s: 0px;
@@ -53,10 +53,7 @@
   --border-round-2xl: 0px;
   --border-round-pill: 999px;
   --border-round-circle: 0%;
-  /* PoC: pills keep their radius but chamfer it — `bevel` cuts each corner
-     back by half the height, so a pill ends in points (<===>) instead of
-     arcs. Browsers without `corner-shape` ignore it and draw the round pill;
-     `round` here restores the arcs everywhere. */
+  /* PoC */
   --corner-shape-pill: bevel;
   /* Extra inline padding a chamfered pill needs so its text clears the cut;
      zero wherever `corner-shape` is unsupported and the pill stays round. */
@@ -69,12 +66,7 @@
   }
 }
 
-/* Border widths. Same idea as the radii: one scale behind every border stroke
-   so line weight can be tuned site-wide from this block. Hairline is the
-   default stroke; `s` carries emphasis rings and dividers, `m`/`l` the few
-   heavy rules (active tabs, gradient frames). Focus rings draw with
-   `--outline-width`, kept apart so the ring can be tuned without moving
-   every border. */
+/* Border widths. */
 :root {
   --border-width-xs: 1px;
   --border-width-s: 2px;

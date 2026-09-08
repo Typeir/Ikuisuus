@@ -15,7 +15,7 @@ export const UNIT_EXPR_REGEX = /\[=\s*(.*?)\s*=\]/g;
 /** Regex to match flag shortcodes appended with a semicolon. */
 const FLAG_REGEX = /;(ADJ)/g;
 
-/** Regex to match a leading whole or fractional quantity: `6`, `1/5`. */
+/** Regex to match a leading whole or fractional quantity */
 const QUANTITY_REGEX = /^(\d+)(?:\s*\/\s*(\d+))?/;
 
 /** Regex to match a leading unit name. */

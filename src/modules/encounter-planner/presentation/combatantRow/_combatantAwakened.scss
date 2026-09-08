@@ -4,16 +4,7 @@
    HEROIC AWAKENING STYLING
    CSS Custom Properties Scoping Pattern (Industry Standard)
    
-   How it works:
-   1. Each .awakened--{affix} class sets --ha-ctx-* variables
-   2. All children reference --ha-ctx-* instead of --color-*
-   3. This provides full theming without massive duplication
-   
-   References:
-   - Radix UI: data-accent-color pattern
-   - Material Design 3: dynamic color system
-   - Open Props: color scheme scoping
-============================================ */
+   How it works */
 
 /* Base awakened state - sets up scoped variable context */
 .awakened {

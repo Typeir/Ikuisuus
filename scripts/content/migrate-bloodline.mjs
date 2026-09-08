@@ -1,8 +1,7 @@
 /**
  * @fileoverview Lifts a v1 bloodline page into its slot form.
  * @description Wraps the page in `<Bloodline>` carrying the boon budget, wraps
- * each `###` core feature in `<Feature>`, and turns every boon's
- * `<Collapsible>` into `<Feature collapsible>`.
+ * each `###` core feature in `<Feature>`
  */
 
 import { basename } from 'node:path';
@@ -82,7 +81,7 @@ export function cellLines(element, cell) {
  * Lifts the Core Features tables into slot elements.
  *
  * @description Each column becomes one element holding the cell exactly as
- * written, `<Tooltip>` blocks and all, which an attribute could not carry.
+ * written, `<Tooltip>` blocks and all
  *
  * @param {string[]} lines - Page lines
  * @param {string[]} notes - Notes to append to
@@ -210,8 +209,7 @@ export function relistCells(lines, notes) {
 /**
  * Wraps the Boons section in a `<Boons>` block.
  *
- * @description The budget sentence goes with it: every bloodline grants the
- * same points, so the component states them and the page says nothing.
+ * @description The budget sentence goes with it
  *
  * @param {string[]} lines - Page lines
  * @param {string[]} notes - Notes to append to

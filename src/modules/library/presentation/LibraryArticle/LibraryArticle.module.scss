@@ -12,9 +12,7 @@
     color 0.2s ease;
 }
 
-/* The title rule: the h1 underlines the full prose measure and names itself as
-   an anchor so the title action can sit on the rule's right end. The rule
-   itself is the shared heading rule the card blocks carry. */
+/* The title rule */
 $title-rule-gap: 0.35rem;
 
 .markdown {
@@ -35,11 +33,7 @@ $title-rule-gap: 0.35rem;
     }
   }
 
-  /* Measure, in characters — the only unit that holds a constant line length.
-     A viewport width does not: 50vw ran 85 characters at 1280 and 170 at 2560,
-     and drifted again with browser zoom. 100ch is the permissive end of the
-     range, chosen because rules text is scanned in short blocks rather than
-     read linearly. `min()` covers narrow screens, so no breakpoint override. */
+  /* Measure, in characters — the only unit that holds a constant line length. */
   max-width: min(100%, var(--prose-measure, 100ch));
 
   @media print {
@@ -98,11 +92,7 @@ $title-rule-gap: 0.35rem;
       column-span: none;
     }
 
-    /* A section or a slot card reads as one unit, so it asks to land whole.
-       The request is dropped for a block taller than the page has room for,
-       which is the intent: prefer to stay together, break rather than clip.
-       Scoped to descendants, so the page's own article is not asking to be
-       unbreakable. */
+    /* A section or a slot card reads as one unit, so it asks to land whole. */
     section,
     article {
       break-inside: avoid;
@@ -176,9 +166,7 @@ $title-rule-gap: 0.35rem;
   }
 }
 
-/* Sits on the rule at its right end; bottom edge meets the h1 text bottom.
-   Below lg a wrapping h1 would run into it, so the slot drops under the
-   rule instead — the h1's mobile margin-bottom reserves the space. */
+/* Sits on the rule at its right end; bottom edge meets the h1 text bottom. */
 .titleAction {
   position: absolute;
   right: 0;

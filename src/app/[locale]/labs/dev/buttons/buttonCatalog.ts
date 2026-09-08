@@ -1,9 +1,7 @@
 /**
  * @fileoverview Derives the canonical button catalogue from source at render time.
  * @description Parses `src/styles/buttons.module.scss` for variant names, doc comments
- * and group headers, then counts reach through both distribution channels: direct
- * `btn.<variant>` references in TSX, and bespoke classes that `@include` a mixin only
- * that variant uses.
+ * and group headers, then counts reach through both distribution channels
  *
  * @module app/[locale]/labs/dev/buttons/buttonCatalog
  * @version 2.0.0

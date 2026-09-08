@@ -58,7 +58,7 @@ const MENU_ENTRIES: MenuEntry[] = [
 ];
 
 /**
- * Runs the interactive CLI loop starting with a repo-state note and a menu select, repeating until the user selects `quit`.
+ * Runs the interactive CLI loop starting with a repo-state note and a menu select
  * @returns {Promise<void>} Resolves when the user chooses `quit`.
  */
 export async function runInteractive(): Promise<void> {

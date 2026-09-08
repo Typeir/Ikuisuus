@@ -70,7 +70,7 @@ function upsertRcBlock(rcPath: string, block: string): boolean {
 
 /**
  * Installs the `ik` shim on POSIX systems by inserting a shell function into
- * `~/.bashrc`, `~/.bash_profile`, and `~/.zshrc` (when they exist).
+ * `~/.bashrc`
  * @param {string} repoRoot - Absolute path to the main repo root.
  * @returns {string | null} Error message if all files missing, null otherwise.
  */

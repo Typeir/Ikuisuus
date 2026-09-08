@@ -124,7 +124,7 @@ async function findMetadataFiles(
   return results;
 }
 
-/** Shape of an aspect token: kebab-case segments joined by colons. */
+/** Shape of an aspect token */
 const ASPECT_TOKEN = /^[a-z][a-z0-9-]*(:[a-z0-9-]+)+$/;
 
 /**

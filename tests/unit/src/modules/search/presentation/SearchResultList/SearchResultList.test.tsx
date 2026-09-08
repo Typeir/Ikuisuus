@@ -1,7 +1,7 @@
 /**
  * @fileoverview SearchResultList Tests
  * @description Covers row rendering through the virtual list, the fixed row
- * pitch exposed as a CSS variable, and the tail-triggered batch load.
+ * pitch exposed as a CSS variable
  *
  * @module tests/unit/src/modules/search/presentation/SearchResultList/SearchResultList.test
  * @version 1.0.0

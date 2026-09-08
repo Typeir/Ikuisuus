@@ -24,7 +24,7 @@ import { recognizeMultiattack } from './monsterTokens';
  *
  * @param {string} slug - Monster slug (e.g. "abominable-avian")
  * @param {string} name - Feature name (e.g. "Gnawing Bite")
- * @returns {string} Feature ID: "<slug>/<name-kebab-cased>"
+ * @returns {string} Feature ID
  */
 export function featureId(slug: string, name: string): string {
   const kebab = name

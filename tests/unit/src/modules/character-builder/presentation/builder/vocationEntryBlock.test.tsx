@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for VocationEntryBlock
  * @description Tests the VocationEntryBlock component — vocation picker render,
- * specialization picker filtering, level NumericInput, remove button visibility,
- * and all event callbacks.
+ * specialization picker filtering, level NumericInput
  *
  * @module tests/unit/src/modules/character-builder/presentation/builder/vocationEntryBlock.test
  * @version 1.0.0

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Aspect Vocabulary API Endpoint
  * @description GET returns the closed, authorable aspect vocabulary as
- * `{ groups: [{ group, values, scope }] }`, resolved from shared-data.
+ * `{ groups: [{ group, values, scope }] }`
  *
  * @module app/api/aspects/vocabulary/route
  * @version 1.0.0

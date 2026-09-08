@@ -1,9 +1,6 @@
 /**
  * @fileoverview Tabs Styles
- * @description Styles for the Tabs primitive. Visual style matches the spell
- * list tabs: bordered tab buttons with rounded top corners, active tab blends
- * into a surface-background panel via a seam-cover pseudo-element, scrollable
- * tablist row with gradient fade. All colors via CSS variables.
+ * @description Styles for the Tabs primitive.
  *
  * @module lib/components/ui/tabs/tabs.module
  */
@@ -58,8 +55,7 @@
   white-space: nowrap;
 
   &:hover:not(:disabled) {
-    // Explicit hover bg guard: without it a bare <button> falls through to the
-    // global `button:hover { background: var(--color-primary) }` green fill.
+    // Explicit hover bg guard
     background: var(--color-bg);
     color: var(--color-text);
     filter: brightness(1.05);
@@ -70,7 +66,7 @@
 }
 
 /* Colour and fill come from the variant blocks (`nested`, `inset`) — every
-   consumer passes one. Only the underline geometry lives here. */
+   consumer passes one. */
 .active {
   &::after {
     content: '';
@@ -107,8 +103,6 @@
 
 /**
  * Nested variant — tabs rendered inside a surface-level container.
- * Inactive tabs are flat/borderless; active tab recesses into --color-bg;
- * the panel uses --color-bg so it reads as a deeper layer.
  */
 .tabsNested {
   /* Iconic rounded-top frame (mirrors GradientTabs' gradientContainer)
@@ -160,10 +154,7 @@
 }
 
 /**
- * Inset variant — one layer deeper than `nested`. For tabs rendered inside
- * a nested panel (e.g. per-vocation section tabs inside the multiclass entry
- * tabs). Active tab and panel recess into --color-bg-secondary with a solid
- * border so the inner group never blends into its parent panel.
+ * Inset variant — one layer deeper than `nested`.
  */
 .tabsInset {
   /* Iconic rounded-top frame (mirrors GradientTabs' gradientContainer)

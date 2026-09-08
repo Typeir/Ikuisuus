@@ -1,9 +1,8 @@
 /**
  * Tools Menu Styles
- * 
+ *
  * @fileoverview Styling for button-triggered tools menu component.
- * Implements upward-expanding dropdown with hover-triggered caret indicator.
- * 
+ *
  * @module toolsMenu.module
  * @version 1.0.0
  * @author Typeir
@@ -32,8 +31,7 @@
   align-items: center;
   gap: 0.5rem;
 
-  /* True-dropdown affordance: hovering highlights the border and chevron,
-     never the container background. */
+  /* True-dropdown affordance */
   &:hover,
   &:focus,
   &.open {
@@ -46,7 +44,7 @@
     @include focus-outline(3px);
   }
 
-  /* Lucide chevron caret (dropup). Highlights on hover/open, flips when open. */
+  /* Lucide chevron caret (dropup). */
   .caret {
     margin-left: auto;
     flex-shrink: 0;

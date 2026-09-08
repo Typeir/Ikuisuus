@@ -1,13 +1,12 @@
 /**
- * @fileoverview Helpers the content-v2 converters share: tag printing, table
- * cells, feature-heading parentheticals, file expansion and the dry-run CLI.
+ * @fileoverview Helpers the content-v2 converters share
  */
 
 import { globSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
- * A markdown heading: its hashes and its text.
+ * A markdown heading
  */
 export const HEADING = /^(#{1,6})\s+(.*?)\s*$/;
 

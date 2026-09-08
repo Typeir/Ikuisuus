@@ -1,7 +1,6 @@
 /**
  * @fileoverview Character Roster Component
- * @description Two-panel view: left sidebar lists saved characters; the right panel
- * shows the active character's sheet.
+ * @description Two-panel view
  *
  * @module modules/character-builder/presentation/Roster/characterRoster
  * @version 1.0.0

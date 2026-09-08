@@ -1,5 +1,5 @@
 /**
- * @fileoverview Slot card T10: compile cost.
+ * @fileoverview Slot card T10
  * @description Compiles the fixture 50 times through compileStatic and
  * reports median milliseconds and output bytes.
  *

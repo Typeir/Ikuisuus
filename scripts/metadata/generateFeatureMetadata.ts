@@ -29,6 +29,7 @@ import {
 import { CLASSIFIER } from './extraction/featurePatterns';
 import { applyMetaHandler } from './extraction/metaHandlers';
 import { findMetaForFeature, parseMetaTags } from './extraction/metaTagParser';
+import { extractDeclaredDeeds } from './extraction/monsterDeclaredDeeds';
 import {
     extractDeedActs,
     extractDeedLair,
@@ -45,6 +46,7 @@ import {
     classifySections,
     type MonsterSection,
 } from './extraction/monsterSectionClassifier';
+import { plain } from './textUtils';
 
 const log = createLogger({ component: 'FeatureMetadataGenerator' });
 
@@ -52,9 +54,14 @@ const log = createLogger({ component: 'FeatureMetadataGenerator' });
  * Maps a classified section to an extraction function.
  *
  * @param {MonsterSection} section - Classified section
+ * @param {string[]} lines - All lines of the sheet, for sections whose numbers
+ * live on the enclosing block's opening tag
  * @returns {MonsterFeature[]} Extracted features from this section
  */
-function extractFeaturesFromSection(section: MonsterSection): MonsterFeature[] {
+function extractFeaturesFromSection(
+  section: MonsterSection,
+  lines: string[],
+): MonsterFeature[] {
   switch (section.type) {
     case 'traits':
       return extractTraits(section);
@@ -64,6 +71,8 @@ function extractFeaturesFromSection(section: MonsterSection): MonsterFeature[] {
       return extractActions(section, 'minor_action');
     case 'reactions':
       return extractActions(section, 'reaction');
+    case 'deeds':
+      return extractDeclaredDeeds(section);
     case 'deed_act':
       return extractDeedActs(section);
     case 'deed_stratagem':
@@ -73,7 +82,7 @@ function extractFeaturesFromSection(section: MonsterSection): MonsterFeature[] {
     case 'deed_phase':
       return extractDeedPhases(section);
     case 'spellcasting': {
-      const spell = extractSpellcasting(section);
+      const spell = extractSpellcasting(section, lines);
       return spell ? [spell] : [];
     }
     case 'bloodrage':
@@ -147,7 +156,7 @@ export function parseMonsterFeaturesSource(
 
   const features: MonsterFeature[] = [];
   for (const section of sections) {
-    const extracted = extractFeaturesFromSection(section);
+    const extracted = extractFeaturesFromSection(section, lines);
     for (const feat of extracted) {
       feat.id = featureId(slug, feat.name);
       if (!feat.source) {
@@ -175,11 +184,11 @@ export function parseMonsterFeaturesSource(
     const line = feat.source ? lines[feat.source.start] : undefined;
     const match = line?.match(CLASSIFIER.heading);
     if (!match) continue;
-    const heading = match[2].replace(/\*\*/g, '').trim();
+    const heading = plain(match[2]);
     if (heading && heading !== feat.name) feat.heading = heading;
   }
 
-  const bodyMap = buildFeatureBodyMap(sections, slug);
+  const bodyMap = buildFeatureBodyMap(sections, slug, lines);
 
   const metaDirectives = parseMetaTags(raw);
   if (metaDirectives.length > 0) {
@@ -208,15 +217,17 @@ export function parseMonsterFeaturesSource(
  *
  * @param {MonsterSection[]} sections - Classified sections
  * @param {string} slug - Monster slug for ID generation
+ * @param {string[]} lines - All lines of the sheet
  * @returns {Map<string, string>} Feature ID → body text
  */
 function buildFeatureBodyMap(
   sections: MonsterSection[],
   slug: string,
+  lines: string[],
 ): Map<string, string> {
   const map = new Map<string, string>();
   for (const section of sections) {
-    const extracted = extractFeaturesFromSection(section);
+    const extracted = extractFeaturesFromSection(section, lines);
     for (const feat of extracted) {
       const id = featureId(slug, feat.name);
       if (feat.source) {

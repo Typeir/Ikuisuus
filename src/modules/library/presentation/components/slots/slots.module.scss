@@ -3,10 +3,7 @@
 /**
  * @fileoverview Slot row, brief, and feature heading layout.
  * @description Layout-only styles for slot rows, the heirloom brief, and the
- * feature heading bar: title at the left, tag and cost at the right, one rule
- * under the whole bar. Slot runs render as paragraphs so the site's article
- * rhythm owns every margin, matching the spell-card stat block. Colors come
- * from theme tokens.
+ * feature heading bar
  *
  * @module modules/library/presentation/components/slots/slots.module
  * @version 0.5.0
@@ -21,12 +18,7 @@
   margin: 0.25rem 0;
 }
 
-/* An item's numbers, carded like a spell but with no name to head them. Held
-   to half the measure so a floated image keeps its side of the page, and given
-   its own formatting context so it takes the space left beside that image
-   rather than sliding under it. Below desktop the page is one column and the
-   card takes the whole measure back. Doubled selector because the prose scale
-   addresses this element by tag and would otherwise outrank a bare class. */
+/* An item's numbers, carded like a spell but with no name to head them. */
 .attributesCard.attributesCard {
   @include mdx-card-face;
   display: flow-root;
@@ -38,10 +30,7 @@
   }
 }
 
-/* The card's head: its glyph and name, what casting it costs beside them, and
-   what kind of spell it is at the far edge of the same line. It heads the card,
-   so it does not also take a heading's top gap — and it is written against the
-   card, since a bare class loses to the prose scale's own `h2`. */
+/* The card's head */
 .spellCard .spellHead {
   @include mdx-heading-rule;
   @include mdx-mark-glyphs-self;
@@ -63,32 +52,35 @@
   @include mdx-slot-run;
 }
 
-/* The block that closes a card by saying how the spell grows. Its header
-   carries the rule, as a feature's does, so the block needs only the gap that
-   sets it off from the prose above. */
+/* The block that closes a card by saying how the spell grows. */
 .spellCard .tail {
   margin-top: 0.5rem;
 }
 
-/* A run that carries no mechanics: colour, illustration, restatement. It takes
-   the same face a slot line takes, so a reader scanning for rules reads past
-   it. */
+/* A run that carries no mechanics */
 .lore {
   font-style: italic;
   color: var(--color-text-secondary);
 }
 
-/* A set of blocks that exclude one another. The lead line says so; the group
-   carries no ornament of its own. */
+/* A set of blocks that exclude one another. */
 .choice {
   margin-block: 0.5rem;
 }
 
+/* A collapsed block wraps a details and nothing else, so the details' margin
+   escapes the article and stacks with its neighbour's. */
+.block[data-collapsible] {
+  display: flow-root;
+  margin-block: 0 0.75rem;
+
+  > details {
+    margin-bottom: 0;
+  }
+}
+
 /* A block sits one level inside whatever holds it, and takes the nested card's
-   face so the reader sees where it belongs. In a spell card that separates the
-   named effects from the card's own sections, whose headers otherwise read the
-   same; a block inside a block indents again, and reads as a stage of the one
-   around it. */
+   face so the reader sees where it belongs. */
 .spellCard .block,
 .block .block {
   margin-left: 1.5rem;
@@ -104,11 +96,7 @@
   color: var(--color-emphasis);
 }
 
-/* One slot row: its own line inside the slot-run paragraph. A slot states a
-   condition on the prose beside it rather than prose of its own, so it sits
-   back from the body in the italic face, at the h6 size, in the secondary
-   text colour. The value takes the heading face; the label keeps the face and
-   the emphasis colour it declares for itself. */
+/* One slot row */
 .row {
   display: flex;
   align-items: baseline;
@@ -121,7 +109,7 @@
   color: var(--color-text-secondary);
 }
 
-/* Slot label: the site's bold face, emphasis colour, and colon separator. */
+/* Slot label */
 .label {
   font-weight: 700;
   font-family: var(--font-default);
@@ -138,9 +126,7 @@
   line-height: 1.5;
 }
 
-/* Feature heading bar: title left, meta right, one rule under both. The
-   heading stays a plain block so its box runs the full prose width beside a
-   floated image; the rule is drawn from that box and painted under the image. */
+/* Feature heading bar */
 .heading {
   display: block;
   @include mdx-heading-rule;
@@ -159,10 +145,15 @@
   gap: 0.75rem;
   margin-left: 1rem;
   white-space: nowrap;
+
+  /* A block with neither aspects nor a tag leaves this empty, and an empty
+     float would still hold its margin against the heading. */
+  &:empty {
+    display: none;
+  }
 }
 
-/* Feature heading tag: reads with the name, since it says what the block is.
-   Collapsible's cost look, one space along from the title. */
+/* Feature heading tag */
 .tag {
   font-weight: 400;
   font-style: italic;
@@ -172,10 +163,8 @@
   white-space: nowrap;
 }
 
-/* Feature cost: the way boons print BP. */
-/* What using a block costs, beside the name it belongs to. Lit the way a
-   rollable number is lit, since it is the first thing a reader looks for, and
-   a shade under it since it is not one. */
+/* Feature cost */
+/* What using a block costs, beside the name it belongs to. */
 .cost {
   font-weight: 600;
   font-size: 0.8em;
@@ -189,12 +178,8 @@
   }
 }
 
-/* Stat-block table: the defence row and the ability row a monster sheet opens
-   with. Columns size to their content and the block scrolls rather than
-   forcing the article wider on a narrow screen. */
-/* Fills the width its wrapper is given. The wrapper carries overflow-x, so it
-   establishes a block formatting context and takes the space left beside a
-   float rather than sliding under one or pushing it away. */
+/* Stat-block table */
+/* Fills the width its wrapper is given. */
 .statTable {
   width: 100%;
   margin-block: 0.75rem;
@@ -220,9 +205,7 @@
   }
 }
 
-/* The header of a tail block. It names a block of rules the way a feature
-   heading names one, so it takes the feature heading's face and rule rather
-   than a slot label's. */
+/* The header of a tail block. */
 .overcastLabel {
   @include mdx-heading-rule;
   display: block;

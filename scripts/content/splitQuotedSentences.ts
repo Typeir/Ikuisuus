@@ -16,7 +16,7 @@ import path from 'node:path';
 /** Quote marker plus any following space, repeated for nesting depth. */
 const REGEX_QUOTE_PREFIX = /^((?:>[ \t]?)+)/;
 
-/** Sentence boundary: a period, then space, then an opening character. */
+/** Sentence boundary */
 const REGEX_SENTENCE_SPLIT = /(?<=\.)[ \t]+(?=[A-Z"'\[*_(])/;
 
 /** Header slots and structural rows that hold no prose. */

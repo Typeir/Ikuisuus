@@ -1,0 +1,38 @@
+@use 'mixins' as *;
+
+.searchBar {
+  width: 100%;
+  position: relative;
+}
+
+.aspectFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.aspectFiltersLabel {
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  @include label-uppercase;
+}
+
+.aspectFiltersClear {
+  font: inherit;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border: var(--border-width-xs) solid var(--color-border-secondary);
+  border-radius: var(--border-round-pill);
+  corner-shape: var(--corner-shape-pill);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+}

@@ -23,7 +23,8 @@ The composite gate runs these checks:
 | Check         | Script                    | What It Catches                            |
 | ------------- | ------------------------- | ------------------------------------------ |
 | File length   | `check-file-length.mjs`   | Files exceeding line limits                |
-| Duplicate CSS | `check-duplicate-css.mjs` | Redundant CSS declarations                 |
+| Duplicate CSS Selectors | `checkDuplicateCssSelectors.ts` | Selectors declared twice |
+| Duplicate CSS Attributes | `checkDuplicateCssAttributes.ts` | Multi-line declaration values written more than once |
 | JSDoc quality | `check-jsdoc-quality.mjs` | Missing/malformed JSDoc                    |
 | Antipatterns  | `check-antipatterns.mjs`  | `alert()`, color literals, inline comments |
 | Test gaps     | `check-test-gaps.mjs`     | Source files without corresponding tests   |

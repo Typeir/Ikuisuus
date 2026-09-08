@@ -143,7 +143,7 @@ interface KeywordCardProps {
 }
 
 /**
- * The card: a title, a link to the full rule, and the compiled definition.
+ * The card
  *
  * @param {KeywordCardProps} props - Component props
  * @returns {React.ReactElement | null} The card, or null until it resolves

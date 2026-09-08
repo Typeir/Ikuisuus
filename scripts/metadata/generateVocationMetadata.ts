@@ -1,8 +1,7 @@
 /**
  * @fileoverview Vocation Metadata Generator
  * @description Parses `main.mdx` files from each vocation subdirectory and
- * extracts core traits, feature progression, proficiency grants, optional
- * spellcasting summary, and specialization links.
+ * extracts core traits, feature progression
  *
  * @module scripts/metadata/generateVocationMetadata
  * @version 1.0.0
@@ -193,7 +192,7 @@ async function parseVocationFile(
       }
     }
 
-    const specializations = parseSpecializations(body);
+    const specializations = await parseSpecializations(filePath);
     const archetype = classifyArchetype(spellcasting?.progression ?? null);
 
     const link = `/library/character-creation/vocations/${slug}/main`;

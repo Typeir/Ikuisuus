@@ -1,7 +1,6 @@
 /**
  * @fileoverview Tooltip Visibility State Machine
- * @description Open/close lifecycle for hover surfaces: show delay, hide delay,
- * and a held-open exit phase.
+ * @description Open/close lifecycle for hover surfaces
  *
  * @module lib/components/ui/tooltip/useTooltipVisibility
  * @version 1.0.0

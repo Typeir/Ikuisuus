@@ -3,7 +3,7 @@
 /**
  * @fileoverview Monster Bonus Auditor
  * @description Scans every `.sheet.mdx` for ALL numeric bonus patterns (+N to hit,
- * DC N, spell save DC N, save/skill +N, etc.)
+ * DC N
  *
  * @module scripts/wip/audit-monster-bonuses
  * @version 1.0.0

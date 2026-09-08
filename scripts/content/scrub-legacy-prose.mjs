@@ -52,7 +52,7 @@ const HEAD = new RegExp(
 );
 
 /**
- * Two head nouns joined by `and` inside one clause: a compound subject.
+ * Two head nouns joined by `and` inside one clause
  */
 const COMPOUND = new RegExp(
   `\\b(?:${HEAD_NOUNS})s?\\b[^,;]*\\band\\b[^,;]*\\b(?:${HEAD_NOUNS})s?\\b`,
@@ -230,7 +230,7 @@ function passSaves(line, lineNo, changes, review) {
 }
 
 /**
- * Attack-block pass: the opener and the hit line, pure template.
+ * Attack-block pass
  *
  * @param {string} line - One line
  * @param {number} lineNo - Its number
@@ -275,7 +275,7 @@ function passAttacks(line, lineNo, changes) {
 }
 
 /**
- * Simple substitutions: one regex, one replacement, no syntax.
+ * Simple substitutions
  */
 const SUBSTITUTIONS = [
   { id: 'briefly', regex: /\s*until the end of (?:its|their) next turn\b/gi, to: ' [# kw:briefly #]' },

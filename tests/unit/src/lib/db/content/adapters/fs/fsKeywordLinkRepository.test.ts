@@ -1,8 +1,7 @@
 /**
  * fsKeywordLinkRepository Unit Tests
  *
- * @fileoverview Tests for the filesystem keyword link adapter: it reads the
- * whole locale tree and keeps only records that define or ingest a shard.
+ * @fileoverview Tests for the filesystem keyword link adapter
  *
  * @module tests/unit/lib/db/content/adapters/fs/fsKeywordLinkRepository
  */

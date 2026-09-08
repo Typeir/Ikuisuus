@@ -1,7 +1,6 @@
 /**
  * @fileoverview Bloodline Metadata Generator
- * @description Parses `.bloodline.mdx` files into metadata: core features,
- * boons, ability scores, and gameplay tags.
+ * @description Parses `.bloodline.mdx` files into metadata
  *
  * @module scripts/metadata/generateBloodlineMetadata
  * @version 1.0.0
@@ -89,7 +88,7 @@ interface BoonSubOption {
  * @property {number} endLine - 1-indexed last line of the boon content block in the source MDX
  * @property {string[]} tags - Derived boon gameplay tags
  * @property {string} [anchor] - Anchor slug of the boon heading
- * @property {string} [parentName] - For an option of a variable-cost boon written as its own heading: the parent boon's name
+ * @property {string} [parentName] - For an option of a variable-cost boon written as its own heading
  */
 interface ParsedBoon {
   name: string;
@@ -475,8 +474,7 @@ function extractBoonTags(
 }
 
 /**
- * A core feature trait: one `###` under `## Core Features`, tagged from its
- * own text so it renders an aspect row like a boon does.
+ * A core feature trait
  *
  * @property {string} id - `${slug}:${anchorSlug(name)}`
  * @property {string} name - Heading text
@@ -573,9 +571,7 @@ function parseCoreFeatures(content: string): {
 /**
  * The values a Core Features slot element holds.
  *
- * @description A cell states either one value or a markdown list of them, and
- * either may carry a tooltip, whose trigger is the value and whose body is the
- * note behind it.
+ * @description A cell states either one value or a markdown list of them
  *
  * @param {string} content - Full MDX content
  * @param {string} element - Slot element name
@@ -696,6 +692,7 @@ function parseBoons(content: string, sharedData: SharedData): ParsedBoon[] {
     text
       .split('\n')
       .map((line) => line.trim())
+      .map((line) => plain(line))
       .find((line) => line.length > 0 && !line.startsWith('|')) || undefined;
 
   const boons: ParsedBoon[] = [];

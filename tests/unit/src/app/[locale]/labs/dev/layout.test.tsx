@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for the labs dev segment layout guard.
  * @description Verifies the segment renders children only under `NODE_ENV=development`
- * and calls `notFound()` in every other mode, and that dev labs is marked noindex.
+ * and calls `notFound()` in every other mode
  *
  * @module tests/unit/src/app/[locale]/labs/dev/layout.test
  * @version 1.0.0

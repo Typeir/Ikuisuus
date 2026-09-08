@@ -28,34 +28,29 @@ const COUNT = /^\d+$/;
 /** A whole number, with the thousands separators a sheet writes. */
 const GROUPED_COUNT = /^(?:\d+|\d{1,3}(?:,\d{3})+)$/;
 
-/** Hit points as a sheet writes them: the total, grouped or not, then the dice in parentheses. */
+/** Hit points as a sheet writes them */
 const HIT_POINTS = /^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\s*\(.+\))?$/;
 
-/** A challenge rating: a whole number or one of the low fractions. */
+/** A challenge rating */
 const CHALLENGE = /^(?:\d+|1\/(?:8|4|2))$/;
 
 /** A signed bonus, as a sheet prints one. */
 const BONUS = /^[+-]\d+$/;
 
-/** A signed bonus, optionally followed by the note a sheet prints beside it, such as `+27 (Wisdom-based)`. */
+/** A signed bonus, optionally followed by the note a sheet prints beside it */
 const BONUS_WITH_NOTE = /^[+-]\d+(?: \([^()]+\))?$/;
 
 /**
- * What a block contests with: a sheet's own number, or the terms a page adds
- * up, such as `your level + your tier bonus`. It is the bonus alone — a save
- * against it is 10 plus this, and an attack rolls d20 plus this — so a value
- * that opens with the 10 is stating the DC, not the accuracy.
+ * What a block contests with
  */
 const CONTEST = /^(?:[+-]\d+(?: \([^()]+\))?|[A-Za-z][^+]*(?: \+ [^+]+)*)$/;
 
 /**
- * What a block's save is taken against: the number a creature sheet prints, or
- * the sum a page works out. A sheet states the number it rolled against; a
- * feature whose accuracy varies with the reader states how it is reached.
+ * What a block's save is taken against
  */
 const SAVE_DC = /^(?:\d{1,2}|\d{1,2} (?:plus|\+) .+)$/;
 
-/** A spell level: zero through twelve, or the word cantrip. */
+/** A spell level */
 const SPELL_LEVEL = /^(?:cantrip|\d|1[0-2])$/i;
 
 /**

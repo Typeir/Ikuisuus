@@ -40,7 +40,8 @@ Phase C: Completion Reconciliation & Report
 | ---------------------------------------- | ------------------------------ | ---------------------------------------- | ---------------- |
 | `.github/scripts/health-check.ts`        | `npm run health:check`         | Composite orchestrator                   | —                |
 | `.github/scripts/check-file-length.ts`   | `npm run health:file-length`   | Files >250 lines                         | CRITICAL         |
-| `.github/scripts/check-duplicate-css.ts` | `npm run health:duplicate-css` | Duplicate CSS selectors                  | CRITICAL         |
+| `.github/scripts/checkDuplicateCssSelectors.ts` | `npm run health:duplicate-css-selectors` | Duplicate CSS selectors | CRITICAL |
+| `.github/scripts/checkDuplicateCssAttributes.ts` | `npm run health:duplicate-css-attributes` | Multi-line declaration values written more than once | CRITICAL |
 | `.github/scripts/check-jsdoc-quality.ts` | `npm run health:jsdoc`         | Inline comments, color literals, alert() | CRITICAL         |
 | `.github/scripts/check-antipatterns.ts`  | `npm run health:antipatterns`  | console.log, any type, force casts       | CRITICAL/WARNING |
 | `.github/scripts/check-test-gaps.ts`     | `npm run health:test-gaps`     | Missing test files for changed code      | CRITICAL         |

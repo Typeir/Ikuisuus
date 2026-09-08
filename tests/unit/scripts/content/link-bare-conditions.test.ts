@@ -1,9 +1,7 @@
 /**
  * @fileoverview Tests for the bare-condition linker.
  * @description The wrap itself is trivial; what these guard is where the
- * linker refuses to wrap — headings, frontmatter, code, an existing keyword,
- * a link's text — and that casing survives so a sentence-initial word
- * displays as authored.
+ * linker refuses to wrap — headings
  *
  * @module tests/unit/scripts/content/link-bare-conditions.test
  * @version 0.1.0

@@ -14,6 +14,8 @@ import Attributes from './Attributes';
 import Bloodline from './Bloodline';
 import Boons from './Boons';
 import Choice from './Choice';
+import Fold from './Fold';
+import Sheet from './Sheet';
 import Feat from './Feat';
 import Feature, { Action, Attack, Curse, Pool, Trait } from './Feature';
 import Heirloom, { Trinket } from './Heirloom';
@@ -48,6 +50,8 @@ export const slotComponents: Record<string, unknown> = {
   Bloodline,
   Boons,
   Choice,
+  Fold,
+  Sheet,
   Lore,
   Progression,
   Scaling,

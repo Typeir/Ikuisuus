@@ -1,8 +1,7 @@
 /**
  * @fileoverview unitConversion Unit Tests
  * @description Tests for conversion of Damocles measures into reader-facing
- * display systems, covering scaling, half-up rounding, pluralisation, and
- * attributive forms.
+ * display systems, covering scaling
  *
  * @module tests/unit/src/lib/units/unitConversion.test
  * @version 1.0.0

@@ -1,7 +1,7 @@
 /**
  * @fileoverview parseReusableRegions Unit Tests
  * @description Tests the frontmatter opt-in, named region extraction,
- * whole-body fallback with title and lede removal, and heading normalisation.
+ * whole-body fallback with title and lede removal
  *
  * @module tests/unit/lib/content/reusable/parseReusableRegions
  * @version 1.0.0

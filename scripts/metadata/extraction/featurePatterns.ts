@@ -33,19 +33,41 @@ export const DICE = {
 } as const;
 
 /**
+ * Ability names as a sheet writes them, long form or short.
+ */
+const ABILITY =
+  '(strength|dexterity|constitution|intelligence|wisdom|charisma|str|dex|con|int|wis|cha)';
+
+/**
  * Pre-compiled patterns for Difficulty Class and saving throw expressions.
  *
  * @property {RegExp} dcFormula - "DC 10 + Prof + CHA mod", or the legacy "DC = ..."
  * @property {RegExp} dcFlat - "DC 16"
- * @property {RegExp} savingThrow - "Wisdom saving throw" or "DEX save"
+ * @property {RegExp} savingThrow - a save the block imposes, in either grammar
+ * @property {RegExp} notImposed - lead-in words that make a save a mention
  * @property {RegExp} savingThrowWithDC - "DC 16 Wisdom saving throw"
  * @property {RegExp} autoFail - "automatically fails saving throws"
  */
 export const SAVES = {
   dcFormula: /DC\s*(?:=\s*|(?=\d+\s*\+))(.+?)(?:\)|,|$)/i,
   dcFlat: /DC\s+(\d+)/i,
-  savingThrow:
-    /(?:(strength|dexterity|constitution|intelligence|wisdom|charisma|str|dex|con|int|wis|cha))\s+sav(?:ing\s+throw|e)/i,
+  /* A block imposes a save two ways: `the target saves Wisdom`, which is how
+     the corpus writes it, and `a Strength save against DC 18`. The ability is
+     held to a word boundary on the left, since `that point saves Dexterity`
+     otherwise reads the tail of `point` as `int`. */
+  savingThrow: new RegExp(
+    `saves?\\s+\\*{0,2}${ABILITY}\\b` +
+      `|\\b\\*{0,2}${ABILITY}\\*{0,2}\\s+sav(?:ing\\s+throws?|es?)\\b`,
+    'i',
+  ),
+  /* Naming an ability beside the word `save` is not enough on its own: a block
+     granting advantage on Constitution saving throws, or immunity to them,
+     names both and imposes nothing. The word can stand a little back from the
+     save it qualifies — `advantage on Strength checks and Strength saving
+     throws` — but never across a sentence end, so a block that grants a bonus
+     and then imposes a save still reports the save. */
+  notImposed:
+    /(?:advantage|disadvantage|immune|immunity|resistance|resistant|proficient|proficiency|bonus|succeeds?|allows?|allowing|automatically\s+fails?|rerolls?|re-rolls?)\b[^.!?]{0,60}$/i,
   savingThrowWithDC: /DC\s+(\d+)\s+(\w+)\s+saving throw/i,
   autoFail: /automatically\s+(fails?|succeeds?)\s+(?:all\s+)?saving\s+throws?/i,
 } as const;
@@ -206,8 +228,12 @@ export const TEMPLATES = {
 /**
  * Pre-compiled patterns for monster stat block parsing.
  *
- * @property {RegExp} attackLine - "_Melee Weapon Attack:_ +7 to hit"
- * @property {RegExp} hitLine - "_Hit:_ 12 (2d8 + 3) slashing damage"
+ * @property {RegExp} attackLine - the legacy "_Melee Weapon Attack:_ +7 to hit"
+ * @property {RegExp} accuracySlot - a block's own `accuracy="+12"`
+ * @property {RegExp} reachSlot - a block's own `reach="[= 1 stride =]"`
+ * @property {RegExp} rangeSlot - a block's own `range="[= 24 stride =]/[= 60 stride =]"`
+ * @property {RegExp} spellAttack - "ranged spell attack", naming the kind
+ * @property {RegExp} hitLine - the hit and its damage, in either grammar
  * @property {RegExp} multiattack - "multiattack"
  * @property {RegExp} attackSegment - "two claw attacks"
  * @property {RegExp} condition - "while raging", "when transformed"
@@ -227,12 +253,27 @@ export const TEMPLATES = {
 export const MONSTER = {
   attackLine:
     /_?(Melee|Ranged)\s+(Weapon|Spell)\s+Attack:_?\s*\+(\d+)\s+to\s+hit/i,
-  hitLine: /_?Hit:_?\s*\*{0,2}(\d+)\s*\((.+?)\)\*{0,2}\s*(\w+)?\s*damage/i,
+  /* An attack states its numbers on its own block — `<Attack accuracy="+12"
+     reach="[= 1 stride =]">` — so the block's attributes are what there is to
+     read; whether it reaches or ranges is what says melee from ranged. */
+  accuracySlot: /\baccuracy\s*=\s*"\+?(\d+)"/i,
+  reachSlot: /\breach\s*=\s*"\[=\s*(\d+)\s*stride[^"]*"/i,
+  rangeSlot:
+    /\brange\s*=\s*"\[=\s*(\d+)\s*stride[^\]]*\](?:\s*\/\s*\[=\s*(\d+)\s*stride[^\]]*\])?/i,
+  spellAttack: /\b(?:melee|ranged)\s+spell\s+attack\b/i,
+  /* The hit is written `On a hit, 21 ([% 3d6 +10 slashing %])` or, where the
+     average is left to the roller, `**Hit**: [% 4d12 +8 force %]`. The average
+     is optional in both, and the dice sit inside the roll macro. */
+  hitLine:
+    /(?:_?Hit:?_?|\*\*Hit\*\*:|On a hit,)\s*\*{0,2}(?:(\d+)\s*)?\(?\s*(?:\[%\s*)?(\d+d\d+(?:\s*[+-]\s*\d+)?)\s*([a-z]+)?[^%)]*(?:%\]|\))?/i,
   multiattack: /multiattack/i,
   attackSegment:
     /(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+((?:\w+\s+)*\w+)\s+attacks?/i,
   condition: /(?:while|when|if)\s+(.+?)(?:\.|,|$)/i,
   deedCost: /\(Costs?\s+(\d+)\s+Deeds?\)/i,
+  /* A block states its deed cost on its own slot; the parenthetical is
+     how a sheet wrote it before the slot existed. */
+  deedCostSlot: /\bcost="(\d+)\s*Deeds?"/i,
   phaseThreshold: /(Wounded|Bloodied|Doomed)\s*\((\d+)%/i,
   phaseSlain: /\bSlain\b/i,
   declareResolve: /\*\*(Declare|Resolve).*?\*\*:?/i,
@@ -253,7 +294,7 @@ export const MONSTER = {
  * @property {RegExp} numericWithParen - "18 (natural armor)"
  * @property {RegExp} blendedImageSrc - BlendedImage JSX src attribute
  * @property {RegExp} heading - "## Title"
- * @property {RegExp} keyBullet - "- **Key**: Value"
+ * @property {RegExp} keyBullet - "- **Key**
  * @property {RegExp} italicLine - "_text_"
  * @property {RegExp} weight - "2.5 lbs"
  */
@@ -383,12 +424,14 @@ export const RECHARGE_TIMINGS: ReadonlyArray<{
  * @property {RegExp} subHeading - H4–H6 heading
  * @property {RegExp} boldLabel - Bullet with bold-label prefix
  * @property {RegExp} deedBullet - Deed option bullet with optional cost
+ * @property {RegExp} openTag - A slot component's opening tag on its own line
  */
 export const SECTIONS = {
   subHeading: /^#{4,6}\s+(.+?)\s*$/,
   boldLabel: /^\s*[-*]\s*\*\*([^*]+?)\.?\*\*(?!\s*:)\s*/,
   deedBullet:
     /^\s*[-*]\s*\*\*([^*]+?)\.?\*\*(?!\s*:)\s*(?:\(Costs?\s*(\d+)\s*Deeds?\))?/i,
+  openTag: /^<[A-Z][A-Za-z]*(?:\s[^>]*)?>$/,
 } as const;
 
 /**
@@ -397,20 +440,24 @@ export const SECTIONS = {
  * @property {RegExp} slotRow - Inline slot row "1st level (2 slots)"
  * @property {RegExp} slotCell - Table cell with level + slot count
  * @property {RegExp} slotTableCell - Bold/plain table cell variant
- * @property {RegExp} casterLevel - "N-level spellcaster"
- * @property {RegExp} dc - "spell save DC N"
- * @property {RegExp} attackBonus - "+N to hit with spell"
- * @property {RegExp} ability - "spellcasting ability is X"
+ * @property {RegExp} dc - the block's `saveDc` slot, or a DC stated in prose
+ * @property {RegExp} attackBonus - the block's `accuracy` slot, or one stated in prose
+ * @property {RegExp} ability - "casting ability is X"
  */
 export const SPELLCASTING = {
-  slotRow: /(\d+)(?:st|nd|rd|th)\s*(?:level)?\s*\((\d+)\s*slots?\)/i,
-  slotCell: /(\d+)(?:st|nd|rd|th)\s+level\s+\((\d+)\s+slots?\)/i,
+  /* A sheet writes its slots either at length — `1st level (4 slots)` — or as
+     the run `1st (4), 2nd (3), 3rd (3)`, so both the word `level` and the word
+     `slots` are optional. */
+  slotRow: /(\d+)(?:st|nd|rd|th)\s*(?:level)?\s*\((\d+)(?:\s*slots?)?\)/i,
+  slotCell: /(\d+)(?:st|nd|rd|th)\s*(?:level)?\s*\((\d+)(?:\s*slots?)?\)/i,
   slotTableCell:
-    /\*?\*?(\d+)(?:st|nd|rd|th)\s+level\s*\((\d+)\s+slots?\)\*?\*?/i,
-  casterLevel: /(\d+)(?:st|nd|rd|th)?[- ]level\s+spellcaster/i,
-  dc: /spell\s+save\s+DC\s*(\d+)/i,
-  attackBonus: /\+(\d+)\s+to\s+hit\s+with\s+spell/i,
-  ability: /spellcasting\s+ability\s+is\s+(\w+)/i,
+    /\*?\*?(\d+)(?:st|nd|rd|th)\s*(?:level)?\s*\((\d+)(?:\s*slots?)?\)\*?\*?/i,
+  /* A sheet declares both on the block as slots, and states them in prose only
+     where the number differs from the sheet's own. Both spellings are read, and
+     emphasis is tolerated around either. */
+  dc: /saveDc="(\d+)"|\bsave\s+DC\s*\*{0,2}(\d+)/i,
+  attackBonus: /accuracy="\+?(\d+)"|\baccuracy\s*\*{0,2}\+(\d+)/i,
+  ability: /casting\s+ability\s+is\s+\*{0,2}(\w+)|\*{0,2}(\w+)\*{0,2}\s+is\s+its\s+casting\s+ability/i,
 } as const;
 
 /**
@@ -441,10 +488,10 @@ export const ENRICHMENT = {
 /**
  * Section classifier patterns for monster stat block headings.
  *
- * @property {RegExp} deedAct - Legendary Deed: Act heading
- * @property {RegExp} deedStratagem - Legendary Deed: Stratagem heading
- * @property {RegExp} deedLair - Legendary Deed: Lair heading
- * @property {RegExp} deedPhase - Legendary Deed: Phase heading
+ * @property {RegExp} deedAct - Legendary Deed
+ * @property {RegExp} deedStratagem - Legendary Deed
+ * @property {RegExp} deedLair - Legendary Deed
+ * @property {RegExp} deedPhase - Legendary Deed
  * @property {RegExp} spellcasting - Spellcasting heading
  * @property {RegExp} condition - Condition heading
  * @property {RegExp} bloodrage - Bloodrage heading
@@ -459,6 +506,8 @@ export const CLASSIFIER = {
   deedStratagem: /^legendary\s+deed:\s*stratagem/i,
   deedLair: /^legendary\s+deed:\s*lair/i,
   deedPhase: /^legendary\s+deed:\s*phase/i,
+  /* One section now holds every deed, each block naming its own kind. */
+  deeds: /^deeds?$/i,
   spellcasting: /^spellcasting/i,
   condition: /^condition:\s*/i,
   bloodrage: /^bloodrage/i,
@@ -472,8 +521,8 @@ export const CLASSIFIER = {
 /**
  * Meta tag parsing patterns for MDX {@literal <Meta>} JSX directives.
  *
- * @property {RegExp} tag - Self-closing Meta tag: {@literal <Meta ... />}
- * @property {RegExp} attribute - JSX attribute: key="value"
+ * @property {RegExp} tag - Self-closing Meta tag
+ * @property {RegExp} attribute - JSX attribute
  */
 export const META_TAG = {
   tag: /<Meta\s+([\s\S]*?)\/>/g,

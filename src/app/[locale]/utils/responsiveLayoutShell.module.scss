@@ -28,6 +28,48 @@ button.headerIconSlot {
   padding-top: 0;
 }
 
+/* Hover veil */
+.headerSearchSlot {
+  position: relative;
+  z-index: 1;
+
+  &::after {
+    $maskImage: linear-gradient(
+      to right,
+      transparent 0,
+      var(--color-bg) 1.3rem,
+      var(--color-bg) calc(100% - 1.3rem),
+      transparent 100%
+    );
+    content: '';
+    position: absolute;
+    inset-inline: -2rem;
+    top: calc(50% - 1.5rem);
+    height: 3rem;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--color-bg);
+    opacity: 0;
+    scale: 0.94 0.4;
+    transition:
+      opacity 0.15s ease,
+      scale 0.15s ease;
+    -webkit-mask-image: $maskImage;
+    mask-image: $maskImage;
+  }
+
+  &:hover::after {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headerSearchSlot::after {
+    transition: none;
+  }
+}
+
 /* The home link keeps a touch more clear of the theme/settings diamonds. */
 .mobileTitleBar > a.headerIconSlot {
   margin-right: 0.25rem;
@@ -74,8 +116,7 @@ button.headerIconSlot {
   }
 }
 
-/* The menu owns its height: 100vh overshoots the visual viewport on phones
-   (URL bar), hiding the tools footer; dvh tracks it. */
+/* The menu owns its height */
 .mobileMenu {
   height: 100vh;
   height: 100dvh;
@@ -92,7 +133,7 @@ button.headerIconSlot {
 @media (max-width: 1024px) {
   /* touch-action blocks pans that begin on the menu's own chrome from
      scrolling the page behind it; the nav scroller is its own scroll
-     container, so panning inside it is unaffected. Taps still land. */
+     container */
   .mobileMenu {
     left: 0;
     padding-left: 24vw;
@@ -167,8 +208,7 @@ h1.title {
   align-items: center;
   gap: 0.25rem;
 
-  /* PoC: theme and settings alternate 0.5rem below and above the axis, like
-     the aspect carousel's slots at a smaller amplitude. */
+  /* PoC */
   > :nth-child(odd) {
     translate: 0 0.5rem;
   }
@@ -178,24 +218,18 @@ h1.title {
   }
 }
 
-/* Same alternation on the mobile bar, mirrored across the search bar: theme
-   (2nd) up, settings (3rd) down, character (5th) down, hamburger (6th) up.
-   The logo and the search stay on axis. */
+/* Same alternation on the mobile bar, mirrored across the search bar */
 .mobileTitleBar > button.headerIconSlot:nth-child(2) {
   translate: 0 -0.5rem;
 }
 
-/* -1px: tightens the theme/settings pair; the hamburger's -3px cancels the
-   character slot's unshrunk width so both pairs read one px tighter. */
+/* -1px */
 .mobileTitleBar > button.headerIconSlot:nth-child(3) {
   translate: 0 0.5rem;
   margin-left: -1px;
 }
 
-/* The character slot's offset goes on the badge's trigger wrap, not the slot:
-   a transform makes its element the containing block for absolute
-   descendants, and the slot would capture the badge's dropdown (28px wide,
-   anchored to itself). The wrap holds the trigger and its deselect only. */
+/* The character slot's offset goes on the badge's trigger wrap, not the slot */
 .mobileTitleBar > div.headerIconSlot:nth-child(5) > div > div:first-child {
   translate: 0 0.5rem;
 }

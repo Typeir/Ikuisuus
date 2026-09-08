@@ -2,11 +2,6 @@
  * @fileoverview SCSS Animation Mixins
  * @description Reusable keyframe animations and animation utilities.
  *
- * Exported mixins:
- *   - mythic-shimmer-keyframes  — Mythic shimmer animation for savanthood
- *   - skeleton-sweep-keyframes  — Compositor-only moving-light sweep for
- *                                 skeletons and awakened-card shimmer
- *
  * @module styles/mixins-animations
  */
 
@@ -34,11 +29,7 @@
 
 /**
  * Skeleton sweep keyframe animation — compositor-only translateX of a
- * light strip pseudo-element sized at 200% of its host. Percentages
- * resolve against the PSEUDO's own width: -100% parks the strip fully
- * left of the host, 50% exits it fully right, so from → to is one
- * complete left-to-right pass. The `from` position doubles as the
- * parked reduced-motion state.
+ * light strip pseudo-element sized at 200% of its host.
  *
  * @mixin skeleton-sweep-keyframes
  */

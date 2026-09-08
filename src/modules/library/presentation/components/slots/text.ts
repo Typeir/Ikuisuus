@@ -1,8 +1,7 @@
 /**
  * @fileoverview Casing helpers shared by the card hosts.
  * @description Every card assembles a brief from slot values, and each one
- * needs the same two adjustments: a value that opens a sentence takes a
- * capital, a value that follows one loses it.
+ * needs the same two adjustments
  *
  * @module modules/library/presentation/components/slots/text
  * @version 0.1.0
@@ -35,7 +34,7 @@ export function lowerFirst(text: string): string {
  *
  * @param {unknown} value - Slot value as MDX delivered it
  * @returns {boolean | unknown} `true` when the flag is set with nothing more to
- * say, `false` when absent or negated, otherwise the detail as given
+ * say, `false` when absent or negated
  *
  * @example
  * flagOf(true); // true

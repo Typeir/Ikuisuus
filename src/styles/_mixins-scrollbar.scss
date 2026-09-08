@@ -1,7 +1,6 @@
 /**
  * @fileoverview Scrollbar Mixins
  * @description Themed scrollbar styles for Webkit and Firefox.
- * Use `scrollbar-custom` for full control; `scrollbar-thin` for the common 6px variant.
  *
  * @module styles/mixins-scrollbar
  */
@@ -9,13 +8,13 @@
 /**
  * Full-control custom scrollbar mixin.
  *
- * @param {String}  $width         - Scrollbar width (default: 6px)
- * @param {String}  $height        - Scrollbar height for horizontal bars (default: $width)
- * @param {String}  $thumb         - Thumb colour (default: var(--color-secondary))
- * @param {String}  $track         - Track colour (default: transparent)
- * @param {String}  $thumb-radius  - Thumb border-radius (default: var(--border-round-s))
- * @param {String}  $thumb-border  - Optional thumb border shorthand, e.g. "1px solid var(--color-surface)" (default: null)
- * @param {String}  $firefox-width - Firefox scrollbar-width keyword: "thin" | "auto" | "none" (default: "thin")
+ * @param {String}  $width         - Scrollbar width (default
+ * @param {String}  $height        - Scrollbar height for horizontal bars (default
+ * @param {String}  $thumb         - Thumb colour (default
+ * @param {String}  $track         - Track colour (default
+ * @param {String}  $thumb-radius  - Thumb border-radius (default
+ * @param {String}  $thumb-border  - Optional thumb border shorthand
+ * @param {String}  $firefox-width - Firefox scrollbar-width keyword
  */
 @mixin scrollbar-custom(
   $width: 5px,
@@ -49,7 +48,6 @@
 
 /**
  * Convenience mixin — thin 6px scrollbar with secondary-colour thumb.
- * Equivalent to `scrollbar-custom()` with defaults.
  */
 @mixin scrollbar-thin(
   $thumb: var(--color-surface),

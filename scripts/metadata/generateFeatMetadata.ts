@@ -12,7 +12,13 @@
 import { createLogger } from '@/lib/logging/logger';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
-import { featRepeatable, unslotFeat } from './slotForms';
+import {
+    featRepeatable,
+    findTag,
+    readHostTag,
+    textAttr,
+    unslotFeat,
+} from './slotForms';
 import path from 'path';
 import {
     blankFrontmatter,
@@ -26,10 +32,45 @@ import {
     type StorageAdapter,
   featureAnchor,
 } from '.';
+import { namedFeatureBlocks } from './extraction/featureBlocks';
 import { extractFeatureGrants } from './extraction/grantsExtractor';
 import { SLUG } from './parsingPatterns';
 
 const log = createLogger({ component: 'FeatMetadataGenerator' });
+
+/**
+ * Derives a `library/character-creation/feats/…` link from a file path.
+ *
+ * @description A feat in a subfolder is served at the path it sits on
+ *
+ * @param {string} filePath - Absolute path to the feat file
+ * @param {string} slug - URL-friendly identifier
+ * @returns {string} Page-level link
+ */
+function deriveFeatLink(filePath: string, slug: string): string {
+  const segments = filePath.replace(/\\/g, '/').split('/').filter(Boolean);
+  const featsIdx = segments.lastIndexOf('feats');
+  const folders =
+    featsIdx === -1 ? [] : segments.slice(featsIdx + 1, segments.length - 1);
+
+  return `/library/character-creation/feats/${[...folders, slug].join('/')}`;
+}
+
+/**
+ * Reads the category the `<Feat>` element declares.
+ *
+ * @param {string} text - File text with frontmatter blanked
+ * @returns {string | undefined} Lower-cased category, when one is declared
+ */
+function parseCategory(text: string): string | undefined {
+  const lines = text.split('\n');
+  const at = findTag(lines, 'Feat');
+  if (at < 0) return undefined;
+  const tag = readHostTag(lines, at);
+  if (!tag) return undefined;
+
+  return textAttr(tag, 'category')?.trim().toLowerCase() || undefined;
+}
 
 /**
  * Map of long-form ability names to canonical short keys used elsewhere in the
@@ -50,6 +91,11 @@ const ABILITY_NAME_MAP: Record<string, string> = {
  * `_No attribute prerequisite._`.
  */
 const PREREQUISITE_REGEX = /_([^_\n]*?prerequisite[^_\n]*?)_/i;
+
+/**
+ * Line opening with the prerequisite label, once emphasis has been stripped.
+ */
+const PREREQUISITE_LINE_REGEX = /^\s*prerequisites?\s*:/i;
 
 /**
  * Regex matching ability score increase lines.
@@ -90,7 +136,10 @@ function stripPrerequisiteLine(
   if (!description) return undefined;
   const joined = description
     .split('\n')
-    .filter((line) => !PREREQUISITE_REGEX.test(line))
+    .filter(
+      (line) =>
+        !PREREQUISITE_REGEX.test(line) && !PREREQUISITE_LINE_REGEX.test(line),
+    )
     .join('\n')
     .trim();
   return joined.length > 0 ? joined : undefined;
@@ -162,13 +211,19 @@ function findFeatureEndIdx(lines: string[], startIdx: number): number {
 /**
  * Parse all named-mechanic features from the raw MDX source.
  *
- * @param {string} raw - Full MDX file content
+ * @description A feat names its mechanics with a heading inside a block, and
+ * older ones name them with a bold-label bullet
+ *
+ * @param {string} raw - Full MDX file content, unslotted
+ * @param {string} slotted - The same file before unslotting, where the blocks
+ * are still written
  * @param {string} filePath - Absolute path (used for tag extraction context)
  * @param {SharedData} sharedData - Shared game data for tag extraction
  * @returns {Array<{ name: string; startLine: number; endLine: number; tags: string[] }>}
  */
 function parseFeatures(
   raw: string,
+  slotted: string,
   filePath: string,
   sharedData: SharedData,
 ): Array<{ name: string; startLine: number; endLine: number; tags: string[] }> {
@@ -181,23 +236,43 @@ function parseFeatures(
     tags: string[];
   }> = [];
 
+  const tagsOf = (startIdx: number, endIdx: number): string[] =>
+    Array.from(
+      new Set(
+        extractAllTags(
+          lines.slice(startIdx, endIdx + 1).join('\n'),
+          filePath,
+          sharedData,
+          { contentType: 'generic' },
+        ),
+      ),
+    ).sort();
+
+  for (const block of namedFeatureBlocks(slotted)) {
+    features.push({
+      name: block.name,
+      anchor: featureAnchor(block.name),
+      startLine: block.startLine,
+      endLine: block.endLine,
+      tags: tagsOf(block.startLine - 1, block.endLine - 1),
+    });
+  }
+
   for (let i = 0; i < lines.length; i++) {
     const match = FEATURE_BULLET_REGEX.exec(lines[i]);
     if (!match) continue;
     const name = match[1].trim();
     const endIdx = findFeatureEndIdx(lines, i);
-    const blockText = lines.slice(i, endIdx + 1).join('\n');
-    const tags = Array.from(
-      new Set(
-        extractAllTags(blockText, filePath, sharedData, {
-          contentType: 'generic',
-        }),
-      ),
-    ).sort();
-    features.push({ name, anchor: featureAnchor(name), startLine: i + 1, endLine: endIdx + 1, tags });
+    features.push({
+      name,
+      anchor: featureAnchor(name),
+      startLine: i + 1,
+      endLine: endIdx + 1,
+      tags: tagsOf(i, endIdx),
+    });
   }
 
-  return features;
+  return features.sort((a, b) => a.startLine - b.startLine);
 }
 
 /**
@@ -213,12 +288,12 @@ async function parseFeatFile(
 ): Promise<object | null> {
   const baseName = path.basename(filePath);
   if (baseName === 'main.mdx') return null;
-  const normalisedPath = filePath.replace(/\\/g, '/');
-  if (normalisedPath.includes('/feats/fighting-styles/')) return null;
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const body = unslotFeat(blankFrontmatter(raw));
+    const slotted = blankFrontmatter(raw);
+    const category = parseCategory(slotted);
+    const body = unslotFeat(slotted);
     const lines = body.split('\n').map((l) => l.trim());
     const slug = filePathToSlug(filePath);
     const title = parseTitle(lines);
@@ -226,7 +301,7 @@ async function parseFeatFile(
 
     const { prerequisite, hasPrerequisite } = parsePrerequisite(body);
     const abilityIncrease = parseAbilityIncrease(body);
-    const features = parseFeatures(body, filePath, sharedData);
+    const features = parseFeatures(body, slotted, filePath, sharedData);
 
     const frontmatter = matter(raw).data as Record<string, unknown>;
     const frontmatterGrants = frontmatter.grants ?? frontmatter.Grants;
@@ -249,12 +324,13 @@ async function parseFeatFile(
       file: path
         .relative(process.cwd(), filePath)
         .replace(SLUG.pathBackslash, '/'),
-      link: `/library/character-creation/feats/${slug}`,
+      link: deriveFeatLink(filePath, slug),
       hasPrerequisite,
       tags,
       indexVersion: 1,
     };
 
+    if (category) metadata.category = category;
     if (description) metadata.description = description;
     if (prerequisite) metadata.prerequisite = prerequisite;
     if (abilityIncrease) metadata.abilityIncrease = abilityIncrease;
@@ -292,6 +368,7 @@ async function main(
     name: 'Feat Metadata Generator',
     contentType: 'feats',
     filePattern: options.filePattern || /\.feat\.mdx$/,
+    recursive: true,
     parseFile: parseFeatFile,
     processResult: (result) => {
       if (result === null) return { metadata: null, count: 0 };

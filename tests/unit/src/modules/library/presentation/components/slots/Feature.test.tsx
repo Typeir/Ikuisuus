@@ -10,6 +10,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
+import type { CostMark } from '@/modules/library/domain/costMark';
 import Feature, {
   Attack,
   Curse,
@@ -110,7 +111,7 @@ describe('Feature', () => {
   });
 
   it('marks a block by what using it costs, and takes the author\'s word over that', () => {
-    const marks = (cost?: string, mark?: 'major' | 'minor' | 'other') => {
+    const marks = (cost?: string, mark?: CostMark) => {
       const { container } = render(
         <Feature cost={cost} mark={mark}>
           <h4>Probe</h4>
@@ -122,12 +123,18 @@ describe('Feature', () => {
 
     expect(marks('1 Major Action')).toBe('major');
     expect(marks('1 Minor Action')).toBe('minor');
+    expect(marks('1 Reaction')).toBe('reaction');
+    expect(marks('1 Deed')).toBe('deed');
+    /* A reflex costs nothing, so it never wears an action's mark. */
+    expect(marks('Reflex')).toBe('reflex');
     expect(marks('forgo all movement on your turn, in combat')).toBe('other');
     expect(marks()).toBe('other');
     expect(marks('1 Major Action', 'other')).toBe('other');
 
     /* The cost is free text: only the action counts, not the word. */
-    expect(marks('1 Reaction, taken when a major threat appears')).toBe('other');
+    expect(marks('1 Reaction, taken when a major threat appears')).toBe(
+      'reaction',
+    );
     expect(marks('none, when a minor wound closes')).toBe('other');
   });
 

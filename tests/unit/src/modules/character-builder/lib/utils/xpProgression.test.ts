@@ -114,8 +114,7 @@ describe('getXPProgressPercent', () => {
 
 /**
  * @fileoverview Tests for getXpAxisPosition
- * @description Verifies the XP axis helper: zero and max boundaries, monotonicity,
- * slope, and level-segment property.
+ * @description Verifies the XP axis helper
  */
 describe('getXpAxisPosition', () => {
   it('returns 0 at XP 0', () => {

@@ -29,8 +29,7 @@ export interface HitDiceCounterProps {
 }
 
 /**
- * Die face count for a vocation entry: `hitDie` first, else the die type in
- * the hit dice log.
+ * Die face count for a vocation entry
  *
  * @function resolveDieFaces
  * @param {VocationEntry} entry - Vocation entry

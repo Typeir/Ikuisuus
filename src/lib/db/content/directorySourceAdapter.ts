@@ -30,7 +30,7 @@ export interface DirectorySourceAdapter {
    *
    * @param {string} locale - Locale code (e.g. "en", "es")
    * @param {string} relativePath - Slash-separated path relative to the content root
-   *   (e.g. "" for root, "monsters", "items/heirlooms")
+   *   (e.g. "" for root, "monsters"
    * @returns {Promise<DirectoryEntry[]>} Entries in the directory, or empty array if not found
    */
   listEntries(locale: string, relativePath: string): Promise<DirectoryEntry[]>;

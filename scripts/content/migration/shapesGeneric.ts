@@ -126,7 +126,7 @@ const DAMAGE_TYPES = new Set([
 
 /**
  * Checks whether a matched type string is a valid damage type
- * (not a stop word, and either a known type or has 'damage' in the original match).
+ * (not a stop word
  *
  * @param {string} type - The matched type string
  * @param {string} fullMatch - The full original match for context

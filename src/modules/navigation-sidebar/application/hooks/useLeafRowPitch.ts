@@ -16,7 +16,7 @@ import { FALLBACK_ROOT_PX, measureRootPx } from '@/lib/hooks/useRootPx';
 import { useEffect, useState } from 'react';
 
 /**
- * Leaf row pitch in rem: `text-sm` line-height (1.25rem) + `space-y-1` (0.25rem).
+ * Leaf row pitch in rem
  *
  * @constant
  * @type {number}

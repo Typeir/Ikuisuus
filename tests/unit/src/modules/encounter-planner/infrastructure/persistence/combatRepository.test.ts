@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests for inProgressCombatPersistence
  * @description Validates CRUD operations, backward-compatibility migration,
- * active combat tracking, turn order logic, export, and SSR guards.
+ * active combat tracking, turn order logic, export
  */
 
 import { EncounterStorage } from '@/modules/encounter-planner/domain/storage/encounterStorageKeys';

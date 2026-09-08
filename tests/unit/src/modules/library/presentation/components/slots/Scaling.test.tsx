@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the Scaling block.
  * @description A cantrip grows at character levels rather than by being cast
- * from a higher slot, so its tail block names itself once and the lines inside
- * carry only their formula.
+ * from a higher slot
  *
  * @module tests/unit/src/modules/library/presentation/components/slots/Scaling.test
  * @version 0.1.0

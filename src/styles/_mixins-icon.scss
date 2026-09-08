@@ -1,8 +1,6 @@
 /**
  * @fileoverview Icon Mixins
- * @description Icon-as-button patterns covering two canonical variants:
- *   - `transparent` — no background, hover changes color only (rosterCollapseBtn, lockToggle, etc.)
- *   - `rounded`   — pill shape, transparent at rest, solid accent background on hover (chip infoBtn)
+ * @description Icon-as-button patterns covering two canonical variants
  *
  * @module styles/mixins-icon
  */
@@ -11,8 +9,8 @@
 @use 'mixins-focus' as *;
 
 /**
- * Transparent icon button. Hover: color + scale, no background.
- * @param {string} $hoverColor — CSS color for hover state (default: accent)
+ * Transparent icon button.
+ * @param {string} $hoverColor — CSS color for hover state (default
  */
 @mixin icon-transparent($hoverColor: var(--color-accent)) {
   @include button-icon;
@@ -33,8 +31,7 @@
 }
 
 /**
- * Rounded icon button. Transparent at rest, solid background on hover.
- * Patterns: chip infoBtn, pagePreviewTooltip.
+ * Rounded icon button.
  * @param {string} $size        — width/height (default 1rem)
  * @param {string} $hoverBg     — hover background color
  * @param {string} $hoverColor  — hover text/icon color

@@ -32,8 +32,7 @@ async function columnExists(
 }
 
 /**
- * Applies migration 016: renames `monsters.proficiency_bonus` to
- * `tier_bonus` when the old column is still present.
+ * Applies migration 016
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}
@@ -49,8 +48,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 016: renames `monsters.tier_bonus` back to
- * `proficiency_bonus` when present.
+ * Reverts migration 016
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}

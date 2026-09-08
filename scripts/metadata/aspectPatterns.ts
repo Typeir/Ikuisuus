@@ -124,7 +124,8 @@ export const COVER = {
   threeQuarters: /\bthree[- ]quarters cover\b/i,
   total: /\btotal cover\b/i,
   grants: /\b(?:grants?|provides?|gains?)\s+(?:\w+\s+){0,2}cover\b/i,
-  ignores: /\b(?:ignor\w+|negat\w+|treats?\s+as\s+if\s+\w+\s+had\s+no)\s+(?:\w+\s+){0,2}cover\b/i,
+  ignores:
+    /\b(?:ignor\w+|negat\w+|treats?\s+as\s+if\s+\w+\s+had\s+no)\s+(?:\w+\s+){0,2}cover\b/i,
 } as const;
 
 /**
@@ -145,7 +146,8 @@ export const DELIVERY = {
   line: /\bline\s+\d+\s*(?:ft|feet)\b|\b\d+\s*(?:ft|feet)[- ]long line\b|\bin a line\b/i,
   sphere: /\bsphere\b|\bradius\b/i,
   zone: /\bthe area (?:is|becomes)\b|\bfor the duration,? the\b|\bzone\b|\b(?:enters?|starts? its turn in) the (?:area|sphere|cloud|fog|wall)\b/i,
-  attack: /\b(?:ranged|melee)\s+spell attack\b|\bmake a spell attack\b|\bspell attack roll\b|\bwhen you hit\b.{0,50}\battack\b|\byour (?:melee |ranged )?attacks\b/i,
+  attack:
+    /\b(?:ranged|melee)\s+spell attack\b|\bmake a spell attack\b|\bspell attack roll\b|\bwhen you hit\b.{0,50}\battack\b|\byour (?:melee |ranged )?attacks\b/i,
   touch: /\byou touch\b|\brange[:*_\s]+touch\b/i,
   projectile: /\bray\b|\bbolt\b|\bmissile\b|\bdart(?:s)? of\b|\bhurls?\b/i,
   summon: /\bsummons?\b|\bconjures?\b|\bappears? in an unoccupied space\b/i,
@@ -175,11 +177,11 @@ export const TEMPO = {
  * Range patterns read from the stat-block Range field.
  *
  * @property {RegExp} field - The Range field and its whole value
- * @property {RegExp} self - Range: Self
- * @property {RegExp} touch - Range: Touch
- * @property {RegExp} sight - Range: Sight
- * @property {RegExp} unlimited - Range: Unlimited
- * @property {RegExp} melee - Range: Melee
+ * @property {RegExp} self - Range
+ * @property {RegExp} touch - Range
+ * @property {RegExp} sight - Range
+ * @property {RegExp} unlimited - Range
+ * @property {RegExp} melee - Range
  * @property {RegExp} strides - A distance written in strides
  * @property {RegExp} feet - A distance written in feet
  * @property {RegExp} reach - Weapon reach
@@ -216,14 +218,15 @@ export const RANGE_BANDS: ReadonlyArray<{ band: string; maxFeet: number }> = [
  * @property {RegExp} slot - Upcasting with a higher spell slot
  * @property {RegExp} level - Character or vocation level thresholds
  * @property {RegExp} tier - Tier bonus
- * @property {RegExp} ability - Spellcasting ability modifier
+ * @property {RegExp} ability - Casting ability modifier
  * @property {RegExp} stacks - Stacking or cumulative effects
  */
 export const SCALING = {
   slot: /\bspell slot of \d(?:st|nd|rd|th) level or higher\b|\bat higher levels\b|\bupcast\b/i,
-  level: /\bwhen you reach \d+(?:st|nd|rd|th) level\b|\b\d+(?:st|nd|rd|th) level(?:\s+or higher)?\b.{0,24}\byou (?:gain|can|may)\b/i,
+  level:
+    /\bwhen you reach \d+(?:st|nd|rd|th) level\b|\b\d+(?:st|nd|rd|th) level(?:\s+or higher)?\b.{0,24}\byou (?:gain|can|may)\b/i,
   tier: /\btier bonus\b/i,
-  ability: /\byour spellcasting ability modifier\b|\byour \w+ modifier\b/i,
+  ability: /\byour casting ability modifier\b|\byour \w+ modifier\b/i,
   stacks: /\bstacks?\b|\bcumulative\b|\bthis effect stacks\b/i,
 } as const;
 
@@ -257,7 +260,8 @@ export const RESOURCE = {
 export const MOVEMENT_EXTRA = {
   hover: /\bhover(?:s|ing)?\b/i,
   ethereal: /\bethereal\b/i,
-  dimensional: /\bdimension(?:al)?\b|\bplanar\b|\banother plane\b|\bteleports?\b|\bteleportation\b/i,
+  dimensional:
+    /\bdimension(?:al)?\b|\bplanar\b|\banother plane\b|\bteleports?\b|\bteleportation\b/i,
   difficultTerrain: /\bdifficult terrain\b/i,
   jump: /\bjump(?:s|ing)?\b|\blong jump\b|\bhigh jump\b/i,
   squeeze: /\bsqueez(?:e|es|ing)\b/i,

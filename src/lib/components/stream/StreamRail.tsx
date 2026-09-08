@@ -1,5 +1,5 @@
 /**
- * @fileoverview Stream rail: the static box a vertical ticker scrolls inside.
+ * @fileoverview Stream rail
  * @description Renders `<span aria-hidden data-stream-rail>`; the host's
  * stylesheet includes `mdx-stream-rail` on it.
  *
@@ -47,8 +47,7 @@ export function cssString(text: string): string {
 }
 
 /**
- * Custom properties a stream host sets: the quoted text and a loop duration
- * derived from its length, so every page scrolls at about the same speed.
+ * Custom properties a stream host sets
  *
  * @param {string} text - One copy of the stream text
  * @returns {CSSProperties} `--stream-text` and `--stream-speed`

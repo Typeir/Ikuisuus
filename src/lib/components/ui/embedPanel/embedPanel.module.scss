@@ -1,8 +1,7 @@
 @use '@/styles/mixins' as *;
 
 /**
- * Default anatomy for GenericEmbedPanel. A consumer className replaces the
- * matching part wholesale; these apply when none is passed.
+ * Default anatomy for GenericEmbedPanel.
  */
 .draggable {
   max-height: calc(100% - 32px);
@@ -40,8 +39,7 @@
 }
 
 /**
- * Page-shaped placeholder. No ground of its own: the embedded page paints
- * `--color-bg`, so the overlay's ground must match what replaces it.
+ * Page-shaped placeholder.
  */
 .loadingSkeleton {
   display: flex;

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Unit tests for the drafts API route.
- * @description Tests the GET and POST handlers: authentication, input
- * validation, and error handling.
+ * @description Tests the GET and POST handlers
  *
  * @module tests/unit/src/app/api/drafts/route.test
  */
@@ -270,8 +269,7 @@ describe('POST /api/drafts', () => {
 });
 
 /**
- * Tests GET/POST on the `fs` backend, where drafts are not implemented: GET
- * returns no draft, POST returns 501.
+ * Tests GET/POST on the `fs` backend, where drafts are not implemented
  */
 describe('drafts on the fs backend', () => {
   beforeEach(() => {

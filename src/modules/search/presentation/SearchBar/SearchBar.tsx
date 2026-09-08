@@ -15,11 +15,11 @@ import { cn } from '@/lib/utils/classNameMerge';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import type { JSX } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearch } from '../../application/useSearch';
 import { searchHref } from '../../domain/searchHref';
 import { AspectSuggestions } from './AspectSuggestions';
-import { useAspectSuggestions } from './useAspectSuggestions';
+import { useAspectAutocomplete, type PickedAspect } from './useAspectAutocomplete';
 import { SearchField } from '../SearchField/SearchField';
 import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
 import { useFocusShortcut } from './useSearchBarChrome';
@@ -66,8 +66,15 @@ export function SearchBar({
   const searchParams = useSearchParams();
   const t = useTranslations('search');
 
+  /* Aspects already pinned on the search page, carried through every navigation
+     out of this bar. */
+  const paramString = searchParams.toString();
+  const activeAspects = useMemo(
+    () => new URLSearchParams(paramString).getAll('aspect'),
+    [paramString],
+  );
+
   const [query, setQuery] = useState(defaultQuery ?? '');
-  const [caret, setCaret] = useState(0);
 
   /** Follow external query changes (URL param updates on the search page). */
   useEffect(() => {
@@ -75,10 +82,6 @@ export function SearchBar({
   }, [defaultQuery]);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
-  const [aspectIndex, setAspectIndex] = useState(-1);
-
-  const { suggestions, pick } = useAspectSuggestions(query, caret);
-  const suggesting = suggestions.length > 0;
   const [isMac, setIsMac] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -106,37 +109,41 @@ export function SearchBar({
     setActiveIndex(-1);
   }, [results]);
 
-  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-    setCaret(e.target.selectionStart ?? e.target.value.length);
-    setAspectIndex(-1);
-    if (e.target.value.length >= 2) {
-      setOpen(true);
-    }
-  }, []);
-
-  const handleCaret = useCallback((e: React.SyntheticEvent<HTMLInputElement>) => {
-    setCaret(e.currentTarget.selectionStart ?? e.currentTarget.value.length);
-  }, []);
-
   /**
-   * Applies a suggested aspect: the token leaves the text and becomes a
-   * filter on the search page, keeping any filters already in the URL.
+   * Sends a picked aspect to the search page, keeping the aspects already set.
    *
-   * @param {number} index - Suggestion index
+   * @param {PickedAspect} picked - Chosen aspect and the query without its token
+   * @returns {void}
    */
-  const pickAspect = useCallback(
-    (index: number) => {
-      const picked = pick(index);
-      if (!picked) return;
-      const existing = searchParams.getAll('aspect');
+  const applyAspect = useCallback(
+    (picked: PickedAspect) => {
       setOpen(false);
-      setAspectIndex(-1);
       setQuery(picked.rest);
-      router.push(searchHref(locale, picked.rest, [...existing, picked.aspect]));
+      router.push(searchHref(locale, picked.rest, [...activeAspects, picked.aspect]));
       onNavigate?.();
     },
-    [pick, searchParams, router, locale, onNavigate],
+    [activeAspects, router, locale, onNavigate],
+  );
+
+  const {
+    suggestions,
+    activeIndex: aspectIndex,
+    suggesting,
+    pickAt: pickAspect,
+    trackCaret: handleCaret,
+    handleChange: trackAspectCaret,
+    handleKeyDown: handleAspectKeys,
+  } = useAspectAutocomplete(query, applyAspect);
+
+  const handleInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(e.target.value);
+      trackAspectCaret(e);
+      if (e.target.value.length >= 2) {
+        setOpen(true);
+      }
+    },
+    [trackAspectCaret],
   );
 
   const handleFocus = useCallback(() => {
@@ -157,29 +164,7 @@ export function SearchBar({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (suggesting) {
-        switch (e.key) {
-          case 'ArrowDown':
-            e.preventDefault();
-            setAspectIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
-            return;
-          case 'ArrowUp':
-            e.preventDefault();
-            setAspectIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
-            return;
-          case 'Enter':
-          case 'Tab':
-            if (aspectIndex >= 0 || e.key === 'Enter') {
-              e.preventDefault();
-              pickAspect(aspectIndex >= 0 ? aspectIndex : 0);
-              return;
-            }
-            break;
-          case 'Escape':
-            setAspectIndex(-1);
-            break;
-        }
-      }
+      if (handleAspectKeys(e)) return;
       switch (e.key) {
         case 'Escape':
           setOpen(false);
@@ -202,19 +187,18 @@ export function SearchBar({
           break;
       }
     },
-    [maxResults, activeIndex, navigateToResult, suggesting, suggestions.length, aspectIndex, pickAspect],
+    [maxResults, activeIndex, navigateToResult, handleAspectKeys],
   );
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (query.trim().length >= 2) {
-        setOpen(false);
-        router.push(`/${locale}/search?q=${encodeURIComponent(query.trim())}`);
-        onNavigate?.();
-      }
+      if (query.trim().length < 2 && activeAspects.length === 0) return;
+      setOpen(false);
+      router.push(searchHref(locale, query, activeAspects));
+      onNavigate?.();
     },
-    [query, locale, router, onNavigate],
+    [query, activeAspects, locale, router, onNavigate],
   );
 
   const handleResultNavigate = useCallback(() => {
@@ -285,7 +269,7 @@ export function SearchBar({
           loading={loading}
           activeIndex={activeIndex}
           onNavigate={handleResultNavigate}
-          searchHref={`/${locale}/search?q=${encodeURIComponent(query.trim())}`}
+          searchHref={searchHref(locale, query, activeAspects)}
         />
       )}
     </div>

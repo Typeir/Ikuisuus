@@ -63,10 +63,10 @@ export interface ContentShardResponse {
 
 /**
  * A resolved shard and where it came from — prose extracted from a file by
- * metadata declaration, heading match, or line splice.
+ * metadata declaration
  *
  * @interface ResolvedShard
- * @property {string} id - Shard id: keyword template id, anchor slug, or `main`
+ * @property {string} id - Shard id
  * @property {string} key - Addressing key this shard answers (`main`, an entry key, or an anchor)
  * @property {string} heading - Heading text of the defining section
  * @property {string} source - Section body markdown, without the heading

@@ -1,19 +1,7 @@
 /**
  * Adds content-type double-extension suffixes to MDX files.
  *
- * @fileoverview Renames content files following the double-extension convention:
- *   - `berserker.mdx` → `berserker.specialization.mdx`
- *   - `spells.mdx` → `spells.list.mdx`
- *   - `bilupine.mdx` → `bilupine.bloodline.mdx`
- *   - `the-sunken-city.mdx` → `the-sunken-city.lore.mdx`
- *
- * Suffix assignment rules (evaluated in priority order):
- *   1. Spell list files (`spells.mdx` in vocation dirs) → `.list`
- *   2. Remaining vocation subfiles → `.specialization`
- *   3. Bloodline files → `.bloodline`
- *   4. World lore files → `.lore`
- *
- * Skips `main.mdx` files and any file already carrying a double extension.
+ * @fileoverview Renames content files following the double-extension convention
  *
  * @module scripts/content/addContentSuffixes
  * @author Typeir

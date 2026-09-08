@@ -8,6 +8,10 @@
 
 'use client';
 
+import {
+  CONTENT_CHANGED_EVENT,
+  DETAILS_OPENED_EVENT,
+} from '@/lib/constants/domEvents';
 import { useEffect, useRef, useState } from 'react';
 
 /**
@@ -91,12 +95,14 @@ export function useScrollProgress(): ScrollProgress {
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
-    window.addEventListener('ik:details-opened', update);
+    window.addEventListener(DETAILS_OPENED_EVENT, update);
+    window.addEventListener(CONTENT_CHANGED_EVENT, update);
 
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
-      window.removeEventListener('ik:details-opened', update);
+      window.removeEventListener(DETAILS_OPENED_EVENT, update);
+      window.removeEventListener(CONTENT_CHANGED_EVENT, update);
 
       if (rafRef.current !== null) {
         window.cancelAnimationFrame(rafRef.current);

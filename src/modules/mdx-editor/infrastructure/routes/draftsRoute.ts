@@ -15,7 +15,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const log = logger.child({ module: 'API:Drafts' });
 
 /**
- * Whether drafts are available: true when METADATA_BACKEND is 'pg'.
+ * Whether drafts are available
  *
  * @returns {boolean} True when METADATA_BACKEND is 'pg'
  */
@@ -24,7 +24,7 @@ function draftsAvailable(): boolean {
 }
 
 /**
- * The response for a backend with no draft store: no draft, and no error.
+ * The response for a backend with no draft store
  *
  * @returns {NextResponse} A 200 carrying a null draft
  */

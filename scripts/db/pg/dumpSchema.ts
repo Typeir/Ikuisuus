@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * @fileoverview Emits the DDL MikroORM derives from the entity metadata and a
- * sorted metadata manifest, without a database connection.
+ * sorted metadata manifest
  *
  * @module scripts/db/pg/dumpSchema
  * @version 1.0.0

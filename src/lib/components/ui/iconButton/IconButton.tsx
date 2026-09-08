@@ -148,8 +148,7 @@ const SIZES: Record<IconButtonSize, string> = {
 };
 
 /**
- * Native button attributes the atom lets through: ARIA state and
- * relationships, identity, focus order and focus/pointer events.
+ * Native button attributes the atom lets through
  *
  * @typedef {object} IconButtonPassthrough
  */
@@ -231,7 +230,7 @@ interface LabelledProps extends IconButtonBaseProps {
 }
 
 /**
- * Props for `<IconButton>`: icon-only or labelled, never both.
+ * Props for `<IconButton>`
  *
  * @typedef {IconOnlyProps | LabelledProps} IconButtonProps
  */

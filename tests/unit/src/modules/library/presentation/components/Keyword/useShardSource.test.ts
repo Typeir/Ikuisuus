@@ -1,7 +1,6 @@
 /**
  * @fileoverview useShardSource Tests
- * @description Covers the two ways a card finds its prose: from the page that
- * baked it, and from the endpoint when the page did not.
+ * @description Covers the two ways a card finds its prose
  *
  * @module tests/unit/src/modules/library/presentation/components/Keyword/useShardSource.test
  * @version 1.0.0

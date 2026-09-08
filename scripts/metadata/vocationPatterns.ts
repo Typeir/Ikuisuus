@@ -12,15 +12,15 @@
 /**
  * Markdown table detection and parsing patterns.
  *
- * @property {RegExp} featuresHeader - Feature table header row: "| Level |"
- * @property {RegExp} coreTraits - Core traits table start: "| Core X Traits"
- * @property {RegExp} traitHeader - Trait label table start: "| Trait |"
- * @property {RegExp} separator - Separator row: "|---|---|"
- * @property {RegExp} spellSlotColumn - Spell slot column: "1st", "2nd", etc.
+ * @property {RegExp} featuresHeader - Feature table header row
+ * @property {RegExp} coreTraits - Core traits table start
+ * @property {RegExp} traitHeader - Trait label table start
+ * @property {RegExp} separator - Separator row
+ * @property {RegExp} spellSlotColumn - Spell slot column
  * @property {RegExp} classLevelHeader - "| (Class)?
  * @property {RegExp} levelSpellsHeader - "| Level | Spells |"
- * @property {RegExp} slotLevel - Slot level extraction: "1st", "2nd", etc.
- * @property {RegExp} markdownLink - Markdown link: [text](url)
+ * @property {RegExp} slotLevel - Slot level extraction
+ * @property {RegExp} markdownLink - Markdown link
  */
 export const TABLE = {
   featuresHeader: /^\|\s*Level\s*\|/i,
@@ -40,14 +40,12 @@ export const TABLE = {
 /**
  * Feature and level heading patterns.
  *
- * @property {RegExp} levelHeading - Collapsible block: "## 3rd Level – Feature Name"
- * @property {RegExp} specializationLink - "[name](/en/library/.../slug.specialization)"
- * @property {RegExp} hitDie - Hit die token: "d12"
- * @property {RegExp} skillCount - Skill count: "Choose 2", "Choose any 3", "Pick two"
+ * @property {RegExp} levelHeading - Collapsible block
+ * @property {RegExp} hitDie - Hit die token
+ * @property {RegExp} skillCount - Skill count
  */
 export const FEATURE = {
   levelHeading: /##\s+(\d+)\w*\s+Level\s+[–—-]\s+(.+)/,
-  specializationLink: /\[.*?\]\(\/en\/library\/.*?\/([\w-]+)\.specialization\)/,
   hitDie: /d(\d+)/i,
   skillCount:
     /(?:Choose|Pick)\s+(?:any\s+)?(\d+|one|two|three|four|five|six|seven|eight|nine|ten)/i,
@@ -56,12 +54,13 @@ export const FEATURE = {
 /**
  * Spellcasting detection patterns for class/specialization context.
  *
- * @property {RegExp} abilityBold - "**Spellcasting Ability**: Wisdom"
- * @property {RegExp} abilityIs - "spellcasting ability is Wisdom"
- * @property {RegExp} abilityReversed - "Wisdom is your spellcasting ability"
+ * @property {RegExp} abilityBold - "**Casting ability**
+ * @property {RegExp} abilityIs - "casting ability is Wisdom"
+ * @property {RegExp} abilityReversed - "Wisdom is your casting ability"
+ * @property {RegExp} keyedTo - "keyed to Wisdom"
+ * @property {RegExp} accuracySlot - the ability named in an `accuracy` slot
  * @property {RegExp} modifierRef - "your Wisdom modifier"
- * @property {RegExp} dcModifier - "spell save DC...Wisdom modifier"
- * @property {RegExp} section - Spellcasting Collapsible block boundary
+ * @property {RegExp} section - Spellcasting block boundary
  * @property {RegExp} pactMagic - Pact Magic keyword
  * @property {RegExp} spellSlotsLabel - "Spell Slots" table header
  * @property {RegExp} slotLevelLabel - "Slot Level" table header
@@ -69,13 +68,17 @@ export const FEATURE = {
  * @property {RegExp} specHeading - Spellblade/Arcane Trickster heading
  */
 export const CASTING = {
-  abilityBold: /\*\*Spellcasting Ability\*\*:\s*(\w+)/i,
-  abilityIs: /spellcasting ability is (\w+)/i,
-  abilityReversed: /(\w+) is your spellcasting ability/i,
+  /* Emphasis is authored freely around the ability — `**Intelligence** is your
+     casting ability` reads the same as the unbolded form — so every pattern
+     tolerates it rather than matching only the plain spelling. */
+  abilityBold: /\*{0,2}Casting ability\*{0,2}:\s*\*{0,2}(\w+)/i,
+  abilityIs: /casting ability is \*{0,2}(\w+)/i,
+  abilityReversed: /\*{0,2}(\w+)\*{0,2} is your casting ability/i,
+  keyedTo: /keyed to \*{0,2}(\w+)/i,
+  accuracySlot: /accuracy="[^"]*?your (\w+) modifier/i,
   modifierRef: /your (\w+) modifier/i,
-  dcModifier: /spell save DC.*?(\w+) modifier/i,
   section:
-    /##\s+\d+\w*\s+Level\s+[–—-]\s+Spellcasting[\s\S]*?(?=<\/Collapsible>|##\s+\d)/i,
+    /##\s+\d+\w*\s+Level\s+[–—-]\s+Spellcasting[\s\S]*?(?=<\/Collapsible>|<\/Feature>|##\s+\d)/i,
   pactMagic: /pact magic/i,
   spellSlotsLabel: /Spell Slots/i,
   slotLevelLabel: /Slot Level/i,
@@ -113,8 +116,8 @@ export const SPECIALIZATION_TYPES: ReadonlyArray<{
 /**
  * Flavor text detection patterns for specialization headers.
  *
- * @property {RegExp} underscoreItalic - Italic with underscores: "_text_"
- * @property {RegExp} asteriskItalic - Italic with asterisks: "*text*"
+ * @property {RegExp} underscoreItalic - Italic with underscores
+ * @property {RegExp} asteriskItalic - Italic with asterisks
  */
 export const FLAVOR = {
   underscoreItalic: /^_[^_]+_$/,

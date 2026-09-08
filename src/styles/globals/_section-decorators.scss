@@ -1,27 +1,12 @@
 /* ============================================
    SECTION DECORATORS
-
-   Two reader switches over the ornament an MDX section carries: the knotwork
-   nine-slice frames and the vertical ticker. The frames are `::before`
-   pseudo-elements and the ticker is a `[data-stream-rail]` element, both
-   styled by the mixins in styles/_mixins-mdx-sections.scss, which take their
-   `display` and the frames' `opacity` from the custom properties below.
-
-   The gate is a custom property. Those boxes are declared across the article
-   stylesheet, the landing page and the search rows, each a CSS module with
-   hashed class names, so an inherited property reaches all of them through
-   the single `display` declaration the mixin already makes.
-
-   The root carries the flags before first paint: the inline script in
-   lib/utils/persistentUiScript stamps both attributes while the FOUC guard
-   still holds the body hidden.
-============================================ */
+   
+   Two reader switches over the ornament an MDX section carries */
 html[data-section-decor='false'] {
   --mdx-section-decor-display: none;
 }
 
-/* How present the frames are. The light ground gives them far more contrast
-   than the dark one, so they come down further there. */
+/* How present the frames are. */
 :root {
   --mdx-section-decor-opacity: 0.75;
 }

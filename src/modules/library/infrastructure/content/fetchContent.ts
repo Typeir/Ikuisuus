@@ -39,8 +39,7 @@ const isBuildTime = (): boolean => {
 
 /**
  * @function resolveContentSource
- * @description Returns the active ContentSourceAdapter: filesystem at build
- * time, GitHub at runtime.
+ * @description Returns the active ContentSourceAdapter
  * @returns {ContentSourceAdapter} The resolved content source adapter
  */
 const resolveContentSource = (): ContentSourceAdapter => {

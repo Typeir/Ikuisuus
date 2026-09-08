@@ -15,7 +15,7 @@
  * @param {string} dice - Dice notation, e.g. "2d20"
  * @param {string | null} modifier - Signed numeric modifier or null
  * @param {string | null} type - Damage type description or null
- * @returns {string} Normalized expression: `[% dice + modifier type %]`
+ * @returns {string} Normalized expression
  */
 export function normalizeExpr(
   dice: string,

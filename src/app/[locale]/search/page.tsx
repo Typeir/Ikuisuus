@@ -58,10 +58,16 @@ function SearchPageInner(): JSX.Element {
       <h1 className='text-2xl font-semibold mb-6'>
         {hasQuery ? (
           <>
-            {t('resultsFor')}{' '}
-            <span className={styles.resultQueryHighlight}>
-              &ldquo;{q}&rdquo;
-            </span>{' '}
+            {q ? (
+              <>
+                {t('resultsFor')}{' '}
+                <span className={styles.resultQueryHighlight}>
+                  &ldquo;{q}&rdquo;
+                </span>{' '}
+              </>
+            ) : (
+              <>{t('results')} </>
+            )}
             <span className={`text-sm ${styles.resultTextSecondary}`}>
               ({total} {t('found')})
             </span>

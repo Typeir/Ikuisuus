@@ -15,13 +15,14 @@ import { CLASSIFIER } from './featurePatterns';
 /**
  * Semantic category for a monster stat block section.
  *
- * @typedef {'traits' | 'actions' | 'minor_actions' | 'reactions' | 'deed_act' | 'deed_stratagem' | 'deed_lair' | 'deed_phase' | 'spellcasting' | 'condition' | 'bloodrage' | 'unknown'} SectionType
+ * @typedef {'traits' | 'actions' | 'minor_actions' | 'reactions' | 'deeds' | 'deed_act' | 'deed_stratagem' | 'deed_lair' | 'deed_phase' | 'spellcasting' | 'condition' | 'bloodrage' | 'unknown'} SectionType
  */
 export type SectionType =
   | 'traits'
   | 'actions'
   | 'minor_actions'
   | 'reactions'
+  | 'deeds'
   | 'deed_act'
   | 'deed_stratagem'
   | 'deed_lair'
@@ -53,6 +54,7 @@ export interface MonsterSection {
  * Ordered classification rules.
  */
 const SECTION_RULES: { pattern: RegExp; type: SectionType }[] = [
+  { pattern: CLASSIFIER.deeds, type: 'deeds' },
   { pattern: CLASSIFIER.deedAct, type: 'deed_act' },
   { pattern: CLASSIFIER.deedStratagem, type: 'deed_stratagem' },
   { pattern: CLASSIFIER.deedLair, type: 'deed_lair' },

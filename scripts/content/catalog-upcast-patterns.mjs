@@ -1,8 +1,5 @@
 /**
- * @fileoverview Catalog: "At Higher Levels" upcast prose patterns
- *
- * Walks every spell .mdx file and extracts the upcasting block — the
- * "At Higher Levels" heading and its body, or inline bullet variants.
+ * @fileoverview Catalog
  *
  * @module scripts/content/catalog-upcast-patterns
  * @version 1.0.0
@@ -31,10 +28,10 @@ const OUT_FILE = join(OUT_DIR, 'upcast-patterns.json');
 /** Matches the "At Higher Levels" heading — standalone or inline with body. */
 const HEADING_RE = /^>\s*\*{0,2}At Higher Levels\.?\*{0,2}\s*/im;
 
-/** Matches an inline bullet upcast: `> - **4th level or higher:** …` */
+/** Matches an inline bullet upcast */
 const INLINE_BULLET_RE = /^>\s*[-*]\s+\*{0,2}(\d+(?:st|nd|rd|th)\s+level\s+or\s+higher)\*{0,2}\s*:\s*(.+)$/im;
 
-/** Slot-level references in body text: "Nth level or higher". */
+/** Slot-level references in body text */
 const SLOT_LEVEL_RE = /(\d+(?:st|nd|rd|th))\s+level\s+or\s+higher/gi;
 
 /** "per/for each slot level above N" tail. */

@@ -25,8 +25,14 @@ export interface CollapsibleProps {
   open?: boolean;
   summary?: ReactNode;
   anchor?: string;
+  skin?: CollapsibleSkin;
   children?: ReactNode;
 }
+
+/**
+ * How a disclosure is dressed: as a panel, or as a row in a list.
+ */
+export type CollapsibleSkin = 'panel' | 'light';
 
 /**
  * @component Collapsible
@@ -48,6 +54,7 @@ const Collapsible: React.FC<CollapsibleProps> = ({
   summary,
   anchor,
   children,
+  skin = 'panel',
 }) => {
   const nodes = React.Children.toArray(children);
   const headingIndex = summary
@@ -72,7 +79,10 @@ const Collapsible: React.FC<CollapsibleProps> = ({
   const summaryAnchor = anchor ?? parsedHeading.anchor;
 
   return (
-    <details className={styles.collapsible} open={open || undefined}>
+    <details
+      className={styles.collapsible}
+      data-skin={skin}
+      open={open || undefined}>
       <summary
         className={styles.summary}
         {...(summaryAnchor && { 'data-anchor': summaryAnchor })}

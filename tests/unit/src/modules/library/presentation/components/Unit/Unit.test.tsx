@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit MDX Component Tests
  * @description Tests that the Unit component renders the native stride form
- * before hydration, converts once hydrated, links to the Measures rule page,
- * and carries every system in its accessible name.
+ * before hydration
  *
  * @module tests/unit/src/modules/library/presentation/components/Unit/Unit.test
  * @version 1.0.0

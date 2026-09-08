@@ -1,9 +1,7 @@
 /**
  * @fileoverview Lifts the attack lines of a v2 monster sheet into `<Attack>` blocks.
  * @description Inside an `<Action>`, a bullet list whose items carry an
- * accuracy line becomes one fifth-level block per item, attacks wrapped in
- * `<Attack>`; an action whose body opens with an accuracy line wraps that
- * body.
+ * accuracy line becomes one fifth-level block per item
  */
 
 import { basename } from 'node:path';
@@ -132,8 +130,7 @@ function promoteBullets(body, level, notes) {
 
 /**
  * Wraps a body from its accuracy line to its end; prose before the line stays
- * outside as the action's own, and a body whose bullets come first is a list
- * for `promoteBullets`, not one attack.
+ * outside as the action's own
  *
  * @param {string[]} body - Lines after the heading, before `</Action>`
  * @param {string[]} notes - Notes to append to

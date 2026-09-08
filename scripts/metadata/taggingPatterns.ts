@@ -1,6 +1,5 @@
 /**
- * @fileoverview Pre-compiled regex patterns for tagging: movement, monster mechanic,
- * and item mechanic matching, grouped into constant dictionaries.
+ * @fileoverview Pre-compiled regex patterns for tagging
  *
  * @module scripts/metadata/taggingPatterns
  * @version 1.0.0
@@ -42,10 +41,10 @@ export const MOVEMENT: Record<string, RegExp> = {
  * Monster mechanic detection patterns.
  *
  * @property {RegExp} legendaryDeed - Any mention of legendary deeds, including the bare section heading
- * @property {RegExp} deedResist - Legendary Deed: Resist
- * @property {RegExp} deedLair - Legendary Deed: Lair
- * @property {RegExp} deedStratagem - Legendary Deed: Stratagem
- * @property {RegExp} deedPhase - Legendary Deed: Phase
+ * @property {RegExp} deedResist - Legendary Deed
+ * @property {RegExp} deedLair - Legendary Deed
+ * @property {RegExp} deedStratagem - Legendary Deed
+ * @property {RegExp} deedPhase - Legendary Deed
  * @property {RegExp} multiattack - Multiattack keyword
  * @property {RegExp} reactions - Reaction(s) keyword
  * @property {RegExp} minorActions - Minor Action(s) keyword

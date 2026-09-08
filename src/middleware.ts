@@ -41,8 +41,7 @@ const replaceFirstSegment = (parts: string[], replacement: string): string => {
 };
 
 /**
- * Strips a trailing index segment from library paths: `main`, or a leaf that
- * repeats the folder above it (`…/paladin/paladin`).
+ * Strips a trailing index segment from library paths
  *
  * @param {string[]} parts - Path segments, empty segments excluded
  * @returns {string | null} Canonical pathname, or null when already canonical

@@ -29,7 +29,7 @@ export interface ConditionEntry {
  * @property {boolean} lair - True if creature has mechanic:lair tag - triggers alert on round start
  * @property {boolean} stratagem - True if creature has mechanic:stratagem tag - shows tactical badge
  * @property {boolean} legendaryDeed - True if creature has mechanic:legendary-deed tag - enables deed tracker
- * @property {boolean} resist - True if creature has Legendary Deed: Resist ability - enables resist tracker
+ * @property {boolean} resist - True if creature has Legendary Deed
  * @property {boolean} phase - True if creature has mechanic:phase tag - enables phase marker and phase deed tracker
  */
 export interface CombatantMechanics {

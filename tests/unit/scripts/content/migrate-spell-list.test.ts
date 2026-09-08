@@ -2,7 +2,7 @@
  * @fileoverview Tests for the spell list converter.
  * @description Spell tables become `<SpellList>` with one column per extra
  * header, bullet lists of spell links become the tag with or without a Cost
- * column, and anything else stays where it is with a note.
+ * column
  *
  * @module tests/unit/scripts/content/migrate-spell-list.test
  * @version 0.1.0

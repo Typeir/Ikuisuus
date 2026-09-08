@@ -1,8 +1,7 @@
 /**
  * @fileoverview Tests for the SWR global fetcher.
  * @description Verifies `fetcher` returns parsed JSON on success, throws
- * `FetchError` with correct fields on non-OK responses, and handles both
- * JSON-body and plain-text error bodies.
+ * `FetchError` with correct fields on non-OK responses
  *
  * @module tests/unit/src/lib/fetch/fetcher.test
  * @version 1.0.0

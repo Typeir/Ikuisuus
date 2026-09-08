@@ -73,11 +73,7 @@
   border: 0;
 }
 
-// Individual notification — a fenced console block. The top and bottom
-// fences ARE the skeleton lattice (same mask, same pitch, same traveling
-// density band), recoloured to the level: the level colour is the matter,
-// its two glints are lighter mixes of it. A solid cell top-left is the
-// corner mark. Near-square corners, no coloured side bar.
+// Individual notification — a fenced console block.
 .notification {
   --level: var(--color-info);
   --icon-btn-tone: var(--level);
@@ -129,9 +125,7 @@
   }
 }
 
-// One lattice bar, level-toned. Matter is the level colour; the band's
-// shoulder and crest are the same colour lifted toward white so the sweep
-// reads as light moving through the fence, not a second hue.
+// One lattice bar, level-toned.
 .fence {
   --skeleton-matter: var(--level);
   --skeleton-rest-alpha: 55%;
@@ -216,9 +210,7 @@
 }
 
 // Dismiss — the site's transparent icon button (secondary at rest, colour
-// lift on hover), cut into the top-left corner of the fence. The block's
-// own background shows through the button so the lattice reads as broken
-// there rather than covered.
+// lift on hover)
 .dismissSlot {
   position: absolute;
   top: 0;
@@ -270,6 +262,6 @@
   }
 
   .fence::before {
-    animation: none; /* band parks off-left: static dithered fence only */
+    animation: none; /* band parks off-left */
   }
 }

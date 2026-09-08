@@ -1,7 +1,6 @@
 /**
  * @fileoverview Overview Tab
- * @description Two-column overview: granted proficiencies, skills and trades on
- * the left; attacks, selected shard chips, and notes on the right.
+ * @description Two-column overview
  *
  * @module modules/character-builder/presentation/tabs/overviewTab
  * @version 3.0.0

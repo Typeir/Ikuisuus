@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests for the shared column reader.
  * @description Column and Row elements are found by display name through
- * paragraphs and fragments, in order, and nothing else is returned.
+ * paragraphs and fragments
  *
  * @module tests/unit/src/modules/library/presentation/components/slots/columns.test
  * @version 0.1.0

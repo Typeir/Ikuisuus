@@ -17,11 +17,11 @@
 
 export { PlayMode } from './playMode';
 
-/** Backwards compatibility: re-export moved components */
+/** Backwards compatibility */
 export { CombatantRow as PlayModeCombatantRow } from '../combatantRow';
 export type { CombatantRowProps as PlayModeCombatantRowProps } from '../combatantRow';
 
-/** Backwards compatibility: re-export sub-components from combatantRow */
+/** Backwards compatibility */
 export {
   CombatantConditionsManager, CombatantHeroicSection, CombatantMainStats, CombatantMechanicsSection, CombatantNameSection, type CombatantConditionsManagerProps, type CombatantHeroicSectionProps, type CombatantMainStatsProps, type CombatantMechanicsSectionProps, type CombatantNameSectionProps
 } from '../combatantRow';

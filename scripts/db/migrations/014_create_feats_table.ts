@@ -13,7 +13,7 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies migration 014: creates the `feats` table and its indexes.
+ * Applies migration 014
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}
@@ -52,7 +52,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 014: drops the `feats` table and its indexes.
+ * Reverts migration 014
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}

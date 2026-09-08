@@ -2,7 +2,7 @@
  * @fileoverview Specialization Metadata Generator
  * @description Parses `.specialization.mdx` files and extracts title, flavor,
  * vocation, specialization type, features, optional always-prepared spell
- * tables, and optional spellcasting progression data.
+ * tables
  *
  * @module scripts/metadata/generateSpecializationMetadata
  * @version 1.0.0

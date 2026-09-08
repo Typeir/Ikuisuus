@@ -70,6 +70,7 @@
     "noFeats": "No feats found.",
     "columns": {
       "feat": "Feat",
+      "category": "Category",
       "prerequisite": "Prerequisite",
       "repeatable": "Repeatable",
       "summary": "Summary"

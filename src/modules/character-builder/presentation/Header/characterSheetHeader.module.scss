@@ -20,7 +20,7 @@
   gap: 0.65rem;
 
   /* Below the desktop breakpoint the shell's fixed title bar exists;
-     offset the sticky header so it pins beneath the bar, not under it. */
+     offset the sticky header so it pins beneath the bar */
   @include desktop {
     top: $mobile-header-height;
   }
@@ -63,10 +63,7 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Diegetic console field matching the search bar: transparent body,
-   square underline that thickens on focus/hover, terminal placeholder.
-   `input.` qualifier (0,1,1) reliably beats the shared `.textInput` base
-   (0,1,0) regardless of CSS bundle order. */
+/* Diegetic console field matching the search bar */
 input.nameInput {
   font-size: 1.6rem;
   font-weight: bold;
@@ -184,7 +181,7 @@ input.nameInput {
 }
 
 /* Inline companion to vocationSelector's `.removeBtn` — same surface/border
-   look, danger on hover, but statically placed beside the warning chip. */
+   look, danger on hover */
 .xpCaption {
   align-self: flex-end;
   font-size: 0.65rem;
@@ -265,10 +262,7 @@ input.nameInput {
 
 /** =====================================================================
  * Command strip — slim sticky bar that replaces the full sticky header
- * on phones. Rendered as a sibling of the header so its sticky range
- * spans the whole sheet rather than just the header's own box.
- * Hidden entirely on desktop; the header itself stays sticky there.
- * ===================================================================== */
+ * on phones. */
 
 @include desktop {
   .header {

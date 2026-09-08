@@ -26,7 +26,7 @@ import { capitalize, flagOf } from './text';
 import styles from './slots.module.scss';
 
 /**
- * Props for the spell card: one optional prop per header slot, plus the body.
+ * Props for the spell card
  */
 export type SpellProps = SlotProps<SpellSlotName> & {
   name?: string;
@@ -47,8 +47,20 @@ const ROW_SLOTS: readonly SpellSlotName[] = [
 ];
 
 /**
- * Rarity as the brief speaks it: capitalised, and silent for common, which
- * every spell is until it says otherwise.
+ * Slots the head takes out of the body.
+ *
+ * @description Overcasting is written where it is read, at the end of the
+ * spell, and a spell may tier it over several blocks. Lifting those out would
+ * collapse them into one row and lose the level each began at, so a written
+ * `<Overcast>` stays where the author put it. An overcast given as an
+ * attribute is a single line with no tier to lose, and still prints as a row.
+ */
+const HEAD_SLOTS: readonly SpellSlotName[] = SPELL_SLOT_NAMES.filter(
+  (slot) => slot !== 'overcast',
+);
+
+/**
+ * Rarity as the brief speaks it
  *
  * @param {ReactNode} rarity - Rarity slot
  * @returns {string | null} Word to print, or null for common
@@ -60,7 +72,7 @@ function rarityWord(rarity: ReactNode): string | null {
 }
 
 /**
- * The brief: what kind of spell this is.
+ * The brief
  *
  * @param {ReactNode} level - Level slot
  * @param {ReactNode} rarity - Rarity slot
@@ -104,11 +116,7 @@ function briefLine(
  *
  * @description The card heads with the spell's name, taken from the article's
  * own metadata so no spell page has to write it twice — and only when the
- * article is that spell, since a card spliced into an heirloom or a monster
- * would otherwise wear its host's title. A card reused that way names itself
- * with `name`. What casting it costs stands beside the name, since it is the
- * fact a reader looks for first, and the brief sits at the far edge of the
- * same line. The cost is therefore not repeated among the rows below.
+ * article is that spell
  *
  * @param {SpellProps} props - Card props
  * @returns {JSX.Element} The spell section
@@ -116,7 +124,11 @@ function briefLine(
 const Spell: React.FC<SpellProps> = ({ name: given, children, ...slots }) => {
   const t = useTranslations('library.spell');
   const { metadata } = useArticleMetadata();
-  const { values, kept } = readSlots(children, SPELL_SLOT_NAMES, slots);
+  const { values: head, kept } = readSlots(children, HEAD_SLOTS, slots, true);
+  const values: Partial<Record<SpellSlotName, ReactNode>> =
+    slots.overcast === undefined
+      ? head
+      : { ...head, overcast: slots.overcast as ReactNode };
   const brief = briefLine(values.level, values.rarity, values.ritual, t);
   const ownPage =
     metadata?.contentType === 'spells' ? metadata?.title : undefined;

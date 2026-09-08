@@ -12,8 +12,7 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies the migration: creates the `draft_status` enum type, converts the
- * `drafts.status` column, and rebuilds the affected indexes.
+ * Applies the migration
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}
@@ -50,9 +49,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverses the migration: converts `drafts.status` back to plain `text`,
- * drops the `draft_status` enum type, and restores the original text-based
- * indexes.
+ * Reverses the migration
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}

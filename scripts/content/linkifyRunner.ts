@@ -8,15 +8,7 @@
  * @version 1.0.0
  * @since 1.0.0
  *
- * Usage:
- *   npx tsx scripts/content/linkifyRunner.ts --links scripts/core/links.json --root src/content/en/world --write --backup
- *
- * Flags:
- *   --links file   JSON array of link specs; if omitted, reads from STDIN
- *   --root dir     Root directory to scan (default: src/content/en/world)
- *   --ext list     Comma-separated extensions (default: .md,.mdx)
- *   --write        Actually write changes (omit for dry-run)
- *   --backup       Write .bak files before overwriting
+ * Usage
  */
 
 import { createLogger } from '@/lib/logging/logger';

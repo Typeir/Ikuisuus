@@ -29,33 +29,52 @@ import {
 
 /**
  * Recognizes a monster attack line like
- * "_Melee Weapon Attack:_ +7 to hit, reach 5 ft".
+ * "_Melee Weapon Attack:_ +7 to hit
  *
  * @param {string} text - Input text
  * @returns {AttackToken | null} Parsed attack token or null
  */
 export function recognizeAttackLine(text: string): AttackToken | null {
-  const match = text.match(MONSTER.attackLine);
-  if (!match) return null;
-  const attackType =
-    match[2].toLowerCase() === 'spell'
-      ? ('spell' as const)
-      : match[1].toLowerCase() === 'melee'
-        ? ('melee' as const)
-        : ('ranged' as const);
-  const bonus = parseInt(match[3], 10);
-  const result: AttackToken = { type: attackType, bonus, targets: '' };
-  const reachMatch = text.match(DISTANCE.reach);
-  if (reachMatch) {
-    result.reach = parseInt(reachMatch[1], 10);
+  const legacy = text.match(MONSTER.attackLine);
+  const slot = legacy ? null : text.match(MONSTER.accuracySlot);
+  if (!legacy && !slot) return null;
+
+  const reachSlot = text.match(MONSTER.reachSlot);
+  const rangeSlot = text.match(MONSTER.rangeSlot);
+
+  /* An accuracy alone is a caster's, not an attack's: a spellcasting block
+     states what it hits with and never how far it reaches, so without a reach,
+     a range, or the words that name a spell attack there is no attack here. */
+  if (slot && !reachSlot && !rangeSlot && !MONSTER.spellAttack.test(text)) {
+    return null;
   }
-  const rangeMatch = text.match(DISTANCE.range);
-  if (rangeMatch) {
-    result.range = { normal: parseInt(rangeMatch[1], 10) };
-    if (rangeMatch[2]) {
-      result.range.long = parseInt(rangeMatch[2], 10);
-    }
+
+  /* A block that reaches is melee and one that ranges is ranged; a block that
+     says it casts is a spell attack whichever way it reaches. */
+  const type = MONSTER.spellAttack.test(text)
+    ? ('spell' as const)
+    : legacy
+      ? legacy[2].toLowerCase() === 'spell'
+        ? ('spell' as const)
+        : legacy[1].toLowerCase() === 'melee'
+          ? ('melee' as const)
+          : ('ranged' as const)
+      : rangeSlot && !reachSlot
+        ? ('ranged' as const)
+        : ('melee' as const);
+
+  const bonus = parseInt(legacy ? legacy[3] : slot![1], 10);
+  const result: AttackToken = { type, bonus, targets: '' };
+
+  const reach = reachSlot ?? text.match(DISTANCE.reach);
+  if (reach) result.reach = parseInt(reach[1], 10);
+
+  const range = rangeSlot ?? text.match(DISTANCE.range);
+  if (range) {
+    result.range = { normal: parseInt(range[1], 10) };
+    if (range[2]) result.range.long = parseInt(range[2], 10);
   }
+
   const targetsMatch = text.match(MONSTER.targets);
   if (targetsMatch) {
     result.targets = targetsMatch[0].toLowerCase();
@@ -64,18 +83,19 @@ export function recognizeAttackLine(text: string): AttackToken | null {
 }
 
 /**
- * Recognizes a hit/damage line like "_Hit:_ 12 (2d8 + 3) slashing damage".
+ * Recognizes a hit and its damage.
+ *
+ * @description The corpus writes `On a hit, 21 ([% 3d6 +10 slashing %])` and
+ * `**Hit**: [% 4d12 +8 force %]`; the average before the dice is optional
  *
  * @param {string} text - Input text
  * @returns {HitToken | null} Parsed hit token or null
  */
 export function recognizeHitLine(text: string): HitToken | null {
   const match = text.match(MONSTER.hitLine);
-  if (!match) return null;
-  const result: HitToken = {
-    average: parseInt(match[1], 10),
-    dice: match[2].trim(),
-  };
+  if (!match || !match[2]) return null;
+  const result: HitToken = { dice: match[2].trim() };
+  if (match[1]) result.average = parseInt(match[1], 10);
   if (match[3]) {
     const typeLower = match[3].toLowerCase();
     if (DAMAGE_TYPES.has(typeLower)) {

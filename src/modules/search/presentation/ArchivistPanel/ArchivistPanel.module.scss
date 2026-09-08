@@ -42,16 +42,14 @@
   white-space: nowrap;
 }
 
-/* Stands in for .pageTitle: same line box, so the header height is identical
-   whether the pick has resolved or not. */
+/* Stands in for .pageTitle */
 .titleSkeleton {
   flex: 1;
   max-width: 16rem;
   margin-bottom: 0 !important;
 }
 
-/* Stacking context for the embed and its placeholder. Owns the height the
-   iframe used to claim, so the box is reserved before the iframe exists. */
+/* Stacking context for the embed and its placeholder. */
 .body {
   position: relative;
   flex: 1;

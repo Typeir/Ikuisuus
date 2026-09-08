@@ -43,8 +43,7 @@ const maxOldSpaceMb = Number.isNaN(parsedMaxOldSpaceMb)
   : Math.max(1024, parsedMaxOldSpaceMb);
 
 /**
- * Mirrors `scripts/build/glslRawLoader.cjs`: a `.glsl` import resolves to the raw
- * shader source string rather than a Vite asset URL.
+ * Mirrors `scripts/build/glslRawLoader.cjs`
  */
 const glslSourcePlugin = {
   name: 'glsl-source',

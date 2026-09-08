@@ -49,8 +49,7 @@ function replaceHeadingImage(filePath: string): void {
 }
 
 /**
- * Main entry point: finds all .sheet.mdx files in the content directory
- * and replaces their heading markdown images.
+ * Main entry point
  */
 function main(): void {
   const pattern = join(ROOT_DIR, '**/*.sheet.mdx');

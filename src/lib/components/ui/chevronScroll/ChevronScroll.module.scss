@@ -1,7 +1,7 @@
 /**
  * @fileoverview ChevronScroll styles
  * @description Flex wrapper with flanking chevron buttons and a horizontally
- * scrollable strip whose native scrollbar is hidden. All colors via tokens.
+ * scrollable strip whose native scrollbar is hidden.
  *
  * @module lib/components/ui/chevronScroll/ChevronScroll.module
  */
@@ -12,14 +12,7 @@
   min-width: 0;
 }
 
-/* Two opt-in knobs set by the consumer on the wrapper:
-   `--chevron-scroll-max` caps the visible strip, so overflow (and the
-   chevrons) kicks in after a chosen number of items rather than at the
-   cell edge. `--chevron-scroll-bleed` pads the scrollport and pulls the
-   margin back by the same amount: a scroll container cannot show overflow
-   on either axis, so hover growth and rotated corners get room inside it
-   while the outer footprint stays put. `content-box` keeps the bleed out of
-   the cap. */
+/* Two opt-in knobs set by the consumer on the wrapper */
 .scroller {
   flex: 1;
   min-width: 0;
@@ -72,7 +65,7 @@
   }
 }
 
-/* Single-text-row variant: the chevrons hug the strip and add no height. */
+/* Single-text-row variant */
 .sm .chevron {
   padding: 0 0.1rem;
   line-height: 1;

@@ -1,9 +1,7 @@
 /**
  * @fileoverview Slot elements and slot helpers.
  * @description Generates one inline element per schema row (`<Cost>`,
- * `<Attunement>`, …) and provides the helpers both parents share: splitting a
- * paragraph of slot elements out of children and merging attribute slots with
- * element slots.
+ * `<Attunement>`, …) and provides the helpers both parents share
  *
  * @module modules/library/presentation/components/slots/slotElements
  * @version 0.4.0
@@ -79,8 +77,7 @@ export function cleanChildren(children: ReactNode): ReactNode[] {
 }
 
 /**
- * Renders a slot value as it arrived: a string trimmed, anything the compile
- * step parsed into nodes as given.
+ * Renders a slot value as it arrived
  *
  * @param {ReactNode} value - Slot value
  * @returns {ReactNode} Value ready to print
@@ -93,8 +90,7 @@ export function inlineValue(value: ReactNode): ReactNode {
  * One slot to render.
  *
  * @property {SlotName} name - Slot name
- * @property {ReactNode} value - Value as MDX delivered it: text, or the
- * fragment the attribute rewrite built from a shortcode-bearing string
+ * @property {ReactNode} value - Value as MDX delivered it
  */
 export interface SlotEntry {
   name: SlotName;
@@ -172,8 +168,7 @@ export function splitSlotRuns(
 }
 
 /**
- * Slot entries of a parent in schema order: attribute values first, then
- * element-form values whose slot no attribute already filled.
+ * Slot entries of a parent in schema order
  *
  * @param {readonly N[]} names - The parent's slot names in display order
  * @param {Partial<Record<N, SlotValue>>} props - The parent's props
@@ -244,8 +239,7 @@ export interface SlotReading<N extends SlotName> {
 }
 
 /**
- * Reads a host's slots from both spellings at once: attributes on the tag and
- * element-form slot paragraphs among the children.
+ * Reads a host's slots from both spellings at once
  *
  * @param {ReactNode} children - The host's children
  * @param {readonly N[]} names - Slot names the host accepts, in display order

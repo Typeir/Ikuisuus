@@ -1,9 +1,7 @@
 /**
  * @fileoverview The action cost a block sits inside.
  * @description A block that states no cost of its own is not free — it is part
- * of whatever costs the block or card around it, so it wears that mark. A
- * spell's modes cost the spell's casting time; a stage nested in a Major
- * Action block is spent within that action.
+ * of whatever costs the block or card around it
  *
  * @module modules/library/presentation/components/slots/costMarkContext
  * @version 0.1.0
@@ -17,7 +15,7 @@ import type { CostMark } from '@/modules/library/domain/costMark';
 import React, { createContext, useContext, type ReactNode } from 'react';
 
 /**
- * The enclosing cost. `other` outside any costed block.
+ * The enclosing cost.
  */
 const CostMarkContext = createContext<CostMark>('other');
 

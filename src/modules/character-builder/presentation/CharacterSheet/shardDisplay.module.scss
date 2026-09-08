@@ -1,6 +1,5 @@
 /**
  * Shard display card styles for character sheet content display.
- * Used for showing skills, specializations, vocation features, etc.
  *
  * @module presentation/CharacterSheet/shardDisplay.module.scss
  */
@@ -147,8 +146,7 @@
     font-style: italic;
   }
 
-  /* Nested tables take the card frame: same border token and radius as the
-     picker container, so a cost/effect table reads as part of the selector. */
+  /* Nested tables take the card frame */
   table {
     width: 100%;
     margin: 0.5rem 0;

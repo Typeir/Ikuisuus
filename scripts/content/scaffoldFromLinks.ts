@@ -8,10 +8,7 @@
  * @version 1.0.0
  * @since 1.0.0
  *
- * Usage:
- *   npx tsx scripts/content/scaffoldFromLinks.ts --links scripts/core/links.json --world-root src/content/en/world
- * Options:
- *   --links file.json   JSON array of {term, path}.
+ * Usage
  */
 
 import { createLogger } from '@/lib/logging/logger';

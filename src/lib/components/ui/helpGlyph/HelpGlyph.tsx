@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils/classNameMerge';
 import styles from './helpGlyph.module.scss';
 
 /**
- * Glyph scale: unshrunk rhombus side 11 / 14 / 18 px.
+ * Glyph scale
  *
  * @typedef {'xs'|'s'|'m'} HelpGlyphSize
  */

@@ -1,6 +1,5 @@
 /**
- * @fileoverview Presentational table: columns and rows in, a scrollable
- * `<table>` out.
+ * @fileoverview Presentational table
  * @module lib/components/ui/dataTable/dataTable
  * @version 0.2.0
  * @author Typeir
@@ -31,7 +30,7 @@ export interface DataTableCellSpec {
 }
 
 /**
- * A cell: content alone, or content with attributes.
+ * A cell
  */
 export type DataTableCell = ReactNode | DataTableCellSpec;
 
@@ -44,6 +43,7 @@ export type DataTableCell = ReactNode | DataTableCellSpec;
  * @property {() => void} [onHeaderClick] - Makes the header a button that calls this
  * @property {'ascending' | 'descending' | 'none'} [sort] - Current sort of the column, for `aria-sort`
  * @property {string} [ariaLabel] - Accessible name for a header without text
+ * @property {string} [width] - CSS width hint on the header cell, e.g. `40%`
  */
 export interface DataTableColumn {
   key: string;
@@ -52,6 +52,7 @@ export interface DataTableColumn {
   onHeaderClick?: () => void;
   sort?: 'ascending' | 'descending' | 'none';
   ariaLabel?: string;
+  width?: string;
 }
 
 /**
@@ -195,6 +196,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 key={column.key}
                 scope='col'
                 className={column.className}
+                style={column.width ? { width: column.width } : undefined}
                 aria-label={column.ariaLabel}
                 aria-sort={column.sort}>
                 {column.onHeaderClick ? (

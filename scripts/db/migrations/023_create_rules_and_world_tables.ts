@@ -1,5 +1,5 @@
 /**
- * @fileoverview Migration 023: creates rules and world tables.
+ * @fileoverview Migration 023
  * @description Columns match metadata sidecar records from generators.
  *
  * @module scripts/db/migrations/023_create_rules_and_world_tables

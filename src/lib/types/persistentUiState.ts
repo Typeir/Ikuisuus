@@ -140,7 +140,7 @@ export interface PersistentUiState {
 }
 
 /**
- * Aspect pill display modes: `compact`, `verbose`, `glyph`.
+ * Aspect pill display modes
  */
 export type AspectDisplayMode = 'compact' | 'verbose' | 'glyph';
 
@@ -405,7 +405,7 @@ export type PersistentUiAction =
   | ResetAction;
 
 /**
- * Neutral text scale: the shipped base size, unmultiplied.
+ * Neutral text scale
  *
  * @constant
  */

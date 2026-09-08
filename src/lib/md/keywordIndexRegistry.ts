@@ -2,8 +2,7 @@
  * Keyword Index Registry
  *
  * @fileoverview Extracts the keyword join keys a content file produces from
- * its frontmatter declarations: `keywordIndex: <name>` keys every heading in
- * the file, `keywords: [<term>, ...]` keys named terms in the bare namespace.
+ * its frontmatter declarations
  *
  * @module lib/md/keywordIndexRegistry
  * @version 4.0.0
@@ -54,7 +53,7 @@ export interface DeclaredKeyword {
 /**
  * Reads the declared terms from a `keywords` frontmatter value.
  *
- * @param {unknown} raw - Frontmatter value: a list, a comma-separated string, or entries mapping a term to its heading
+ * @param {unknown} raw - Frontmatter value
  * @returns {DeclaredKeyword[]} Declared terms paired with their bearing heading
  *
  * @example

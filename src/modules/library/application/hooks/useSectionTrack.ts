@@ -9,6 +9,10 @@
 
 'use client';
 
+import {
+    CONTENT_CHANGED_EVENT,
+    DETAILS_OPENED_EVENT,
+} from '@/lib/constants/domEvents';
 import type { SectionTrackItem } from '@/modules/library/domain';
 import {
     useCallback,
@@ -27,8 +31,7 @@ const MOBILE_IDLE_MS = 1_500;
 const MOBILE_BREAKPOINT = 768;
 
 /**
- * Label of a heading: the part marked `[data-heading-title]` when the heading
- * also carries a tag or cost, otherwise its whole text.
+ * Label of a heading
  *
  * @param {HTMLElement} el - Heading element
  * @returns {string | null} Trimmed label, or null when empty
@@ -54,6 +57,9 @@ function scanHeadings(): SectionTrackItem[] {
   for (const el of headings) {
     const anchor = el.getAttribute('data-anchor');
     if (!anchor) continue;
+    /* A page on its way out is still on screen while it fades, and its
+       headings are already spoken for by the page replacing it. */
+    if (el.closest('[aria-hidden="true"]')) continue;
 
     const level = parseInt(el.tagName[1], 10) as SectionTrackItem['level'];
     const rect = el.getBoundingClientRect();
@@ -110,7 +116,7 @@ interface SectionTrackState {
 }
 
 /**
- * Tracks `[data-anchor]` headings: active section, proportional positions, mobile auto-hide.
+ * Tracks `[data-anchor]` headings
  *
  * @returns {SectionTrackState} Heading items, active anchor, visibility flag, center proximity function.
  */
@@ -146,12 +152,14 @@ export function useSectionTrack(): SectionTrackState {
     };
 
     window.addEventListener('resize', rescan, { passive: true });
-    window.addEventListener('ik:details-opened', rescan);
+    window.addEventListener(DETAILS_OPENED_EVENT, rescan);
+    window.addEventListener(CONTENT_CHANGED_EVENT, rescan);
     document.addEventListener('toggle', onDetailsToggle, true);
 
     return () => {
       window.removeEventListener('resize', rescan);
-      window.removeEventListener('ik:details-opened', rescan);
+      window.removeEventListener(DETAILS_OPENED_EVENT, rescan);
+      window.removeEventListener(CONTENT_CHANGED_EVENT, rescan);
       document.removeEventListener('toggle', onDetailsToggle, true);
 
       if (rafRef.current !== null) {
@@ -160,7 +168,7 @@ export function useSectionTrack(): SectionTrackState {
     };
   }, []);
 
-  /** Determine active section: the last heading whose top ≤ scrollY + viewportH * 0.4. */
+  /** Determine active section */
   useEffect(() => {
     if (items.length === 0) {
       setActiveAnchor(null);

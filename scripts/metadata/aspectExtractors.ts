@@ -330,8 +330,7 @@ export function extractExtraMovementTags(text: string): string[] {
 }
 
 /**
- * Groups that a damage stratum can be asserted on: the damage dealt and each of
- * the three scoped defences against it.
+ * Groups that a damage stratum can be asserted on
  */
 const STRATUM_GROUPS = [
   'damage',

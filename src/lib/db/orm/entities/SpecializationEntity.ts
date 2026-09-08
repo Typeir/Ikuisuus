@@ -25,7 +25,7 @@ import { Collection } from '@mikro-orm/core';
 /* ─────────────────────────  Embeddable VOs  ─────────────────────────── */
 
 /**
- * Spellcasting summary: ability, progression.
+ * Spellcasting summary
  */
 @OrmEmbeddable('SpecializationSpellcastingEmbed')
 export class SpecializationSpellcastingEmbed {

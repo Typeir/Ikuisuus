@@ -144,7 +144,7 @@ const DEFAULT_SAVES: Record<AbilityKey, 'none'> = {
 };
 
 /**
- * Compute tier bonus from level: `⌈level / 3⌉`.
+ * Compute tier bonus from level
  *
  * @function computeTierBonus
  * @param {number} level - Character level (1–30)

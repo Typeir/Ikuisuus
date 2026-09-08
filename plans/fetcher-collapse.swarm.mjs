@@ -1,8 +1,5 @@
 /**
- * @fileoverview Fetcher collapse sweep: one member per file, each converts its
- * file (and paired unit test) off getJson/postJson/raw fetch onto the canonical
- * fetcher at src/lib/fetch/fetcher.ts, preserving the file's existing failure
- * contract.
+ * @fileoverview Fetcher collapse sweep
  */
 
 const CANON = [

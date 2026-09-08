@@ -2,7 +2,7 @@
  * Logger Unit Tests
  *
  * @fileoverview Tests for the structured logging system including level gating,
- * environment configuration, metadata serialization, and child logger scoping.
+ * environment configuration, metadata serialization
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

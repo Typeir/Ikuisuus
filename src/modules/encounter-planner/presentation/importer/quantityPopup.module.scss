@@ -1,8 +1,7 @@
 /**
  * @fileoverview Quantity Popup Styles
  * @description Styles for the quantity selection modal used in monster import flow.
- * Uses theme tokens exclusively - no color literals.
- * 
+ *
  * @module quantityPopup.module.scss
  */
 
@@ -34,7 +33,7 @@
 }
 
 /* Layout-only helper for the two modal action buttons (Cancel = btn.neutral,
-   Confirm = bare primary). Colors/hover come from the shared button classes. */
+   Confirm = bare primary). */
 .action {
   display: inline-flex;
   align-items: center;

@@ -71,32 +71,36 @@ describe('T4 sectionize anchors', () => {
 });
 
 describe('T5 aspects row placement', () => {
-  const ASPECTS = { keys: ['mooncleave'], records: [] };
+  const RECORD = 'alfanjón-of-the-crescent-moon';
 
-  it('row lands inside the mooncleave feature after the heading', async () => {
+  it('the record title takes the row', async () => {
     const html = await renderFixture({
       components: { Aspects: AspectsStub },
-      aspects: ASPECTS,
+      aspects: { keys: [RECORD], records: [RECORD] },
     });
-    const article = html.match(
-      /<article [^>]*data-anchor="mooncleave"[^>]*>[\s\S]*?<\/article>/,
-    );
-    expect(article?.[0] ?? '').toContain('data-aspects-section="mooncleave"');
-    expect(article?.[0] ?? '').not.toContain(
-      'data-aspects-section="lunar-dissolution"',
-    );
+    expect(html).toContain(`data-aspects-section="${RECORD}"`);
   }, 120000);
 
-  it('heading below the slot run is no longer the block\'s own: it sections on its own and takes the row', async () => {
+  /* A block is read through the record it sits in, so repeating the record's
+     aspects on every feature buried the reading they were there to give. */
+  it('a feature under the record takes none', async () => {
+    const html = await renderFixture({
+      components: { Aspects: AspectsStub },
+      aspects: { keys: [RECORD, 'mooncleave'], records: [RECORD] },
+    });
+    expect(html).not.toContain('data-aspects-section="mooncleave"');
+  }, 120000);
+
+  it("heading below the slot run is no longer the block's own: it sections on its own", async () => {
     const scratch = `<Feature>\n\n<Cost>1 Minor Action</Cost>\n\n#### Mooncleave\n\nProse.\n\n</Feature>\n`;
     const content = await compileSource(scratch, {
       components: { Aspects: AspectsStub },
-      aspects: ASPECTS,
+      aspects: { keys: ['mooncleave'], records: [] },
     });
     const markup = renderToStaticMarkup(content);
     expect(markup).not.toMatch(/<article [^>]*data-anchor="mooncleave"/);
     expect(markup).toMatch(
-      /<article [^>]*data-kind="feature"[^>]*>[\s\S]*<section data-heading-level="4" data-anchor="mooncleave">[\s\S]*data-aspects-section="mooncleave"/,
+      /<article [^>]*data-kind="feature"[^>]*>[\s\S]*<section data-heading-level="4" data-anchor="mooncleave">/,
     );
   });
 });

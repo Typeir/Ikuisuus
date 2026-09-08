@@ -14,6 +14,20 @@
   margin-block: 0.35rem 0.6rem;
 }
 
+/* Set into a heading rather than given a row of its own: no margins to open a
+   gap in the line, and it takes the slack between the cost and the tag so it
+   sits hard against the tag however long the name is. */
+.inlineRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+  min-width: 0;
+  margin-block: 0;
+}
+
 .caption {
   font-size: 0.65rem;
   letter-spacing: 0.09em;
@@ -30,12 +44,17 @@
   min-width: 0;
 }
 
-/* Size steps. `data-size` re-points two inherited factors — the badge box
-   (`--pip-scale`) and the mark inside it (`--pip-icon-scale`) — so a single
-   attribute on a row scales every pill in it, and a lone pill can carry its
-   own. The mark shrinks less than its box on purpose: at small sizes the glyph
-   is the label, so it cedes less ground than the chrome around it. `m` is the
-   absence of the attribute. */
+/* Size steps. */
+.glyphs[data-size='xs'],
+.aspect[data-size='xs'],
+.glyph[data-size='xs'] {
+  --pip-scale: #{$aspect-pip-scale-xs};
+  --pip-icon-scale: #{$aspect-pip-icon-scale-xs};
+
+  font-size: 0.62rem;
+  gap: 0.18rem;
+}
+
 .glyphs[data-size='s'],
 .aspect[data-size='s'],
 .glyph[data-size='s'] {
@@ -50,17 +69,15 @@
   --pip-icon-scale: #{$aspect-pip-icon-scale-l};
 }
 
-/* `color` is forced because the glyph inherits it. A pill is an anchor inside
-   prose, so `body a` and `body a:hover` both target it, and the SVG draws with
-   `stroke: currentColor` — losing the cascade repaints the icon in link green,
-   not just the text. Specificity alone cannot settle an inherited value against
-   a hover rule, so the declaration is marked instead. */
+/* `color` is forced because the glyph inherits it. */
 a.aspect,
 button.aspect,
 span.aspect {
   --aspect-fg: var(--aspect-default);
 
   @include button-still;
+  /* Positioned so the hover lift below has a z-index to raise. */
+  position: relative;
   display: inline-flex;
   font-family: inherit;
   cursor: pointer;
@@ -72,17 +89,13 @@ span.aspect {
   font-weight: 400;
   line-height: 1.45;
   color: var(--aspect-fg) !important;
-  /* Mixed toward the page ground, never toward `transparent`. `transparent` is
-     rgba(0,0,0,0), so an sRGB mix with it drags every tint toward black — fine
-     over a dark page, muddy over a light one, which is why the ratios appeared
-     to inverse between themes. `--color-bg` flips with the theme, so one set of
-     percentages darkens in dark mode and lightens in light mode by itself. */
+  /* Mixed toward the page ground, never toward `transparent`. */
   background: color-mix(in oklab, var(--aspect-fg) 14%, var(--color-bg));
   border: var(--border-width-xs) solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
   border-radius: var(--border-round-pill);
   corner-shape: var(--corner-shape-pill);
   /* The prose/link rules underline every anchor in an article; a pill is a
-     chip, never underlined, in any display mode. */
+     chip */
   text-decoration: none !important;
   transition:
     background 0.14s ease,
@@ -90,18 +103,18 @@ span.aspect {
     scale 0.14s ease;
 
   /* `button-still` pins `transform` so the pill never drifts inside prose; the
-     hover growth rides the separate `scale` property instead, which the pin
-     does not touch. Gentler than the house 1.08 — a pill sits against the
-     marginalia, and the full growth collided with it horizontally. */
+     hover growth rides the separate `scale` property instead */
   &:hover {
     background: color-mix(in oklab, var(--aspect-fg) 26%, var(--color-bg));
     border-color: var(--aspect-fg);
     scale: 1.04;
+    z-index: 1;
   }
 
   &:focus-visible {
     outline: var(--outline-width) solid var(--aspect-fg);
     outline-offset: 2px;
+    z-index: 1;
   }
 
   &[aria-pressed='true'] {
@@ -110,8 +123,7 @@ span.aspect {
   }
 
   /* Authored facets — form and myth — are the ones a build hinges on; the
-     rest can be read off the text. They wear a heavier, fuller-toned ring so
-     they read first in a row without changing size or layout. */
+     rest can be read off the text. */
   &[data-group='form'],
   &[data-group='myth'] {
     border-color: color-mix(in oklab, var(--aspect-fg) 70%, var(--color-bg));
@@ -135,9 +147,7 @@ span.aspect {
   }
 }
 
-/* Expand toggle. The rhombus IconButton keeps its glyph upright by counter-
-   rotating it; expanded, the plus stops counter-rotating and inherits the
-   box's 45°, so it reads as a cross. */
+/* Expand toggle. */
 .toggle > svg {
   transition: rotate 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -151,9 +161,7 @@ span.aspect {
   --icon-btn-tone: var(--aspect-fg);
 }
 
-/* A glyph that has to be squinted at is a worse label than the word it replaced,
-   so the mark is sized to be read at a glance rather than to sit politely
-   inside the cap height. */
+/* A glyph that has to be squinted at is a worse label than the word it replaced */
 .mark {
   position: relative;
   display: none;
@@ -170,9 +178,7 @@ span.aspect {
 }
 
 /* A stratum is drawn as its three member types, each keeping its own glyph and
-   its own hue, arranged at fixed points. The arrangement never varies because a
-   stratum is always exactly three types, so the silhouette is recognisable
-   before any single glyph is. */
+   its own hue */
 .markStrata {
   overflow: visible;
 }
@@ -208,7 +214,7 @@ span.aspect {
   width: calc(10.2px * var(--pip-icon-scale, 1));
   height: calc(10.2px * var(--pip-icon-scale, 1));
   /* An element badge carries its own hue — fire stays orange under a defence
-     shield. A severity chevron is part of the same mark, so it inherits. */
+     shield. */
   color: var(--badge-fg, currentColor);
   background: var(--color-bg);
   border-radius: var(--border-round-circle);
@@ -228,8 +234,7 @@ span.aspect {
   font-weight: 500;
 }
 
-/* Compact pairs an image anchor with a text anchor; glyph drops the text. Both
-   modes keep the full aspect as the accessible name. */
+/* Compact pairs an image anchor with a text anchor; glyph drops the text. */
 :global(html[data-aspect-display='compact']) {
   .mark {
     display: block;
@@ -254,8 +259,7 @@ span.aspect {
   .label {
     display: none;
   }
-  /* PoC: the whole pill, mark included, rests at 90% and pops to full size on
-     hover; the layout box is untouched so the prose around it does not reflow. */
+  /* PoC */
   .aspect {
     @include rhombus;
     /* Square base under the rotation; the bevelled pill of the text modes
@@ -277,17 +281,11 @@ span.aspect {
 
 /* ============================================
    COMPRESSED CAROUSEL
-   The box never changes size. Slots are absolutely positioned and moved with
-   transform alone, so unpacking cannot reflow the prose around it — only the
-   track's own scroll width changes, and the carousel contains it.
-============================================ */
-/* The controls sit outside the scrolling box. Inside it they would scroll away
-   with the pills and be erased by the edge mask. */
+   The box never changes size. */
+/* The controls sit outside the scrolling box. */
 .carouselWrap {
   /* Declared here so the controls can size themselves to the same box as the
-     carousel. A glyph's centre is `top: 4px + --size / 2`, which is exactly half
-     of `--size + 8px` — so a button centred in an equal-height column shares the
-     glyphs' axis by construction rather than by a tuned offset. */
+     carousel. */
   --size: 32px;
 
   display: flex;
@@ -312,23 +310,16 @@ span.aspect {
   display: flex;
 }
 
-/* Solid-surface icon button. `background` is forced because an unstyled button
-   inherits the global primary fill, which lands green on a pill row and reads as
-   a call to action rather than a control. The badge's deselect does the same. */
+/* Solid-surface icon button. */
 .carousel {
   --step-packed: 7px;
   --step-open: 42px;
   --step: var(--step-packed);
-  /* Room for the leading edge fade. It used to be 22px to clear the old count
-     overlay; with the controls lifted out, that much is just a hole between the
-     button and the first glyph. */
+  /* Room for the leading edge fade. */
   --inset: 6px;
 
   /* A rhombus glyph is √2 taller than its slot, and the alternating offsets add
-     to that. `overflow-y: visible` cannot coexist with the horizontal scroll,
-     so the box bleeds vertically instead: padding gives the corners room inside
-     the scrollport and the matching negative margin keeps the outer footprint
-     at `--size + 8px`, so the row never grows. */
+     to that. */
   --bleed: 0.5rem;
 
   position: relative;
@@ -367,20 +358,22 @@ span.aspect {
 .track {
   position: relative;
   height: 100%;
-  /* The left inset is part of the scroll width. Leaving it out clipped the last
-     glyph by exactly that much once the track was scrolled to the end. */
+  /* The left inset is part of the scroll width. */
   width: calc(
     var(--inset) + (var(--count) - 1) * var(--step) + var(--size) + 14px
   );
   transition: width 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* `--z` arrives inline and descends with the track, so the packed stack
+   shingles left over right. */
 .slot {
   position: absolute;
   top: 4px;
   left: var(--inset);
   width: var(--size);
   height: var(--size);
+  z-index: var(--z);
   transform: translate3d(calc(var(--index) * var(--step)), 0, 0) scale(0.86);
   transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
   transition-delay: calc(var(--index) * 8ms);
@@ -390,14 +383,100 @@ span.aspect {
     transform: translate3d(calc(var(--index) * var(--step)), 0, 0) scale(1);
   }
 
-  /* PoC: alternate slots ride 0.15rem above and below the axis. `translate` is
-     its own property, so the packing transform above is untouched. */
+  /* Above every sibling, packed or open */
+  &:hover,
+  &:focus-within {
+    z-index: calc(var(--count) + 1);
+  }
+
+  /* PoC */
   &:nth-child(even) {
     translate: 0 -0.15rem;
   }
 
   &:nth-child(odd) {
     translate: 0 0.15rem;
+  }
+}
+
+/* The controls lead the stack, which reads correctly while the carousel opens
+   to the right. Set at the right edge of a heading it opens toward the text
+   instead, so the pair swaps and the fade swaps with it. */
+.carouselWrap[data-flip='true'] {
+  flex-direction: row-reverse;
+
+  .carousel {
+    mask-image: linear-gradient(
+      270deg,
+      transparent,
+      #000 var(--inset),
+      #000 calc(100% - 18px),
+      transparent
+    );
+  }
+}
+
+/* Set into a heading, the carousel has a line to live in rather than a row of
+   its own. Every measure it is built from is a step of one size, so they all
+   come down together and the box keeps its proportions. */
+.carouselWrap[data-size='xs'] {
+  --size: 15px;
+
+  flex: 0 1 auto;
+  gap: 0.1rem;
+
+  .controls {
+    height: calc(var(--size) + 4px);
+  }
+
+  .carousel {
+    --step-packed: 4px;
+    --step-open: 19px;
+    --inset: 3px;
+    --bleed: 0.22rem;
+
+    height: calc(var(--size) + 4px + 2 * var(--bleed));
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 var(--inset),
+      #000 calc(100% - 8px),
+      transparent
+    );
+  }
+
+  &[data-flip='true'] .carousel {
+    mask-image: linear-gradient(
+      270deg,
+      transparent,
+      #000 var(--inset),
+      #000 calc(100% - 8px),
+      transparent
+    );
+  }
+
+  .track {
+    width: calc(
+      var(--inset) + (var(--count) - 1) * var(--step) + var(--size) + 7px
+    );
+  }
+
+  .slot {
+    top: 2px;
+
+    /* The alternating lift is a share of the glyph, so at this size it is a
+       nudge rather than the stagger it is in a row. */
+    &:nth-child(even) {
+      translate: 0 -0.07rem;
+    }
+
+    &:nth-child(odd) {
+      translate: 0 0.07rem;
+    }
+  }
+
+  .count {
+    font-size: 0.5rem;
   }
 }
 
@@ -409,9 +488,9 @@ span.glyph {
   --aspect-fg: var(--aspect-default);
 
   @include rhombus;
-  /* PoC: the whole glyph, mark included, at 80%. `scale` leaves the layout box
-     alone, so the slot and the carousel keep their height. */
+  /* PoC */
   scale: 0.8;
+  position: relative;
   display: grid;
   place-items: center;
   box-sizing: border-box;
@@ -437,6 +516,7 @@ span.glyph {
     background: color-mix(in oklab, var(--aspect-fg) 30%, var(--color-bg));
     border-color: var(--aspect-fg);
     scale: 0.9;
+    z-index: 1;
   }
 
   /* The ring belongs to keyboard focus alone; folding it into the hover rule
@@ -446,6 +526,7 @@ span.glyph {
     border-color: var(--aspect-fg);
     outline: var(--outline-width) solid var(--aspect-fg);
     outline-offset: 2px;
+    z-index: 1;
   }
 }
 
@@ -457,10 +538,7 @@ span.glyph[data-group='myth'] {
   box-shadow: 0 0 0 1px color-mix(in oklab, var(--aspect-fg) 55%, var(--color-bg));
 }
 
-/* Floats under the button rather than sitting at the far edge: at the edge it
-   was the one thing a reader had to look away from the row to find, and the
-   pills covered it the moment the row unpacked. Absolute so it can never push
-   the button out of line with the glyphs. */
+/* Floats under the button rather than sitting at the far edge */
 .count {
   position: absolute;
   top: calc(100% + 1px);
@@ -490,8 +568,7 @@ span.glyph[data-group='myth'] {
   }
 }
 
-/* `AspectGlyphs`: a plain glyph row outside the carousel. Each glyph is its
-   own 26px slot; a capped row folds the rest into a `+n` marker. */
+/* `AspectGlyphs` */
 .glyphs {
   display: inline-flex;
   flex-wrap: wrap;
@@ -520,8 +597,7 @@ span.glyph[data-group='myth'] {
   cursor: help;
 }
 
-/* Inline `<Aspect>` in prose: its own display mode wins over the site-wide
-   setting, and it sits on the text baseline. */
+/* Inline `<Aspect>` in prose */
 .inline {
   display: inline-flex;
   align-items: center;
@@ -578,12 +654,7 @@ span.glyph[data-group='myth'] {
   }
 }
 
-/* ---- Constrained hue: hover vibrancy ----
-   The rest colour is greyed at the root. Every aspect token redirects through
-   --aspect-constrained, so re-pointing that one property on the hovered pill
-   re-resolves the whole chain — including the inline --aspect-fg, which holds
-   a var() reference rather than a colour. Both values live in globals.scss;
-   this rule only chooses between them. */
+/* ---- Constrained hue */
 :global(html[data-constrained-hue='true']) {
   a.aspect:hover,
   button.aspect:hover,

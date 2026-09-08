@@ -2,7 +2,7 @@
  * Character Sheet State Types and Action Schema
  *
  * @fileoverview Defines typed state shapes and action types for the character sheet
- * persistent state system, stored via fetchPersistentData / storePersistentData.
+ * persistent state system
  *
  * @module lib/types/characterSheet
  * @version 1.0.0

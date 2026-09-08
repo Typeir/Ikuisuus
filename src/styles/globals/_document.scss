@@ -4,14 +4,7 @@
    GLOBAL BODY RESET AND TRANSITION
 ============================================ */
 html {
-  /* Reference density: 14px base against the 16px browser default. Stated as
-     a percentage, not `14px`, so a reader who raised their browser default
-     keeps the increase. Every rem scales with this — Tailwind spacing and the
-     prose scale included. Px values in component SCSS do not.
-
-     `--text-scale-user` is the reader's multiplier over that base, written to
-     the root by PersistentUiContext. Unset it reads 1, so the base ships as
-     the default with no preference stored. */
+  /* Reference density */
   --text-scale-base: 87.5%;
   font-size: calc(var(--text-scale-base) * var(--text-scale-user, 1));
   overflow-x: hidden;

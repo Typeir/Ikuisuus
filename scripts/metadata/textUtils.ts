@@ -8,6 +8,11 @@
  * @since 3.0.0
  */
 
+import { stripDiceWrappers } from '@/lib/md/diceExpressionParser';
+import {
+  KEYWORD_EXPR_REGEX,
+  parseKeywordReference,
+} from '@/lib/md/keywordExpressionParser';
 import { toPlainMeasure } from '@/lib/units/nativeMeasure';
 import path from 'path';
 import { SLUG, TEXT } from './parsingPatterns';
@@ -23,7 +28,26 @@ export function clean(text: string): string {
 }
 
 /**
- * Cleans text for atomic plaintext fields: strips markdown, link syntax, and authoring macros.
+ * Resolves every `[# kw:… #]` block to the words the page prints in its place.
+ *
+ * @description The block is a hover, not text
+ *
+ * @param {string} text - Text that may carry keyword blocks
+ * @returns {string} Text with each block replaced by its display words
+ */
+function resolveKeywords(text: string): string {
+  const pattern = new RegExp(KEYWORD_EXPR_REGEX.source, 'g');
+  return text.replace(pattern, (full, inner: string) => {
+    const reference = parseKeywordReference(inner);
+    return reference ? reference.display : full;
+  });
+}
+
+/**
+ * Cleans text for atomic plaintext fields
+ *
+ * @description Dice and keyword blocks are authoring macros too, so they are
+ * reduced to the text they render as
  *
  * @param {string} text - Input string for an atomic field
  * @returns {string} Cleaned string, free of markdown and of authoring macros
@@ -34,7 +58,9 @@ export function plain(text: string): string {
     '$1',
   );
 
-  return toPlainMeasure(withoutMarkup).trim();
+  return toPlainMeasure(
+    resolveKeywords(stripDiceWrappers(withoutMarkup)),
+  ).trim();
 }
 
 /**

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests for the creature spell list.
  * @description One row per declared slug, in order, filled from the spell
- * rows the hook returns, with the page's own columns after the metadata ones.
+ * rows the hook returns
  *
  * @module tests/unit/src/modules/library/presentation/components/slots/SpellList.test
  * @version 0.1.0

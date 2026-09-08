@@ -1,8 +1,7 @@
 /**
  * @fileoverview Tests for the bloodline converter.
  * @description A bloodline gains a `<Bloodline>` wrapper carrying its boon
- * budget, `<Feature>` around each core feature, and `<Feature collapsible>` in
- * place of each boon's `<Collapsible>`.
+ * budget, `<Feature>` around each core feature
  *
  * @module tests/unit/scripts/content/migrate-bloodline.test
  * @version 0.1.0

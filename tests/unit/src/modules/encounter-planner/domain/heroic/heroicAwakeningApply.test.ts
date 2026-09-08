@@ -61,7 +61,7 @@ function makeCombatant(
 
 /**
  * Mock Math.random to produce a high fate die (d20 = 20, passes any DC)
- * followed by safe affix rolls (d10 = 6, never hits "Reroll").
+ * followed by safe affix rolls (d10 = 6
  */
 function mockHighRolls(): void {
   vi.spyOn(Math, 'random').mockReturnValueOnce(0.99).mockReturnValue(0.5);

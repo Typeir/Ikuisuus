@@ -1,8 +1,7 @@
 /**
  * Mounted Guard
  *
- * @fileoverview Client-mount guard: false during SSR and hydration render,
- * true after the first client effect.
+ * @fileoverview Client-mount guard
  *
  * @module lib/hooks/useMounted
  * @version 1.0.0

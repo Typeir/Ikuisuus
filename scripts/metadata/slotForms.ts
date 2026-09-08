@@ -1,10 +1,7 @@
 /**
  * @fileoverview Reads slot-form content back into the line shapes the metadata
  * generators parse.
- * @description The generators read v1 markdown: a spell's blockquote header,
- * a monster's tables and bullets, a feat's italic prerequisite, a trinket's
- * bold stat lines, a vocation's core traits table and `## Nth Level – Name`
- * headings.
+ * @description The generators read v1 markdown
  *
  * @module scripts/metadata/slotForms
  * @version 0.1.0
@@ -35,7 +32,7 @@ const OVERCAST_INLINE = /^<Overcast(?:\s+at=(?:"([^"]*)"|'([^']*)'))?>(.*)<\/Ove
 const OVERCAST_OPEN = /^<Overcast(?:\s+at=(?:"([^"]*)"|'([^']*)'))?>\s*$/;
 
 /**
- * Reads the tag that opens on a line: its name, attributes and line span.
+ * Reads the tag that opens on a line
  *
  * @param {string[]} lines - File lines
  * @param {number} start - Line the tag opens on
@@ -88,7 +85,7 @@ export function splice(lines: string[], start: number, end: number, replacement:
 }
 
 /**
- * Ordinal of a whole number: 1st, 2nd, 3rd, 4th, 11th, 21st.
+ * Ordinal of a whole number
  *
  * @param {number} value - Number
  * @returns {string} Ordinal
@@ -125,8 +122,7 @@ export function findTag(lines: string[], name: string, from = 0): number {
 }
 
 /**
- * Blanks every line that is only a block tag: `<Trait …>`, `</Action>`,
- * `<Feature …>`, `</Overcast>` and the like.
+ * Blanks every line that is only a block tag
  *
  * @param {string[]} lines - File lines, mutated
  */
@@ -198,7 +194,7 @@ export function unslotSpell(text: string): string {
 
 /**
  * Writes every `<Attack>` tag back as the accuracy sentence the generator
- * reads, and blanks the `<SpellList>` columns and rows around it.
+ * reads
  *
  * @param {string[]} lines - File lines, mutated
  */
@@ -220,7 +216,7 @@ function restoreAttacks(lines: string[]): void {
 }
 
 /**
- * Tier bonus a challenge rating implies: one step per three, floor one.
+ * Tier bonus a challenge rating implies
  *
  * @param {string} challenge - Rating text
  * @returns {number | null} Bonus, or null when unreadable
@@ -357,10 +353,7 @@ export function unslotFeat(text: string): string {
  * Unwraps the blocks a bloodline conversion added.
  *
  * @description The generator reads the Core Features values and the boon
- * budget off the slots themselves, so only the boons need restoring: it
- * delimits one from the next by the collapsible around it, so a collapsible
- * feature is written back as `<Collapsible>` while every other added tag is
- * blanked in place.
+ * budget off the slots themselves
  *
  * @param {string} text - File text
  * @returns {string} Text the boon parser reads as it always did

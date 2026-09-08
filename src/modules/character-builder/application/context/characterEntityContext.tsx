@@ -15,7 +15,7 @@ import type { CharacterEntity } from '@/modules/character-builder/domain/charact
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
 /**
- * Context payload: the entity plus an optional patcher.
+ * Context payload
  *
  * @interface CharacterEntityContextValue
  * @property {CharacterEntity} entity - The canonical character JSON

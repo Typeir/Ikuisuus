@@ -1,7 +1,5 @@
 /**
- * @fileoverview Button mixins. Primary is a bare `<button>` styled by the global
- * rule in `globals/_base-elements.scss`; every other variant is distributed as a
- * class in `src/styles/buttons.module.scss`.
+ * @fileoverview Button mixins.
  *
  * @module styles/mixins-button
  */
@@ -36,11 +34,7 @@
 }
 
 /**
- * Canonical button shape: transparent fill, 1px border and glyph in `$color`,
- * hover washing that color in at low alpha.
- *
- * Hover must not set `color` — the global primary is an element selector and
- * would repaint every variant's label.
+ * Canonical button shape
  */
 @mixin button-outline(
   $color,
@@ -67,15 +61,14 @@
 }
 
 /**
- * Secondary button. The canonical outline in `--color-emphasis`.
+ * Secondary button.
  */
 @mixin button-secondary($padding: 0.5rem 1rem, $font-size: 0.85rem) {
   @include button-outline(var(--color-emphasis), $padding, $font-size);
 }
 
 /**
- * Ghost button — no background or border at rest. Text and icon only.
- * Icon color animation is handled by the consumer via svg selectors.
+ * Ghost button — no background or border at rest.
  */
 @mixin button-ghost($font-size: 0.8rem) {
   background: none;
@@ -92,8 +85,7 @@
 }
 
 /**
- * Icon-only button — no background, no border, no text. Purely visual icon target.
- * Color animation is handled by the consumer via svg/color selectors.
+ * Icon-only button — no background, no border, no text.
  */
 @mixin button-icon {
   background: none;
@@ -110,20 +102,15 @@
 
 /**
  * Press effect — slight downward translate on active state.
- * Defined in _mixins-layout.scss. Referenced here for documentation only.
- * Use via the mixins barrel: `@use 'mixins' as *`.
  */
 
 /* ============================================================
    GAP ARCHETYPES
    Variants that recur across the app but fit none of the canonical
-   mixins above. Each owns its hover background so the global button
-   hover cannot show through.
-============================================================ */
+   mixins above. */
 
 /**
  * Outline danger — transparent with danger border+text, fills danger on hover.
- * For destructive actions that shouldn't shout at rest (remove/delete/logout).
  */
 @mixin button-danger-outline($padding: 0.3rem 0.65rem, $font-size: 0.8rem) {
   padding: $padding;
@@ -148,7 +135,7 @@
 
 /**
  * Bordered icon button — resting border + surface fill, accent border/text on
- * hover (no fill swap). For dense +/- / edit / remove controls in tables/rows.
+ * hover (no fill swap).
  */
 @mixin button-icon-bordered($size: 1.6rem) {
   display: inline-flex;
@@ -178,8 +165,7 @@
 }
 
 /**
- * Segmented tab — transparent at rest, subtle fill on hover. Pair with
- * `button-tab-active` for the selected state.
+ * Segmented tab — transparent at rest, subtle fill on hover.
  */
 @mixin button-tab($padding: 0.4rem 0.8rem, $font-size: 0.8rem) {
   padding: $padding;
@@ -200,7 +186,7 @@
   }
 }
 
-/** Selected state for `button-tab`. Apply alongside the tab class. */
+/** Selected state for `button-tab`. */
 @mixin button-tab-active {
   background: var(--color-surface);
   color: var(--color-accent);
@@ -214,7 +200,6 @@
 
 /**
  * Full-width row button — transparent, left-aligned, grey fill on hover.
- * For list rows / expandable headers / menu items rendered as `<button>`.
  */
 @mixin button-row($padding: 0.5rem) {
   display: flex;
@@ -234,10 +219,7 @@
 }
 
 /**
- * Still button — pins the global `button` hover motion. The base rule scales
- * every button 1.05 on hover with a springy bezier; wide controls (triggers,
- * comboboxes, list rows) must not move, so this holds transform at none in
- * every state and normalises weight. Include in any button that is not a CTA.
+ * Still button — pins the global `button` hover motion.
  */
 @mixin button-still {
   transform: none;
@@ -252,7 +234,6 @@
 
 /**
  * Field trigger — full-width bordered control that opens a menu/popover.
- * Accent border on hover; background is held explicitly so it never flips green.
  */
 @mixin button-field-trigger($padding: 0.4rem 0.6rem, $font-size: 0.85rem) {
   @include button-still;

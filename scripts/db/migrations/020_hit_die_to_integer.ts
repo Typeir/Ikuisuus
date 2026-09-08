@@ -33,8 +33,7 @@ async function columnType(
 }
 
 /**
- * Applies migration 020: rewrites `vocations.hit_die` as an integer face count,
- * salvaging the digits of each existing notation string.
+ * Applies migration 020
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}
@@ -53,8 +52,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 020: restores `vocations.hit_die` to `d{faces}` notation
- * held as text.
+ * Reverts migration 020
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}

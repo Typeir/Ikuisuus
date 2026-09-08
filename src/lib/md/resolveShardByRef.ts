@@ -1,8 +1,6 @@
 /**
  * @fileoverview Shard Resolution
- * @description One pipeline for every shard address: a target names a file, a
- * route, and how to derive its entries; resolution reads that one file and
- * extracts the matching sections.
+ * @description One pipeline for every shard address
  *
  * @module lib/md/resolveShardByRef
  * @version 2.0.0
@@ -88,8 +86,7 @@ function headingFor(body: string, anchor: string): string | null {
 }
 
 /**
- * A resolvable shard address: the file holding the prose, the route serving
- * it, and how its entries derive from the content.
+ * A resolvable shard address
  *
  * @interface ShardTarget
  * @property {string} file - Content file path as the metadata stamped it
@@ -162,8 +159,7 @@ export async function resolveTargetShards(
 }
 
 /**
- * Target for a keyword reference: the graph names the producing file, and the
- * entry is the heading bearing the reference's term.
+ * Target for a keyword reference
  *
  * @param {string} reference - Normalised reference, `namespace;value` or a bare value
  * @param {string} locale - Content locale

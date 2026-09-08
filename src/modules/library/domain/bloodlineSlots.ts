@@ -10,10 +10,9 @@
  */
 
 /**
- * Header slots of a bloodline: the two Core Features rows.
+ * Header slots of a bloodline
  *
- * @description Every one is written as a child element, never an attribute: a
- * cell can carry a list or a `<Tooltip>`, and a quoted attribute holds neither.
+ * @description Every one is written as a child element, never an attribute
  */
 export const BLOODLINE_SLOTS = {
   abilityScores: 'AbilityScores',

@@ -41,7 +41,7 @@ export interface SourceParseResult {
 
 /**
  * Extractor names a file may declare in frontmatter (`extractor: spell`),
- * for content living outside its kind's folder (adventures, one-offs).
+ * for content living outside its kind's folder (adventures
  */
 const DECLARED_EXTRACTORS: Readonly<Record<string, SourceContentKind>> = {
   monster: 'monster',

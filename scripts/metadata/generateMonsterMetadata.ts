@@ -359,8 +359,7 @@ function findStatBlockPositions(
 }
 
 /**
- * A stat block anchor: the `_Size Type_` line of a creature, or the heading of
- * a quoted object block (AC/HP table, no creature line).
+ * A stat block anchor
  *
  * @property {number} lineIndex - Anchor line
  * @property {boolean} isBlockquote - Block lives inside a `>` quote
@@ -373,9 +372,7 @@ interface StatBlockPosition {
 }
 
 /**
- * True when `idx` is the heading of a quoted object block: a `> #### Title`
- * heading followed within a few quoted lines by an Armor Class table row and
- * no `_Size Type_` creature line in between.
+ * True when `idx` is the heading of a quoted object block
  *
  * @param {string[]} lines - All file lines
  * @param {number} idx - Candidate heading line
@@ -941,9 +938,7 @@ export function parseMonsterSource(
 }
 
 /**
- * Start of the statlet containing `line`: walks back over `>` lines to the
- * nearest quoted heading (the statlet's title) or the quote's first line, so
- * several statlets sharing one quote each get their own range.
+ * Start of the statlet containing `line`
  *
  * @param {string[]} lines - All file lines
  * @param {number} line - A line inside the quote
@@ -972,8 +967,7 @@ function blockquoteEnd(lines: string[], start: number): number {
 }
 
 /**
- * Parses a quoted object block (plating, blade, drone): heading title, AC/HP/
- * damage-threshold header row, tags from the block text.
+ * Parses a quoted object block (plating, blade, drone)
  *
  * @param {string[]} lines - All file lines
  * @param {number} start - Heading line of the block
@@ -1056,16 +1050,20 @@ function parseQuotedBlockFeatures(
   for (const block of blocks) {
     const start = block.blockStart as number;
     const end = block.blockEnd as number;
-    const dequoted = lines.map((l, i) =>
-      i >= start && i < end ? l.replace(STAT_CONTENT.blockquoteMarker, '') : l,
-    );
+    /* Lines above the block still say which section it sits in, so they stay;
+       everything from its end is blanked, since the block's last feature runs
+       forward until something stops it and would otherwise read the next stat
+       block's tables and report their saves and damage as its own. Blanking in
+       place keeps every line number, so the source ranges stay true. */
+    const dequoted = lines.map((l, i) => {
+      if (i >= end) return '';
+      return i >= start ? l.replace(STAT_CONTENT.blockquoteMarker, '') : l;
+    });
     const feats = parseMonsterFeaturesSource(dequoted.join('\n'), baseSlug, {
       statlet: { start, end },
     });
     for (const f of feats) {
       if (!f.source || f.source.start < start || f.source.start >= end) continue;
-      /* The last feature of a statlet otherwise runs to the section end,
-         past the quote, and picks up the next block's tags. */
       f.source.end = Math.min(f.source.end, end);
       out.push(f);
     }
@@ -1111,9 +1109,7 @@ function rollUpSubRecordTags(results: Record<string, unknown>[]): void {
 }
 
 /**
- * Tag groups that describe the record itself, never its parent: `meta:*`
- * (an object statlet does not make the sheet an object) and `rarity:*`
- * (derived from each record's own challenge rating).
+ * Tag groups that describe the record itself, never its parent
  */
 const ROLL_UP_EXCLUDED = /^(meta|rarity):/;
 

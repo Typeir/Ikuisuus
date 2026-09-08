@@ -1,8 +1,6 @@
 /**
  * @fileoverview Unit tests for Shared Feature Token Recognizers
- * @description Validates the 10 shared token recognizer functions: dice,
- * damage, DC, save, range, resource, recharge, action, duration, and
- * template recognizers.
+ * @description Validates the 10 shared token recognizer functions
  *
  * @version 1.0.0
  * @author Typeir

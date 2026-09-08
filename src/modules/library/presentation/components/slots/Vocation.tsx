@@ -1,8 +1,6 @@
 /**
  * @fileoverview Vocation and specialization card.
- * @description The core traits table as the page wrote it: an optional
- * heading, then one trait per row with its description, the labels the
- * vocation's own.
+ * @description The core traits table as the page wrote it
  *
  * @module modules/library/presentation/components/slots/Vocation
  * @version 0.3.0
@@ -29,7 +27,7 @@ import { capitalize } from './text';
 import { collectFeatureHeadings, VocationFeaturesContext } from './vocationFeatures';
 
 /**
- * Props for the card: one optional prop per slot, plus the body.
+ * Props for the card
  */
 export type VocationProps = SlotProps<VocationSlotName> & {
   children?: ReactNode;
@@ -41,7 +39,7 @@ export type VocationProps = SlotProps<VocationSlotName> & {
 type VocationKind = 'vocation' | 'specialization';
 
 /**
- * A vocation's name as its slug reads: hyphens to spaces, each word capitalised.
+ * A vocation's name as its slug reads
  *
  * @param {string} slug - Vocation slug
  * @returns {string} Display name
@@ -141,7 +139,7 @@ const Vocation: React.FC<VocationProps> = (props) => (
 Vocation.displayName = 'Vocation';
 
 /**
- * Specialization card component: the vocation card under its own tag.
+ * Specialization card component
  *
  * @param {VocationProps} props - Card props
  * @returns {JSX.Element} The specialization section

@@ -17,8 +17,7 @@
  * @returns {string} Text with inline markdown markers removed
  *
  * @description
- * Applied in order:
- * 1. `[text](url)` links collapse to their `text`.
+ * Applied in order
  *
  * @example
  * stripInlineMarkdown('**Light**, Medium, **Heavy**');

@@ -68,7 +68,7 @@ export function getSupportedOgTypes(): string[] {
 
 /**
  * Resolves and returns the root-relative public image path for a content
- * entity, following the same convention used by `resolvePageImage`.
+ * entity
  *
  * @param {string} type - Content type key (e.g. `"monsters"`)
  * @param {string} slug - Entity slug (e.g. `"abominable-avian"`)

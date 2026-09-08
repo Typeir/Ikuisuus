@@ -64,7 +64,7 @@ export interface SpellRepository {
   getBySlug(locale: string, slug: string): Promise<SpellMetadata | null>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+/** @property {string} metadataBackend - Active backend */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**

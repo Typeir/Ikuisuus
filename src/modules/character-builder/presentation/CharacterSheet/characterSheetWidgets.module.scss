@@ -1,7 +1,6 @@
 /**
  * Character Sheet widget styles — skills table, attacks table, notes,
- * shard display, boon picker, feature viewer.
- * All colors via CSS variables — no color literals.
+ * shard display
  */
 
 @use '@/styles/mixins-disabled' as *;
@@ -38,8 +37,7 @@
     letter-spacing: 0.06em;
   }
 }
-/* Horizontal safety rail: on phones the four-input attack rows keep a usable
-   width and scroll sideways instead of crushing into slivers. */
+/* Horizontal safety rail */
 .attacksScrollGuard {
   position: relative;
   min-width: 0;

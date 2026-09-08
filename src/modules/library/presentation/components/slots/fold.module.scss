@@ -1,0 +1,79 @@
+@use 'mixins' as *;
+
+/* The disclosure adds no ground of its own: the division already has a heading,
+   a rule and a pip, and a panel around it would say the same thing twice. */
+.fold {
+  display: block;
+
+  /* Opening is a movement, not a jump. `interpolate-size` is what lets the
+     panel run to its own height instead of a number guessed in the stylesheet;
+     where it is not supported the panel still opens, just at once. */
+  interpolate-size: allow-keywords;
+
+  &::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size 0.4s var(--springy-bezier),
+      opacity 0.25s ease,
+      content-visibility 0.4s allow-discrete;
+  }
+
+  &[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+/* The arrow sits where the sidebar's does: at the far edge of the row. */
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  /* The heading keeps its own margins, so a folded division sits at the same
+     rhythm as an unfolded one. */
+  > :is(h1, h2, h3, h4, h5, h6) {
+    flex: 1 1 auto;
+  }
+
+  &:hover .arrow,
+  &:focus-visible .arrow {
+    color: var(--color-actionable);
+  }
+}
+
+/* Fixed square at the sidebar's size, so turning it moves nothing around it. */
+.arrow {
+  flex: 0 0 auto;
+  width: 3.15rem;
+  height: 3.15rem;
+  color: var(--color-accent);
+  object-fit: contain;
+  transition:
+    rotate 0.4s var(--springy-bezier),
+    color 0.3s ease;
+}
+
+.fold[open] > .summary .arrow {
+  rotate: 90deg;
+}
+
+.body {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow,
+  .fold::details-content {
+    transition: none;
+  }
+}

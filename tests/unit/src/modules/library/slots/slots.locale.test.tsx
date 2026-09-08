@@ -1,5 +1,5 @@
 /**
- * @fileoverview Slot card T12: labels out of content.
+ * @fileoverview Slot card T12
  * @description Slot labels come from the message catalogue, so the fixture
  * stays locale-free; `en` carries one label per schema row.
  *

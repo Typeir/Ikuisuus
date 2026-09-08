@@ -48,7 +48,7 @@ export interface MonsterRepository {
 
   /**
    * Returns every stat block that shares a file slug — all creatures of a
-   * multi-stat-block sheet, in file order.
+   * multi-stat-block sheet
    *
    * @param {string} locale - Locale code
    * @param {string} slug - File-level monster slug
@@ -57,7 +57,7 @@ export interface MonsterRepository {
   getAllBySlug(locale: string, slug: string): Promise<MonsterMetadata[]>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+/** @property {string} metadataBackend - Active backend */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**

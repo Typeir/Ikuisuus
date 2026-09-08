@@ -1,5 +1,5 @@
 /**
- * @fileoverview Slot card T15: truncateMdx and search prose.
+ * @fileoverview Slot card T15
  *
  * @module tests/unit/src/modules/library/slots/slots.search.test
  * @version 0.3.0

@@ -1,8 +1,6 @@
 /**
  * Character Sheet core layout styles — sheet header, ability scores,
- * combat stats, column grid. Roster styles live in roster/roster.module.scss.
- * Widget styles live in characterSheetWidgets.module.scss.
- * All colors via CSS variables — no color literals.
+ * combat stats
  */
 
 @use '@/styles/mixins-button' as *;
@@ -56,8 +54,7 @@
 
 /** =====================================================================
  * Stats Row — abilities (left), combat stats + grit (right)
- * Uses space-between to push groups to opposite sides.
- * ===================================================================== */
+ * Uses space-between to push groups to opposite sides. */
 
 .statsRow {
   display: flex;
@@ -89,8 +86,7 @@
 }
 
 /** =====================================================================
- * Combat Stats Row — HP, AC, Initiative, Speed, Tier, Grit
- * ===================================================================== */
+ * Combat Stats Row — HP */
 
 .combatStatsRow {
   display: flex;

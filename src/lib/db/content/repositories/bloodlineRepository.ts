@@ -37,7 +37,7 @@ export interface BloodlineRepository {
   getBySlug(locale: string, slug: string): Promise<BloodlineMetadata | null>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+/** @property {string} metadataBackend - Active backend */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Boon Picker Component
  * @description Fetches the bloodline's boon list from `/api/bloodlines` and renders
- * selectable boon cards with BP cost badges, a BP budget meter, and search
- * filtering.
+ * selectable boon cards with BP cost badges
  *
  * @module modules/character-builder/presentation/builder/boonPicker
  * @version 1.2.0

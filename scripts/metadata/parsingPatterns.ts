@@ -13,7 +13,7 @@ import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
 /**
  * Heading detection patterns.
  *
- * @property {RegExp} h1 - H1 heading: "# Title"
+ * @property {RegExp} h1 - H1 heading
  */
 export const HEADING = {
   h1: /^#\s+/,
@@ -23,8 +23,8 @@ export const HEADING = {
  * Properties section extraction patterns.
  *
  * @property {RegExp} section - "## Properties" section with optional prefix
- * @property {RegExp} bulletItem - Bullet property: "- **Key**: Value"
- * @property {RegExp} weight - Weight value: "2.5 lbs"
+ * @property {RegExp} bulletItem - Bullet property
+ * @property {RegExp} weight - Weight value
  * @property {RegExp} keyBullets - Global key-value bullets
  */
 export const PROPERTIES = {
@@ -54,12 +54,12 @@ export const CHARGES = {
  * Shared text processing patterns for markdown stripping and splitting.
  *
  * @property {RegExp} carriageReturn - Carriage return for stripping
- * @property {RegExp} bold - Capturing bold: "**text**" → group 1 = content
- * @property {RegExp} boldStrip - Non-capturing bold strip: removes "**"
- * @property {RegExp} italic - Italic: "*text*" → group 1 = content
- * @property {RegExp} underscoreItalic - Underscore italic: "_text_" → group 1
- * @property {RegExp} inlineCode - Inline code: "`code`" → group 1
- * @property {RegExp} markdownLink - Markdown link: "[text](url)" → group 1 = text
+ * @property {RegExp} bold - Capturing bold
+ * @property {RegExp} boldStrip - Non-capturing bold strip
+ * @property {RegExp} italic - Italic
+ * @property {RegExp} underscoreItalic - Underscore italic
+ * @property {RegExp} inlineCode - Inline code
+ * @property {RegExp} markdownLink - Markdown link
  * @property {RegExp} markdownFormatChars - Markdown format characters for bulk strip
  * @property {RegExp} underscore - Underscore character strip
  * @property {RegExp} italicWrap - Italic/bold wrappers at start/end of a line

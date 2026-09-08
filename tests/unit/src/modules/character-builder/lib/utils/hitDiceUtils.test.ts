@@ -1,8 +1,7 @@
 /**
  * @fileoverview Hit-dice HP derivation unit tests
  * @description Tests `recalculateHpMax` (legacy frozen-conMod fold) and
- * `deriveHitPoints` / `perLevelGrantBonus` (the live fold: rolled dice + CON × N
- * + passive hp grants, minus the grievous-wound pool).
+ * `deriveHitPoints` / `perLevelGrantBonus` (the live fold
  *
  * @module tests/unit/src/modules/character-builder/lib/utils/hitDiceUtils.test
  * @version 2.0.0

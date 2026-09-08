@@ -30,7 +30,7 @@
 import { LazyPrefetchLink } from '@/lib/components/lazyPrefetchLink';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { SearchField, useScopedSearch } from '@/modules/search';
+import { useScopedSearch } from '@/modules/search';
 import { FilterSelect, NumericInput } from '../../ui';
 import {
   DataTable,
@@ -43,8 +43,10 @@ import {
   filterOptionsFor,
   getCellValue,
   resolveRowHref,
+  rowMatchesAspects,
   rowMatchesColumnFilters,
 } from './metadataTableLogic';
+import { MetadataTableSearch } from './metadataTableSearch';
 import { useAspectsColumn } from './useAspectsColumn';
 
 import type {
@@ -133,10 +135,17 @@ export default function MetadataTable({
   const [filters, setFilters] = useState<FilterState>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [aspectFilters, setAspectFilters] = useState<string[]>([]);
+
+  /** Narrowing the rows invalidates whatever page the reader was on. */
+  const handleSearchChange = useCallback((term: string, aspects: string[]) => {
+    setSearchTerm(term);
+    setAspectFilters(aspects);
+    setCurrentPage(1);
+  }, []);
 
   /**
-   * Index-backed search scope: rows rank against the shared Pagefind index,
-   * intersected with the slugs this table owns.
+   * Index-backed search scope
    */
   const slugOf = useCallback(
     (row: MetadataRow) => getRowSlug(row).split('#')[0],
@@ -155,11 +164,12 @@ export default function MetadataTable({
    * @function filteredData
    * @returns {MetadataRow[]} Filtered array of data rows
    *
-   * @description Global search: Pagefind slug ranks when the index answers
-   * with hits, else case-insensitive substring match on any searchKey.
+   * @description Global search
    */
   const filteredData = useMemo(() => {
     return data.filter((row) => {
+      if (!rowMatchesAspects(row, aspectFilters)) return false;
+
       if (searchTerm) {
         if (ranks && ranks.size > 0) {
           if (!ranks.has(slugOf(row))) return false;
@@ -175,7 +185,16 @@ export default function MetadataTable({
 
       return rowMatchesColumnFilters(row, filters, columns);
     });
-  }, [data, filters, searchTerm, ranks, slugOf, columns, searchKeys]);
+  }, [
+    data,
+    filters,
+    aspectFilters,
+    searchTerm,
+    ranks,
+    slugOf,
+    columns,
+    searchKeys,
+  ]);
 
   /**
    * Sorts filtered dataset by current sort state.
@@ -237,7 +256,7 @@ export default function MetadataTable({
   );
 
   /**
-   * Cycles sort state on column header click: asc → desc → clear.
+   * Cycles sort state on column header click
    *
    * @function handleSort
    * @param {string} key - Column key to sort by
@@ -315,6 +334,7 @@ export default function MetadataTable({
           </span>
         ),
         className: column.sortable !== false ? styles.sortable : undefined,
+        width: column.width,
         onHeaderClick:
           column.sortable !== false ? () => handleSort(column.key) : undefined,
         sort:
@@ -396,18 +416,13 @@ export default function MetadataTable({
     <div
       className={`${styles.metadataTable} ${size === 's' ? styles.sizeS : ''}`}>
       <div className={styles.controls}>
-        <div className={styles.searchBar}>
-          <SearchField
-            value={searchTerm}
-            onChange={(value) => {
-              setSearchTerm(value);
-              setCurrentPage(1);
-            }}
-            placeholder={t('searchPlaceholder')}
-            ariaLabel={t('searchPlaceholder')}
-            loading={searchLoading}
-          />
-        </div>
+        <MetadataTableSearch
+          value={searchTerm}
+          aspects={aspectFilters}
+          onChange={handleSearchChange}
+          locale={locale}
+          loading={searchLoading}
+        />
 
         <div className={styles.filters}>
           {columns
@@ -433,6 +448,7 @@ export default function MetadataTable({
                     options={getSelectOptions(column)}
                     placeholder={tCommon('all')}
                     ariaLabel={column.label}
+                    searchable={column.searchableFilter}
                     size='sm'
                   />
                 )}
@@ -503,7 +519,11 @@ export default function MetadataTable({
       <DataTable
         columns={tableColumns}
         rows={tableRows}
-        className={styles.table}
+        className={
+          ownColumns.some((column) => column.width)
+            ? `${styles.table} ${styles.fixedLayout}`
+            : styles.table
+        }
         wrapperClassName={styles.tableWrapper}
       />
 

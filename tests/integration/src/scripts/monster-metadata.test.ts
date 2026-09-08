@@ -1,6 +1,6 @@
 /**
  * @fileoverview Integration tests for parseMonsterFile covering single monsters,
- * multi-stat-block files, blockquote spawn statlets, and extreme stat values.
+ * multi-stat-block files, blockquote spawn statlets
  *
  * @module tests/integration/monster-metadata
  * @version 1.0.0

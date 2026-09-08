@@ -1,7 +1,6 @@
 /**
  * @fileoverview Nested-heading Extraction Tests
- * @description Covers the case heading level alone cannot resolve: a heading
- * that sits inside a component.
+ * @description Covers the case heading level alone cannot resolve
  *
  * @module tests/unit/src/lib/utils/contentShardResolverNesting.test
  * @version 1.0.0

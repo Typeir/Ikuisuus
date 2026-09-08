@@ -1,15 +1,7 @@
 /**
- * Skeleton Loader Styles — "static ink, moving light"
+ * Skeleton Loader Styles — "static ink
  *
  * @description Compositor-only skeleton shimmer, dithered-glyph edition.
- *   1. host      — matter color (contextual via --skeleton-matter),
- *                  visible ONLY inside the dither cells of a static
- *                  gradient mask; the gaps are true transparency showing
- *                  the page behind, like a ░▒ console glyph
- *   2. ::before  — dual-tone light strip, moved with transform only,
- *                  likewise confined to the dither cells by the mask
- * The mask is static (painted into the layer once); the only per-frame
- * work is compositing the translating strip.
  */
 
 @use 'mixins' as *;
@@ -57,20 +49,12 @@ $sweep-duration: $skeleton-sweep-duration;
   }
 }
 
-/* Stratum 2: the traveling density band. Strip is 2x host width;
-   translateX percentages resolve against the strip itself, so
-   -100% -> 50% is one full left-to-right pass (see
-   skeleton-sweep-keyframes). The envelope is symmetric — sparse matter
-   swelling to a glint crest (theme-toned via --skeleton-glint-*) and
-   tapering back — so the dither reads sparse -> dense -> sparse as it
-   moves. No will-change:
-   the layer is promoted only while the animation runs. */
+/* Stratum 2 */
 .skeleton::before {
   @include skeleton-strip;
 }
 
-/* Per-cell desync: deterministic cadence variation so neighboring cells
-   don't sweep in lockstep. Negative delays start mid-cycle. */
+/* Per-cell desync */
 .skeleton:nth-child(2n)::before {
   animation-delay: -0.9s;
 }
@@ -125,19 +109,19 @@ $sweep-duration: $skeleton-sweep-duration;
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
-    /* with the band parked, restore full matter so the glyph stays legible */
+    /* with the band parked */
     background: var(--skeleton-matter, var(--skeleton-surface));
   }
 
   .skeleton::before {
-    animation: none; /* band parks off-left: static dithered glyph only */
+    animation: none; /* band parks off-left */
   }
 }
 
 @media (forced-colors: active) {
   .skeleton {
     background: Canvas;
-    border: var(--border-width-xs) solid CanvasText; /* gradients are stripped; keep a shape */
+    border: var(--border-width-xs) solid CanvasText; /* gradients are stripped */
     -webkit-mask-image: none; /* an active mask would dice the border */
     mask-image: none;
   }

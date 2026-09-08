@@ -24,7 +24,7 @@ const VOCATIONS_DIR = join(
 );
 
 /**
- * New tier bonus formula: ceil(level / 3)
+ * New tier bonus formula
  * @param {number} level
  * @returns {number}
  */

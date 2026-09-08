@@ -1,0 +1,34 @@
+/**
+ * Duplicate CSS Attributes Gate
+ *
+ * @fileoverview Thin wrapper that delegates to the canonical
+ * checkDuplicateCssAttributes script and adapts the result for the PAW gate
+ * system.
+ *
+ * @module .paw/gates/duplicateCssAttributes.gate
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
+ */
+
+import { runCheck } from '../../.github/scripts/checkDuplicateCssAttributes.ts';
+import type { GateContext, GateResult, QualityGate } from '../healthCheckTypes';
+import { adaptCheckResult } from './adaptResult.ts';
+
+export const gate: QualityGate = {
+  id: 'duplicate-css-attributes',
+  name: 'Duplicate CSS Attributes',
+  port: 'build-integrity',
+  severity: 'critical',
+  appliesTo: ['.scss', '.css'],
+
+  async check(context: GateContext): Promise<GateResult> {
+    const files = await context.targetFiles(this.appliesTo);
+    const result = await runCheck({
+      rootDir: context.rootDir,
+      files,
+      readFile: (rel) => context.readFile(rel),
+    });
+    return adaptCheckResult(this.id, result);
+  },
+};

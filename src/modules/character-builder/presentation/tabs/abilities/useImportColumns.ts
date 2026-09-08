@@ -1,7 +1,7 @@
 /**
  * @fileoverview Import-tab column configs hook.
  * @description Returns MetadataTable column configurations for the
- * ability import tabs (spells, heirlooms, trinkets, feats).
+ * ability import tabs (spells, heirlooms, trinkets
  *
  * @module modules/character-builder/presentation/tabs/abilities/useImportColumns
  * @version 1.0.0

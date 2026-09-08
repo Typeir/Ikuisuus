@@ -39,7 +39,7 @@ function isFeatureNode(node: ReactNode): node is React.ReactElement<{ level?: un
 }
 
 /**
- * Text of a slot value: a string as is, nodes flattened.
+ * Text of a slot value
  *
  * @param {unknown} value - Slot value
  * @returns {string} Text

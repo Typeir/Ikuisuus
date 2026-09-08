@@ -122,9 +122,9 @@ export interface MonsterSenses {
  *
  * @interface MonsterMetadata
  * @property {string} [subSlug] - Variant identifier for multi-stat-block files (e.g. "albedo", "petal")
- * @property {string} [size] - Creature size (lowercase: "tiny" | "small" | "medium" | "large" | "huge" | "gargantuan")
- * @property {string} [creatureType] - Creature type (lowercase: "aberration" | "beast" | "dragon" etc.)
- * @property {string} [alignment] - Alignment (lowercase: "chaotic evil" | "neutral" etc.)
+ * @property {string} [size] - Creature size (lowercase
+ * @property {string} [creatureType] - Creature type (lowercase
+ * @property {string} [alignment] - Alignment (lowercase
  * @property {MonsterAC} [ac] - Armor Class
  * @property {MonsterHP} [hp] - Hit Points
  * @property {MonsterSpeed} [speed] - Movement Speed

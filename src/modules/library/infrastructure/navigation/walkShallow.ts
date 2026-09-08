@@ -93,8 +93,7 @@ async function countDescendants(
 }
 
 /**
- * Counts the entries of a directory that the sidebar would render as rows:
- * its subdirectories plus its deduplicated markdown files.
+ * Counts the entries of a directory that the sidebar would render as rows
  *
  * @param {DirectorySourceAdapter} adapter - Directory source adapter.
  * @param {string} locale - Locale code.

@@ -10,9 +10,7 @@
   color: var(--color-error);
 }
 
-/* Active `?aspect=` filters. Each is a link that drops itself, so narrowing and
-   widening use the same mechanism the pills do — the URL — rather than local
-   state the address bar would not reflect. */
+/* Active `?aspect=` filters. */
 .activeAspects {
   display: flex;
   flex-wrap: wrap;

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Fix spell casting times: 1 Action → 1 Major Action. */
+/** Fix spell casting times */
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';

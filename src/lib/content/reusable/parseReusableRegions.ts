@@ -170,7 +170,7 @@ export function normaliseHeadings(source: string, offset: number): string {
  *
  * @param {string} raw - The full document source, frontmatter included
  * @returns {ParsedReusable} The parsed result; `isReusable` is false when the
- *   file did not opt in, in which case the other fields are empty
+ *   file did not opt in
  *
  * @example
  * parseReusableRegions('---\nreusable: true\n---\n\n# T\n\nlede\n\n---\n\nbody')

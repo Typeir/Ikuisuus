@@ -1,7 +1,6 @@
 /**
- * @fileoverview Slot card T13: escaping probe.
- * @description Six authored values per spelling: apostrophe, double quote,
- * link, emphasis, literal brace, and a two-line value.
+ * @fileoverview Slot card T13
+ * @description Six authored values per spelling
  *
  * @module tests/unit/src/modules/library/slots/slots.escaping.test
  * @version 0.3.0

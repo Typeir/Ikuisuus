@@ -1,8 +1,7 @@
 /**
  * @fileoverview keywordGraph Unit Tests
  * @description Covers the reverse index built from `produces` / `consumes`, the
- * transitive walk with its cycle guard, and route normalisation across the
- * locale prefix the generator omits.
+ * transitive walk with its cycle guard
  *
  * @module tests/unit/src/lib/db/content/keywordGraph
  * @version 1.0.0

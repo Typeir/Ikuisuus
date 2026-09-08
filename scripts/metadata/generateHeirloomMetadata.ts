@@ -1,7 +1,6 @@
 /**
  * @fileoverview Heirloom Metadata Generator
- * @description Parses .mdx files from the heirlooms directory and extracts metadata:
- * rarity, item types, attunement, weapon properties, and gameplay mechanics tags.
+ * @description Parses .mdx files from the heirlooms directory and extracts metadata
  *
  * @module scripts/metadata/generateHeirloomMetadata
  * @version 3.0.0
@@ -42,6 +41,7 @@ import {
   readLines,
   runGenerator,
   runWithCli,
+  stampAnchors,
   stripMarkdown,
   type SharedData,
   type StorageAdapter,
@@ -98,6 +98,43 @@ function firstParenGroup(text: string): string | undefined {
     }
   }
   return undefined;
+}
+
+/**
+ * Rewrites a "Type, Subtype" base into the parenthesised spelling.
+ *
+ * @param {string} base - Base slot value
+ * @returns {string} Base with its subtype in parentheses
+ */
+function parenthesizeSubtype(base: string): string {
+  if (base.includes('(')) return base;
+  const parts = base.match(TYPE_PARSING.twoPartFormat);
+  return parts ? `${parts[1].trim()} (${parts[2].trim()})` : base;
+}
+
+/**
+ * Splits a property clause on commas that sit outside any parenthesis.
+ *
+ * @param {string} content - Clause text, parentheses already unwrapped
+ * @returns {string[]} Trimmed parts
+ */
+function splitTopLevel(content: string): string[] {
+  const parts: string[] = [];
+  let current = '';
+  let depth = 0;
+  for (let i = 0; i < content.length; i++) {
+    const char = content[i];
+    if (char === '(') depth++;
+    else if (char === ')') depth--;
+    else if (char === ',' && depth === 0) {
+      parts.push(current.trim());
+      current = '';
+      continue;
+    }
+    current += char;
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
 }
 
 /**
@@ -259,21 +296,7 @@ function parseWeaponTitleLine(
 
   const content = firstParenGroup(line);
   if (content !== undefined) {
-    const parts: string[] = [];
-    let current = '';
-    let depth = 0;
-    for (let i = 0; i < content.length; i++) {
-      const char = content[i];
-      if (char === '(') depth++;
-      else if (char === ')') depth--;
-      else if (char === ',' && depth === 0) {
-        parts.push(current.trim());
-        current = '';
-        continue;
-      }
-      current += char;
-    }
-    if (current.trim()) parts.push(current.trim());
+    const parts = splitTopLevel(content);
 
     const properties: string[] = [];
     const mastery: string[] = [];
@@ -433,7 +456,7 @@ function parseWeaponDamageFromProperties(properties: Record<string, string>) {
 
 /**
  * Parses the Type property and extracts weapon properties, weapon type, unique
- * tags, and mastery.
+ * tags
  *
  * @param {Record<string, string>} properties - Parsed properties
  * @param {SharedData} sharedData - Shared data
@@ -469,10 +492,9 @@ function parseTypeProperty(
     (entry) => entry.toLowerCase() === baseType?.toLowerCase(),
   );
 
-  const parenMatch = typeText.match(TYPE_PARSING.parenContent);
-  if (parenMatch) {
-    const content = parenMatch[1];
-    const parts = content.split(LIST.commaSplit);
+  const parenContent = firstParenGroup(typeText);
+  if (parenContent !== undefined) {
+    const parts = splitTopLevel(parenContent);
 
     for (const part of parts) {
       const trimmed = plain(part);
@@ -503,8 +525,12 @@ function parseTypeProperty(
         (entry) => entry.toLowerCase() === lower,
       );
 
+      const qualified = lower.match(TYPE_PARSING.qualifiedProperty)?.[1];
+
       if (weaponProperties.includes(lower)) {
         result.weaponProperties.push(lower);
+      } else if (qualified && weaponProperties.includes(qualified)) {
+        result.weaponProperties.push(qualified);
       } else if (isArmorType) {
         result.uniqueTags.push(`armor:${slug}`);
       } else {
@@ -518,8 +544,8 @@ function parseTypeProperty(
     t.toLowerCase(),
   );
   if (lowerBase && baseCategoryTypes.includes(lowerBase)) {
-    if (parenMatch) {
-      const firstItem = parenMatch[1].split(',')[0].trim();
+    if (parenContent !== undefined) {
+      const firstItem = splitTopLevel(parenContent)[0] ?? '';
       if (firstItem && !TYPE_PARSING.masterySpecialGuard.test(firstItem)) {
         result.weaponType = firstItem;
         result.typeFromParen = true;
@@ -533,7 +559,15 @@ function parseTypeProperty(
 }
 
 /**
+ * Lines that are not prose
+ */
+const NOT_PROSE = /^(?:#|_|>|\||-|```)/;
+
+/**
  * First prose paragraph after the H1 title, with markdown stripped.
+ *
+ * @description An heirloom opens with a `<Heirloom>` tag whose attributes run
+ * over several lines
  *
  * @param {string[]} lines - File lines (trimmed)
  * @returns {string | undefined} First prose line with markdown stripped, or undefined
@@ -542,32 +576,19 @@ function parseHeirloomDescription(lines: string[]): string | undefined {
   const titleIndex = lines.findIndex((l) => l.startsWith('# '));
   if (titleIndex === -1) return undefined;
 
-  let inJsxBlock = false;
+  let inOpeningTag = false;
   for (let i = titleIndex + 1; i < lines.length; i++) {
     const line = lines[i].trim();
 
-    if (line.includes('<')) {
-      inJsxBlock = !line.includes('/>') && !line.includes('</');
-      if (inJsxBlock || line.includes('/>') || line.includes('</')) continue;
-    }
-    if (inJsxBlock) continue;
-
-    if (!line) continue;
-
-    if (
-      line.startsWith('#') ||
-      line.startsWith('_') ||
-      line.startsWith('>') ||
-      line.startsWith('|') ||
-      line.startsWith('-') ||
-      line.startsWith('```')
-    ) {
+    if (inOpeningTag) {
+      if (line.endsWith('>')) inOpeningTag = false;
       continue;
     }
-
-    if (line.includes('=') && (line.includes('{') || line.includes("'"))) {
+    if (line.startsWith('<')) {
+      inOpeningTag = !line.endsWith('>');
       continue;
     }
+    if (!line || NOT_PROSE.test(line)) continue;
 
     return plain(line);
   }
@@ -594,6 +615,9 @@ async function parseHeirloomFile(
 
 /**
  * Parses heirloom metadata from raw MDX source, no file read.
+ *
+ * @description The slot form's `base` carries the same "Type (properties)"
+ * spelling the v1 bullet list used
  *
  * @param {string} rawFile - Complete file text including frontmatter
  * @param {string} filePath - Path the source belongs to, for slug and org tags
@@ -645,7 +669,12 @@ export function parseHeirloomSource(
   );
   const properties = parseProperties(raw) ?? {};
 
-  const typeInfo = parseTypeProperty(properties, sharedData);
+  const typeProperties =
+    !properties.Type && header?.base
+      ? { ...properties, Type: parenthesizeSubtype(header.base) }
+      : properties;
+
+  const typeInfo = parseTypeProperty(typeProperties, sharedData);
   const weaponDamage = parseWeaponDamageFromProperties(properties);
   const weight = parseWeight(properties);
   const rangeFromProps = parseRange(properties);
@@ -780,6 +809,13 @@ export function parseHeirloomSource(
   const description = parseHeirloomDescription(lines);
   const image = findContentImage(lines);
 
+  /* An heirloom's blocks are shards like any other content type's, so they are
+     published with the anchors that address them. The header parse already
+     read them; dropping them left heirlooms the one type whose blocks nothing
+     could look up. */
+  const features = (header?.features ?? []).map((feature) => ({ ...feature }));
+  stampAnchors(features);
+
   if (!rarity) log.warning(`No rarity found for ${title || baseSlug}`);
   if (!itemType) log.warning(`No item type found for ${title || baseSlug}`);
 
@@ -810,6 +846,7 @@ export function parseHeirloomSource(
     damageTypesDealt,
     savingThrowTypes,
     charges,
+    features: features.length ? features : undefined,
     tags: tags.length ? Array.from(new Set(tags)).sort() : undefined,
     indexVersion: 1,
     ...(description && { description }),
@@ -829,6 +866,8 @@ export interface HeirloomV2Feature {
   charges?: string;
   targets?: string;
   recharge?: string;
+  accuracy?: string;
+  saveDc?: string;
 }
 
 /**
@@ -973,9 +1012,7 @@ function rarityFromText(text: string): string {
 }
 
 /**
- * A heading's ornament: the glyphs some headings open with, which name
- * nothing and would otherwise break the join between a feature's name and a
- * slot that refers to it.
+ * A heading's ornament
  */
 const HEADING_ORNAMENT = /^[^\p{L}\p{N}]+/u;
 
@@ -1067,8 +1104,7 @@ function parseJsxForm(heirloom: MdNode): HeirloomV2Result {
 }
 
 /**
- * Slot card extractor: reads the Heirloom element in either spelling,
- * attributes or slot elements.
+ * Slot card extractor
  *
  * @param {string} rawFile - Complete file text including frontmatter
  * @returns {HeirloomV2Result} Golden shape with slot values as source text

@@ -1,9 +1,7 @@
 /**
  * MDX Format Check
  *
- * @fileoverview Scans MDX content files for format violations: naming conventions,
- * structural issues, broken component usage, image path errors, and content
- * type-specific format rules (monster sheets, spells, heirlooms).
+ * @fileoverview Scans MDX content files for format violations
  *
  * @module .github/scripts/check-mdx-format
  */
@@ -113,7 +111,7 @@ function buildContentBasenameSet(files: string[]): Set<string> {
 }
 
 /**
- * Opening tag of a slot host with everything up to its `>`, across lines.
+ * Opening tag of a slot host with everything up to its `>`
  */
 const HOST_TAG = new RegExp(
   `<(${Object.keys(SLOT_HOSTS).join('|')})\\b([^>]*)>`,
@@ -129,7 +127,7 @@ const ATTRIBUTE = /([A-Za-z]\w*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
  * Every slot attribute whose value does not have the shape its card reads.
  *
  * @description Reports the shape a value was written in against the shape the
- * card parses, so a value the card cannot read is visible to the author.
+ * card parses
  *
  * @param {string} content - MDX file content
  * @returns {string | false} The notes joined, or false when every value parses

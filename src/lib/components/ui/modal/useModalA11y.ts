@@ -34,7 +34,7 @@ let savedRootOverflow = '';
 
 /**
  * Applies or clears `inert` + `aria-hidden` so only the top-of-stack modal is
- * interactive; every modal beneath it is gated from pointer, focus, and AT.
+ * interactive; every modal beneath it is gated from pointer
  *
  * @function syncModalInert
  * @returns {void}
@@ -110,10 +110,7 @@ export interface ModalA11y {
 }
 
 /**
- * Wires modal accessibility for a controlled modal: focus trap, initial focus,
- * focus restore to the trigger, Escape dismissal through the shared surface
- * stack, reference-counted body scroll-lock, and `inert` gating of lower
- * modals.
+ * Wires modal accessibility for a controlled modal
  *
  * @function useModalA11y
  * @param {boolean} isOpen - Whether the modal is currently open

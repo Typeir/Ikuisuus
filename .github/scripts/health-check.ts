@@ -14,7 +14,8 @@ import { fileURLToPath } from 'node:url';
 import { runCheck as checkAnchors } from './checkAnchors';
 import { runCheck as checkAntipatterns } from './checkAntipatterns';
 import { runCheck as checkAspects } from './checkAspects';
-import { runCheck as checkDuplicateCss } from './checkDuplicateCss';
+import { runCheck as checkDuplicateCssAttributes } from './checkDuplicateCssAttributes';
+import { runCheck as checkDuplicateCssSelectors } from './checkDuplicateCssSelectors';
 import { runCheck as checkFileLength } from './checkFileLength';
 import { runCheck as checkJsdocQuality } from './checkJsdocQuality';
 import { runCheck as checkMdxFormat } from './checkMdxFormat';
@@ -58,7 +59,8 @@ interface CheckEntry {
 
 const CHECKS: CheckEntry[] = [
   { name: 'file-length', run: checkFileLength },
-  { name: 'duplicate-css', run: checkDuplicateCss },
+  { name: 'duplicate-css-selectors', run: checkDuplicateCssSelectors },
+  { name: 'duplicate-css-attributes', run: checkDuplicateCssAttributes },
   { name: 'jsdoc-quality', run: checkJsdocQuality },
   { name: 'antipatterns', run: checkAntipatterns },
   { name: 'test-gaps', run: checkTestGaps },

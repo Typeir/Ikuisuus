@@ -1,7 +1,7 @@
 /**
  * @fileoverview Backfills missing content version hashes in PostgreSQL.
  * @description Scans tables for rows where `version_hash` is null or empty,
- * computes `contentHash` from each reflected row, and flushes updates.
+ * computes `contentHash` from each reflected row
  *
  * @module scripts/db/pg/backfill-version-hashes
  * @version 2.0.0
@@ -171,7 +171,7 @@ interface BackfillConfig {
 
 /**
  * Scans all rows for `config.entityClass`, computes a deterministic hash for
- * each row that is missing one, and persists updates via `em.flush()`.
+ * each row that is missing one
  *
  * @param {EntityManager} em - Transaction-scoped entity manager
  * @param {MetadataStorage} allMeta - ORM metadata from `orm.getMetadata()`

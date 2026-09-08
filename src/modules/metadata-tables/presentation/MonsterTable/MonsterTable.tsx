@@ -1,7 +1,7 @@
 /**
  * @fileoverview Monster table wrapper that fetches and renders creature stat blocks.
  * @description Fetches monster metadata from the API and configures MetadataTable
- * with d20 creature stat columns (size, type, CR, AC, HP, alignment).
+ * with d20 creature stat columns (size
  *
  * @version 2.0.0
  * @author Typeir

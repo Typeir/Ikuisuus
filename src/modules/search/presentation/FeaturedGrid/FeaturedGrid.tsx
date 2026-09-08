@@ -47,8 +47,7 @@ interface FeaturedGridProps {
 }
 
 /**
- * Renders the "featured" discovery section: heading, loading/empty states,
- * and a card grid with one daily-featured entry per content type.
+ * Renders the "featured" discovery section
  *
  * @param {FeaturedGridProps} props - Component props
  * @param {string} props.locale - Current locale code

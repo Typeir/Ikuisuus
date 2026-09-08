@@ -1,7 +1,7 @@
 /**
  * @fileoverview Token image generator for Foundry VTT monster exports.
  * @description Generates circular token images by cropping portraits to
- * center-square, clipping to a circle, and compositing a frame overlay.
+ * center-square, clipping to a circle
  *
  * @module foundry/scripts/utils/tokenGenerator
  * @version 1.0.0
@@ -89,7 +89,7 @@ async function generateDefaultToken(
 
 /**
  * Generates circular token images by cropping portraits to center-square,
- * clipping to a circle, and compositing the frame overlay on top.
+ * clipping to a circle
  *
  * @param {Set<string>} imageFiles - Set of image filenames to generate tokens for
  * @param {string} assetsImgDir - Source directory for portrait images

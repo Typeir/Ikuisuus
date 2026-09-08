@@ -1,7 +1,6 @@
 /**
  * @fileoverview Combat Mechanics Utilities
- * @description Heroic Awakening utilities: affix generation and HP maximization
- * for in-progress combatants.
+ * @description Heroic Awakening utilities
  *
  * @module modules/encounter-planner/domain/mechanics/combatMechanics
  * @version 1.0.0

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Migration 027: bidirectional keyword consumption arrays.
+ * @fileoverview Migration 027
  * @description `consumes` lists the shard references a file declares; `consumers`
  * lists the files declaring a reference into it.
  *

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Feature Grant Extractor
  * @description Heuristic prose parser that turns "you gain proficiency…" style
- * feature text into flat grant tags (`weapon:martial`, `armor:medium`,
- * `saving_throw:dexterity`, `skill:persuasion:expertise`, `trade:smithing:proficient`).
+ * feature text into flat grant tags (`weapon:martial`
  *
  * @module scripts/metadata/extraction/grantsExtractor
  * @version 1.0.0

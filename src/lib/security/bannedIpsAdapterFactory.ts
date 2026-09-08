@@ -13,7 +13,7 @@ import { fsBannedIpsAdapter } from './adapters/fsBannedIpsAdapter';
 import { pgBannedIpsAdapter } from './adapters/pgBannedIpsAdapter';
 import type { BannedIpsAdapter } from './bannedIpsAdapter';
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+/** @property {string} metadataBackend - Active backend */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**

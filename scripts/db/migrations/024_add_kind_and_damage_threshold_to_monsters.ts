@@ -1,5 +1,5 @@
 /**
- * @fileoverview Migration 024: add kind and damage_threshold to monsters.
+ * @fileoverview Migration 024
  * @description Object statlets get kind='object' and damage threshold; creatures keep kind=null.
  *
  * @module scripts/db/migrations/024_add_kind_and_damage_threshold_to_monsters

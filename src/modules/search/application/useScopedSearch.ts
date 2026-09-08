@@ -1,8 +1,6 @@
 /**
  * @fileoverview Scoped Pagefind Search Hook
- * @description Ranks a caller-owned dataset against the Pagefind index: query
- * the shared index (optionally type-filtered), resolve hits to slugs, and
- * intersect with the slugs the caller owns.
+ * @description Ranks a caller-owned dataset against the Pagefind index
  *
  * @module modules/search/application/useScopedSearch
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Vocation and specialization slot-form shim.
  * @description Restores a vocation's core traits table and `## Nth Level –
- * Name` headings, and reads a specialization's parent vocation, back into the
- * v1 markdown shapes the metadata generators parse.
+ * Name` headings
  *
  * @module scripts/metadata/vocationForms
  * @version 0.1.0
@@ -28,8 +27,7 @@ const TRAIT_ROWS: Array<[string, string]> = [
 ];
 
 /**
- * Reads element-form slots written in the paragraph after a tag:
- * `<Equipment>…</Equipment>` lines, one per slot.
+ * Reads element-form slots written in the paragraph after a tag
  *
  * @param {string[]} lines - File lines
  * @param {number} from - Line after the opening tag
@@ -68,8 +66,7 @@ export function parentVocationOf(text: string): string | undefined {
 
 /**
  * Restores a vocation's core traits table from the `<Vocation>` tag and its
- * element-form slots, and its `## Nth Level – Name` headings from
- * `<Feature level="N">` blocks.
+ * element-form slots
  *
  * @param {string} text - File text
  * @returns {string} Text on the v1 form

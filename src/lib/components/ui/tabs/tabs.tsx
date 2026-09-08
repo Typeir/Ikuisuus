@@ -61,7 +61,7 @@ function useTabsContext(): TabsContextValue {
  * @property {ReactNode} children - `<TabList>` and `<TabPanel>`s
  * @property {string} [className] - Optional outer class
  * @property {string} [ariaLabel] - Accessible label for the tab group
- * @property {'default' | 'nested' | 'inset'} [variant] - Visual variant; `nested` recesses into --color-bg for tabs on a surface container, `inset` recesses one layer deeper (--color-bg-secondary) for tabs nested inside a `nested` panel
+ * @property {'default' | 'nested' | 'inset'} [variant] - Visual variant; `nested` recesses into --color-bg for tabs on a surface container
  */
 export interface TabsProps {
   value: string;
@@ -82,7 +82,7 @@ export interface TabsProps {
  * @param {ReactNode} props.children - `<TabList>` and `<TabPanel>`s
  * @param {string} [props.className] - Optional outer class
  * @param {string} [props.ariaLabel] - Accessible label for the tab group
- * @param {'default' | 'nested' | 'inset'} [props.variant='default'] - Visual variant; `nested` recesses into --color-bg for tabs on a surface container, `inset` recesses one layer deeper (--color-bg-secondary) for tabs nested inside a `nested` panel
+ * @param {'default' | 'nested' | 'inset'} [props.variant='default'] - Visual variant; `nested` recesses into --color-bg for tabs on a surface container
  * @returns {JSX.Element} Rendered tabs root
  */
 export const Tabs: React.FC<TabsProps> = ({

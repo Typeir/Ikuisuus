@@ -17,8 +17,7 @@ import {
 import { computeAbilityModifier } from './characterStorage';
 
 /**
- * The value term of an `hp` scalar grant: an integer literal or a whitelisted
- * resolver reference evaluated against the sheet.
+ * The value term of an `hp` scalar grant
  *
  * @typedef {object} HpTerm
  * @property {'lit'|'ref'} t - Literal integer or resolver reference
@@ -85,9 +84,7 @@ export const SCALAR_RESOLVERS: Record<
 const SCALAR_RESOLVER_KEYS = new Set(Object.keys(SCALAR_RESOLVERS));
 
 /**
- * Resolves an {@link HpTerm} to its live numeric value against the sheet: a
- * literal returns its value, a reference invokes its {@link SCALAR_RESOLVERS}
- * entry.
+ * Resolves an {@link HpTerm} to its live numeric value against the sheet
  *
  * @function resolveHpTerm
  * @param {HpTerm} term - The parsed term
@@ -101,8 +98,7 @@ export function resolveHpTerm(term: HpTerm, character: CharacterSheet): number {
 }
 
 /**
- * Parses the term segment of an `hp` grant: a signed integer literal or a
- * whitelisted resolver key.
+ * Parses the term segment of an `hp` grant
  *
  * @function parseHpTerm
  * @param {string} raw - Lowercased term segment
@@ -114,8 +110,7 @@ function parseHpTerm(raw: string): HpTerm | null {
 }
 
 /**
- * Parses the scope segment of an `hp` grant into an {@link HpScope}, capturing
- * the slug verbatim for the specific scopes.
+ * Parses the scope segment of an `hp` grant into an {@link HpScope}
  *
  * @function parseHpScope
  * @param {string} raw - Lowercased scope segment

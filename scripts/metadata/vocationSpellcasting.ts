@@ -1,6 +1,6 @@
 /**
  * @fileoverview Vocation spellcasting and feature-range parsers.
- * @description Detects spellcasting ability and progression, reads
+ * @description Detects casting ability and progression, reads
  * specialization slugs and archetypes, and locates feature heading blocks.
  *
  * @module scripts/metadata/vocationSpellcasting
@@ -9,21 +9,32 @@
  * @since 2026-09-07
  */
 
-import { CASTING, FEATURE, TABLE } from './vocationPatterns';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { CASTING, TABLE } from './vocationPatterns';
 
 /**
- * Detects spellcasting ability from the Spellcasting feature collapsible block.
+ * Filename suffix marking a specialization page.
+ */
+const SPECIALIZATION_SUFFIX = '.specialization.mdx';
+
+/**
+ * Detects casting ability from the Spellcasting feature collapsible block.
  *
  * @param {string} raw - Full MDX file content
- * @returns {string | null} Spellcasting ability name or null
+ * @returns {string | null} Casting ability name or null
  */
 function parseSpellcastingAbility(raw: string): string | null {
+  /* Ordered from the declaration a page makes on purpose to the incidental
+     mention it falls back on: a bare `your Wisdom modifier` anywhere in the
+     file is the last resort, since any feature may say it. */
   const abilityPatterns = [
     CASTING.abilityBold,
     CASTING.abilityIs,
     CASTING.abilityReversed,
+    CASTING.keyedTo,
+    CASTING.accuracySlot,
     CASTING.modifierRef,
-    CASTING.dcModifier,
   ];
 
   const spellcastingSection = raw.match(CASTING.section);
@@ -56,7 +67,7 @@ function parseSpellcastingAbility(raw: string): string | null {
  *
  * @param {string[]} headers - Feature table headers
  * @param {string} raw - Full MDX file content
- * @returns {string | null} Progression type: "Full" | "Half" | "Third" | "Pact" | null
+ * @returns {string | null} Progression type
  */
 function classifyProgression(headers: string[], raw: string): string | null {
   if (CASTING.pactMagic.test(raw)) return 'Pact';
@@ -73,18 +84,24 @@ function classifyProgression(headers: string[], raw: string): string | null {
 }
 
 /**
- * Extracts specialization slugs from the specialization table links.
+ * Reads the specialization slugs a vocation owns.
  *
- * @param {string} raw - Full MDX file content
- * @returns {string[]} Array of specialization slugs
+ * @description The slugs come from the `*.specialization.mdx` files sitting
+ * beside the vocation page
+ *
+ * @param {string} filePath - Absolute path to the vocation's own MDX file
+ * @returns {Promise<string[]>} Specialization slugs, alphabetical
  */
-function parseSpecializations(raw: string): string[] {
-  const slugs: string[] = [];
-  const matches = raw.matchAll(new RegExp(FEATURE.specializationLink, 'g'));
-  for (const match of matches) {
-    slugs.push(match[1]);
+async function parseSpecializations(filePath: string): Promise<string[]> {
+  try {
+    const entries = await fs.readdir(path.dirname(filePath));
+    return entries
+      .filter((entry) => entry.endsWith(SPECIALIZATION_SUFFIX))
+      .map((entry) => entry.slice(0, -SPECIALIZATION_SUFFIX.length))
+      .sort();
+  } catch {
+    return [];
   }
-  return slugs;
 }
 
 /**
@@ -107,7 +124,7 @@ function classifyArchetype(progression: string | null): string {
  *
  * @param {string[]} lines - MDX file split by newline
  * @param {string} featureName - Feature display name to search for
- * @returns {{ startLine: number; endLine: number; heading: string } | null} Line range and the raw heading text (level prefix kept, bold stripped), or null if not found
+ * @returns {{ startLine: number; endLine: number; heading: string } | null} Line range and the raw heading text (level prefix kept
  */
 function findFeatureLineRange(
   lines: string[],
@@ -151,4 +168,10 @@ function findFeatureLineRange(
   return { startLine: startIdx + 1, endLine: endIdx + 1, heading };
 }
 
-export { classifyArchetype, classifyProgression, findFeatureLineRange, parseSpecializations, parseSpellcastingAbility };
+export {
+  classifyArchetype,
+  classifyProgression,
+  findFeatureLineRange,
+  parseSpecializations,
+  parseSpellcastingAbility,
+};

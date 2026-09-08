@@ -1,8 +1,7 @@
 /**
  * @fileoverview Bloodline card.
  * @description Prints the two Core Features rows as tables, the way a monster
- * prints its defences and its ability scores, then the boon budget, then the
- * page's own content.
+ * prints its defences and its ability scores
  *
  * @module modules/library/presentation/components/slots/Bloodline
  * @version 0.2.0
@@ -30,7 +29,7 @@ import { readSlots, slotElementOf } from './slotElements';
 import styles from './slots.module.scss';
 
 /**
- * Props for the card: one optional prop per slot, plus the body.
+ * Props for the card
  *
  * @property {ReactNode} [children] - The page's own content
  */

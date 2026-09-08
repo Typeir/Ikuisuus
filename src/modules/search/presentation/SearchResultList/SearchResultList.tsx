@@ -25,8 +25,7 @@ import { SearchResultRow } from '../SearchResultRow/SearchResultRow';
 import styles from './SearchResultList.module.scss';
 
 /**
- * Row height in rem: two title lines, two snippet lines, type label and meta
- * trail, plus the row padding.
+ * Row height in rem
  *
  * @constant
  * @type {number}

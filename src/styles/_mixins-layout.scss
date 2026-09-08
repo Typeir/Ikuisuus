@@ -14,9 +14,7 @@
 }
 
 /**
- * Visual chrome of a floating panel, with no layout. A portaled panel
- * (DropdownPanel) is positioned by CSS anchors or useAnchoredPosition; any
- * inset here would fight that positioning.
+ * Visual chrome of a floating panel, with no layout.
  */
 @mixin dropdown-surface {
   background: var(--color-surface);
@@ -49,9 +47,7 @@
 }
 
 /**
- * Faded-out state. content-visibility flips discretely at the end of the
- * fade, which parks the shimmer instead of leaving it compositing behind the
- * loaded content.
+ * Faded-out state.
  */
 @mixin skeleton-fade-done {
   opacity: 0;
@@ -82,4 +78,14 @@
   &:active {
     transform: scale(0.95);
   }
+}
+
+/**
+ * Applies a mask, prefixed and standard, from one value.
+ *
+ * @param {*} $image - The mask image, written once
+ */
+@mixin mask-image($image) {
+  -webkit-mask-image: $image;
+  mask-image: $image;
 }

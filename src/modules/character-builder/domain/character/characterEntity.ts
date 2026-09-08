@@ -1,7 +1,6 @@
 /**
  * @fileoverview Character Entity — canonical single-JSON character model.
- * @description One flat, self-contained JSON structure: plain objects and
- * arrays only, no class instances, no functions, no circular links.
+ * @description One flat, self-contained JSON structure
  *
  * @module modules/character-builder/domain/character/characterEntity
  * @version 1.0.0
@@ -286,8 +285,8 @@ export interface EquipmentItem {
  * @property {string} title - Display name, e.g. `Wizard`
  * @property {number} level - Levels invested in this vocation specifically
  * @property {number} [hitDie] - Hit die face count (e.g. `10`), copied from vocation metadata on selection.
- * @property {string[]} [baseSavingThrows] - Saving-throw ability names this vocation confers at its base (e.g. `["Constitution", "Intelligence"]`), copied from vocation metadata on selection and auto-applied as a proficiency floor
- * @property {number} [baseSkillChoiceCount] - Number of base skill proficiencies this vocation lets the player choose (from its metadata `skillProficiencies.count`), synced from vocation metadata; the primary vocation's value drives the unspent-proficiency counter
+ * @property {string[]} [baseSavingThrows] - Saving-throw ability names this vocation confers at its base (e.g. `["Constitution", "Intelligence"]`)
+ * @property {number} [baseSkillChoiceCount] - Number of base skill proficiencies this vocation lets the player choose (from its metadata `skillProficiencies.count`)
  * @property {string[]} [baseSkillChoices] - The skills this vocation offers as its base picks, stored as table row-keys (`skills.<camel>`).
  * @property {string[]} [baseTradeFixed] - Trades this vocation grants outright (not chosen), stored as table row-keys (`tools.<camel>`).
  * @property {string|null} specializationSlug - Specialization identifier, e.g. `evoker`
@@ -311,8 +310,7 @@ export interface VocationEntry {
 }
 
 /**
- * The canonical character entity: one flat JSON document per character,
- * stored verbatim in localStorage and across the persistence layer.
+ * The canonical character entity
  *
  * @interface CharacterEntity
  * @property {string} id - Unique character identifier
@@ -342,7 +340,7 @@ export interface VocationEntry {
  * @property {string[]} manualStatOverrides - Stat keys the player has pinned to manual values
  * @property {HitDieRollEntry[]} hitDiceLog - Per-level hit die roll history
  * @property {Record<string, number>} [spentHitDice] - Hit dice spent (healing / grievous-wound clearing) by vocation slug; recover ½ per Recovery
- * @property {Record<string, number>} [lostHitDice] - Hit dice lost to Misdeed overshoot by vocation slug; frozen until all grievous wounds clear, then 1 per Recovery
+ * @property {Record<string, number>} [lostHitDice] - Hit dice lost to Misdeed overshoot by vocation slug; frozen until all grievous wounds clear
  * @property {string[]} conditions - Active condition labels
  * @property {CharacterAttack[]} attacks - Attack entries
  * @property {CharacterSpellSlot[]} spellSlots - Spell slot tracking (1–9)

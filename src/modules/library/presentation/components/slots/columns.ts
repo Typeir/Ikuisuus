@@ -10,7 +10,7 @@ import React, { type ReactNode } from 'react';
 import { cleanChildren } from './slotElements';
 
 /**
- * Props of a column: a label, and either a comma-separated value list or Row children.
+ * Props of a column
  *
  * @property {string} label - Column heading
  * @property {string} [values] - Comma-separated values, one per table row from the first
@@ -23,7 +23,7 @@ export interface ColumnProps {
 }
 
 /**
- * Props of a row: which table row it belongs to, whether it stays there, and its value.
+ * Props of a row
  *
  * @property {string | number} [at] - Row key the value starts at
  * @property {unknown} [unique] - Print at this row only

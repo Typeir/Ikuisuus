@@ -1,8 +1,7 @@
 /**
  * @fileoverview UnassignedChips tests
  * @description Verifies the stack renders one pill per unassigned (category,tier)
- * group the anchor owns (identified by their aria-labels), excludes categories it
- * does not own, and renders nothing when all is assigned.
+ * group the anchor owns (identified by their aria-labels)
  *
  * @module tests/unit/src/modules/character-builder/presentation/atoms/unassignedChips.test
  * @version 1.0.0

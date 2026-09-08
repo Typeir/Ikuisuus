@@ -1,8 +1,7 @@
 /**
  * @fileoverview SearchBar Unit Tests
  * @description Tests input wiring, dropdown open/close rules, arrow/Enter/
- * Escape keyboard navigation, form submit, Cmd/Ctrl-K shortcut, and
- * outside-click dismissal.
+ * Escape keyboard navigation, form submit
  *
  * @module tests/unit/src/modules/search/presentation/SearchBar/SearchBar.test
  * @author Typeir
@@ -15,8 +14,9 @@ import { SearchBar } from '@/modules/search/presentation/SearchBar/SearchBar';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { pushMock, searchState } = vi.hoisted(() => ({
+const { pushMock, paramState, searchState } = vi.hoisted(() => ({
   pushMock: vi.fn(),
+  paramState: { query: '' },
   searchState: {
     results: [] as unknown[],
     total: 0,
@@ -29,7 +29,7 @@ const { pushMock, searchState } = vi.hoisted(() => ({
 vi.mock('next/navigation', () => ({
   useParams: () => ({ locale: 'en' }),
   useRouter: () => ({ push: pushMock }),
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams(paramState.query),
 }));
 
 vi.mock('@/modules/search/application/useSearch', () => ({
@@ -65,6 +65,7 @@ function mkResult(slug: string, title: string): SearchResult {
 describe('SearchBar', () => {
   beforeEach(() => {
     pushMock.mockReset();
+    paramState.query = '';
     searchState.results = [];
     searchState.total = 0;
     searchState.loading = false;
@@ -152,6 +153,27 @@ describe('SearchBar', () => {
     fireEvent.change(screen.getByRole('combobox'), { target: { value: 'd' } });
     fireEvent.submit(screen.getByRole('search'));
     expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  it('should keep the active aspects when the query is submitted', () => {
+    paramState.query = 'q=old&aspect=condition%3Ableeding&aspect=form%3Ablade';
+    render(<SearchBar />);
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'dragon' },
+    });
+    fireEvent.submit(screen.getByRole('search'));
+    expect(pushMock).toHaveBeenCalledWith(
+      '/en/search?q=dragon&aspect=condition%3Ableeding&aspect=form%3Ablade',
+    );
+  });
+
+  it('should submit an aspect-only search with no query text', () => {
+    paramState.query = 'aspect=condition%3Ableeding';
+    render(<SearchBar />);
+    fireEvent.submit(screen.getByRole('search'));
+    expect(pushMock).toHaveBeenCalledWith(
+      '/en/search?aspect=condition%3Ableeding',
+    );
   });
 
   it('should close the dropdown on Escape', () => {

@@ -25,7 +25,7 @@ import { capitalize, flagOf } from './text';
 import styles from './slots.module.scss';
 
 /**
- * Props for the feat card: one optional prop per header slot, plus the body.
+ * Props for the feat card
  */
 export type FeatProps = SlotProps<FeatSlotName> & {
   children?: ReactNode;
@@ -57,7 +57,7 @@ function categoryLabel(
  */
 const Feat: React.FC<FeatProps> = ({ children, ...slots }) => {
   const t = useTranslations('library.feat');
-  const { values, kept } = readSlots(children, FEAT_SLOT_NAMES, slots);
+  const { values, kept } = readSlots(children, FEAT_SLOT_NAMES, slots, true);
 
   const brief: ReactNode[] = [];
   if (values.category !== undefined) {

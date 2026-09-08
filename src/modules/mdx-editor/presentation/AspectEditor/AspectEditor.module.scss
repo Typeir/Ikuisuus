@@ -18,9 +18,7 @@
   overflow: hidden;
 }
 
-/* The atom nests the children one level deeper, above the reveal layer. That
-   wrapper carries the height on to the panes; without it they size to their
-   content and the vocabulary collapses to a sliver. */
+/* The atom nests the children one level deeper, above the reveal layer. */
 .modalContent {
   flex: 1 1 auto;
   min-height: 0;
@@ -28,8 +26,7 @@
   flex-direction: column;
 }
 
-/* Two stacked panes. Staged sits on its content (thin) and grows with it;
-   the vocabulary takes the rest and shrinks as staged grows. */
+/* Two stacked panes. */
 .body {
   display: flex;
   flex-direction: column;

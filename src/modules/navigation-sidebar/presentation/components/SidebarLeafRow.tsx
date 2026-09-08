@@ -1,8 +1,7 @@
 /**
  * @fileoverview Leaf row for virtualized sidebar lists
  * @description Renders the link-only markup of a leaf item with none of the
- * folder machinery in `SidebarItem` — no context subscription, no fetch hook,
- * no effects.
+ * folder machinery in `SidebarItem` — no context subscription
  *
  * @module modules/navigation-sidebar/presentation/components/SidebarLeafRow
  * @author Typeir

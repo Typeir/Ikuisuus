@@ -470,14 +470,18 @@ export function parseKeyBullets(text: string): Record<string, string> {
 /**
  * Splits comma/semicolon-delimited list into array.
  *
+ * @description Entries are read as the page prints them, since a stat line
+ * names its conditions and damage types through keyword blocks and a reader
+ * of the list sees only the words those stand for.
+ *
  * @param {string} raw - Raw list string
- * @returns {string[]} Array of list items with markdown stripped
+ * @returns {string[]} Array of list items, free of markdown and macros
  */
 export function splitList(raw: string): string[] {
   if (!raw || raw === '—' || raw.toLowerCase() === 'none') return [];
   return raw
     .split(LIST.commaOrSemicolon)
-    .map((s) => stripMarkdown(s.trim()))
+    .map((s) => plain(s))
     .filter(Boolean);
 }
 
@@ -497,11 +501,11 @@ export function splitListWithGrouping(
   const match = raw.match(groupPattern);
 
   if (match) {
-    const grouped = stripMarkdown(match[0].trim());
+    const grouped = plain(match[0]);
     const remainder = raw.replace(groupPattern, '').trim();
     const others = remainder
       .split(LIST.commaOrSemicolon)
-      .map((s) => stripMarkdown(s.trim()))
+      .map((s) => plain(s))
       .filter(Boolean)
       .filter((s) => s !== 'and');
 
@@ -510,6 +514,6 @@ export function splitListWithGrouping(
 
   return raw
     .split(LIST.commaOrSemicolon)
-    .map((s) => stripMarkdown(s.trim()))
+    .map((s) => plain(s))
     .filter(Boolean);
 }

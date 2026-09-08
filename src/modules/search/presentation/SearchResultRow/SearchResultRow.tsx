@@ -41,7 +41,7 @@ interface SearchResultRowProps {
  * @param {SearchResult} props.result - Typed search result with record + snippet
  * @param {string} [props.className] - Additional class names
  * @param {React.CSSProperties} [props.style] - Inline style overrides merged onto the row element
- * @param {'row' | 'card'} [props.variant=row] - Layout variant: 'row' or 'card'
+ * @param {'row' | 'card'} [props.variant=row] - Layout variant
  * @returns {JSX.Element} The result row
  */
 export function SearchResultRow({

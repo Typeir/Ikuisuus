@@ -1,7 +1,5 @@
 /**
- * @fileoverview Hook call-site sweep: one member per file, replacing inline
- * mounted-guard and outside-click implementations with the canonical hooks in
- * src/lib/hooks.
+ * @fileoverview Hook call-site sweep
  */
 
 const CANON = [

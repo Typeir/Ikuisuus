@@ -40,8 +40,17 @@ describe('slots schema', () => {
       'charges',
       'recharge',
       'deed',
+      'accuracy',
+      'saveDc',
       'targets',
     ]);
+  });
+
+  /* The DC is written as its own calculation, so it has to follow the accuracy
+     it is calculated from. */
+  it('reads the DC off the accuracy above it', () => {
+    const at = (name: string) => FEATURE_SLOT_NAMES.indexOf(name as never);
+    expect(at('saveDc')).toBe(at('accuracy') + 1);
   });
 
   it('puts availability first, and reads charges next to recharge', () => {

@@ -14,6 +14,12 @@ import { useMemo } from 'react';
 import type { ColumnConfig, MetadataRow } from './metadataTable.types';
 
 /**
+ * Prefix of the bookkeeping aspects every row carries, which say nothing that
+ * would narrow a table.
+ */
+const META_ASPECT_PREFIX = 'meta:';
+
+/**
  * Tags of a row, when it has any.
  *
  * @param {MetadataRow} row - Table row
@@ -50,9 +56,28 @@ export function useAspectsColumn(
         key: 'tags',
         label: t('aspects'),
         sortable: false,
-        getValue: (row) => tagsOf(row)?.join(' ') ?? '',
+        filterable: true,
+        filterType: 'select',
+        searchableFilter: true,
+        width: size === 's' ? '10%' : '14%',
+        getValue: (row) => tagsOf(row) ?? [],
+        getFilterOptions: (rows) =>
+          Array.from(
+            new Set(
+              rows.flatMap((row) =>
+                (tagsOf(row) ?? []).filter(
+                  (tag) => !tag.startsWith(META_ASPECT_PREFIX),
+                ),
+              ),
+            ),
+          ).sort(),
         render: (_value, row) => (
-          <AspectGlyphs tags={tagsOf(row)} inert max={size === 's' ? 5 : 8} />
+          <AspectGlyphs
+            tags={tagsOf(row)}
+            inert
+            wrap
+            max={size === 's' ? 4 : 6}
+          />
         ),
       },
     ];

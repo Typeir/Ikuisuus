@@ -35,6 +35,8 @@ export type FilterState = Record<string, any>;
  * @property {Function} [getValue] - Extracts value from row for filtering/sorting (handles nested data)
  * @property {Function} [compareValues] - Custom comparison logic for sorting
  * @property {Record<string, number>} [filterSortOrder] - Sort order map for dropdown options (e.g., RARITY_SORT_ORDER)
+ * @property {string} [width] - CSS width hint for the column, e.g. `40%`
+ * @property {boolean} [searchableFilter] - Whether the select filter shows a search input; for columns with many options
  */
 export type ColumnConfig = {
   key: string;
@@ -47,6 +49,8 @@ export type ColumnConfig = {
   getValue?: (row: MetadataRow) => unknown;
   compareValues?: (a: unknown, b: unknown) => number;
   filterSortOrder?: Record<string, number>;
+  width?: string;
+  searchableFilter?: boolean;
 };
 
 /**

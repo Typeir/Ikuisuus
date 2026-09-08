@@ -180,8 +180,7 @@ export function higherTier(a: TierLevel, b: TierLevel): TierLevel {
 }
 
 /**
- * Reduces grant tags to the proficiencies they confer: highest tier per
- * skill/trade/save, deduped armor/weapon grants.
+ * Reduces grant tags to the proficiencies they confer
  *
  * @function deriveGrants
  * @param {string[]} tags - Grant tags from one or more features
@@ -218,9 +217,7 @@ export function deriveGrants(tags: string[]): DerivedGrants {
 }
 
 /**
- * Collects every grant tag from a character's active features: vocation and
- * specialization shards unlocked at or below vocation level, plus selected
- * feats.
+ * Collects every grant tag from a character's active features
  *
  * @function collectActiveGrants
  * @param {CharacterSheet} character - Character to inspect
@@ -234,8 +231,7 @@ export function collectActiveGrants(character: CharacterSheet): string[] {
 
 /**
  * Collects the grant-bearing shards of a character's active features and
- * selected feats: vocation and specialization feature shards unlocked at or
- * below vocation level, plus every selected feat.
+ * selected feats
  *
  * @function collectActiveGrantShards
  * @param {CharacterSheet} character - Character to inspect

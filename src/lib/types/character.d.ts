@@ -2,7 +2,7 @@
  * @fileoverview Character Sheet Types — compatibility shim
  * @description The canonical character model now lives in the
  * character-builder module's domain layer as `CharacterEntity` (one flat
- * JSON structure, no self-referencing objects).
+ * JSON structure
  *
  * @see modules/character-builder/domain/character/characterEntity
  * @version 2.0.0

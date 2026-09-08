@@ -1,8 +1,7 @@
 /**
  * @fileoverview Deed-costed monster preview at /[locale]/labs/dev/deeds.
  * @description The Tombsteel Wizard-Construct converted to slot forms, with
- * three deed-costed blocks added: one spell, one line effect, and one that
- * fires when the construct is destroyed.
+ * three deed-costed blocks added
  *
  * @module app/[locale]/labs/dev/deeds/page
  * @version 0.1.0

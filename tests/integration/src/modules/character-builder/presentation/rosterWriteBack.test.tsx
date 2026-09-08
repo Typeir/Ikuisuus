@@ -1,8 +1,6 @@
 /**
  * @fileoverview Roster Write-Back Integration Test
- * @description Exercises the full write-back round trip: sheet write, provider
- * push to roster context, roster rebuild to a fresh object, and flow back as the
- * `character` prop.
+ * @description Exercises the full write-back round trip
  *
  * @module tests/integration/character-builder/presentation/rosterWriteBack
  * @version 1.0.0

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Theme enum - supported UI color themes.
- * @description Enum of supported color themes: Dark and Light.
+ * @description Enum of supported color themes
  *
  * @version 2.0.0
  * @author Typeir

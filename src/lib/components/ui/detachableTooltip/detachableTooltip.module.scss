@@ -3,7 +3,7 @@
 /**
  * @fileoverview Detachable Tooltip Styles
  * @description The viewport-sized layer detached panels live in, and the panel
- * chrome, including its enter, exit and re-park motion.
+ * chrome, including its enter
  */
 
 /* `Draggable` measures this for bounds, so it must be the viewport, and inert. */
@@ -15,14 +15,13 @@
 }
 
 /* Content shown on hover has to survive the pointer moving onto it (WCAG 2.1
-   SC 1.4.13), which the shared tooltip frame prevents by going inert. */
+   SC 1.4.13) */
 .hoverable {
   pointer-events: auto;
 }
 
 /* The surface adopts drag rather than being wrapped by `Draggable`, so it also
-   takes on the layout that wrapper used to provide. Positioning is not here:
-   `.anchored` and `.moved` supply it. */
+   takes on the layout that wrapper used to provide. */
 .panel {
   display: flex;
   flex-direction: column;
@@ -39,8 +38,7 @@
   box-shadow: 0 10px 28px rgb(var(--color-shadow));
   overflow: hidden;
 
-  /* Opacity only. `left`/`top` are written every frame during a drag and on
-     every scroll while unpinned, so a transition on them would lag the pointer. */
+  /* Opacity only. */
   opacity: 1;
   transition: opacity 0.18s ease;
 
@@ -50,8 +48,7 @@
 }
 
 /* Same anchoring contract the tooltip uses, so the card is placed before paint
-   and never appears in a spot it is about to leave. Intrinsic sizing is part of
-   that contract: `position-area` stretches a surface that has none. */
+   and never appears in a spot it is about to leave. */
 .anchored {
   @include anchored-surface-base;
   width: max-content;

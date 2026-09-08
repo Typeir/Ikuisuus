@@ -1,8 +1,7 @@
 /**
  * @fileoverview PipCheckbox Component
- * @description A pip-styled checkbox/radio control: an accent pip dot button
- * (filled when checked, hollow when not) with an optional inline label.
- * @todo TODO: move pip to shared
+ * @description A pip-styled checkbox/radio control
+ * @todo TODO
  * @module modules/character-builder/presentation/components/PipCheckbox
  * @version 1.0.0
  * @author Typeir
@@ -26,7 +25,7 @@ import styles from './PipCheckbox.module.scss';
  * @property {string} [title] - Native tooltip on the pip button
  * @property {boolean} [disabled] - Disables the control
  * @property {'checkbox' | 'radio'} [role='checkbox'] - ARIA role for the pip control
- * @property {'sm' | 'lg'} [size='sm'] - Pip size: `sm` track dot, `lg` deed pip
+ * @property {'sm' | 'lg'} [size='sm'] - Pip size
  * @property {string} [className] - Extra class merged onto the wrapper
  */
 export interface PipCheckboxProps {

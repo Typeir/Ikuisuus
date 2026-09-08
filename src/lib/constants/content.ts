@@ -108,8 +108,7 @@ export function resolveIndexFile(
 }
 
 /**
- * True when a route is the index of the folder directly above it: the `main`
- * leaf, or a leaf that repeats the folder's own name.
+ * True when a route is the index of the folder directly above it
  *
  * @param {string} folderPath - Folder route, slash-separated, no locale
  * @param {string} childPath - Candidate child route

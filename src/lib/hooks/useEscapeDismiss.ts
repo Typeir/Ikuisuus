@@ -2,8 +2,7 @@
  * Escape Dismissal
  *
  * @fileoverview One shared Escape listener over a LIFO stack, so a press closes
- * the most recent surface only — tooltips, modals, and custom surfaces share
- * the one stack.
+ * the most recent surface only — tooltips
  *
  * @module lib/hooks/useEscapeDismiss
  * @version 2.0.0

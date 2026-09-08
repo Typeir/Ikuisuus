@@ -25,7 +25,7 @@ const CONTENT_REPO_URL = GITHUB_PAT
   : `https://github.com/${CONTENT_REPO_OWNER}/${CONTENT_REPO_NAME}.git`;
 
 /**
- * Branch to clone: an explicit override, else the branch being deployed.
+ * Branch to clone
  */
 const REQUESTED_BRANCH =
   process.env['CONTENT_REPO_BRANCH'] ?? process.env['VERCEL_GIT_COMMIT_REF'];

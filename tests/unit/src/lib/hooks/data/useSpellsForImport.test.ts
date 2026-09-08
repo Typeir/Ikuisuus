@@ -1,8 +1,7 @@
 /**
  * @fileoverview useSpellsForImport Tests
  * @description Verifies the abilities-import spell hook scopes its POST body to
- * the character's vocation spell lists when `listSources` is provided, and falls
- * back to the full library otherwise.
+ * the character's vocation spell lists when `listSources` is provided
  *
  * @module tests/unit/src/lib/hooks/data/useSpellsForImport.test
  * @version 1.0.0

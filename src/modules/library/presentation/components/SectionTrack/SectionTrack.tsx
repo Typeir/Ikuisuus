@@ -2,8 +2,9 @@
  * @fileoverview Section Track — vertical navigation widget for library content pages.
  * @module modules/library/presentation/components/SectionTrack/SectionTrack
  * @author Typeir
- * @version 1.2.0
+ * @version 1.3.0
  * @since 7.0.0
+ * @todo Candidate for motion.js (Motion) — CSS transitions here are hand-rolled and growing.
  */
 
 'use client';
@@ -17,7 +18,7 @@ import type { JSX } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './SectionTrack.module.scss';
 
-/** Width below which the track sits on the right (the stylesheet's `max-width: 1023px`), so tooltips open leftward there. */
+/** Width below which the track sits on the right (the stylesheet's `max-width: 1023px`) */
 const SMALL_SCREEN_BP = 1024;
 
 /**
@@ -26,7 +27,7 @@ const SMALL_SCREEN_BP = 1024;
 const BAR_WIDTH_BASE = 5;
 
 /**
- * Bar thickness range by heading level: h1 (thickest) → h6 (thinnest).
+ * Bar thickness range by heading level
  */
 const BAR_THICKNESS: Record<number, number> = {
   1: 5,
@@ -122,7 +123,7 @@ export function SectionTrack(): JSX.Element | null {
       <div className={styles.inner}>
         {items.map((item, i) => (
           <SectionTrackBar
-            key={`${item.anchor}--${i}`}
+            key={item.anchor}
             item={item}
             topPercent={topPercents[i]}
             active={item.anchor === activeAnchor}

@@ -37,14 +37,32 @@ describe('useAspectsColumn', () => {
     );
     expect(result.current.map((c) => c.key)).toEqual(['title', 'tags']);
     const col = result.current[1];
-    expect(col.getValue?.({ slug: 'a', tags: ['damage:fire', 'x:y'] })).toBe(
-      'damage:fire x:y',
-    );
+    expect(
+      col.getValue?.({ slug: 'a', tags: ['damage:fire', 'x:y'] }),
+    ).toEqual(['damage:fire', 'x:y']);
     const { container } = render(
       <>{col.render?.(undefined, { slug: 'a', tags: ['damage:fire'] })}</>,
     );
-    expect(container.querySelectorAll('span[title="damage: fire"]')).toHaveLength(1);
+    expect(
+      container.querySelectorAll('span[aria-label="damage: fire"]'),
+    ).toHaveLength(1);
     expect(container.querySelectorAll('a')).toHaveLength(0);
+  });
+
+  it('should offer every aspect but the bookkeeping ones as filter options', () => {
+    const rows = [
+      { slug: 'a', tags: ['damage:fire', 'meta:locale:en'] },
+      { slug: 'b', tags: ['damage:fire', 'mechanic:advantage'] },
+    ];
+    const { result } = renderHook(() => useAspectsColumn(base, rows, 'md'));
+    const col = result.current[1];
+
+    expect(col.filterable).toBe(true);
+    expect(col.filterType).toBe('select');
+    expect(col.getFilterOptions?.(rows)).toEqual([
+      'damage:fire',
+      'mechanic:advantage',
+    ]);
   });
 
   it('should not duplicate a caller-defined tags column', () => {

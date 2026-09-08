@@ -1,7 +1,6 @@
 /**
  * @fileoverview Builds a vocation's progression table from what the page
- * declares: its feature headings, its feat and specialization levels, its
- * casting kind and its columns.
+ * declares
  * @module modules/library/domain/progression
  * @version 0.1.0
  * @author Typeir
@@ -11,9 +10,9 @@
 import { castingColumns, type CastingKind } from './castingTables';
 
 /**
- * One row of a column: a value from a level on, or at that level alone.
+ * One row of a column
  *
- * @property {number} [at] - Level the value starts at; unset means the level after the previous row, level 1 first
+ * @property {number} [at] - Level the value starts at; unset means the level after the previous row
  * @property {T} value - Cell value
  * @property {boolean} [unique] - Print at this level only
  */
@@ -24,7 +23,7 @@ export interface ColumnEntry<T> {
 }
 
 /**
- * A declared column: either one value per level from level 1, or rows.
+ * A declared column
  *
  * @property {string} label - Column heading
  * @property {readonly T[]} [values] - One value per level from level 1; the last carries forward
@@ -123,7 +122,7 @@ const DEFAULT_LABELS: ProgressionLabels = {
 };
 
 /**
- * Tier bonus at a level: one step per three, floor one.
+ * Tier bonus at a level
  *
  * @param {number} level - Level
  * @returns {number} Bonus
@@ -212,8 +211,7 @@ function columnExtent<T>(column: ColumnSpec<T>): number {
 }
 
 /**
- * Last level the table prints: what was written, else the last level anything
- * declares, never below the default.
+ * Last level the table prints
  *
  * @param {ProgressionSpec<T>} spec - Spec
  * @returns {number} Level
@@ -294,7 +292,7 @@ export function featuresText<T>(
 
 /**
  * Items of a comma-separated attribute value, trimmed; empty items stay as
- * empty cells, and an empty or missing value is no list at all.
+ * empty cells
  *
  * @param {string} [text] - Attribute value
  * @returns {string[]} Items

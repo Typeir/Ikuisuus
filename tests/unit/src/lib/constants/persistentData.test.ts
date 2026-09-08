@@ -1,7 +1,7 @@
 /**
  * @fileoverview Persistent Data Enum Unit Tests
  * @description Tests for persistent data keys used in localStorage and DOM data attributes
- * for cross-session state persistence (theme, preferences).
+ * for cross-session state persistence (theme
  *
  * @module tests/unit/src/lib/constants/persistentData.test
  * @version 1.0.0

@@ -2,7 +2,7 @@
  * @fileoverview Search content-type taxonomy
  * @module modules/search/domain/contentTypes
  * @description Canonical union of searchable content types and a display-metadata
- * registry (label, icon name, color token key, URL segment).
+ * registry (label, icon name
  *
  * @author Typeir
  * @version 1.0.0
@@ -24,8 +24,7 @@ export const SEARCH_EXCLUDED_TYPES = [
 ] as const;
 
 /**
- * Union of all searchable content types: every {@link ContentType} except
- * {@link SEARCH_EXCLUDED_TYPES}.
+ * Union of all searchable content types
  *
  * @typedef {(
  *   | 'monsters' | 'heirlooms' | 'spells' | 'trinkets' | 'bloodlines'

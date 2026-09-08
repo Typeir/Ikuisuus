@@ -1,7 +1,6 @@
 /**
  * Character Roster layout — top bar, sidebar list, collapsed state,
- * delete confirmation buttons, main panel placeholder.
- * All colors via CSS variables.
+ * delete confirmation buttons
  */
 
 @use '@/styles/mixins-button' as *;
@@ -221,11 +220,7 @@
 
 /** =====================================================================
  * Phone layout (≤768px) — the sidebar becomes a horizontal save-slot
- * rail under the top bar, and inner scroll containers dissolve so the
- * document is the single scroll surface. Selectors are doubled with the
- * [data-collapsed='true'] variant where needed so the rail wins over the
- * desktop collapsed-state overrides regardless of the persisted toggle.
- * ===================================================================== */
+ * rail under the top bar */
 
 @include desktop {
   .rosterShell {
@@ -314,7 +309,7 @@
   }
 
   /* Delete lives inside the active slot only — a 44px target next to the
-     name, feeding the existing confirmation modal. */
+     name */
   .characterRoster .rosterDeleteBtn,
   .characterRoster[data-collapsed='true'] .rosterDeleteBtn {
     display: none;

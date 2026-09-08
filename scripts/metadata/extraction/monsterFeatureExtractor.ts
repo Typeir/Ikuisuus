@@ -30,6 +30,22 @@ import {
 } from './monsterTokens';
 
 /**
+ * Matches the tag a heading carries at its end, which names what kind of block
+ * it is rather than forming part of its own name.
+ */
+const HEADING_TAG = /\s*<span\b[^>]*>[\s\S]*?<\/span>\s*$/i;
+
+/**
+ * A heading's name, without the tag it wears.
+ *
+ * @param {string} heading - Raw heading text
+ * @returns {string} The name a reader would call it by
+ */
+function headingName(heading: string): string {
+  return plain(heading.replace(HEADING_TAG, ''));
+}
+
+/**
  * A named sub-section produced by splitBySubHeadings.
  *
  * @interface SubSection
@@ -38,6 +54,8 @@ import {
  * @property {'heading' | 'bold'} origin - Whether this came from an H4+ heading or a bold-label bullet
  * @property {number} startOffset - 0-based index of this sub-section's first line within the parent lines array
  * @property {number} endOffset - Exclusive 0-based end index within the parent lines array
+ * @property {string} [tag] - The opening tag of the block this sub-section sits
+ * inside, which is where a slot-form sheet writes its accuracy
  */
 export interface SubSection {
   name: string;
@@ -45,6 +63,7 @@ export interface SubSection {
   origin: 'heading' | 'bold';
   startOffset: number;
   endOffset: number;
+  tag?: string;
 }
 
 /**
@@ -149,7 +168,9 @@ function extractSubHeadingFeatures(
       continue;
     }
 
-    const raw = sub.lines.join('\n');
+    /* The block's own opening tag carries its accuracy, reach and range, so it
+       is read alongside the prose rather than left outside the feature. */
+    const raw = [sub.tag, ...sub.lines].filter(Boolean).join('\n');
     const feat = baseFeature(sub.name);
     feat.trigger = defaultTrigger;
     feat.source = {
@@ -190,9 +211,13 @@ export function enrichFromBody(feat: MonsterFeature, body: string): void {
 
   const save = recognizeSave(body);
   if (save) {
+    /* A block states its DC once, on its accuracy: every DC is ten plus that,
+       so a save with no number of its own takes the one its block sets. */
+    const accuracy = body.match(MONSTER.accuracySlot);
+    const derived = accuracy ? 10 + parseInt(accuracy[1], 10) : 0;
     feat.saving_throw = {
       ability: save.ability,
-      dc: save.dc.flat ?? 0,
+      dc: save.dc.flat ?? derived,
     };
   }
 
@@ -235,6 +260,25 @@ export function enrichFromBody(feat: MonsterFeature, body: string): void {
 }
 
 /**
+ * Whether the tag opening on a line introduces a block with its own heading.
+ *
+ * @description Such a tag ends the feature above it, since what follows is a
+ * new named block and its accuracy belongs to that block.
+ *
+ * @param {string[]} lines - Section content lines
+ * @param {number} idx - Line the tag opens on
+ * @returns {boolean} True when a heading follows the tag
+ */
+function opensNamedBlock(lines: string[], idx: number): boolean {
+  if (!/^\s*<[A-Z]/.test(lines[idx])) return false;
+  let end = idx;
+  while (end < lines.length && !/>\s*$/.test(lines[end])) end += 1;
+  let next = end + 1;
+  while (next < lines.length && lines[next].trim() === '') next += 1;
+  return next < lines.length && SECTIONS.subHeading.test(lines[next]);
+}
+
+/**
  * Splits section lines by H4/H5/H6 sub-headings or bold-label bullets.
  *
  * @param {string[]} lines - Section content lines
@@ -249,17 +293,28 @@ export function splitBySubHeadings(lines: string[]): SubSection[] {
     const headingMatch = line.match(SECTIONS.subHeading);
     const boldMatch = !headingMatch ? line.match(SECTIONS.boldLabel) : null;
 
+    if (!headingMatch && !boldMatch && opensNamedBlock(lines, idx)) {
+      if (current) {
+        current.endOffset = idx;
+        result.push(current);
+        current = null;
+      }
+      continue;
+    }
+
     if (headingMatch) {
       if (current) {
         current.endOffset = idx;
         result.push(current);
       }
+      const tag = enclosingOpenTags(lines, idx);
       current = {
-        name: plain(headingMatch[1]),
+        name: headingName(headingMatch[1]),
         lines: [],
         origin: 'heading',
         startOffset: idx,
         endOffset: lines.length,
+        ...(tag ? { tag } : {}),
       };
       continue;
     }
@@ -289,25 +344,49 @@ export function splitBySubHeadings(lines: string[]): SubSection[] {
 }
 
 /**
+ * Reads the open tags a heading sits directly inside.
+ *
+ * @description A section starts at its heading, so a block written as
+ * `<Action accuracy="+4">` above `### Spellcasting` would have its numbers fall
+ * outside the section that needs them.
+ *
+ * @param {string[]} lines - All lines of the sheet
+ * @param {number} startLine - Index of the section's heading line
+ * @returns {string} The enclosing open tags, newest first, or the empty string
+ */
+export function enclosingOpenTags(lines: string[], startLine: number): string {
+  const tags: string[] = [];
+  for (let i = startLine - 1; i >= 0; i--) {
+    const line = lines[i].trim();
+    if (line === '') continue;
+    if (!SECTIONS.openTag.test(line)) break;
+    tags.push(line);
+  }
+  return tags.join('\n');
+}
+
+/**
  * Extracts spellcasting data from a spellcasting section.
  *
  * @param {MonsterSection} section - Classified spellcasting section
- * @param {string} file - Source file path
+ * @param {string[]} [lines] - All lines of the sheet, so the block's own open
+ * tag can be read for slots the section body does not repeat
  * @returns {MonsterFeature | null} Spellcasting feature or null
  */
 export function extractSpellcasting(
   section: MonsterSection,
+  lines?: string[],
 ): MonsterFeature | null {
-  const raw = section.lines.join('\n');
+  const preamble = lines
+    ? enclosingOpenTags(lines, section.startLine)
+    : '';
+  const raw = [preamble, ...section.lines].join('\n');
   const feat = baseFeature('Spellcasting');
   feat.trigger = 'passive';
 
-  const levelMatch = raw.match(SPELLCASTING.casterLevel);
   const dcMatch = raw.match(SPELLCASTING.dc);
   const atkMatch = raw.match(SPELLCASTING.attackBonus);
   const abiMatch = raw.match(SPELLCASTING.ability);
-
-  if (!levelMatch && !dcMatch) return null;
 
   const slots: Record<number, number> = {};
   const slotRegex = new RegExp(SPELLCASTING.slotCell.source, 'gi');
@@ -316,11 +395,26 @@ export function extractSpellcasting(
     slots[parseInt(slotMatch[1], 10)] = parseInt(slotMatch[2], 10);
   }
 
+  /* A block states its numbers as slots or in prose, so every pattern carries
+     a branch per spelling and only one of them captures. */
+  const captured = (match: RegExpMatchArray | null): string | null =>
+    match ? (match.slice(1).find((group) => group !== undefined) ?? null) : null;
+
+  const dc = captured(dcMatch);
+  const attack = captured(atkMatch);
+  const ability = captured(abiMatch);
+
+  /* A caster is anything that names a DC, an accuracy, a keyed ability or a
+     slot table. Keying this to a caster level would drop every sheet, since no
+     sheet prints one any more. */
+  if (!dc && !attack && !ability && Object.keys(slots).length === 0) {
+    return null;
+  }
+
   feat.spellcasting = {
-    level: levelMatch ? parseInt(levelMatch[1], 10) : 0,
-    ability: abiMatch ? abiMatch[1].toLowerCase() : 'unknown',
-    dc: dcMatch ? parseInt(dcMatch[1], 10) : 0,
-    attack_bonus: atkMatch ? parseInt(atkMatch[1], 10) : 0,
+    ability: ability ? ability.toLowerCase() : 'unknown',
+    dc: dc ? parseInt(dc, 10) : 0,
+    attack_bonus: attack ? parseInt(attack, 10) : 0,
     slots,
   };
 

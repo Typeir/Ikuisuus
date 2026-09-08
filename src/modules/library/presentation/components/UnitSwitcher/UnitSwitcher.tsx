@@ -45,7 +45,7 @@ function labelKey(value: string, prefix: string): string {
  *
  * @interface UnitSwitcherProps
  * @property {boolean} [embedded=false] - Render as rows alone, for a panel that
- *   supplies its own frame, heading and hint
+ *   supplies its own frame
  */
 export interface UnitSwitcherProps {
   embedded?: boolean;

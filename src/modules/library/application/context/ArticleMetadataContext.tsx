@@ -16,7 +16,7 @@ import React, { createContext, useContext, useMemo } from 'react';
 /**
  * One section of an article that carries its own aspects.
  *
- * @property {string} name - Section key: the heading's anchor slug, or `record/anchor` inside a multi-block file
+ * @property {string} name - Section key
  * @property {string[]} [tags] - Aspects derived from that section alone
  */
 export interface ArticleSection {

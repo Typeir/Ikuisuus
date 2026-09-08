@@ -1,7 +1,7 @@
 /**
  * PersistentUiContext Unit Tests
  *
- * @fileoverview Tests for the persistent UI context provider: hydration, persistence, and hook behavior.
+ * @fileoverview Tests for the persistent UI context provider
  */
 
 import {

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Skeleton Component Unit Tests
- * @description Unit tests for the skeleton loader component: renders a given
- * count, applies variant classes, width/height styles, and className.
+ * @description Unit tests for the skeleton loader component
  *
  * @module tests/unit/src/lib/components/skeleton/skeleton.test
  * @version 1.0.0

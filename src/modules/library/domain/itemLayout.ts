@@ -1,8 +1,7 @@
 /**
  * @fileoverview Where each item slot lands on the card.
  * @description The item schema names the slots; this says which the brief
- * speaks, which print as rows, and which form the stats row an heirloom's
- * `<Attributes />` marker draws.
+ * speaks
  *
  * @module modules/library/domain/itemLayout
  * @version 0.1.0
@@ -29,7 +28,7 @@ export const STAT_SLOTS: readonly HeirloomSlotName[] = [
 ];
 
 /**
- * Item slots the brief speaks: identity, spelled as sentences under the title.
+ * Item slots the brief speaks
  */
 export const ITEM_BRIEF_SLOTS: readonly HeirloomSlotName[] = [
   'rarity',

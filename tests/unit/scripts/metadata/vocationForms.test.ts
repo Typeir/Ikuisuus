@@ -1,7 +1,6 @@
 /**
  * @fileoverview Tests for the vocation slot-form shim.
- * @description Round trips: a v1 sample goes through its converter, then
- * through the shim, and the generator sees what it saw before.
+ * @description Round trips
  *
  * @module tests/unit/scripts/metadata/vocationForms.test
  * @version 0.1.0

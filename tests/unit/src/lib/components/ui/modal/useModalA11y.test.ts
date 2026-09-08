@@ -1,8 +1,7 @@
 /**
  * @fileoverview useModalA11y tests
  * @description Verifies the shared modal-a11y hook reference-counts body
- * scroll-lock, closes only the top-of-stack modal on Escape, and restores scroll
- * on close.
+ * scroll-lock, closes only the top-of-stack modal on Escape
  *
  * @module tests/unit/src/lib/components/ui/modal/useModalA11y.test
  * @version 1.0.0

@@ -1,8 +1,7 @@
 /**
  * Anti-Pattern Check
  *
- * @fileoverview Scans source code for common anti-patterns: console.log usage,
- * hardcoded setTimeout delays, explicit any types, and unsafe any casts.
+ * @fileoverview Scans source code for common anti-patterns
  *
  * @module .github/scripts/check-antipatterns
  */

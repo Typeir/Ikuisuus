@@ -2,7 +2,7 @@
  * @fileoverview Shared MDX heading inspection helpers.
  * @description Extracted from Collapsible so the slot card components and
  * Collapsible agree on what counts as a heading and how a heading splits into
- * title, trailing tag, and anchor.
+ * title
  *
  * @module modules/library/presentation/components/headingParts
  * @version 1.0.0
@@ -16,12 +16,13 @@ import React, { type ReactNode } from 'react';
  * Parsed heading payload.
  *
  * @property {ReactNode[]} titleNodes - Title content, trailing tag stripped
- * @property {string | null} cost - Trailing span text, used as tag or cost
+ * @property {React.ReactNode} cost - Trailing span contents, used as tag or
+ * cost; kept as nodes so a keyword written there stays a keyword
  * @property {string | null} anchor - Anchor id from heading element props
  */
 export interface ParsedHeading {
   titleNodes: ReactNode[];
-  cost: string | null;
+  cost: React.ReactNode;
   anchor: string | null;
 }
 
@@ -100,13 +101,16 @@ export function parseHeading(headingNode: ReactNode): ParsedHeading {
     };
   }
 
-  const costText = React.Children.toArray(lastNode.props.children)
-    .join('')
-    .trim();
+  /* The span's children are kept whole: flattening them to a string turned a
+     keyword written in a tag into `[object Object]`. A run of plain text is
+     still trimmed, so a tag reads the same as it always did. */
+  const costNodes = React.Children.toArray(lastNode.props.children);
+  const allText = costNodes.every((node) => typeof node === 'string');
+  const costText = allText ? costNodes.join('').trim() : '';
 
   return {
     titleNodes: nodes.slice(0, -1),
-    cost: costText.length > 0 ? costText : null,
+    cost: allText ? (costText.length > 0 ? costText : null) : costNodes,
     anchor: headingId,
   };
 }

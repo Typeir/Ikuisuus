@@ -1,9 +1,7 @@
 /**
  * @fileoverview Aspect autocomplete state for the search bar.
  * @description Watches the token under the caret; once it reads
- * `group:` (a group from the vocabulary, optionally with a value prefix),
- * the vocabulary is fetched lazily and the matching `group:value` tokens are
- * offered.
+ * `group:` (a group from the vocabulary
  *
  * @module modules/search/presentation/SearchBar/useAspectSuggestions
  * @version 1.0.0

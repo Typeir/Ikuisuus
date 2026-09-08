@@ -1,5 +1,5 @@
 /**
- * @fileoverview Migration 025: add feature headings, tags, and bloodline_features table.
+ * @fileoverview Migration 025
  * @description Adds heading and tags to features; creates bloodline_features child table.
  *
  * @module scripts/db/migrations/025_feature_headings_and_bloodline_features

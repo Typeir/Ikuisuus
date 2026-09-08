@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the button catalogue sample renderer.
  * @description Verifies each variant renders a `<button>`, icon-only variants carry
- * an accessible name, `tabActive` composes with `tab`, and unknown names fall back
- * to a labelled button.
+ * an accessible name
  *
  * @module tests/unit/src/app/[locale]/labs/dev/buttons/ButtonSample.test
  * @version 1.0.0

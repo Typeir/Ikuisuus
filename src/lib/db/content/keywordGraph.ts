@@ -1,8 +1,7 @@
 /**
  * @fileoverview Keyword Producer / Consumer Graph
  * @description Reads the `produces` and `consumes` arrays every metadata record
- * carries and turns them into the reverse direction invalidation needs: given a
- * file that changed, which pages hold a baked copy of its prose.
+ * carries and turns them into the reverse direction invalidation needs
  *
  * @module lib/db/content/keywordGraph
  * @version 1.0.0
@@ -62,7 +61,7 @@ const dropGraphs = (): void => {
 registerServerCache('keyword-graph', dropGraphs);
 
 /**
- * Trims a route to the comparable form: no locale prefix, no trailing slash.
+ * Trims a route to the comparable form
  *
  * @param {string} route - Route in either form
  * @returns {string} Normalised route

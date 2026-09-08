@@ -100,7 +100,7 @@ function handleDestructibleComponent(
 }
 
 /**
- * Extracts mark-target mechanics: condition name, duration, and limit.
+ * Extracts mark-target mechanics
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text
@@ -127,8 +127,7 @@ function handleMarkTarget(
 }
 
 /**
- * Extracts auto-hit attack data: flat damage, damage type, range, and
- * any bypass conditions.
+ * Extracts auto-hit attack data
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text
@@ -164,7 +163,7 @@ function handleAutoHit(
 }
 
 /**
- * Extracts summoning data: creature name, count, range, and tether status.
+ * Extracts summoning data
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text
@@ -202,8 +201,7 @@ function handleSummon(
 }
 
 /**
- * Extracts geometric teleportation mechanics: movement constraints
- * and immunity during repositioning.
+ * Extracts geometric teleportation mechanics
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text
@@ -242,7 +240,7 @@ function handleGeometryTeleport(
 }
 
 /**
- * Extracts damage reflection/link mechanics: range, save DC, link duration, and reflection type.
+ * Extracts damage reflection/link mechanics
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text
@@ -295,8 +293,7 @@ function handleTextPipe(
 }
 
 /**
- * Extracts environmental zone mechanics: duration, radius, conditions
- * applied, and special suppression effects.
+ * Extracts environmental zone mechanics
  *
  * @param {MonsterFeature} feat - Feature to enrich
  * @param {string} body - Raw body text

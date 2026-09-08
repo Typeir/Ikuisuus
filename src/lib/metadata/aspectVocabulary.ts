@@ -24,8 +24,7 @@ export interface AspectVocabularyGroup {
 }
 
 /**
- * Display order for pickers: form leads, myth second, machine groups in
- * shared-data order, theme last.
+ * Display order for pickers
  */
 const FIRST = ['form', 'myth'];
 const LAST = ['theme'];

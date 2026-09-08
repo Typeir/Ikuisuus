@@ -1,7 +1,6 @@
 /**
  * @fileoverview Dice Rolling Utilities
- * @description Shared primitives for dice rolls: rolling, parsing face counts
- * from die notation, formatting, and max/min result checks.
+ * @description Shared primitives for dice rolls
  *
  * @module lib/utils/diceUtils
  * @version 1.0.0
@@ -33,8 +32,7 @@ export function rollDie(faces: number): number {
 export const UNKNOWN_DIE = 0;
 
 /**
- * Reads the face count out of authored die notation (`"d12"`, `"12"`, `"D12"`,
- * `"d12 per Berserker level"`).
+ * Reads the face count out of authored die notation (`"d12"`, `"12"`, `"D12"`
  *
  * @function parseDieFaces
  * @param {string} notation - Authored die notation

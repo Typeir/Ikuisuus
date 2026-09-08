@@ -1,8 +1,7 @@
 /**
  * pgKeywordLinkRepository Unit Tests
  *
- * @fileoverview Tests for the MikroORM-backed keyword link adapter: it sweeps
- * every file-level table and keeps rows that define or ingest a shard.
+ * @fileoverview Tests for the MikroORM-backed keyword link adapter
  *
  * @module tests/unit/lib/db/content/adapters/pg/pgKeywordLinkRepository
  */

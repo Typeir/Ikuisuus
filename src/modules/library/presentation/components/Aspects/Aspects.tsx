@@ -16,6 +16,7 @@ import {
 import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
 import { useArticleMetadata } from '@/modules/library/application/context/ArticleMetadataContext';
 import {
+  collapseImplied,
   displayAspects,
   type ParsedAspect,
 } from '@/modules/library/domain/aspects';
@@ -23,13 +24,18 @@ import { IconButton } from '@/lib/components/ui/iconButton';
 import { useMounted } from '@/lib/hooks/useMounted';
 import { useLocale, useTranslations } from 'next-intl';
 import React, { useEffect, useRef, useState } from 'react';
-import { AspectPill } from './AspectPill';
+import { AspectPill, type AspectSize } from './AspectPill';
 import styles from './Aspects.module.scss';
 
 /**
  * Aspect count past which a flat row becomes a compressed carousel.
  */
 const CAROUSEL_THRESHOLD = 14;
+
+/**
+ * The same, for a run set into a heading rather than given a row.
+ */
+const INLINE_CAROUSEL_THRESHOLD = 4;
 
 /**
  * Props for the Aspects component.
@@ -39,6 +45,8 @@ const CAROUSEL_THRESHOLD = 14;
  * @property {string[]} [aspects] - Explicit tag list, for callers holding metadata
  * @property {string} [label] - Optional caption shown before the row
  * @property {string} [from] - Slot level at which these aspects are gained
+ * @property {AspectSize} [size] - Size step for the pills; defaults to `m`
+ * @property {boolean} [inline] - Sit in a line of its own making rather than open a row
  */
 export interface AspectsProps {
   section?: string;
@@ -46,6 +54,8 @@ export interface AspectsProps {
   aspects?: string[];
   label?: string;
   from?: string;
+  size?: AspectSize;
+  inline?: boolean;
 }
 
 /**
@@ -53,7 +63,7 @@ export interface AspectsProps {
  *
  * @returns {React.ReactElement | null} The toggle, or null with no provider to write to
  */
-const ExpandToggle: React.FC = () => {
+const ExpandToggle: React.FC<{ size?: AspectSize }> = ({ size }) => {
   const t = useTranslations('aspects');
   const dispatch = usePersistentUiDispatchOptional();
   const { aspectExpanded } = usePersistentUiStateOptional();
@@ -67,7 +77,7 @@ const ExpandToggle: React.FC = () => {
     <IconButton
       kind='add'
       shape='rhombus'
-      size='l'
+      size={size === 'xs' ? 's' : 'l'}
       tone={expanded ? 'danger' : 'accent'}
       aria-pressed={expanded}
       className={styles.toggle}
@@ -93,7 +103,9 @@ const ExpandToggle: React.FC = () => {
 const AspectCarousel: React.FC<{
   aspects: ParsedAspect[];
   locale: string;
-}> = ({ aspects, locale }) => {
+  size?: AspectSize;
+  flip?: boolean;
+}> = ({ aspects, locale, size, flip = false }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -121,10 +133,13 @@ const AspectCarousel: React.FC<{
   }, []);
 
   return (
-    <div className={styles.carouselWrap}>
+    <div
+      className={styles.carouselWrap}
+      data-size={size ?? undefined}
+      data-flip={flip ? 'true' : undefined}>
       <span className={styles.controls}>
         <span className={styles.toggleWrap}>
-          <ExpandToggle />
+          <ExpandToggle size={size} />
           <span className={styles.count} aria-hidden='true'>
             {aspects.length}
           </span>
@@ -144,11 +159,16 @@ const AspectCarousel: React.FC<{
                   style={
                     {
                       '--index': index,
-                      zIndex: aspects.length - index,
+                      '--z': aspects.length - index,
                     } as React.CSSProperties
                   }
                 >
-                  <AspectPill aspect={aspect} locale={locale} compact />
+                  <AspectPill
+                    aspect={aspect}
+                    locale={locale}
+                    size={size}
+                    compact
+                  />
                 </span>
               ))
             : null}
@@ -170,6 +190,8 @@ export const Aspects: React.FC<AspectsProps> = ({
   aspects,
   label,
   from,
+  size,
+  inline = false,
 }) => {
   const locale = useLocale();
   const t = useTranslations('aspects');
@@ -183,23 +205,40 @@ export const Aspects: React.FC<AspectsProps> = ({
         ? (aspectsFor(section) ?? [])
         : []);
 
-  const parsed = displayAspects(raw);
+  const parsed = collapseImplied(displayAspects(raw));
 
   if (!parsed.length) return null;
 
+  /* Set into a heading there is far less room, so the run folds into the
+     carousel sooner than it would given a row to itself. */
+  const crowded = inline ? INLINE_CAROUSEL_THRESHOLD : CAROUSEL_THRESHOLD;
+
   return (
-    <div className={styles.row} data-from={from ?? undefined}>
+    <div
+      className={inline ? styles.inlineRow : styles.row}
+      data-size={size ?? undefined}
+      data-from={from ?? undefined}>
       {label || from ? (
         <span className={styles.caption}>
           {from ? t('from', { source: from }) : label}
         </span>
       ) : null}
-      {parsed.length > CAROUSEL_THRESHOLD ? (
-        <AspectCarousel aspects={parsed} locale={locale} />
+      {parsed.length > crowded ? (
+        <AspectCarousel
+          aspects={parsed}
+          locale={locale}
+          size={size}
+          flip={inline}
+        />
       ) : (
         <span className={styles.flat}>
           {parsed.map((aspect) => (
-            <AspectPill key={aspect.raw} aspect={aspect} locale={locale} />
+            <AspectPill
+              key={aspect.raw}
+              aspect={aspect}
+              locale={locale}
+              size={size}
+            />
           ))}
         </span>
       )}

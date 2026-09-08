@@ -1,8 +1,7 @@
 /**
  * @fileoverview Native Measure Normalisation
  * @description Rewrites authoring syntax `[= 12 stride =]` to the bare form
- * `12 stride` that `parseUnitExpression` accepts, and splits that form back into
- * prose and measure segments for display.
+ * `12 stride` that `parseUnitExpression` accepts
  *
  * @module lib/units/nativeMeasure
  * @version 1.0.0

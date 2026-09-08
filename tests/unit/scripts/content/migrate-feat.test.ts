@@ -2,7 +2,7 @@
  * @fileoverview Tests for the feat converter.
  * @description Prerequisite, origin and repeatable move into the tag; the
  * ability sentence moves into `ability` with its maximum clause dropped; a
- * stated absence of prerequisite goes, since the card shows none.
+ * stated absence of prerequisite goes
  *
  * @module tests/unit/scripts/content/migrate-feat.test
  * @version 0.1.0

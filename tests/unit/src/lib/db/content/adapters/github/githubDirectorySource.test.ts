@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit Tests — githubDirectorySource
  * @description Validates GitHub Git Trees API integration including env var checks,
- * successful tree filtering, and error handling.
+ * successful tree filtering
  *
  * @module tests/unit/lib/db/content/adapters/github/githubDirectorySource
  */

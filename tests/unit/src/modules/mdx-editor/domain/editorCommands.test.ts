@@ -1,8 +1,6 @@
 /**
  * @fileoverview Editor Commands Unit Tests
- * @description Tests for execCommand-based textarea mutations: selection,
- * wrapping, prefix insertion, link insertion, line duplication, and keyboard
- * shortcut dispatch.
+ * @description Tests for execCommand-based textarea mutations
  */
 
 import {

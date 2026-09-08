@@ -31,7 +31,7 @@ export type DraftStatus = 'active' | 'pending' | 'archived';
  * @property {string} locale - Content locale (e.g. 'en', 'es')
  * @property {string} slug - Content slug path (e.g. 'monsters/albedo')
  * @property {string} content - Raw MDX content of the draft
- * @property {DraftStatus} status - Lifecycle status: 'active', 'pending', or 'archived'
+ * @property {DraftStatus} status - Lifecycle status
  * @property {Date} createdAt - Timestamp when the draft was created
  * @property {Date} updatedAt - Timestamp of the last update
  * @property {string | null} versionHash - FNV-1a content hash derived from locale+slug+content
@@ -58,7 +58,7 @@ export class DraftEntity {
   @OrmProperty({ type: 'string', columnType: 'text' })
   content!: string;
 
-  /** @property {DraftStatus} status - Lifecycle status: 'active', 'pending', or 'archived' */
+  /** @property {DraftStatus} status - Lifecycle status */
   @OrmProperty({ type: 'string', default: 'active' })
   status!: DraftStatus;
 

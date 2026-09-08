@@ -1,18 +1,13 @@
 /**
  * @fileoverview Backfill spell_lists from vocation spells.mdx files
  * @description Parses each vocation's spells.mdx to extract the spell slug array
- * from the SpellTable component's `spells` prop, cross-references against the
- * `spells` table in Postgres, and inserts matching `spell_lists` rows.
+ * from the SpellTable component's `spells` prop
  *
  * @module scripts/db/pg/backfill-spell-lists
  * @version 1.0.0
  * @since 1.0.0
  *
- * Usage:
- *   npx tsx scripts/db/pg/backfill-spell-lists.ts
- *
- * Required env:
- *   DATABASE_URL — Neon / Postgres connection string
+ * Usage
  */
 
 import { createLogger } from '@/lib/logging/logger';
@@ -134,8 +129,7 @@ function extractSpellSlugs(filePath: string): string[] {
 /* ──────────────────────  DB backfill logic  ────────────────────────── */
 
 /**
- * Processes a single vocation: deletes stale spell_lists rows, resolves slugs
- * against the spells table, and inserts fresh spell_lists rows.
+ * Processes a single vocation
  *
  * @param client - Transaction-bound pg client
  * @param vocation - Vocation definition

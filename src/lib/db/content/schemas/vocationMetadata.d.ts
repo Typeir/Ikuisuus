@@ -35,7 +35,7 @@ export interface VocationFeature {
 /**
  * Spellcasting summary extracted from the vocation's spellcasting section.
  *
- * @property {string} ability - Primary spellcasting ability (e.g. "Charisma")
+ * @property {string} ability - Primary casting ability (e.g. "Charisma")
  * @property {string} progression - Caster classification ("Full" | "Half" | "Third" | "Pact")
  */
 export interface VocationSpellcasting {

@@ -1,10 +1,6 @@
 /**
  * @fileoverview Unassigned-chip stack styles
  * @description A corner-anchored, absolutely-positioned ROW of status pills.
- * Absolute so it overlays without reflowing the table; pointer-events disabled on
- * the row since the pills are passive indicators. Pills flow horizontally and
- * right-align so they never stack downward into the table content. The condensed
- * summary pill re-enables pointer events so its tooltip is hoverable.
  *
  * @module modules/character-builder/presentation/atoms/unassignedChips.module
  */

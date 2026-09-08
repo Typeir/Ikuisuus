@@ -68,16 +68,7 @@ interface ToolsMenuProps {
  * @returns {JSX.Element} Rendered menu with button trigger and dropdown
  *
  * @description
- * Keyboard support on the trigger:
- * - `ArrowDown`, `Enter`, `Space` open the menu at the first item
- * - `ArrowUp` opens the menu at the last item
- *
- * Keyboard support within the menu:
- * - `ArrowDown` / `ArrowUp` move between items and wrap at both ends
- * - `Home` / `End` jump to the first and last item
- * - `Enter` / `Space` activate the focused item
- * - `Escape` closes and returns focus to the trigger
- * - `Tab` closes and lets focus continue past the menu
+ * Keyboard support on the trigger
  */
 export function ToolsMenu({ items, onSelect, trigger, label }: ToolsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);

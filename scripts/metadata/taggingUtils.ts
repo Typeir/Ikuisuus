@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tag extraction utilities: mechanics, organizational, lore, and content tags.
+ * @fileoverview Tag extraction utilities
  * @module scripts/metadata/taggingUtils
  * @version 1.0.0
  * @author Typeir
@@ -56,7 +56,7 @@ export function stripCitations(text: string): string {
 }
 
 /**
- * Collects text regions where a damage type may appear: clauses containing "damage" and dice expressions.
+ * Collects text regions where a damage type may appear
  *
  * @param {string} text - Content to analyze
  * @returns {string} The damage-bearing regions of the text, joined with ' | '
@@ -405,8 +405,7 @@ export function extractContentTypeTags(
 const ASPECT_SHAPE = /^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9-]*$/;
 
 /**
- * Slug rule shared with the page anchors: lowercase, hyphenated, ASCII word
- * chars only.
+ * Slug rule shared with the page anchors
  *
  * @param {string} text - Feature name or heading
  * @returns {string} Slug
@@ -416,7 +415,7 @@ export function aspectAnchor(text: string): string {
 }
 
 /**
- * Anchor of a feature: `anchorSlug` of the measure-normalised heading text.
+ * Anchor of a feature
  *
  * @param {string} text - Rendered heading text, or the feature name
  * @returns {string} Anchor slug
@@ -479,8 +478,7 @@ export function parseAuthoredAspectList(list: unknown): {
 }
 
 /**
- * Applies the sheet-level authored aspect frontmatter to a generated tag set:
- * bare `aspects:` entries are added, bare `denyAspects:` entries removed.
+ * Applies the sheet-level authored aspect frontmatter to a generated tag set
  *
  * @param {string[]} tags - Generated aspects
  * @param {Record<string, unknown> | undefined} frontmatter - Parsed frontmatter

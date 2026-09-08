@@ -78,7 +78,7 @@ export const AffixListEditor: React.FC<AffixListEditorProps> = ({
 
   const handleAddAffix = useCallback(
     (affix: AffixEntry) => {
-      /** Deduplicate: skip if affix already exists */
+      /** Deduplicate */
       if (affixes.some((a) => a.text === affix.text)) return;
       onChange([...affixes, affix]);
     },

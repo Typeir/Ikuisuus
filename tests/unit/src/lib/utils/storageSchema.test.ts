@@ -1,7 +1,7 @@
 /**
  * @fileoverview Storage Schema Version Tests
  * @description Tests that ensureStorageSchema drops stale or unversioned
- * storage, leaves current-version storage alone, and runs once per page load.
+ * storage, leaves current-version storage alone
  *
  * @module tests/unit/src/lib/utils/storageSchema.test
  * @version 1.0.0

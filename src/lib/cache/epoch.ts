@@ -38,7 +38,7 @@ const noneEpochSource: CacheEpochSource = {
   bump: async () => {},
 };
 
-/** @property {string} epochBackend - Active backend: only `'none'` exists yet. */
+/** @property {string} epochBackend - Active backend */
 const epochBackend = process.env.CACHE_EPOCH_BACKEND || 'none';
 
 /**

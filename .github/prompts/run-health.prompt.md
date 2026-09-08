@@ -17,7 +17,8 @@ If the composite script is not available, run each check individually:
 
 ```bash
 node .github/scripts/check-file-length.mjs
-node .github/scripts/check-duplicate-css.mjs
+npx tsx .github/scripts/checkDuplicateCssSelectors.ts
+npx tsx .github/scripts/checkDuplicateCssAttributes.ts
 node .github/scripts/check-jsdoc-quality.mjs
 node .github/scripts/check-antipatterns.mjs
 node .github/scripts/check-test-gaps.mjs

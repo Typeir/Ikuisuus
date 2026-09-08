@@ -1,5 +1,8 @@
 /**
- * @fileoverview Rehype plugin inserting Aspects rows in sections and articles.
+ * @fileoverview Rehype plugin inserting the Aspects row a record wears.
+ * @description Only the title of a record carries a row. Its parts are read
+ * through it, and repeating the aspects down every heading buried the reading
+ * they were there to give.
  *
  * @module modules/library/infrastructure/compile/rehypeAspects
  * @version 1.0.0
@@ -56,30 +59,6 @@ function slugOf(node: Element): string | undefined {
 }
 
 /**
- * Split paragraph at first br; place row between label and body.
- *
- * @param {Parent} parent - Node holding the paragraph
- * @param {number} index - Index of the paragraph in `parent.children`
- * @param {string} key - Section key
- */
-function placeAfterLabel(parent: Parent, index: number, key: string): void {
-  const p = parent.children[index] as Element;
-  const br = p.children.findIndex(
-    (c) => c.type === 'element' && c.tagName === 'br',
-  );
-  if (br === -1) {
-    parent.children.splice(index + 1, 0, aspectsNode(key));
-    return;
-  }
-  const label: Element = { ...p, children: p.children.slice(0, br) };
-  const body = p.children.slice(br + 1);
-  const rest: ElementContent[] = body.length
-    ? [{ ...p, children: body } as ElementContent]
-    : [];
-  parent.children.splice(index, 1, label, aspectsNode(key), ...rest);
-}
-
-/**
  * Plugin factory.
  *
  * @param {RehypeAspectsOptions} [options] - Plugin options
@@ -107,16 +86,7 @@ const rehypeAspects: Plugin<[RehypeAspectsOptions?], Root> = (options) => {
       const type = c.type as unknown as string;
 
       if (type === 'mdxJsxFlowElement') {
-        const jsx = c as unknown as Parent;
-        const lead = jsx.children[0];
-        if (
-          lead?.type === 'element' &&
-          /^h[1-6]$/.test((lead as Element).tagName)
-        ) {
-          const key = keyOf(headingAnchor(lead as Element), record);
-          if (key) jsx.children.splice(1, 0, aspectsNode(key));
-        }
-        walk(jsx, record, inQuote);
+        walk(c as unknown as Parent, record, inQuote);
         continue;
       }
 
@@ -136,20 +106,14 @@ const rehypeAspects: Plugin<[RehypeAspectsOptions?], Root> = (options) => {
         } else if (slug) {
           key = keyOf(slug, record);
         }
-        if (key && level > 0) c.children.splice(1, 0, aspectsNode(key) as ElementContent);
+        if (key && level === 1) {
+          c.children.splice(1, 0, aspectsNode(key) as ElementContent);
+        }
         walk(c as unknown as Parent, record, inQuote);
         continue;
       }
 
       if (c.tagName === 'article') {
-        const slug = slugOf(c);
-        const key = slug ? keyOf(slug, record) : null;
-        const lead = c.children.findIndex((x) => x.type === 'element');
-        if (key && lead !== -1 && (c.children[lead] as Element).tagName === 'p') {
-          placeAfterLabel(c as unknown as Parent, lead, key);
-        } else if (key) {
-          c.children.splice(lead === -1 ? 0 : lead + 1, 0, aspectsNode(key) as ElementContent);
-        }
         walk(c as unknown as Parent, record, inQuote);
         continue;
       }

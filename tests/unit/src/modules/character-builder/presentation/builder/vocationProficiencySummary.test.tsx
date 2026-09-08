@@ -1,8 +1,6 @@
 /**
  * @fileoverview VocationProficiencySummary Unit Tests
- * @description Verifies the fixed proficiency digest: every SAVES/SKILLS/ARMOR/
- * WEAPONS/TRADES row is always rendered, absent grants (or no vocation) show an
- * em dash, and inline markdown markers are stripped from grant values.
+ * @description Verifies the fixed proficiency digest
  *
  * @module tests/unit/src/modules/character-builder/presentation/builder/vocationProficiencySummary.test
  * @version 2.0.0

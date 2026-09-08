@@ -1,6 +1,5 @@
 /**
- * @fileoverview Pure row logic for MetadataTable: cell extraction, column
- * filter matching, row navigation targets, and filter option derivation.
+ * @fileoverview Pure row logic for MetadataTable
  *
  * @module lib/components/mdx/metadataTables/metadataTableLogic
  * @version 1.0.0
@@ -61,9 +60,16 @@ export function rowMatchesColumnFilters(
         if (!hasMatch) return false;
       }
     } else if (column.filterType === 'select') {
-      const cellValueStr = String(cellValue || '').toLowerCase();
       const filterValueStr = String(value).toLowerCase();
-      if (cellValueStr !== filterValueStr) return false;
+      if (Array.isArray(cellValue)) {
+        const hasValue = cellValue.some(
+          (entry) => String(entry).toLowerCase() === filterValueStr,
+        );
+        if (!hasValue) return false;
+      } else {
+        const cellValueStr = String(cellValue || '').toLowerCase();
+        if (cellValueStr !== filterValueStr) return false;
+      }
     } else if (column.filterType === 'range') {
       const numValue = parseFloat(String(cellValue));
       if (isNaN(numValue)) return false;
@@ -77,6 +83,27 @@ export function rowMatchesColumnFilters(
   }
 
   return true;
+}
+
+/**
+ * Whether a row carries every aspect the table is filtered by.
+ *
+ * @param {MetadataRow} row - Data row
+ * @param {string[]} aspects - Active `group:value` filters
+ * @returns {boolean} True when the row's tags cover all of them
+ *
+ * @example
+ * rowMatchesAspects({ tags: ['condition:bleeding'] }, ['condition:bleeding']); // true
+ */
+export function rowMatchesAspects(
+  row: MetadataRow,
+  aspects: string[],
+): boolean {
+  if (aspects.length === 0) return true;
+  const tags = Array.isArray(row.tags)
+    ? (row.tags as unknown[]).map((tag) => String(tag).toLowerCase())
+    : [];
+  return aspects.every((aspect) => tags.includes(aspect.toLowerCase()));
 }
 
 /**
@@ -138,9 +165,7 @@ export function resolveRowHref(
 }
 
 /**
- * Filter dropdown options for a column: `column.getFilterOptions(rows)` when
- * defined, else unique stringified cell values (arrays flattened), sorted by
- * `column.filterSortOrder` when provided, else alphabetically.
+ * Filter dropdown options for a column
  *
  * @param {ColumnConfig} column - Column configuration
  * @param {MetadataRow[]} rows - Dataset to derive options from

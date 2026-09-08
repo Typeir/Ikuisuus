@@ -1,8 +1,7 @@
 /**
  * @fileoverview Foundry VTT monster compendium export orchestrator.
  * @description Reads monster metadata and MDX content from the Ikuisuus content
- * directory, transforms each monster into a dnd5e NPC Actor JSON document, and
- * writes the results to foundry/packs/_source/monsters/.
+ * directory, transforms each monster into a dnd5e NPC Actor JSON document
  *
  * @module foundry/scripts/export
  * @version 1.0.0

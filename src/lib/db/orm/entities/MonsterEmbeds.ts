@@ -42,7 +42,7 @@ export class MonsterHPEmbed {
 
 /**
  * Speed value object — maps to `speed_raw`, `speed_walk`, `speed_fly`,
- * `speed_climb`, `speed_swim`, `speed_burrow`, `speed_hover`.
+ * `speed_climb`, `speed_swim`, `speed_burrow`
  */
 @OrmEmbeddable('MonsterSpeedEmbed')
 export class MonsterSpeedEmbed {

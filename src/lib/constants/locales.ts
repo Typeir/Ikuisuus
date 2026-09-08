@@ -2,7 +2,7 @@
  * Locale Constants
  *
  * @fileoverview Single source of truth for the locale list, shared by routing,
- * search, scripts, and keyword resolution.
+ * search
  *
  * @module lib/constants/locales
  * @version 2.0.0

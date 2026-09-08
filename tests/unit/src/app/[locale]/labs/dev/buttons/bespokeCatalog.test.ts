@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for bespoke button grouping and canonical matching.
  * @description Covers grouping of class uses by stylesheet and class, exclusion of
- * the canonical stylesheet, and nearest-variant scoring.
+ * the canonical stylesheet
  *
  * @module tests/unit/src/app/[locale]/labs/dev/buttons/bespokeCatalog.test
  * @version 1.0.0

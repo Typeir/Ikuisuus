@@ -38,7 +38,7 @@ type MonsterLibraryData = {
 };
 
 /**
- * Creates an empty creature entry with default values: ability scores, HP, and AC of 10.
+ * Creates an empty creature entry with default values
  *
  * @function createEmptyCreature
  * @returns {CreatureEntry} Creature with default values

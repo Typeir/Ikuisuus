@@ -129,10 +129,7 @@ export const createInProgressCombatant = (
  * @returns {string[]} Sorted array of combatant IDs
  *
  * @description
- * Sorting priority:
- * 1. Initiative value (descending)
- * 2. Dexterity modifier (descending tie-breaker)
- * 3. Name alphabetically (final tie-breaker)
+ * Sorting priority
  */
 export const sortCombatantsByInitiative = (
   combatants: InProgressCombatant[],

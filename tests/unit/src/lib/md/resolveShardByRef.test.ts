@@ -1,8 +1,6 @@
 /**
  * @fileoverview resolveShardByRef Tests
- * @description Covers resolution through the `produces` graph: the shard id a
- * reference names, the single file read it costs, and the boundary that keeps a
- * document's bake to what it writes.
+ * @description Covers resolution through the `produces` graph
  *
  * @module tests/unit/src/lib/md/resolveShardByRef.test
  * @version 1.0.0

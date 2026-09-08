@@ -1,7 +1,7 @@
 /**
  * @fileoverview Integration tests for ToolsMenu with useToolRegistry items.
  * @description Verifies all visible registry tools render as menu items, items have non-empty
- * labels, onSelect receives the ToolMenuItem on click, and the menu closes after selection.
+ * labels
  *
  * @module tests/unit/src/modules/tools-menu/tools-menu-registry.test
  * @version 1.0.0

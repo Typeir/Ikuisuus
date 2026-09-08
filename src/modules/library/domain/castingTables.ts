@@ -172,8 +172,7 @@ export function slotOrdinal(level: number): string {
 }
 
 /**
- * Columns a casting kind prints for a table that runs to `levels`, and the
- * cell values for each level.
+ * Columns a casting kind prints for a table that runs to `levels`
  *
  * @param {CastingKind} kind - Casting kind
  * @param {number} levels - Last level printed

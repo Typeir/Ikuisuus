@@ -1,5 +1,5 @@
 /**
- * @fileoverview Slot card T3: keyword href in slots.
+ * @fileoverview Slot card T3
  * @description Mocks the keyword graph and file service so `[# kw:Repose #]`
  * resolves deterministically; asserts the resolved `<Keyword>` carries an href
  * in both spellings.

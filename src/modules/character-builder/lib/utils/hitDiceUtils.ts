@@ -15,8 +15,7 @@ import { collectActiveGrants, parseGrant } from './grants';
 import { resolveHpTerm, type HpScope } from './hpGrants';
 
 /**
- * Recomputes maximum HP from the hit dice log: the sum of `(result + conMod)`
- * across every entry that has been confirmed and added to HP.
+ * Recomputes maximum HP from the hit dice log
  *
  * @function recalculateHpMax
  * @param {HitDieRollEntry[]} log - The character's hit dice roll log
@@ -43,8 +42,7 @@ export interface DerivedHitPoints {
 }
 
 /**
- * The rolled-dice counts a scope multiplier reads: the total assigned dice and
- * the per-vocation / per-specialization breakdowns.
+ * The rolled-dice counts a scope multiplier reads
  *
  * @interface HpScopeContext
  * @property {number} totalRolled - Count of assigned (rolled + added) hit dice
@@ -116,8 +114,7 @@ function readAssignedDice(character: CharacterSheet): {
 }
 
 /**
- * Derives a character's hit points from the rolled hit dice, plus CON, plus every
- * active passive `hp` grant, minus the grievous-wound pool.
+ * Derives a character's hit points from the rolled hit dice, plus CON
  *
  * @function deriveHitPoints
  * @param {CharacterSheet} character - Character to derive from
@@ -140,9 +137,7 @@ export function deriveHitPoints(character: CharacterSheet): DerivedHitPoints {
 }
 
 /**
- * The HP a single rolled die of the given vocation carries: the CON modifier
- * plus every per-level `hp` grant whose scope matches this die (`level`, or the
- * matching `level-vocation`/`level-specialization`).
+ * The HP a single rolled die of the given vocation carries
  *
  * @function perLevelGrantBonus
  * @param {CharacterSheet} character - Character to read grants from

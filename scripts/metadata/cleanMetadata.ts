@@ -8,8 +8,7 @@
  * @author Typeir
  * @since 8.0.0
  *
- * Usage:
- *   npx tsx --tsconfig tsconfig.scripts.json scripts/metadata/cleanMetadata.ts
+ * Usage
  */
 
 import { promises as fs } from 'fs';
@@ -45,7 +44,7 @@ async function deleteBySuffix(dir: string, suffix: string): Promise<number> {
 }
 
 /**
- * Entry point: removes sidecars and `.meta` output trees.
+ * Entry point
  *
  * @returns {Promise<void>}
  */

@@ -22,7 +22,7 @@
   --color-actionable: #b2dfdb;
   --color-emphasis: #8acfd4;
 
-  /* Semantic notification colors - pastel, desaturated for dark theme */
+  /* Semantic notification colors - pastel */
   --color-success: #86efac;
   --color-warning: #fbbf24;
   --color-error: #f87171;
@@ -31,11 +31,11 @@
   --color-stratagem: #d8b4fe;
 
   /* Phase marker colors - creature lifecycle tracking at HP thresholds */
-  --color-phase-wounded: #fbbf24; /* Wounded: 75%-51% (amber) */
+  --color-phase-wounded: #fbbf24; /* Wounded */
   --color-phase-wounded-border: #f59e0b;
-  --color-phase-bloodied: #f87171; /* Bloodied: 50%-26% (red) */
+  --color-phase-bloodied: #f87171; /* Bloodied */
   --color-phase-bloodied-border: #ef4444;
-  --color-phase-doomed: #7f1d1d; /* Doomed: 25%-0% (dark red) */
+  --color-phase-doomed: #7f1d1d; /* Doomed */
   --color-phase-doomed-border: #991b1b;
   --color-phase-slain: #000000;
   --color-phase-slain-border: #ffffff;
@@ -94,57 +94,56 @@
   --search-type-rule: #d8c8a0;
 
   /* Search bar visibility — dimming alphas and input weight are
-     theme-owned: dark tolerates heavy dimming, light does not */
+     theme-owned */
   --search-muted-alpha: 0.6; /* placeholder + search icon */
   --search-hint-alpha: 0.4; /* keyboard shortcut hint */
   --search-input-weight: 400;
 
   /* ============================================
      HEROIC AWAKENING TOKENS - Pastel-adjacent
-     Each affix: -bg-1 (primary), -bg-2 (secondary), -border
-  ============================================ */
+     Each affix */
 
-  /* Bloodthirsty: red family (muted rose) */
+  /* Bloodthirsty */
   --ha-bloodthirsty-bg-1: #3d2632;
   --ha-bloodthirsty-bg-2: #4d303d;
   --ha-bloodthirsty-border: #9c6b7a;
 
-  /* Championed: iron/grey family (muted steel) */
+  /* Championed */
   --ha-championed-bg-1: #2d3038;
   --ha-championed-bg-2: #383b44;
   --ha-championed-border: #7a8090;
 
-  /* Crusading: yellow/gold family (muted gold) */
+  /* Crusading */
   --ha-crusading-bg-1: #3d3826;
   --ha-crusading-bg-2: #4d4530;
   --ha-crusading-border: #a89860;
 
-  /* Flametongued: red/orange family (muted ember) */
+  /* Flametongued */
   --ha-flametongued-bg-1: #3d2e26;
   --ha-flametongued-bg-2: #4d3a30;
   --ha-flametongued-border: #b08060;
 
-  /* Frostveined: blue/cyan family (muted ice) */
+  /* Frostveined */
   --ha-frostveined-bg-1: #262d3d;
   --ha-frostveined-bg-2: #303a4d;
   --ha-frostveined-border: #6090a8;
 
-  /* Psionic: pink/magenta family (muted violet) */
+  /* Psionic */
   --ha-psionic-bg-1: #38263d;
   --ha-psionic-bg-2: #45304d;
   --ha-psionic-border: #9068a0;
 
-  /* Rakish: silver/white family (muted pearl) */
+  /* Rakish */
   --ha-rakish-bg-1: #333540;
   --ha-rakish-bg-2: #3e404d;
   --ha-rakish-border: #a0a5b8;
 
-  /* Stormbound: purple/violet family (muted storm) */
+  /* Stormbound */
   --ha-stormbound-bg-1: #30263d;
   --ha-stormbound-bg-2: #3c304d;
   --ha-stormbound-border: #8068a8;
 
-  /* Sulphurous: green family (muted bile) */
+  /* Sulphurous */
   --ha-sulphurous-bg-1: #2d3826;
   --ha-sulphurous-bg-2: #384530;
   --ha-sulphurous-border: #78a060;
@@ -157,7 +156,7 @@
   --ha-legendary-shimmer-5: #4a4228;
   --ha-legendary-border: #d4b858;
 
-  /* Mythic tier shimmer (prismatic/opaline: purple→teal→pink→yellow) */
+  /* Mythic tier shimmer (prismatic/opaline */
   --ha-mythic-shimmer-1: #38303d; /* Purple */
   --ha-mythic-shimmer-2: #303d3d; /* Teal */
   --ha-mythic-shimmer-3: #484850; /* White highlight */
@@ -166,7 +165,7 @@
   --ha-mythic-shimmer-6: #38303d; /* Back to purple */
   --ha-mythic-border: #b890d0; /* Purple border */
 
-  /* Skeleton: static ink, moving light */
+  /* Skeleton */
   --skeleton-surface: var(--color-bg-secondary); /* default matter color */
   --skeleton-glint-1: #3f5a4a; /* --color-accent desaturated toward surface (green) */
   --skeleton-glint-2: #4d7580; /* --color-emphasis darkened (cyan crest) */
@@ -175,7 +174,7 @@
   --flashlight-scanline: rgba(255, 255, 255, 0.4);
   --flashlight-scanline-opacity: 0.2;
 
-  /* Sidebar folder glow — a luminous halo, so light-on-dark here */
+  /* Sidebar folder glow — a luminous halo */
   --sidebar-glow: var(--color-text);
 
   /* Awakened badge token */
@@ -185,9 +184,7 @@
 
   /* ============================================
      HEROIC AWAKENING CONTEXTUAL TOKENS
-     These are scoped overrides set by .awakened--{affix} classes.
-     Children reference these instead of --color-* for full theming.
-  ============================================ */
+     These are scoped overrides set by .awakened--{affix} classes. */
 
   /* Default contextual values (non-awakened state) - inherit from theme */
   --ha-ctx-bg: var(--color-surface);
@@ -215,8 +212,7 @@
   --worldsim-bg: #050508;
   --worldsim-panel-bg: var(--color-surface);
   --worldsim-panel-border: var(--color-border);
-  /* Labels float over the space canvas, which stays dark in both themes, so
-     their text and scrim derive from the canvas rather than the page theme. */
+  /* Labels float over the space canvas, which stays dark in both themes */
   --worldsim-label-text: #ffffff;
   --worldsim-label-accent: var(--color-accent);
   --worldsim-label-bg: color-mix(in srgb, var(--worldsim-bg) 70%, transparent);

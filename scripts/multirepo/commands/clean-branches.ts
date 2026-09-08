@@ -123,7 +123,7 @@ function cleanRepoBranches(
 }
 
 /**
- * Deletes all branches except `main` in both repos, locally and on origin, content first.
+ * Deletes all branches except `main` in both repos, locally and on origin
  * @param _args - Unused; present for the CliCommand contract.
  */
 export async function run(_args: string[]): Promise<void> {

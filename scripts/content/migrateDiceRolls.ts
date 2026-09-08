@@ -1,15 +1,14 @@
 /**
  * @fileoverview Dice Expression Migration Script (CLI)
  * @description Scans MDX files, normalizes dice expressions to canonical
- * `[% NdM + static type %]` form, and wraps them.
+ * `[% NdM + static type %]` form
  *
  * @module scripts/content/migrateDiceRolls
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0
  *
- * Usage:
- *   npx tsx scripts/content/migrateDiceRolls.ts [--dry-run] [--verbose] [--file <path>] [--apply] [--max-outlier-pct 5]
+ * Usage
  */
 
 import {

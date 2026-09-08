@@ -1,8 +1,7 @@
 /**
  * @fileoverview Tests for the vocation converter.
  * @description The core traits table becomes the `<Vocation>` tag, a value an
- * attribute cannot hold goes in element form, and level headings become
- * Feature blocks that respect Collapsible boundaries.
+ * attribute cannot hold goes in element form
  *
  * @module tests/unit/scripts/content/migrate-vocation.test
  * @version 0.1.0

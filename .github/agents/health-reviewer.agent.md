@@ -39,7 +39,8 @@ Always runs after implementation. Job:
 | Check            | Script                  | Severity |
 | ---------------- | ----------------------- | -------- |
 | File length >250 | check-file-length.mjs   | CRITICAL |
-| Duplicate CSS    | check-duplicate-css.mjs | CRITICAL |
+| Duplicate CSS Selectors | checkDuplicateCssSelectors.ts | CRITICAL |
+| Duplicate CSS Attributes | checkDuplicateCssAttributes.ts | CRITICAL |
 | JSDoc quality    | check-jsdoc-quality.mjs | CRITICAL |
 | Anti-patterns    | check-antipatterns.mjs  | CRITICAL |
 | Test gaps        | check-test-gaps.mjs     | CRITICAL |

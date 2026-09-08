@@ -39,7 +39,7 @@ import { AspectGlyphs } from '@/modules/library/presentation/components/Aspects/
  * @property {string} expandLabel - Accessible label for the expand button
  * @property {string} [openLabel] - Accessible label for the open-source button (only used when `onFocus` is provided)
  * @property {ReactNode} [subOptions] - Optional sub-option selector rendered beneath the card row
- * @property {FeatureCardRepeatable} [repeatable] - When present, the primary button adds an instance, a count chip and remove button appear, and `onToggle`/`selected` are ignored
+ * @property {FeatureCardRepeatable} [repeatable] - When present, the primary button adds an instance, a count chip and remove button appear
  * @property {string[]} [aspects] - Aspects of the feature, shown as glyphs under the row
  */
 export interface FeatureCardProps {

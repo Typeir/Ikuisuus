@@ -91,4 +91,87 @@ describe('FeatTable', () => {
     // repeatable column renders tCommon('yes') for the repeatable feat only
     expect(screen.getByText('yes')).toBeInTheDocument();
   });
+
+  it('renders the declared category and an em dash without one', () => {
+    useFeatsMock.mockReturnValue({
+      feats: [
+        {
+          slug: 'refusal-of-fate',
+          title: 'Refusal of Fate',
+          hasPrerequisite: false,
+          category: 'epic boon',
+        },
+        { slug: 'tough', title: 'Tough', hasPrerequisite: false },
+      ],
+      isLoading: false,
+      error: undefined,
+    });
+    render(<FeatTable />);
+    expect(screen.getByText('Epic boon')).toBeInTheDocument();
+    expect(screen.getAllByText('—').length).toBeGreaterThan(0);
+  });
+
+  it('compiles prose fields instead of stripping their markup', () => {
+    useFeatsMock.mockReturnValue({
+      feats: [
+        {
+          slug: 'chef',
+          title: 'Chef',
+          hasPrerequisite: true,
+          prerequisite: 'Proficiency with **cook** tools',
+          description: 'You gain a **knack** for feeding people.',
+        },
+      ],
+      isLoading: false,
+      error: undefined,
+    });
+    const { container } = render(<FeatTable />);
+    const bold = Array.from(container.querySelectorAll('strong')).map(
+      (node) => node.textContent,
+    );
+    expect(bold).toContain('knack');
+    expect(bold).toContain('cook');
+    expect(container.textContent).not.toContain('**');
+  });
+
+  it('renders a link in compiled prose without emitting an anchor', () => {
+    useFeatsMock.mockReturnValue({
+      feats: [
+        {
+          slug: 'chef',
+          title: 'Chef',
+          hasPrerequisite: true,
+          prerequisite: 'Proficiency with [Cooking](/library/items/tools/cooking)',
+        },
+      ],
+      isLoading: false,
+      error: undefined,
+    });
+    const { container } = render(<FeatTable />);
+    expect(container.querySelector('a')).toBeNull();
+    const labelled = container.querySelector('[title*="items/tools/cooking"]');
+    expect(labelled).not.toBeNull();
+    expect(labelled).toHaveTextContent('Cooking');
+  });
+
+  it('cuts a long summary well before the whole passage', () => {
+    const passage = `${'word '.repeat(200)}tail`;
+    useFeatsMock.mockReturnValue({
+      feats: [
+        {
+          slug: 'verbose',
+          title: 'Verbose',
+          hasPrerequisite: false,
+          description: passage,
+        },
+      ],
+      isLoading: false,
+      error: undefined,
+    });
+    const { container } = render(<FeatTable />);
+    const text = container.textContent ?? '';
+    expect(text).toContain('…');
+    expect(text).not.toContain('tail');
+    expect(text.length).toBeLessThan(passage.length / 2);
+  });
 });

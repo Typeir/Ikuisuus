@@ -68,6 +68,22 @@ describe('rowMatchesColumnFilters', () => {
     expect(rowMatchesColumnFilters(row, { rarity: 'ra' }, columns)).toBe(false);
   });
 
+  it('matches a select filter against a list cell by membership', () => {
+    const listColumns: ColumnConfig[] = [
+      column({ key: 'tags', label: 'Aspects', filterType: 'select' }),
+    ];
+
+    expect(
+      rowMatchesColumnFilters(row, { tags: 'artifact' }, listColumns),
+    ).toBe(true);
+    expect(rowMatchesColumnFilters(row, { tags: 'art' }, listColumns)).toBe(
+      false,
+    );
+    expect(rowMatchesColumnFilters(row, { tags: 'potion' }, listColumns)).toBe(
+      false,
+    );
+  });
+
   it('bounds range filters by min and max', () => {
     expect(rowMatchesColumnFilters(row, { level: { min: 3 } }, columns)).toBe(
       true,

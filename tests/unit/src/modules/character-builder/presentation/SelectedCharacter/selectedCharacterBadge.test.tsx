@@ -1,7 +1,6 @@
 /**
  * @fileoverview Selected Character Badge Tests
- * @description Unit tests for the sidebar-footer character badge: avatar
- * rendering, picker dropdown, selection dispatch, and manage navigation.
+ * @description Unit tests for the sidebar-footer character badge
  *
  * @module tests/unit/src/modules/character-builder/presentation/SelectedCharacter/selectedCharacterBadge.test
  * @version 1.0.0

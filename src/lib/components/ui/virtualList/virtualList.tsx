@@ -51,7 +51,7 @@ export interface VirtualListProps<T> {
   overscanCount?: number;
   /** Optional className for the outer `<ul>`. */
   className?: string;
-  /** Fires when the rendered range changes: visible rows, then rows including overscan. */
+  /** Fires when the rendered range changes */
   onRowsRendered?: (visible: VirtualRowRange, all: VirtualRowRange) => void;
 }
 

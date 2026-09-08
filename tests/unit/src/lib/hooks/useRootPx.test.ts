@@ -1,7 +1,7 @@
 /**
  * @fileoverview useRootPx Tests
  * @description Covers root font-size measurement, the fallback when the value
- * cannot be read, and re-measurement when the root's style attribute changes.
+ * cannot be read
  *
  * @module tests/unit/src/lib/hooks/useRootPx.test
  * @version 1.0.0

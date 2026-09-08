@@ -42,11 +42,7 @@ import {
  *
  * @description
  * Returns an IIFE that reads the stored state from cookies, then
- * sessionStorage, then localStorage, and stamps the document element with
- * every root hook the stylesheets key off: data-theme, data-aspect-display,
- * data-aspect-expanded, data-stream-text, data-section-decor,
- * data-constrained-hue, and the `--text-scale-user` / `--prose-measure`
- * custom properties.
+ * sessionStorage
  */
 export function getPersistentUiInitScript(): string {
   return `

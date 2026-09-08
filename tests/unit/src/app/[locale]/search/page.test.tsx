@@ -76,6 +76,17 @@ describe('SearchPage', () => {
     expect(screen.getByText('Ancient Dragon')).toBeTruthy();
   });
 
+  it('should drop the quoted query from the heading for an aspect-only search', () => {
+    navState.query = 'aspect=condition%3Ableeding';
+    searchState.total = 3;
+
+    render(<SearchPage />);
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toContain(
+      'results',
+    );
+    expect(screen.queryByText('“”')).toBeNull();
+  });
+
   it('should render the error state when search is unavailable', () => {
     navState.query = 'q=dragon';
     searchState.error = new Error('unavailable');

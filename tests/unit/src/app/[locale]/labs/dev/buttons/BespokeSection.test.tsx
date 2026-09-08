@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the bespoke button section.
  * @description Verifies the section is omitted when empty, renders one card per entry
- * with a scoped preview rule, labels icon-like entries with an icon rather than text,
- * reports the declaration site and call sites, and sanitises injected declarations.
+ * with a scoped preview rule
  *
  * @module tests/unit/src/app/[locale]/labs/dev/buttons/BespokeSection.test
  * @version 1.0.0

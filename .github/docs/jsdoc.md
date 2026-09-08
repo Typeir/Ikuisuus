@@ -33,7 +33,21 @@ Over budget is a review rejection. If a function description needs a second sent
 
 `npm run jsdoc:nuke -- --write` cuts every block and every tag in the corpus to its first sentence (`@example` stays whole). Dry run without `--write`; pass paths to limit it. `--code` and `--styles` limit it to source files or stylesheets.
 
-Stylesheets go through the same cut, with two additions. A run of adjacent `//` lines at one indent is cut as a single comment. A comment holding no sentence terminator falls back to a break character — `,`, then `;`, then `:` — run to a fixed point, so `/* Skeleton: static ink, no sweep */` becomes `/* Skeleton */`. A break needs whitespace after it, which spares `::before` and `1,024`. Commented-out declarations, the ones ending in `;`, `{` or `}`, are left alone.
+A sentence ends at the earliest of three things.
+
+| Break                         | Kept | Why                                                              |
+| ----------------------------- | ---- | ---------------------------------------------------------------- |
+| `.` `!` `?`                   | Yes  | The sentence ended                                               |
+| `:`                           | No   | A colon buys a second clause; the clause is the padding          |
+| `,` past `--words=N` (def 12) | No   | A chain of commas is a second sentence wearing a disguise        |
+
+The budget counts prose words only — `@param {string} name -` does not spend it. A break needs whitespace after it to count, which spares `::before`, `10:30` and `1,024`; a break inside a code span or a `{type}` never counts.
+
+Stylesheets take the same three rules, plus two of their own. A run of adjacent `//` lines at one indent is cut as a single comment. Commented-out declarations, the ones ending in `;`, `{` or `}`, are left alone.
+
+Every rule runs to a fixed point: a second pass over a nuked file cuts nothing.
+
+The world sim is exempt, source and tests alike — its comments carry the math, and without them the module is unreadable. `EXCLUDED_DIRS` in the script holds the directory names, and `corpusFiles()` never lists a file under one, so passing a path inside it explicitly still cuts nothing. The content submodule is exempt for the same mechanical reason it always was.
 
 Never leave a JSDoc block empty. One dry sentence is the floor.
 

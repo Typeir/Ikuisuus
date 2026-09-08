@@ -1,6 +1,6 @@
 /**
  * @fileoverview Slot that sits on the article title's rule, right edge —
- * bottom aligned with the h1 on desktop, hanging under the rule below lg.
+ * bottom aligned with the h1 on desktop
  *
  * @module modules/library/presentation/LibraryArticle/ArticleTitleAction
  * @version 1.0.0

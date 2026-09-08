@@ -1,8 +1,7 @@
 /**
  * @fileoverview Adds `start_line` and `end_line` columns to feature and boon tables.
  * @description Adds `start_line` and `end_line` nullable smallint columns to
- * `vocation_features`, `specialization_features`, and `bloodline_boons`,
- * storing 1-indexed line offsets in the source MDX file.
+ * `vocation_features`, `specialization_features`, and `bloodline_boons`
  *
  * @module scripts/db/migrations/013_add_line_markers_to_features_and_boons
  * @author Typeir

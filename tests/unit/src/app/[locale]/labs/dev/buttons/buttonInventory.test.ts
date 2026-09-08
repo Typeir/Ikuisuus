@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for the `<button>` class inventory scanner.
  * @description Covers tag extraction across multi-line and expression-bearing tags,
- * class-reference reading, stylesheet import resolution, state-modifier detection,
- * module naming, and declaration similarity.
+ * class-reference reading, stylesheet import resolution
  *
  * @module tests/unit/src/app/[locale]/labs/dev/buttons/buttonInventory.test
  * @version 1.0.0

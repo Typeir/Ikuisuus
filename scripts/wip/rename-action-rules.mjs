@@ -107,8 +107,7 @@ export const RULES_A = [
 ];
 
 /**
- * Phase B rules: "bonus action" → "Minor Action"
- * "Bonus" only matches when adjacent to "action" — safe from tier bonus, etc.
+ * Phase B rules
  * @type {Array<{ re: RegExp, to: string, desc: string }>}
  */
 export const RULES_B = [

@@ -29,18 +29,18 @@ function parseCR(s) {
   return Number(t) || 0;
 }
 
-/** New formula: ceil(CR / 3). */
+/** New formula */
 function newTB(cr) {
   return Math.ceil(cr / 3);
 }
 
-/** Extract current tier bonus from "**Tier Bonus**: +7". */
+/** Extract current tier bonus from "**Tier Bonus** */
 function parseTB(line) {
   const m = line.match(/\*\*Tier Bonus\*\*:\s*\+(\d+)/);
   return m ? parseInt(m[1], 10) : null;
 }
 
-/** Extract challenge rating from "**Challenge**: 12 (8,300 XP)". */
+/** Extract challenge rating from "**Challenge** */
 function parseChallenge(line) {
   const m = line.match(/\*\*Challenge\*\*:\s*([\d/]+)/);
   return m ? parseCR(m[1]) : null;
@@ -48,7 +48,7 @@ function parseChallenge(line) {
 
 // ─── Line classifiers ────────────────────────────────────────────────────────
 
-/** Check if a line should be skipped (AC, HP, ability scores, damage, etc.). */
+/** Check if a line should be skipped (AC, HP, ability scores, damage */
 function isImmune(line) {
   const L = line.trim();
   if (!L) return true;
@@ -82,7 +82,7 @@ function hasAdjustableBonus(line) {
   );
 }
 
-/** Check if line is a save/skill bullet: "- **Saving Throws**: Str +14, ..." */
+/** Check if line is a save/skill bullet */
 function isSaveSkillBullet(line) {
   return (
     /^-\s+\*\*Saving Throws?\*\*:/.test(line) ||

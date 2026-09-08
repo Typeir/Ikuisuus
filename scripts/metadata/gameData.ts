@@ -160,7 +160,13 @@ export class ItemData {
         }
       }
 
+      /* A base names its kind through the vocabulary as often as through the
+         bare word: `Gauntlet` and `Half Plate` are armor and `Mantle` is
+         clothing, and consulting only the weapon list left every such heirloom
+         with no type at all. */
       if (weaponPattern.test(italicLine)) return 'weapon';
+      if (armorPattern.test(italicLine)) return 'armor';
+      if (clothingPattern.test(italicLine)) return 'clothing';
     }
 
     const typePropertyLine = lines.find((l) =>

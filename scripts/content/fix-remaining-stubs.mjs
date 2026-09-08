@@ -1,6 +1,5 @@
 /**
- * Fixes stub files: adds H1 heading, creates remaining missing spell stubs,
- * handles apostrophe variant naming.
+ * Fixes stub files
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';

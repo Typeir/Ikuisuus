@@ -28,7 +28,7 @@ import { resolveMetadataBase } from '@/lib/seo/resolveMetadataBase';
 
 export const dynamic = 'force-dynamic';
 
-/** Cache-Control header value: 1 year immutable. */
+/** Cache-Control header value */
 const CACHE_CONTROL = 'public, s-maxage=31536000, immutable';
 
 /**

@@ -171,8 +171,7 @@ export const NotesPanel: React.FC = () => {
 };
 
 /**
- * The features a character has actually unlocked: every vocation and
- * specialization feature at or below that vocation's own level.
+ * The features a character has actually unlocked
  *
  * @function unlockedFeatureShards
  * @param {CharacterSheetType} data - Active character
@@ -192,7 +191,7 @@ const unlockedFeatureShards = (
 
 /**
  * Every aspect the character's chosen boons, feats and unlocked features
- * carry, most frequent first, each with how many picks carry it.
+ * carry, most frequent first
  *
  * @component
  * @returns {JSX.Element} Rendered aspect summary section

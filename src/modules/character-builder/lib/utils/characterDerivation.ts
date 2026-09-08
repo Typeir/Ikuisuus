@@ -60,8 +60,7 @@ export function sumVocationLevels(vocations: VocationEntry[]): number {
 }
 
 /**
- * Returns the character's level: max of XP-derived level, allocated vocation
- * level, and legacy `character.level`, clamped to `[1, MAX_XP_LEVEL]`.
+ * Returns the character's level
  *
  * @function getTotalCharacterLevel
  * @param {CharacterSheet} character - Character sheet to inspect

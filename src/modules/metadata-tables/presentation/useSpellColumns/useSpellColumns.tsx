@@ -15,8 +15,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 /**
- * Returns the six standard spell table columns: Name, School, Casting Time,
- * Range, Duration, and Components.
+ * Returns the six standard spell table columns
  *
  * @returns {ColumnConfig[]} Column configuration array ready for MetadataTable
  */

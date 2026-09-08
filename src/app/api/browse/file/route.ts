@@ -30,8 +30,7 @@ const CACHE_CONTROL = 'public, s-maxage=3600, stale-while-revalidate=86400';
 /**
  * GET /api/browse/file?slug=<fuzzy>&locale=en
  *
- * Returns the best-matching content file with its raw MDX source, plus ranked
- * alternates so a caller can disambiguate.
+ * Returns the best-matching content file with its raw MDX source
  *
  * @param {Request} req - Next.js request object
  * @returns {Promise<NextResponse>} JSON payload or error object

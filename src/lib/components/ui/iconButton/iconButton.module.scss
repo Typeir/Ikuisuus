@@ -1,23 +1,5 @@
 /**
- * IconButton atom. Three icon-only shapes, one labelled form, five sizes,
- * one glow.
- *
- * `.btn` is the plain glyph: transparent, no border, tone on hover.
- * `.square` and `.rhombus` add the 1px border and surface fill; the rhombus
- * keeps the `--border-round-circle` token, which is 0% in this idiom, so it
- * stays a lozenge rather than rounding into a disc. `.labelled` is the
- * "Suggest edit" chrome: border, text, glyph on either side.
- *
- * Sizes set `--icon-btn-box` (plain/square side) and `--icon-btn-rhombus`
- * (diamond side, before the rhombus mixin's area shrink). The glyph px is
- * chosen in the component to match.
- *
- * Tone: `.danger` / `.accent` set `--icon-btn-tone`; `.inherit` leaves it to
- * an ancestor and paints the resting glyph in it too.
- *
- * Focus: the glow is the focus indicator on screens that render filters;
- * forced-colors mode gets a real outline. Coarse pointers get a 44px hit
- * area through a transparent ::before, so the visible box stays small.
+ * IconButton atom.
  *
  * @module lib/components/ui/iconButton/iconButton.module
  */
@@ -152,15 +134,14 @@ $rhombus-side: math.sqrt($rhombus-area);
   }
 }
 
-/* Dashed emphasis outline — the create/add affordance on bordered chrome.
-   Glyph and label wear the border colour so the control reads as one piece. */
+/* Dashed emphasis outline — the create/add affordance on bordered chrome. */
 .dashed {
   border-style: dashed;
   border-color: var(--color-emphasis);
   color: var(--color-emphasis);
 }
 
-/* Labelled + rhombus: ghost label, the glyph carried in a currentColor diamond. */
+/* Labelled + rhombus */
 .labelledRhombus {
   border: none;
   padding: 0.25rem 0.5rem;

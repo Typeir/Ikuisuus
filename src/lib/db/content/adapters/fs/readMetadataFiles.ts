@@ -37,10 +37,7 @@ const READ_CONCURRENCY = 32;
  * @returns {T[]} Flattened metadata records
  *
  * @description
- * Reads in batches rather than one `Promise.all` over the tree: an empty
- * `subdir` covers every sidecar in the locale, and opening them all at once
- * exhausts the process descriptor table, which fails unrelated reads elsewhere
- * in the server.
+ * Reads in batches rather than one `Promise.all` over the tree
  */
 export const readMetadataFiles = async <T>(
   locale: string,

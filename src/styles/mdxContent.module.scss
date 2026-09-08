@@ -4,11 +4,6 @@
 /**
  * @fileoverview Shared MDX Content Typography Styles
  * @description Canonical typography rules for rendered MDX content.
- * `.mdxBase` holds the reusable base typography (font sizes, headings,
- * paragraphs, lists, tables, code, blockquote) and can be composed into
- * any container that needs prose-quality rendering without page-level padding
- * or decorative pseudo-elements. `.mdxContent` extends `.mdxBase` with the
- * full library-page treatment (section decorators, padding, first-letter).
  *
  * @module styles/mdxContent.module
  */
@@ -19,7 +14,7 @@
   color: var(--color-text);
 
   /* Part of the top gap is padding so a section's edge, where the knotwork
-     anchors, sits above the heading text instead of on it. */
+     anchors */
   h1,
   h2,
   h3,
@@ -177,9 +172,7 @@
     margin-bottom: 1.5rem;
   }
 
-  /* The rule is drawn in the border colour, not in either ground: a header
-     cell is filled with the surface and a body cell shows the page through,
-     so a rule matching either one vanishes against half the table. */
+  /* The rule is drawn in the border colour, not in either ground */
   th,
   td {
     border: var(--border-width-xs) solid var(--color-border);
@@ -222,8 +215,7 @@
       @include mdx-stream-rail($side: left);
     }
 
-    /* Emitted only for sections holding entries: a list, or entry components
-       sectionized as their own children. */
+    /* Emitted only for sections holding entries */
     > [data-stream-rail='right'] {
       --stream-x: -1rem;
       @include mdx-stream-rail($side: right);
@@ -283,7 +275,7 @@
         );
       }
 
-      /* Responsive adjustments: reduce horizontal distance and lower opacity */
+      /* Responsive adjustments */
       @media (max-width: 1023px) {
         &:not(:last-child) {
           &:nth-of-type(even)::before {
@@ -306,13 +298,59 @@
     @include mdx-first-letter-decor();
   }
 
-  [data-heirloom] {
+  /* A monster holds its sections in a body wrapper, and a paged sheet holds
+     them in a panel, so the card's own rules, which reach for direct children,
+     are given both. */
+  [data-heirloom],
+  [data-monster],
+  [data-monster] > [data-monster-body],
+  [data-monster] [data-sheet-page] {
     @include mdx-slot-card;
     @include mdx-slot-run;
   }
 
-  /* A spell's blocks wear the same cost glyphs an heirloom's blocks wear,
-     without taking the rest of that card's rhythm. */
+  /* A group under Features holds cards, so it reads as the thing holding them:
+     a rule down its side and its cards indented against it, rather than a
+     heading with loose text under it. */
+  [data-monster] > [data-monster-body] section[data-heading-level]:has(
+      > section[data-entry],
+      > article[data-kind]
+    ) {
+    /* Traits, Actions, Attacks and Deeds are the sheet's divisions whatever
+       depth they sit at, so they are headed alike rather than shrinking by a
+       step each time one is nested inside another. */
+    > :is(h2, h3, h4, h5) {
+      font-size: 1.75rem;
+    }
+
+    border-left: var(--border-width-s) solid var(--color-border-secondary);
+    padding-left: 1rem;
+    margin-left: 0.25rem;
+
+    > section[data-entry],
+    > article[data-kind] {
+      margin-left: 0;
+    }
+  }
+
+  /* Deeds wear the group ornament turned on its corner: squares against the
+     diamonds every other group carries. */
+  /* Turned on its corner the ornament reads larger than it is, so it is scaled
+     up to sit level with the diamonds and lifted to share their baseline. */
+  [data-monster] [data-anchor='deeds'] > :is(#{$mdx-headings})::before,
+  [data-monster]
+    [data-anchor='deeds']
+    > details
+    > summary
+    > :is(#{$mdx-headings})::before {
+    display: inline-block;
+    margin-inline-end: 0.3em;
+    rotate: 45deg;
+    scale: 1.15;
+    translate: 0 -0.06em;
+  }
+
+  /* A spell's blocks wear the same cost glyphs an heirloom's blocks wear */
   [data-spell] article[data-kind] {
     @include mdx-mark-glyphs;
   }

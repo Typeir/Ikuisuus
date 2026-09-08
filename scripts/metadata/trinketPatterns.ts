@@ -11,11 +11,11 @@
 /**
  * Bold property extraction patterns for trinket stat blocks.
  *
- * @property {RegExp} damage - "**Damage**: 1d8"
- * @property {RegExp} damageType - "**Damage Type**: slashing"
- * @property {RegExp} properties - "**Properties**: versatile, thrown"
- * @property {RegExp} range - "**Range**: 20/60"
- * @property {RegExp} weight - "**Weight**: 3 lbs"
+ * @property {RegExp} damage - "**Damage**
+ * @property {RegExp} damageType - "**Damage Type**
+ * @property {RegExp} properties - "**Properties**
+ * @property {RegExp} range - "**Range**
+ * @property {RegExp} weight - "**Weight**
  * @property {RegExp} specialNotation - "special (effect)" to strip
  */
 export const PROPERTY = {

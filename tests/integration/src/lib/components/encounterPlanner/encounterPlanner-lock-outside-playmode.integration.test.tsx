@@ -14,8 +14,7 @@
  * @requires @/modules/encounter-planner/application/factories/combatSnapshot.factory Combat storage utilities
  *
  * @description Tests verify createInProgressCombatant initializes locked to [], CombatantRow
- * renders lock state in EncounterPlanner context, lock toggles work in design mode, and inputs
- * disable/enable based on lock state outside PlayMode.
+ * renders lock state in EncounterPlanner context
  *
  * @example
  * // Test that combatant created from CreatureEntry has locked field

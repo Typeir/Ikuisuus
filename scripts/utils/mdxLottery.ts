@@ -3,7 +3,7 @@
 /**
  * @fileoverview CLI that prints a random .mdx file name.
  * @description Walks a directory recursively for .mdx files, optionally filters
- * by substring patterns, picks one at random, and writes its basename to stdout.
+ * by substring patterns
  *
  * @version 1.1.0
  * @since 1.0.0

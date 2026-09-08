@@ -9,9 +9,7 @@
   position: relative;
 }
 
-/* Two columns of equal track, one row per control pair. The floor is wide
-   enough that three tracks never fit the modal, so the pairing holds until
-   the grid drops to a single column. */
+/* Two columns of equal track, one row per control pair. */
 .fields {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
@@ -26,8 +24,7 @@
   min-width: 0;
 }
 
-/* Labels are short by design: a wrapped label would offset its control from
-   the one beside it and break the row. */
+/* Labels are short by design */
 .fieldLabel {
   font-size: 0.8125rem;
   font-weight: 600;

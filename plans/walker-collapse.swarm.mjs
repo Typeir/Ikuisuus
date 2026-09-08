@@ -1,7 +1,5 @@
 /**
- * @fileoverview Walker collapse sweep: one member per file, each replaces a
- * hand-rolled recursive directory walker with the canonical walker at
- * src/lib/utils/getMatchingFiles.ts.
+ * @fileoverview Walker collapse sweep
  */
 
 const CANON = [

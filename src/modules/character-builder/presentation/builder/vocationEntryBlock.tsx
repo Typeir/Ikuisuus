@@ -1,6 +1,5 @@
 /**
- * @fileoverview Single-row editor for one {@link VocationEntry}: vocation picker,
- * specialization picker, and level spinner with {@link NumericInput}.
+ * @fileoverview Single-row editor for one {@link VocationEntry}
  *
  * @module modules/character-builder/presentation/builder/vocationEntryBlock
  * @version 3.0.0

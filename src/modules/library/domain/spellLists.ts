@@ -2,9 +2,7 @@
  * @fileoverview The lists a spell appears on, resolved from their slugs.
  * @description A spell names each list once — `wizard`, or
  * `berserker/want-of-knowledge` for a specialization's own list — and the link
- * and the display name are derived from that. The build-time metadata
- * generator resolves the same slugs, so the page and the metadata cannot
- * disagree about where a spell appears.
+ * and the display name are derived from that.
  *
  * @module modules/library/domain/spellLists
  * @version 0.1.0
@@ -52,8 +50,7 @@ function titleOf(slug: string): string {
  * Resolve declared list slugs to their names and links.
  *
  * @description A bare slug is a vocation, whose list lives at `spells` under
- * it. A slug with a slash names a specialization's own list, which lives at
- * the specialization instead.
+ * it.
  *
  * @param {string[]} slugs - Declared slugs, in the order the page wrote them
  * @param {string} locale - Active locale, for the link

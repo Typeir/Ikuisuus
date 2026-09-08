@@ -1,5 +1,5 @@
 /**
- * @fileoverview Migration: drop school from spell subtitles.
+ * @fileoverview Migration
  * @description Rewrite subtitle from school grammar to school-free form; keep level and quality.
  *
  * @module scripts/metadata/stripSpellSchools

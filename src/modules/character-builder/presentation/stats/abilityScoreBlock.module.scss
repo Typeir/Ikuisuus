@@ -1,7 +1,5 @@
 /**
  * Ability Score Block styles — view and edit mode.
- * Consumed only by abilityScoreBlock.tsx.
- * All colors via CSS variables — no color literals.
  */
 
 @use '@/styles/mixins-button' as *;
@@ -57,7 +55,7 @@
 
 /**
  * Saving throw row — small-caps label, proficiency pip track, computed
- * bonus. Divided from the score area by a hairline rule.
+ * bonus.
  */
 .saveRow {
   display: flex;

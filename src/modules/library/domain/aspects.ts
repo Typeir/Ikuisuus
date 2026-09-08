@@ -220,6 +220,48 @@ export function aspectColour(aspect: ParsedAspect): string {
 }
 
 /**
+ * Groups in which the metadata generator derives a stratum aspect from the
+ * damage types beside it.
+ */
+const STRATUM_GROUPS: readonly string[] = [
+  'damage',
+  'resistance',
+  'immunity',
+  'vulnerability',
+];
+
+/**
+ * Drops aspects that a more specific aspect beside them already implies.
+ *
+ * @param {ParsedAspect[]} aspects - Parsed aspects for one row
+ * @returns {ParsedAspect[]} The aspects with implied parents removed
+ */
+export function collapseImplied(aspects: ParsedAspect[]): ParsedAspect[] {
+  const byGroup = new Map<string, Set<string>>();
+
+  for (const aspect of aspects) {
+    const values = byGroup.get(aspect.group);
+    if (values) values.add(aspect.value);
+    else byGroup.set(aspect.group, new Set([aspect.value]));
+  }
+
+  return aspects.filter((aspect) => {
+    if (aspect.group === 'defense') {
+      if (!SCOPED_DEFENCE[aspect.value]) return true;
+      return !byGroup.has(aspect.value);
+    }
+
+    if (!STRATUM_GROUPS.includes(aspect.group)) return true;
+
+    const types = STRATUM_TYPES[aspect.value];
+    if (!types) return true;
+
+    const present = byGroup.get(aspect.group);
+    return !types.some((type) => present?.has(type));
+  });
+}
+
+/**
  * Parses, filters and orders a raw tag list for display.
  *
  * @param {string[] | undefined} tags - Raw tag list from generated metadata

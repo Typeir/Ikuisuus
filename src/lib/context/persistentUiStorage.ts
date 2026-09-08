@@ -2,8 +2,7 @@
  * Persistent UI Storage
  *
  * @fileoverview Reads persisted UI state from the storage port and writes it
- * back, stamping the root element with the attributes and custom properties
- * the stylesheets key off.
+ * back
  *
  * @module lib/context/persistentUiStorage
  * @version 1.0.0

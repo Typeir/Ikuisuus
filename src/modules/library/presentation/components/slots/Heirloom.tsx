@@ -1,5 +1,5 @@
 /**
- * @fileoverview Item card: heirlooms and trinkets.
+ * @fileoverview Item card
  * @description Holds the whole item, story included.
  *
  * @module modules/library/presentation/components/slots/Heirloom
@@ -31,8 +31,7 @@ import { capitalize, flagOf, lowerFirst } from './text';
 import styles from './slots.module.scss';
 
 /**
- * Props for the Heirloom wrapper: one optional prop per header slot, plus the
- * art, primer, `---`, and features as children.
+ * Props for the Heirloom wrapper
  */
 export type HeirloomProps = SlotProps<HeirloomSlotName> & {
   kind?: ItemKind;
@@ -65,8 +64,7 @@ function rowsFor(kind: ItemKind): readonly HeirloomSlotName[] {
 const REQUIRES_ATTUNEMENT = /^(?:requires?\s+attunement|required)\b[\s,:]*/i;
 
 /**
- * What an attunement slot adds after "requires attunement": nothing for the
- * bare flag or a value that only restates it, otherwise the condition.
+ * What an attunement slot adds after "requires attunement"
  *
  * @param {ReactNode} value - Attunement slot value
  * @returns {ReactNode | null} Condition to print, or null
@@ -89,8 +87,7 @@ function attunementDetail(value: ReactNode): ReactNode | null {
 const PAIRED_ENCHANTMENT = /^\+(\d+)\s+accuracy,\s*\+(\d+)\s+damage$/i;
 
 /**
- * Enchantment clause: equal accuracy and damage bonuses collapse into one
- * figure, anything else prints as authored.
+ * Enchantment clause
  *
  * @param {string} value - Enchantment attribute
  * @returns {string} Clause text
@@ -108,8 +105,7 @@ function enchantmentClause(value: string): string {
 }
 
 /**
- * The brief lines built from the identity slots: rarity and attunement, then
- * the object, then one line per optional extra (focus, Nullifying).
+ * The brief lines built from the identity slots
  *
  * @param {HeaderValues} values - Header slot values
  * @param {(key: string) => string} t - Translator for the heirloom namespace
@@ -182,8 +178,7 @@ function briefLines(
 }
 
 /**
- * A trinket's brief: its category, then rarity and attunement where it carries
- * them.
+ * A trinket's brief
  *
  * @param {HeirloomValues} values - Header slot values
  * @param {(key: string) => string} t - Translator for the heirloom namespace

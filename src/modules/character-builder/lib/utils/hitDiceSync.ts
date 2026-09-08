@@ -1,9 +1,6 @@
 /**
  * @fileoverview Hit Dice Log Sync
- * @description Rebuilds a character's hit-dice log from its vocations and level:
- * one entry per vocation level, never-rolled dice seeded to their default, entries
- * beyond the current level or for removed vocations pruned, and `hpMax` recomputed
- * from the surviving log.
+ * @description Rebuilds a character's hit-dice log from its vocations and level
  *
  * @module modules/character-builder/lib/utils/hitDiceSync
  * @version 1.0.0
@@ -18,9 +15,7 @@ import { computeAbilityModifier } from './characterStorage';
 import { deriveHitPoints } from './hitDiceUtils';
 
 /**
- * Seed value for a freshly-seeded or never-rolled die: `floor(faces/2) + 1`, or
- * `faces` for the first level of the primary vocation, or `null` when `faces` is
- * not finite or `<= UNKNOWN_DIE`.
+ * Seed value for a freshly-seeded or never-rolled die
  *
  * @function defaultDieResult
  * @param {number} faces - The die's face count (e.g. 8)
@@ -36,8 +31,7 @@ function defaultDieResult(
 }
 
 /**
- * Rebuilds the canonical hit-dice log: one entry per vocation level, in
- * vocation-then-level order.
+ * Rebuilds the canonical hit-dice log
  *
  * @function buildCanonicalLog
  * @param {CharacterSheet} character - Character to rebuild the log for

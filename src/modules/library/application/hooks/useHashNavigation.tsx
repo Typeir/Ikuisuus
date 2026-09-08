@@ -8,13 +8,8 @@
  */
 'use client';
 
+import { DETAILS_OPENED_EVENT } from '@/lib/constants/domEvents';
 import { useEffect } from 'react';
-
-/**
- * Custom event name fired after a closed details is opened so that
- * layout-dependent observers (e.g. SectionTrack) can rescan the DOM.
- */
-const DETAILS_OPENED_EVENT = 'ik:details-opened';
 
 /**
  * Opens the nearest closed ancestor {@link HTMLDetailsElement} of

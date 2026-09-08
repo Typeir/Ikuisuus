@@ -18,7 +18,7 @@ import {
 import type { PagefindFragment } from './pagefindClient';
 
 /**
- * Slug of a resolved fragment: indexed meta first, then the URL tail.
+ * Slug of a resolved fragment
  *
  * @param {PagefindFragment} fragment - Resolved Pagefind fragment
  * @returns {string} Record slug, empty when neither source carries one

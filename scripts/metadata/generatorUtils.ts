@@ -1,5 +1,5 @@
 /**
- * @fileoverview Orchestrate metadata generators: backend detection, paths, run loop.
+ * @fileoverview Orchestrate metadata generators
  * @description Detects backend, resolves directories, maps output paths.
  *
  * @module scripts/metadata/generatorUtils
@@ -234,8 +234,7 @@ function stampSharedFields(
 }
 
 /**
- * Orchestrates metadata generation with the standardized pattern:
- * scan → parse → write → optional DB persist → report.
+ * Orchestrates metadata generation with the standardized pattern
  *
  * @param {GeneratorConfig} config - Generator configuration
  * @returns {Promise<void>}

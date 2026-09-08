@@ -1,8 +1,7 @@
 /**
  * @fileoverview Portal listbox of aspect suggestions under the search input.
  * @description Renders the `group:value` candidates as genuine aspect pills
- * (button mode) in a `document.body` portal anchored to the input, so it
- * escapes any overflow-clipped sidebar.
+ * (button mode) in a `document.body` portal anchored to the input
  *
  * @module modules/search/presentation/SearchBar/AspectSuggestions
  * @version 1.0.0

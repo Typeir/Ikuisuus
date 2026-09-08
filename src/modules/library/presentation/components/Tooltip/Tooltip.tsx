@@ -17,7 +17,7 @@ import React, { ReactNode } from 'react';
  * Props for the Tooltip MDX component.
  *
  * @interface TooltipProps
- * @property {ReactNode} children - Two children: trigger content first, tooltip content second
+ * @property {ReactNode} children - Two children
  */
 export interface TooltipProps {
   children: ReactNode;

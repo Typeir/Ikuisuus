@@ -2,7 +2,7 @@
  * @fileoverview Unit tests for Spell Table component
  * @module tests/unit/src/lib/components/mdx/spellTable/spellTable.test
  * @description Validates SpellTable rendering across loading, error, and data states,
- * tab switching, column rendering, and ritual casting time display.
+ * tab switching, column rendering
  *
  * @version 2.0.0
  * @author Typeir

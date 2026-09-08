@@ -33,8 +33,7 @@ async function columnExists(
 }
 
 /**
- * Applies migration 018: adds the nullable `bloodline_boons.sub_options` JSONB
- * column when it is not already present.
+ * Applies migration 018
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}
@@ -49,7 +48,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverts migration 018: drops `bloodline_boons.sub_options` when present.
+ * Reverts migration 018
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called by the runner).
  * @returns {Promise<void>}

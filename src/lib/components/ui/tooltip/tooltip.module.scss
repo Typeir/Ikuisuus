@@ -28,8 +28,7 @@
   pointer-events: none;
 
   // List markers (::marker) misalign inside the floating tooltip frame and
-  // break vertical rhythm when MDX content renders <ul>/<ol>. Strip them
-  // globally for any descendant list, regardless of nesting depth.
+  // break vertical rhythm when MDX content renders <ul>/<ol>.
   ul,
   ol {
     list-style: none;

@@ -46,6 +46,7 @@ export interface FeatAbilityIncrease {
  * Complete feat metadata record as emitted by the generator.
  *
  * @interface FeatMetadata
+ * @property {string} [category] - Declared feat category (`general`, `origin`, `epic boon`, `fighting style`)
  * @property {string} [prerequisite] - Raw prerequisite text (italics line)
  * @property {boolean} hasPrerequisite - True when a non-trivial prerequisite is parsed
  * @property {FeatAbilityIncrease} [abilityIncrease] - Parsed ability score increase
@@ -54,6 +55,7 @@ export interface FeatAbilityIncrease {
  * @property {boolean} [repeatable] - When true, the feat may be selected more than once (e.g. Ability Score Improvement).
  */
 export interface FeatMetadata extends BaseMetadata {
+  category?: string;
   prerequisite?: string;
   hasPrerequisite: boolean;
   abilityIncrease?: FeatAbilityIncrease;

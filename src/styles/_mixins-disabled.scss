@@ -1,8 +1,6 @@
 /**
  * @fileoverview Disabled-State Mixins
  * @description Opacity and cursor helpers for disabled elements and classes.
- * Includes `loading-dimmed` for async-loading overlay states where the element
- * stays rendered but is visually muted and non-interactive.
  *
  * @module styles/mixins-disabled
  */
@@ -28,8 +26,6 @@
 
 /**
  * Dims an element during async loading without removing it from the DOM.
- * Applies reduced opacity and blocks pointer interaction. The optional
- * transition smooths the opacity change when entering and leaving the state.
  *
  * @param {number} $opacity [$opacity: 0.45] - Target opacity while loading
  * @param {boolean} $with-transition [$with-transition: true] - Whether to animate the opacity change

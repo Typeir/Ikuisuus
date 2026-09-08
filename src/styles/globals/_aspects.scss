@@ -1,20 +1,11 @@
 /* ============================================
    ASPECT PALETTE
    One hue per aspect group; the pill derives its background and border from it
-   with color-mix, so a group needs one token rather than three. Groups without
-   a token fall back to --aspect-default, which is what lets a new group ship
-   before its colour is chosen.
-
-   damage: carries per-value hues because thirteen types is the one group where
-   a single family colour discards what colour is best at. phase: deliberately
-   has no tokens — it reuses --color-phase-* so the pill and the encounter
-   tracker cannot drift apart.
-============================================ */
+   with color-mix */
 :root {
   --aspect-default: #8d9194;
   /* A stratum mark carries three member glyphs in their own hues, so its own
-     chip stays neutral and lets them read. Colouring it would put a fourth
-     competing hue in a mark that already has three. */
+     chip stays neutral and lets them read. */
   --aspect-stratum: #8d9194;
   --aspect-damage: #c27661;
   --aspect-condition: #b199cc;
@@ -43,9 +34,7 @@
   --aspect-property: #a59a94;
   --aspect-level: #959dad;
   /* form is the authored identity facet; it takes the theme primary so it
-     pops against the machine-derived groups. Doomed and slain re-tint for the
-     pill only — the tracker keeps its black chip — because near-black and
-     black do not read on a dark ground. */
+     pops against the machine-derived groups. */
   --aspect-form: var(--color-primary);
   --aspect-phase-doomed: #b04a4a;
   --aspect-phase-slain: #c9c4bb;

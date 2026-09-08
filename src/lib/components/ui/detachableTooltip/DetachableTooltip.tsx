@@ -137,7 +137,7 @@ export function DetachableTooltip({
   }, [hideNow]);
 
   /**
-   * Leaves the trigger: pins when Shift is held, otherwise starts the fade.
+   * Leaves the trigger
    *
    * @param {ReactMouseEvent} event - Pointer leave event
    */

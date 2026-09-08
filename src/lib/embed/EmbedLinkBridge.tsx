@@ -1,7 +1,6 @@
 /**
  * @fileoverview Embed Link Bridge
- * @description Routes link clicks inside an embedded frame: library links
- * navigate via the router, all others open in a new window.
+ * @description Routes link clicks inside an embedded frame
  * @version 1.0.0
  * @author Typeir
  * @since 1.0.0

@@ -1,22 +1,23 @@
 /**
- * Duplicate CSS Gate
+ * Duplicate CSS Selectors Gate
  *
- * @fileoverview Thin wrapper that delegates to the canonical check-duplicate-css
- * script and adapts the result for the PAW gate system.
+ * @fileoverview Thin wrapper that delegates to the canonical
+ * checkDuplicateCssSelectors script and adapts the result for the PAW gate
+ * system.
  *
- * @module .paw/gates/duplicate-css.gate
+ * @module .paw/gates/duplicateCssSelectors.gate
  * @author Typeir
  * @version 2.0.0
  * @since 3.0.0
  */
 
-import { runCheck } from '../../.github/scripts/checkDuplicateCss.ts';
+import { runCheck } from '../../.github/scripts/checkDuplicateCssSelectors.ts';
 import type { GateContext, GateResult, QualityGate } from '../healthCheckTypes';
 import { adaptCheckResult } from './adaptResult.ts';
 
 export const gate: QualityGate = {
-  id: 'duplicate-css',
-  name: 'Duplicate CSS',
+  id: 'duplicate-css-selectors',
+  name: 'Duplicate CSS Selectors',
   port: 'build-integrity',
   severity: 'critical',
   appliesTo: ['.scss', '.css'],

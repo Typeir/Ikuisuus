@@ -132,6 +132,10 @@ export class FeatEntity {
   @OrmProperty({ type: 'string', nullable: true })
   image?: string | null;
 
+  /** @property {string | null} category - Declared feat category (`general`, `origin`, `epic boon` */
+  @OrmProperty({ type: 'string', nullable: true })
+  category?: string | null;
+
   @OrmProperty({ type: 'string', nullable: true })
   prerequisite?: string | null;
 
@@ -158,7 +162,7 @@ export class FeatEntity {
   @OrmProperty({ type: 'string[]' })
   consumers: string[] = [];
 
-  /** @property {string[] | null} grants - Tag-based proficiency grants when selected (e.g. `weapon:martial`, `skill:persuasion:expertise`) */
+  /** @property {string[] | null} grants - Tag-based proficiency grants when selected (e.g. `weapon:martial` */
   @OrmProperty({ type: 'string[]', nullable: true })
   grants?: string[] | null;
 

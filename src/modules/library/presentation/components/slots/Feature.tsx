@@ -1,10 +1,6 @@
 /**
  * @fileoverview Feature block.
- * @description Renders a declared-by-name feature: the first heading child
- * names it, a trailing span in the heading is the tag and prints beside the
- * name, since it says what kind of block this is; the cost prints at the
- * heading's right edge the way boons print BP; the other slots print as
- * labelled slot lines, and the rest is prose.
+ * @description Renders a declared-by-name feature
  *
  * @module modules/library/presentation/components/slots/Feature
  * @version 0.5.0
@@ -15,7 +11,12 @@
 'use client';
 
 import { anchorSlug } from '@/modules/library/domain/anchorSlug';
-import { markOf, type CostMark } from '@/modules/library/domain/costMark';
+import {
+  markCount,
+  markOf,
+  type CostMark,
+} from '@/modules/library/domain/costMark';
+import { saveDcFrom } from '@/modules/library/domain/derive';
 import {
   ATTACK_SLOT_NAMES,
   FEATURE_SLOT_NAMES,
@@ -34,8 +35,11 @@ import {
   parseHeading,
   textOfNodes,
 } from '../headingParts';
+import { Aspects } from '../Aspects/Aspects';
 import Collapsible from '../Collapsible/Collapsible';
+import { holdsCards, useCardFold } from './cardFold';
 import { CostMarkProvider, useCostMark } from './costMarkContext';
+import { disclosure } from './foldDivision';
 import { cleanChildren, readSlots, slotElementOf } from './slotElements';
 import styles from './slots.module.scss';
 
@@ -51,8 +55,7 @@ export type FeatureKind =
   | 'attack';
 
 /**
- * Props for the Feature component: one optional prop per feature slot, the
- * block kind, and the heading, optional slot run, and prose as children.
+ * Props for the Feature component
  */
 export type FeatureProps = SlotProps<
   FeatureSlotName | PoolSlotName | AttackSlotName
@@ -61,6 +64,7 @@ export type FeatureProps = SlotProps<
   mark?: FeatureMark;
   collapsible?: boolean;
   open?: boolean;
+  skin?: 'panel' | 'light';
   ornament?: boolean;
   children?: ReactNode;
 };
@@ -132,8 +136,7 @@ function constructed(
  * Feature block component.
  *
  * @description Given `collapsible`, the block's own heading becomes the
- * summary of a details element and the slot grid folds away with the prose,
- * rather than sitting above a closed block.
+ * summary of a details element and the slot grid folds away with the prose
  *
  * @param {FeatureProps} props - Block props
  * @returns {JSX.Element} The feature article
@@ -143,6 +146,7 @@ const Feature: React.FC<FeatureProps> = ({
   mark,
   collapsible = false,
   open = false,
+  skin,
   ornament,
   children,
   ...slots
@@ -166,10 +170,29 @@ const Feature: React.FC<FeatureProps> = ({
       : nodes;
 
   const slotNames = SLOT_NAMES_BY_KIND[kind];
-  const { values, kept: body } = readSlots(bodyNodes, slotNames, slots);
+  const { values, kept: body } = readSlots(bodyNodes, slotNames, slots, true);
+
+  /* A block that states an accuracy also states the save it sets, since the two
+     are the same number: printing the sum on every such block is what teaches
+     the rule. A block that writes its own save keeps it. */
+  const printed = { ...values };
+  if (printed.saveDc === undefined && typeof printed.accuracy === 'string') {
+    const derived = saveDcFrom(printed.accuracy);
+    if (derived) {
+      printed.saveDc =
+        derived.total === null ? (
+          derived.working
+        ) : (
+          <>
+            <strong>{derived.total}</strong> [{derived.working}]
+          </>
+        );
+    }
+  }
+
   const entries = slotNames
-    .filter((name) => values[name] !== undefined)
-    .map((name) => ({ name, value: constructed(name, values[name], t) }));
+    .filter((name) => printed[name] !== undefined)
+    .map((name) => ({ name, value: constructed(name, printed[name], t) }));
   const cost = entries.find((entry) => entry.name === 'cost')?.value;
   const rows = entries.filter((entry) => entry.name !== 'cost');
 
@@ -186,13 +209,16 @@ const Feature: React.FC<FeatureProps> = ({
           {cost}
         </span>
       )}
-      {parsed.cost && (
-        <span className={styles.headingMeta}>
+      {/* The far edge of the heading: what the block is made of, read at a
+          glance the way a card reads its colours, and then what it is. */}
+      <span className={styles.headingMeta}>
+        {anchor && <Aspects section={anchor} size='xs' inline />}
+        {parsed.cost && (
           <span className={styles.tag} data-feature-tag>
             {parsed.cost}
           </span>
-        </span>
-      )}
+        )}
+      </span>
     </Tag>
   ) : null;
 
@@ -220,16 +246,36 @@ const Feature: React.FC<FeatureProps> = ({
     </>
   );
 
+  /* A card holding cards of its own opens on its heading when the sheet around
+     it is read that way; one holding none is already a heading and a few
+     lines, and would collapse to nothing but a repeat of its own title. */
+  const folds = useCardFold() && !collapsible && holdsCards(body);
+
   return (
     <article
       className={styles.block}
       data-kind={kind}
       data-mark={resolvedMark}
+      data-mark-count={markCount(cost)}
       {...(collapsible ? { 'data-collapsible': 'true' } : {})}
       {...((ornament ?? !collapsible) ? {} : { 'data-ornament': 'none' })}
-      {...(anchor ? { 'data-anchor': anchor } : {})}>
-      {collapsible ? (
-        <Collapsible summary={summary} anchor={anchor ?? undefined} open={open}>
+      {...(anchor ? { 'data-anchor': anchor } : {})}
+      {...(folds ? { 'data-folded': 'true' } : {})}>
+      {folds ? (
+        disclosure(
+          headingElement,
+          <>
+            {grid}
+            {bodyElement}
+          </>,
+          false,
+        )
+      ) : collapsible ? (
+        <Collapsible
+          summary={summary}
+          anchor={anchor ?? undefined}
+          open={open}
+          skin={skin}>
           {grid}
           {bodyElement}
         </Collapsible>
@@ -271,7 +317,7 @@ export const Curse: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
 Curse.displayName = 'Curse';
 
 /**
- * Action block: what a creature does on its turn.
+ * Action block
  *
  * @param {Omit<FeatureProps, 'kind'>} props - Block props
  * @returns {JSX.Element} The action article
@@ -283,7 +329,7 @@ export const Action: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
 Action.displayName = 'Action';
 
 /**
- * Pool block: a number the host owns and its blocks spend from.
+ * Pool block
  *
  * @param {Omit<FeatureProps, 'kind'>} props - Block props
  * @returns {JSX.Element} The pool article
@@ -295,7 +341,7 @@ export const Pool: React.FC<Omit<FeatureProps, 'kind'>> = (props) => (
 Pool.displayName = 'Pool';
 
 /**
- * Attack block inside an action: accuracy, reach or range, targets, then the hit as prose.
+ * Attack block inside an action
  *
  * @param {Omit<FeatureProps, 'kind'>} props - Block props
  * @returns {JSX.Element} The attack article

@@ -20,8 +20,7 @@ import type {
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
- * Encapsulates the editor state machine: mode/status, content, file path,
- * loading from the corrections read API, and submitting changes.
+ * Encapsulates the editor state machine
  *
  * @param {Object} opts - Hook options
  * @param {string} opts.initialSlug - Slug from query params

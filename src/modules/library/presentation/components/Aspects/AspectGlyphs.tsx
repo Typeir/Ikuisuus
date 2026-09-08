@@ -9,7 +9,10 @@
 
 'use client';
 
-import { displayAspects } from '@/modules/library/domain/aspects';
+import {
+  collapseImplied,
+  displayAspects,
+} from '@/modules/library/domain/aspects';
 import { useLocale } from 'next-intl';
 import { AspectPill, type AspectSize } from './AspectPill';
 import styles from './Aspects.module.scss';
@@ -23,6 +26,7 @@ import styles from './Aspects.module.scss';
  * @property {string} [ariaLabel] - Row label
  * @property {number} [max] - Max glyphs; rest fold into +n marker
  * @property {AspectSize} [size] - Size step for the whole row; defaults to `m`
+ * @property {boolean} [wrap] - Let a capped row wrap, for a container too narrow for one line
  */
 export interface AspectGlyphsProps {
   tags?: string[];
@@ -30,6 +34,7 @@ export interface AspectGlyphsProps {
   ariaLabel?: string;
   max?: number;
   size?: AspectSize;
+  wrap?: boolean;
 }
 
 /**
@@ -45,15 +50,20 @@ export const AspectGlyphs: React.FC<AspectGlyphsProps> = ({
   ariaLabel,
   max,
   size,
+  wrap,
 }) => {
   const locale = useLocale();
-  const parsed = displayAspects(tags);
+  const parsed = collapseImplied(displayAspects(tags));
   if (!parsed.length) return null;
   const shown = max !== undefined ? parsed.slice(0, max) : parsed;
   const rest = parsed.slice(shown.length);
   return (
     <span
-      className={max !== undefined ? `${styles.glyphs} ${styles.glyphsCapped}` : styles.glyphs}
+      className={
+        max !== undefined && !wrap
+          ? `${styles.glyphs} ${styles.glyphsCapped}`
+          : styles.glyphs
+      }
       data-size={size && size !== 'm' ? size : undefined}
       aria-label={ariaLabel}>
       {shown.map((aspect) => (

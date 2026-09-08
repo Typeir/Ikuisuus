@@ -1,28 +1,6 @@
 /**
  * @fileoverview Semantic button classes — the single distribution surface.
  *
- * A bare `<button>` is already the PRIMARY button (styled by the global rule in
- * globals.scss). Do NOT add a class for primary — just render `<button>`.
- *
- * For every other intent, import this module and apply the matching class:
- *
- * ```tsx
- * import btn from '@/styles/buttons.module.scss';
- *
- * <button>Save</button>                              // primary (bare)
- * <button className={btn.secondary}>Add</button>
- * <button className={btn.dangerOutline}>Remove</button>
- * <button className={`${btn.tab} ${active ? btn.tabActive : ''}`}>Tab</button>
- * ```
- *
- * Icon-glyph buttons (close, delete, add, roll, …) are NOT here — render the
- * `IconButton` atom from `@/lib/components/ui/iconButton`.
- *
- * Every class fully owns its hover background, so applying one cleanly displaces
- * the global primary hover — the "light-text-on-green" bug is structurally
- * impossible here. When a call site needs a one-off tweak (extra padding, a
- * layout override) apply an adjacent module class; do not fork the variant.
- *
  * @module styles/buttons.module
  */
 
@@ -30,7 +8,7 @@
 
 /* ── Filled / solid ─────────────────────────────────────── */
 
-/** Neutral filled button (surface bg, grey fill on hover). Secondary action. */
+/** Neutral filled button (surface bg, grey fill on hover). */
 .neutral {
   @include button-base;
   @include button-hover-scale;
@@ -39,15 +17,13 @@
 
 /* ── Outline ────────────────────────────────────────────── */
 
-/** Accent outline that fills on hover. The default "add / CTA" outline. */
+/** Accent outline that fills on hover. */
 .secondary {
   @include button-secondary;
 }
 
 /**
- * The danger button. Transparent, fills danger on hover. Remove / logout /
- * destructive confirmations. There is no filled danger variant — the outline
- * reads more clearly and one destructive treatment is enough.
+ * The danger button.
  */
 .dangerOutline {
   @include button-danger-outline;
@@ -70,7 +46,7 @@
   }
 }
 
-/** Invisible-by-default tertiary (grey bg on hover/focus). Icon actions. */
+/** Invisible-by-default tertiary (grey bg on hover/focus). */
 .tertiary {
   background: var(--color-transparent);
   border: none;
@@ -110,7 +86,7 @@
 
 /* ── Segmented tabs ─────────────────────────────────────── */
 
-/** Segmented tab. Combine with `.tabActive` for the selected state. */
+/** Segmented tab. */
 .tab {
   @include button-tab;
 }

@@ -1,0 +1,239 @@
+@use 'mixins' as *;
+@use 'variables' as *;
+
+/* Softness of the seam, as a share of the page's width. */
+$seam-feather: 13%;
+
+/* How far the header's ground reaches above the row it carries. */
+$ground-lead: 0.6rem;
+
+.sheet {
+  /* Where the header comes to rest. Narrow, the title bar is already fixed to
+     the top of the screen, so the sheet's own header stops below it. */
+  --sheet-offset: 0px;
+
+  /* How long a page turn takes: the seam crossing, and the fades that carry
+     what hangs outside it. The fade is given four fifths of the crossing, so
+     what the seam cannot reach has settled before the seam lands. */
+  --sheet-turn: 1s;
+  --sheet-fade: 0.8s;
+
+  display: block;
+
+  @media (max-width: 1023px) {
+    --sheet-offset: #{$mobile-header-height};
+  }
+}
+
+/* Header and page share one screen's budget, less whatever the layout puts
+   under the sheet, so the bottom of the scroll is the bottom of the page and
+   the header is pinned for the whole of it. The measurement is the sheet's
+   own. This is also what bounds the sticky travel, so it has to hold both. */
+.body {
+  /* Its own formatting context, so a page's closing margin stays inside it
+     and what lies under the sheet measures the same whichever page is up. The
+     strip's leading margin sits here for the same reason: inside, it would
+     hold the strip off the top of the box it has to pin against. */
+  display: flow-root;
+  margin-block-start: 0.5rem;
+  min-block-size: calc(
+    100svh - var(--sheet-trailing, 0px) - var(--sheet-offset)
+  );
+}
+
+.strip {
+  position: sticky;
+  top: var(--sheet-offset);
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  padding: 0.4rem 0;
+  margin-block: 0 1.25rem;
+  background: none;
+
+  /* Wide, the row stands as tall as the layout's own header, so what it
+     carries sits on the same line as the sidebar's title and the ground ends
+     on the same rule. It stands that tall whether stuck or not, so sticking
+     moves nothing. */
+  @media (min-width: 1024px) {
+    /* The fallback stands in for the one frame before the layout's header has
+       been read, so it is the height that header comes out at. */
+    min-block-size: var(--sheet-headline, 5.07rem);
+  }
+
+  /* The ground is a layer of its own, so the header grows in both directions
+     while the row itself is never laid out twice. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-bottom: var(--border-width-xs) solid var(--color-border);
+    transition:
+      inset 0.24s var(--springy-bezier),
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  /* Loose in the page it is a row of tabs and carries no ground; stuck, it
+     takes one and runs past every edge of the row to read as a header. */
+  &[data-stuck='true']::after {
+    inset-block: calc(-1 * #{$ground-lead}) -0.85rem;
+    inset-inline: calc(-1 * var(--sheet-bleed-start, 0px))
+      calc(-1 * var(--sheet-bleed-end, 0px));
+    background-color: var(--color-bg);
+    border-bottom-color: var(--color-accent);
+    box-shadow: 0 8px 16px -12px var(--color-shadow);
+
+    /* Wide, the row is already the height of the layout's header, so the
+       ground has only to fill it and the two rules meet. Narrow, the title bar
+       holds that line and the sheet's header hangs below it. */
+    @media (min-width: 1024px) {
+      inset-block: 0;
+    }
+  }
+}
+
+.tab {
+  font-family: var(--font-headings), var(--font-default);
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-bottom: var(--border-width-s) solid transparent;
+  padding: 0.2rem 0.15rem;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    font-size var(--dur-3) var(--ease-out-quart);
+
+  /* The site's buttons wash and swell on hover; a tab is a label, so it says
+     which page it is with its colour and its rule and nothing else. */
+  &:hover,
+  &:focus-visible {
+    color: var(--color-accent);
+    background: none;
+    transform: none;
+  }
+
+  &[data-active='true'] {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+}
+
+/* Stuck, the row is a header, and a header's labels are set at a header's
+   size. The row already stands at its full height, so the labels grow inside
+   it and nothing around them is laid out again. */
+@media (min-width: 1024px) {
+  .strip[data-stuck='true'] .tab {
+    font-size: 1.25rem;
+  }
+}
+
+/* A mask is an image, and an image does not interpolate. A registered
+   property inside one does, so both pages read their seam off a single
+   number and cannot drift apart. */
+@property --sheet-seam {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 115%;
+}
+
+.stack {
+  position: relative;
+}
+
+/* The page turning away is lifted out of flow, so the one arriving sets the
+   height and nothing below the sheet moves while both are on screen. */
+.page {
+  position: relative;
+  z-index: 2;
+}
+
+.page[data-leaving='true'] {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* One seam sweeps the column. Ahead of it the arriving page is drawn, behind
+   it the leaving one is let go, and the two are complementary, so the pages
+   hand over inside the same soft band rather than crossing a hard edge. Both
+   are masked only while the turn runs: the stream rails hang outside the
+   page, and a mask taken at its edge would cut them off. */
+.page[data-entering='true'],
+.page[data-leaving='true'] {
+  --sheet-seam: 115%;
+
+  mask-clip: no-clip;
+  mask-repeat: no-repeat;
+  transition: --sheet-seam var(--sheet-turn) var(--ease-out-quart);
+
+  @starting-style {
+    --sheet-seam: 0%;
+  }
+}
+
+/* The page carries more than the seam can reach: the stream rails hang off
+   its sides, outside the box a mask is measured against. Fading the block
+   along with the seam takes them with it instead of snapping them on. */
+.page[data-entering='true'] {
+  opacity: 1;
+  /* The fades are given less time than the seam so both have settled before
+     the page turning away is taken off, which is what stops it vanishing
+     part-faded. */
+  transition:
+    --sheet-seam var(--sheet-turn) var(--ease-out-quart),
+    opacity var(--sheet-fade) var(--ease-out-quart);
+  mask-image: linear-gradient(
+    to right,
+    #000 calc(var(--sheet-seam) - #{$seam-feather}),
+    transparent var(--sheet-seam)
+  );
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+/* Its fade eases in where the arriving page's eases out, so the two hold the
+   column between them rather than both thinning out across the middle. */
+.page[data-leaving='true'] {
+  opacity: 0;
+  transition:
+    --sheet-seam var(--sheet-turn) var(--ease-out-quart),
+    opacity var(--sheet-fade) var(--ease-in-cubic);
+  mask-image: linear-gradient(
+    to right,
+    transparent calc(var(--sheet-seam) - #{$seam-feather}),
+    #000 var(--sheet-seam)
+  );
+
+  @starting-style {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .strip,
+  .strip::after,
+  .tab,
+  .page {
+    transition: none;
+  }
+
+  /* With no sweep to watch, a half-drawn seam would simply be a page with a
+     bite taken out of it. */
+  .page[data-entering='true'],
+  .page[data-leaving='true'] {
+    mask-image: none;
+  }
+}

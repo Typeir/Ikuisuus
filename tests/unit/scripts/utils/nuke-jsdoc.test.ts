@@ -9,8 +9,10 @@
 
 import { describe, expect, it } from 'vitest';
 import {
+  corpusFiles,
   firstSentence,
   firstSentenceEnd,
+  isExcluded,
   nukeSource,
   nukeStyleSource,
   truncateJsdoc,
@@ -51,7 +53,7 @@ describe('firstSentenceEnd', () => {
   });
 
   it('keeps list markers, abbreviations and ellipses', () => {
-    expect(firstSentenceEnd('Priority:\n1. Minor Action\n2. action\n- bullet')).toBe(-1);
+    expect(firstSentenceEnd('Priority\n1. Minor Action\n2. action\n- bullet')).toBe(-1);
     expect(firstSentence('Uses e.g. foo. Then bar.')).toBe('Uses e.g. foo.');
     expect(firstSentence('Loads foo... then bar. More.')).toBe('Loads foo...');
   });
@@ -62,39 +64,86 @@ describe('firstSentenceEnd', () => {
   });
 });
 
-describe('firstSentence with the fallback ladder', () => {
-  it('prefers a terminator over the comma, semicolon and colon', () => {
-    expect(firstSentence('Foo, bar. Baz, qux.', true)).toBe('Foo, bar.');
-    expect(firstSentence('Foo; bar: baz. More.', true)).toBe('Foo; bar: baz.');
-  });
-
-  it('drops the break character and everything after it', () => {
-    expect(firstSentence('Container positions, one per corner', true)).toBe('Container positions');
-    expect(firstSentence('Entrance animation; runs once', true)).toBe('Entrance animation');
-    expect(firstSentence('Moving window: a 2r square', true)).toBe('Moving window');
-  });
-
-  it('runs the ladder to a fixed point, so a second pass cuts nothing', () => {
-    const once = firstSentence('Skeleton: static ink, no sweep', true);
-    expect(once).toBe('Skeleton');
-    expect(firstSentence(once, true)).toBe(once);
-  });
-
-  it('needs whitespace after the break, so pseudo-selectors survive', () => {
-    expect(firstSentence('Nine-slice base for a ::before', true)).toBe(
-      'Nine-slice base for a ::before',
+describe('the colon break', () => {
+  it('ends a sentence like a terminator, and is dropped with it', () => {
+    expect(firstSentence('The block is a hover, not text: a reader sees only its display text.')).toBe(
+      'The block is a hover, not text',
     );
-    expect(firstSentence('Grid of 1,024 dots', true)).toBe('Grid of 1,024 dots');
+    expect(firstSentence('Moving window: a 2r square')).toBe('Moving window');
   });
 
-  it('leaves text without any break alone', () => {
-    expect(firstSentence('Responsive adjustments', true)).toBe('Responsive adjustments');
+  it('loses to an earlier terminator', () => {
+    expect(firstSentence('Foo bar. Baz: qux.')).toBe('Foo bar.');
   });
 
-  it('is off by default', () => {
+  it('needs whitespace after it, so pseudo-selectors and times survive', () => {
+    expect(firstSentence('Nine-slice base for a ::before')).toBe('Nine-slice base for a ::before');
+    expect(firstSentence('Runs at 10:30 sharp')).toBe('Runs at 10:30 sharp');
+  });
+
+  it('ignores a colon inside a code span or a type', () => {
+    expect(firstSentence('Reads `kw: condition` first. More.')).toBe('Reads `kw: condition` first.');
+    expect(firstSentence('{Record<string, { a: number }>} A map: of things.')).toBe(
+      '{Record<string, { a: number }>} A map',
+    );
+  });
+});
+
+describe('the word budget', () => {
+  const LONG =
+    'Cleans text for atomic plaintext fields and every other field, stripping markdown, link syntax and authoring macros.';
+
+  it('cuts at the next comma once the sentence runs past the budget', () => {
+    expect(firstSentence(LONG, { words: 8 })).toBe('Cleans text for atomic plaintext fields and every other field');
+    expect(firstSentence(LONG, { words: 12 })).toBe(
+      'Cleans text for atomic plaintext fields and every other field, stripping markdown',
+    );
+  });
+
+  it('leaves a sentence inside the budget alone', () => {
+    expect(firstSentence('Short, terse and done.', { words: 12 })).toBe('Short, terse and done.');
+  });
+
+  it('does nothing when no comma follows the budget', () => {
+    const clause = 'One two three four five six seven eight nine ten eleven twelve thirteen.';
+    expect(firstSentence(clause, { words: 5 })).toBe(clause);
+  });
+
+  it('counts words across the line breaks a wrapped comment adds', () => {
+    expect(firstSentence('one two three\nfour five six,\nseven eight', { words: 5 })).toBe(
+      'one two three\nfour five six',
+    );
+  });
+
+  it('is on by default', () => {
     expect(firstSentence('Container positions, one per corner')).toBe(
       'Container positions, one per corner',
     );
+    expect(firstSentence(LONG)).toBe(
+      'Cleans text for atomic plaintext fields and every other field, stripping markdown',
+    );
+  });
+});
+
+describe('breaks the nuker does not take', () => {
+  it('leaves a comma inside brackets or braces alone', () => {
+    expect(firstSentence('Clamped to [1/120, 1] on write', { words: 3 })).toBe(
+      'Clamped to [1/120, 1] on write',
+    );
+    expect(firstSentence('A {Record<string, number>} of counts', { words: 2 })).toBe(
+      'A {Record<string, number>} of counts',
+    );
+  });
+
+  it('leaves a comma inside the budget and a bare semicolon alone', () => {
+    expect(firstSentence('Container positions, one per corner')).toBe(
+      'Container positions, one per corner',
+    );
+    expect(firstSentence('Entrance animation; runs once')).toBe('Entrance animation; runs once');
+  });
+
+  it('leaves text without any break alone', () => {
+    expect(firstSentence('Responsive adjustments')).toBe('Responsive adjustments');
   });
 });
 
@@ -147,7 +196,7 @@ describe('truncateJsdoc', () => {
  */`);
   });
 
-  it('keeps a @description list and a one-sentence block untouched', () => {
+  it('cuts a @description at its colon, taking the list under it', () => {
     const list = `/**
  * Parses casting time.
  *
@@ -155,7 +204,14 @@ describe('truncateJsdoc', () => {
  * 1. Minor Action
  * 2. action
  */`;
-    expect(truncateJsdoc(list)).toBe(list);
+    expect(truncateJsdoc(list)).toBe(`/**
+ * Parses casting time.
+ *
+ * @description Priority, first match wins
+ */`);
+  });
+
+  it('keeps a one-sentence block untouched', () => {
     const heading = `/**
  * @fileoverview Tests for the helpers.
  * @description Tag printing, each pinned by the shapes the corpus writes.
@@ -195,6 +251,30 @@ describe('truncateJsdoc', () => {
     expect(truncateJsdoc(block)).toBe(
       '/**\r\n     * Foo.\r\n     * @param {string} a - A.\r\n     */',
     );
+  });
+
+  it('counts the word budget from the prose, not the tag boilerplate', () => {
+    const block = `/**
+ * @param {string} line - One two three four five, six
+ */`;
+    expect(truncateJsdoc(block, { words: 8 })).toBe(block);
+    expect(truncateJsdoc(block, { words: 5 })).toBe(`/**
+ * @param {string} line - One two three four five
+ */`);
+  });
+
+  it('cuts a description that buys a second clause with a colon', () => {
+    const block = `/**
+ * Cleans text for atomic plaintext fields: strips markdown and link syntax.
+ *
+ * @description The block is a hover, not text: a reader sees only its display
+ * text, so an atomic field would show markup the page never shows.
+ */`;
+    expect(truncateJsdoc(block)).toBe(`/**
+ * Cleans text for atomic plaintext fields
+ *
+ * @description The block is a hover, not text
+ */`);
   });
 
   it('returns a block it cannot parse unchanged', () => {
@@ -257,6 +337,31 @@ export const x = { s, t, r, j };
   });
 });
 
+describe('isExcluded', () => {
+  it('keeps the nuker out of the world sim and its tests', () => {
+    expect(isExcluded('src/modules/world-sim/infrastructure/three-js/SceneManager.ts')).toBe(true);
+    expect(isExcluded('src/modules/world-sim/presentation/overlay/overlay.module.scss')).toBe(true);
+    expect(
+      isExcluded('tests/unit/src/modules/world-sim/domain/celestials/OrbitalMechanics.test.ts'),
+    ).toBe(true);
+    expect(isExcluded('src/lib/components/worldSim/data/registry.ts')).toBe(true);
+  });
+
+  it('keeps it out of the content submodule', () => {
+    expect(isExcluded('src/content/en/spells/fireball.mdx')).toBe(true);
+  });
+
+  it('lets the rest of the corpus through', () => {
+    expect(isExcluded('src/modules/library/domain/costMark.ts')).toBe(false);
+    expect(isExcluded('messages/en/worldSim.json')).toBe(false);
+    expect(isExcluded('src/lib/utils/worldSimHelpers.ts')).toBe(false);
+  });
+
+  it('drops excluded files from the corpus listing', () => {
+    expect(corpusFiles(['src/modules/world-sim'])).toEqual([]);
+  });
+});
+
 describe('nukeStyleSource', () => {
   it('cuts a run of adjacent line comments as one comment', () => {
     const source = `// Global stylesheet entry point.
@@ -271,9 +376,9 @@ describe('nukeStyleSource', () => {
 `);
   });
 
-  it('keeps the indent of an indented run and cuts on the ladder', () => {
+  it('keeps the indent of an indented run', () => {
     const source = `.a {
-  // Position variants, one per corner
+  // Position variants: one per corner
   top: 0;
 
   // Entrance animation
@@ -291,11 +396,11 @@ describe('nukeStyleSource', () => {
   });
 
   it('joins only same-indent neighbours, never across a blank line or code', () => {
-    const source = `// One, two
+    const source = `// One: two
 .a {
   color: red;
 }
-// Three, four
+// Three: four
 `;
     const result = nukeStyleSource(source, 'a.scss');
     expect(result.count).toBe(2);
@@ -308,14 +413,14 @@ describe('nukeStyleSource', () => {
   });
 
   it('folds a multi-line block comment onto one line', () => {
-    const source = `/* Moving window: a 2r square centered on the cursor. The mask never changes —
+    const source = `/* A 2r window centered on the cursor. The mask never changes —
    it is centered in this element's own box. */
 .aperture {
   inset: 0;
 }
 `;
     expect(nukeStyleSource(source, 'a.scss').text)
-      .toBe(`/* Moving window: a 2r square centered on the cursor. */
+      .toBe(`/* A 2r window centered on the cursor. */
 .aperture {
   inset: 0;
 }
@@ -329,9 +434,9 @@ describe('nukeStyleSource', () => {
     );
   });
 
-  it('cuts a doc block with the ladder', () => {
+  it('cuts a doc block at its colon', () => {
     const source = `/**
- * @fileoverview MDX section mixins, stream rail, first-letter decor
+ * @fileoverview MDX section mixins: stream rail and first-letter decor
  * @module styles/mixins
  */
 `;
@@ -365,7 +470,7 @@ describe('nukeStyleSource', () => {
 
   it('is idempotent', () => {
     const source = `/* Skeleton: static ink, no sweep */
-// Content area, with padding
+// Content area: padding and rhythm
 .a {
   color: red;
 }

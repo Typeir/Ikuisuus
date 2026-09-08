@@ -1,8 +1,6 @@
 /**
  * @fileoverview Content Shard Route Unit Tests
- * @description Tests the unified GET handler: locale and type validation, 404
- * paths, the resolved envelope for repository and keyword addresses, key
- * subsetting, and the 500 failure path.
+ * @description Tests the unified GET handler
  *
  * @module tests/unit/src/app/api/content-shards/[type]/[slug]/route.test
  * @version 1.0.0

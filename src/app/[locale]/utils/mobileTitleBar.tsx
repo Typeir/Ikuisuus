@@ -1,8 +1,7 @@
 /**
  * Mobile Title Bar
  *
- * @fileoverview Fixed title bar shown below `lg`: logo, shell controls, search,
- * selected character and the hamburger that opens the sidebar.
+ * @fileoverview Fixed title bar shown below `lg`
  *
  * @module app/[locale]/utils/mobileTitleBar
  * @version 1.0.0
@@ -41,7 +40,7 @@ export interface MobileTitleBarProps {
 }
 
 /**
- * Fixed mobile title bar: equal icon slots flanking a centered search bar.
+ * Fixed mobile title bar
  *
  * @param {MobileTitleBarProps} props - Component props
  * @returns {JSX.Element} The title bar

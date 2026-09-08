@@ -50,8 +50,7 @@ async function keywordsFor(
 /**
  * GET /api/content-shards/[type]/[slug]
  *
- * `type` is a registry key; `slug` is that type's address — a content slug, or
- * a URL-encoded keyword reference for `keyword`.
+ * `type` is a registry key; `slug` is that type's address — a content slug
  *
  * @param {Request} req - Next.js request object
  * @param {{ params: Promise<{ type: string; slug: string }> }} context - Route segment params

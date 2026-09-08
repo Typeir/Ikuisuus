@@ -1,7 +1,7 @@
 /**
  * @fileoverview Trinket Metadata Generator
  * @description Parses .mdx files from the trinkets directory and extracts metadata
- * including item type, damage, range, weight, saving throws, and gameplay tags.
+ * including item type
  *
  * @module scripts/metadata/generateTrinketMetadata
  * @version 2.0.0
@@ -39,6 +39,8 @@ const log = createLogger({ component: 'TrinketMetadataGenerator' });
 /**
  * Extracts the prose description from a trinket MDX file.
  *
+ * @description Lines are reduced to what the page prints.
+ *
  * @param {string} content - Full MDX file content
  * @returns {string | undefined} Joined prose lines or undefined
  */
@@ -63,7 +65,7 @@ function parseTrinketDescription(content: string): string | undefined {
     if (l.startsWith('#') || l.startsWith('<') || l.startsWith('>')) continue;
 
     foundContent = true;
-    descLines.push(l);
+    descLines.push(plain(l));
   }
 
   return descLines.length > 0 ? descLines.join('\n') : undefined;
@@ -145,7 +147,7 @@ function parseTrinketProperties(
   if (specialEffectsMatch) {
     result.specialEffects = specialEffectsMatch[1]
       .split(',')
-      .map((effect) => clean(effect).toLowerCase())
+      .map((effect) => plain(effect).toLowerCase())
       .filter(Boolean);
   }
 

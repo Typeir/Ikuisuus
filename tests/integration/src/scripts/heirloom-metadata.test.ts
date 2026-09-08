@@ -47,7 +47,7 @@ describe('Heirloom Metadata Generator', () => {
      * Tests mythic artifact weapon extraction
      *
      * @description Validates parsing of high-rarity weapons with complex properties
-     * including mastery abilities, size modifiers, and special effects
+     * including mastery abilities, size modifiers
      */
     it('should parse a mythic artifact weapon', async () => {
       const filePath = path.join(FIXTURES_DIR, 'mythic-weapon.mdx');
@@ -163,7 +163,7 @@ describe('Heirloom Metadata Generator', () => {
      * Tests rarity extraction for rare items
      *
      * @description Validates parsing of standard rarity levels
-     * Note: This fixture has "Rare" in description but "Nonmagical" as item type
+     * Note
      */
     it('should extract rarity (rare) and property:nonmagical tag', async () => {
       const filePath = path.join(FIXTURES_DIR, 'armor-item.mdx');
@@ -224,7 +224,7 @@ describe('Heirloom Metadata Generator', () => {
      * Tests charges extraction
      *
      * @description Validates parsing of items with charge systems
-     * Note: The current parser may not extract charges from passive abilities
+     * Note
      */
     it('should extract charges information if available', async () => {
       const filePath = path.join(FIXTURES_DIR, 'armor-item.mdx');
@@ -396,8 +396,7 @@ describe('Heirloom Metadata Generator', () => {
     /**
      * Tests custom in-file mastery handling
      *
-     * @description Mastery defined in the item's own Weapon Mastery section:
-     * kept in metadata, no property: aspect
+     * @description Mastery defined in the item's own Weapon Mastery section
      */
     it('should not emit a property aspect for an item-defined mastery', async () => {
       const filePath = path.join(FIXTURES_DIR, 'dual-form-weapon.mdx');
@@ -428,7 +427,7 @@ describe('Heirloom Metadata Generator', () => {
     });
 
     /**
-     * Tests "Mastery: None" handling
+     * Tests "Mastery
      *
      * @description None names no mastery; no value, no warning, no aspect
      */
@@ -443,8 +442,7 @@ describe('Heirloom Metadata Generator', () => {
     /**
      * Tests graft slot routing
      *
-     * @description Base category parenthetical names slots; slot: aspects, no
-     * type aspect for the slot value
+     * @description Base category parenthetical names slots; slot
      */
     it('should tag graft slots without a type aspect for the slot', async () => {
       const filePath = path.join(FIXTURES_DIR, 'graft-item.mdx');

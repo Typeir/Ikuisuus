@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for the inherited action cost.
  * @description A block that states no cost of its own is spent within the one
- * around it, and wears that mark rather than reading as free.
+ * around it
  *
  * @module tests/unit/src/modules/library/presentation/components/slots/costMarkContext.test
  * @version 0.1.0
@@ -81,6 +81,6 @@ describe('a block that states no cost', () => {
       </Feature>,
     );
     const blocks = container.querySelectorAll('article[data-kind]');
-    expect(blocks[1]).toHaveAttribute('data-mark', 'other');
+    expect(blocks[1]).toHaveAttribute('data-mark', 'reaction');
   });
 });

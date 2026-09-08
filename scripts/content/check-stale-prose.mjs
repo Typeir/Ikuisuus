@@ -17,7 +17,7 @@ const CONDITIONS =
 
 /**
  * Condition words that are also ordinary English — a burning horse, a dying
- * breath, a blade that cannot be sundered.
+ * breath
  */
 const AMBIGUOUS_CONDITIONS =
   'bleeding|burning|dying|invisible|slowed|steady|sundered';
@@ -105,8 +105,8 @@ export const PATTERNS = [
     id: 'spellcasting-ability',
     family: 'cast',
     severity: 'legacy',
-    label: 'spellcasting ability is X (spell save DC …)',
-    regex: /spellcasting ability is[^.]{0,40}\(spell save DC/i,
+    label: 'casting ability is X (spell save DC …)',
+    regex: /casting ability is[^.]{0,40}\(spell save DC/i,
     hint: '`saveDc` on the sheet',
   },
   {

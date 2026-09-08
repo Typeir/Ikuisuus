@@ -37,7 +37,7 @@ export interface VocationRepository {
   getBySlug(locale: string, slug: string): Promise<VocationMetadata | null>;
 }
 
-/** @property {string} metadataBackend - Active backend: `'fs'` (default) or `'pg'`. */
+/** @property {string} metadataBackend - Active backend */
 const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
 /**

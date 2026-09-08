@@ -1,8 +1,7 @@
 /**
  * @fileoverview UnitSwitcher Component Tests
  * @description Tests that the switcher exposes one labelled radiogroup per
- * measurement family, marks the stored system active, and dispatches a change
- * scoped to a single family.
+ * measurement family, marks the stored system active
  *
  * @module tests/unit/src/modules/library/presentation/components/UnitSwitcher/UnitSwitcher.test
  * @version 2.0.0

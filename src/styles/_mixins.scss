@@ -1,19 +1,7 @@
 /**
  * @fileoverview SCSS Mixins — Aggregator
  * @description Re-exports all mixin sub-modules so component SCSS files can
- * continue to import a single entry-point: `@use 'mixins' as *`.
- *
- * Sub-modules (each focused on a single concern):
- *   - mixins-scrollbar  — Themed thin scrollbars (webkit + standard)
- *   - mixins-focus      — Outline, ring, and glow focus indicators
- *   - mixins-disabled   — Disabled-state opacity + cursor helpers
- *   - mixins-text       — Text truncation, label typography, placeholders
- *   - mixins-input      — Form input base + focus/glow variants
- *   - mixins-button     — Button base + hover/primary/danger modifiers
- *   - mixins-layout     — Shadow tokens, dropdown panel, transitions
- *   - mixins-encounter  — Encounter-planner label and action-row patterns
- *   - mixins-responsive — Breakpoint media-query wrappers
- *   - mixins-rhombus    — Diamond control: box turned 45°, children turned back
+ * continue to import a single entry-point
  *
  * @module styles/mixins
  */

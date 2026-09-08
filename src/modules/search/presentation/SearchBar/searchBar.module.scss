@@ -1,9 +1,7 @@
 /* ============================================
    SEARCH BAR — Diegetic console terminal
    Ritualistic, command-line aesthetic matching
-   the site's systems-console look.
-   All colors via tokens (no literals).
-============================================ */
+   the site's systems-console look. */
 
 .searchBar {
   padding-top: 0.75rem;
@@ -16,11 +14,7 @@
 }
 
 /* ---- Dropdown ----
-   A body portal hung off the bar. The sidebar is transformed, so anything
-   positioned inside it is boxed to the sidebar's width; a result row (sigil,
-   title, snippet, meta trail) needs far more than that. The dropdown takes
-   its own width from the bar's left edge and slides back inside the viewport
-   when the bar sits near the right, as on the mobile title bar. */
+   A body portal hung off the bar. */
 .dropdown {
   position: fixed;
   top: 0;
@@ -68,7 +62,7 @@
   text-align: center;
 }
 
-/* Final dropdown row: link to the full search page. */
+/* Final dropdown row */
 .digDeeper {
   display: block;
   padding: 0.625rem 0.75rem;
@@ -114,8 +108,7 @@
   }
 }
 
-/* Aspect autocomplete: a body portal under the input, so it escapes any
-   overflow-clipped sidebar. */
+/* Aspect autocomplete */
 .aspectSuggestions {
   position: fixed;
   top: 0;

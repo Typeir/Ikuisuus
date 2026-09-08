@@ -1,7 +1,7 @@
 /**
  * @fileoverview Fetches trinket metadata from API and renders MetadataTable.
  * @description Configures MetadataTable with equipment columns (item type, damage,
- * damage type, properties, range, weight).
+ * damage type, properties, range
  *
  * @version 1.0.0
  * @author Typeir

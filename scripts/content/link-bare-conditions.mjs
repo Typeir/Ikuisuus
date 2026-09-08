@@ -32,8 +32,7 @@ export const CONDITIONS = [
 const WORD = new RegExp(`\\b(${CONDITIONS.join('|')})\\b`, 'gi');
 
 /**
- * Whether an index in a line sits inside a span that must not be rewritten:
- * a keyword block, a link's text or target, or inline code.
+ * Whether an index in a line sits inside a span that must not be rewritten
  *
  * @param {string} line - The line
  * @param {number} index - Match index

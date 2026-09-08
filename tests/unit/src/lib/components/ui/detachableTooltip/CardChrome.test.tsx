@@ -1,7 +1,7 @@
 /**
  * @fileoverview CardChrome Tests
  * @description Covers the handle, title, close control and resize corner a
- * parked card wears, and that pointer handlers reach the right element.
+ * parked card wears
  *
  * @module tests/unit/src/lib/components/ui/detachableTooltip/CardChrome.test
  * @version 1.0.0

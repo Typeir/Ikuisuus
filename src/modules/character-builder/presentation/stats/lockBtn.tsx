@@ -15,7 +15,7 @@ import { memo } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
 
 export interface LockBtnProps {
-  /** Predicate: is this stat key currently unlocked? */
+  /** Predicate */
   isUnlocked: (k: string) => boolean;
   /** Toggle callback for the given stat key. */
   toggle: (k: string) => void;

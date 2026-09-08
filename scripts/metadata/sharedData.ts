@@ -225,8 +225,7 @@ export function aspectGroupAppliesTo(
 }
 
 /**
- * Splits an aspect into its group and value on the last colon, so that both
- * `damage:fire` and `meta:source:official` yield a usable pair.
+ * Splits an aspect into its group and value on the last colon
  *
  * @param {string} aspect - A full aspect token
  * @returns {{ group: string; value: string } | null} The pair, or null when there is no colon

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Targeted fix: bold-wrapped **action** → **Major Action** (patterns missed by main script).
+ * Targeted fix
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { readdir, readFile, writeFile } from 'node:fs/promises';

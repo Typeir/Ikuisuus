@@ -1,11 +1,7 @@
 /**
  * @fileoverview Slot attributes as markdown.
  * @description Turns `<Feature cost="1/[# kw:Repose #]">` into the element
- * form, `<Cost>1/[# kw:Repose #]</Cost>`, before any other plugin runs, so a
- * slot value written as an attribute is ordinary markdown from there on: the
- * shortcode plugins reach it with their usual text visit, emphasis and links
- * become real nodes through the component registry, and the card reads the
- * value through the element path it already supports.
+ * form, `<Cost>1/[# kw:Repose #]</Cost>`
  *
  * @module lib/md/desugarSlotAttributes
  * @version 1.0.0
@@ -62,14 +58,12 @@ const SHORTCODE_REGEX = new RegExp(
 );
 
 /**
- * Inline parser, the document's own minus the MDX extension: an attribute
- * value is phrasing, never a component.
+ * Inline parser, the document's own minus the MDX extension
  */
 const parser = unified().use(remarkParse).use(remarkGfm);
 
 /**
- * Where a host's slot run goes: after the heading the host opens with, which
- * titles it and has to stay first for sectionize, and at the front otherwise.
+ * Where a host's slot run goes
  *
  * @param {RootContent[]} children - Host children
  * @returns {number} Insertion index
@@ -97,8 +91,7 @@ function phrasingOf(value: string): PhrasingContent[] | null {
 }
 
 /**
- * Whether a value has to become an element: markdown parsed it into something
- * other than one plain text run, or it carries a shortcode.
+ * Whether a value has to become an element
  *
  * @param {string} value - Attribute value
  * @param {PhrasingContent[]} phrasing - Its parsed phrasing
@@ -140,8 +133,7 @@ function slotElement(
 }
 
 /**
- * Stamps the slot name on a slot element an author wrote by hand, so both
- * spellings reach the card the same way.
+ * Stamps the slot name on a slot element an author wrote by hand
  *
  * @param {RootContent} node - Candidate node
  * @param {Readonly<Record<string, string>>} elementSlots - Element name to slot name
@@ -173,8 +165,7 @@ function stampAuthoredSlot(
 
 /**
  * Moves a host's parseable slot attributes into slot elements, gathered in one
- * paragraph among the host's own children, where the card's slot-run reader
- * finds them and sectionize still sees the host's heading first.
+ * paragraph among the host's own children
  *
  * @param {MdxJsxElementNode} node - Host element
  * @param {SlotElementMap} slots - Its slots

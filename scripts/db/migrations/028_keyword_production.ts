@@ -1,5 +1,5 @@
 /**
- * @fileoverview Migration 028: keyword production array.
+ * @fileoverview Migration 028
  * @description `produces` lists the shard ids a file defines, completing the
  * pair 027 opened.
  *

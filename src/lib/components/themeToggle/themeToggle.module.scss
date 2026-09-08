@@ -1,5 +1,4 @@
-/* Theme toggle. Moved here verbatim from responsiveLayoutShell so the
-   sidebar, the mobile bar and the preferences panel share one definition. */
+/* Theme toggle. */
 
 @use '@/styles/mixins' as *;
 
@@ -7,8 +6,7 @@
    border-radius/border tie — a bare `.themeToggle` would lose on source order. */
 button.themeToggle {
   @include rhombus;
-  /* Square base: a pill radius under `corner-shape: bevel` is already a
-     diamond, and the rhombus rotation would turn that back into a square. */
+  /* Square base */
   border-radius: var(--border-round-s);
 
   /* The glyph (moon/sun, sliders, hamburger) sits 10% under its icon size;

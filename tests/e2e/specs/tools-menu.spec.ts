@@ -1,7 +1,7 @@
 /**
  * @fileoverview End-to-end tests for the tools-menu module.
  * @description Verifies the tools menu lists the shipped tools plus the dev-only Labs
- * entry, opens and closes, and navigates to the correct routes.
+ * entry
  *
  * @module tests/e2e/specs/tools-menu
  * @version 1.0.0

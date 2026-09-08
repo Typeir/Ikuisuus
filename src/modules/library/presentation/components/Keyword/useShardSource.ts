@@ -1,6 +1,6 @@
 /**
  * @fileoverview Shard Source Resolution
- * @description Answers a card's one question: what prose defines this keyword.
+ * @description Answers a card's one question
  *
  * @module modules/library/presentation/components/Keyword/useShardSource
  * @version 2.0.0
@@ -63,7 +63,7 @@ async function fetchShard(
 
 /**
  * Resolves a card's shard from the page, then from what an earlier card already
- * fetched, then from the endpoint.
+ * fetched
  *
  * @param {string | undefined} id - Shard id stamped at compile, when the page baked one
  * @param {string} reference - Normalised reference, used when the page did not

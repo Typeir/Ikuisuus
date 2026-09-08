@@ -7,11 +7,11 @@
  */
 
 import {
-    extractActions,
-    extractSpellcasting,
-    extractTraits,
-    parseRechargeFromHeading,
-    splitBySubHeadings,
+  extractActions,
+  extractSpellcasting,
+  extractTraits,
+  parseRechargeFromHeading,
+  splitBySubHeadings,
 } from '@scripts/metadata/extraction/monsterFeatureExtractor';
 import type { MonsterSection } from '@scripts/metadata/extraction/monsterSectionClassifier';
 import { describe, expect, it } from 'vitest';
@@ -208,7 +208,7 @@ describe('extractActions', () => {
 describe('extractSpellcasting', () => {
   it('extracts a full spellcasting block', () => {
     const section = makeSection('spellcasting', [
-      'Ludwig is a 10th-level spellcaster. His spellcasting ability is Constitution (spell save DC 19, +11 to hit with spell attacks).',
+      'Constitution is its casting ability. accuracy +11, saveDc="19"',
       '| Spell Level | Slots | Spells |',
       '| --- | --- | --- |',
       '| **1st level (4 slots)** | 4 | Bloodlash Rebuke |',
@@ -221,12 +221,30 @@ describe('extractSpellcasting', () => {
     const feat = extractSpellcasting(section);
     expect(feat).not.toBeNull();
     expect(feat!.spellcasting).toBeDefined();
-    expect(feat!.spellcasting!.level).toBe(10);
     expect(feat!.spellcasting!.ability).toBe('constitution');
     expect(feat!.spellcasting!.dc).toBe(19);
     expect(feat!.spellcasting!.attack_bonus).toBe(11);
     expect(feat!.spellcasting!.slots[1]).toBe(4);
     expect(feat!.spellcasting!.slots[5]).toBe(2);
+  });
+
+  it('reads the slot run a sheet writes without the word level', () => {
+    const section = makeSection('spellcasting', [
+      '1st (4), 2nd (3), 3rd (3), 9th (1).',
+    ]);
+
+    const feat = extractSpellcasting(section);
+    expect(feat!.spellcasting!.slots[1]).toBe(4);
+    expect(feat!.spellcasting!.slots[9]).toBe(1);
+  });
+
+  it('reads accuracy off the block the heading sits inside', () => {
+    const lines = ['<Action accuracy="+4">', '', '### Spellcasting', 'Prepared:'];
+    const section = makeSection('spellcasting', ['Prepared:']);
+    section.startLine = 2;
+
+    const feat = extractSpellcasting(section, lines);
+    expect(feat!.spellcasting!.attack_bonus).toBe(4);
   });
 
   it('returns null for empty section', () => {

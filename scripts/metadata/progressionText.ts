@@ -19,7 +19,7 @@ import {
 import { readHostTag } from './slotForms';
 
 /**
- * What the generator reads from a progression: the same shape the table parser returns.
+ * What the generator reads from a progression
  *
  * @property {Array<{ level: number; name: string }>} features - Feature names by level
  * @property {boolean} hasSpellSlots - Whether the table carries slot columns
@@ -42,7 +42,7 @@ const LEVEL_HEADING = /^#{1,6}\s+(\d+)(?:st|nd|rd|th)\s+Level\s+[–—-]\s+(.+?
 const FEATURE_OPEN = /^<Feature\b[^>]*\blevel=(?:"(\d+)"|'(\d+)')/;
 
 /**
- * Plain text of a cell: bold and links stripped.
+ * Plain text of a cell
  *
  * @param {string} text - Markdown
  * @returns {string} Text

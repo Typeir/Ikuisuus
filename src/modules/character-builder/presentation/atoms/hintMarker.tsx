@@ -27,7 +27,7 @@ export interface HintMarkerProps {
 
 /**
  * Renders the vocation-pick hint asterisk with a screen-reader label and a
- * hover tooltip, or nothing when `show` is false.
+ * hover tooltip
  *
  * @component
  * @param {HintMarkerProps} props - Component props

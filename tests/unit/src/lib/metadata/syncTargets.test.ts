@@ -1,8 +1,7 @@
 /**
  * @fileoverview Sync Targets Unit Tests
  * @description Tests that every content type the metadata sync covers names the
- * right entity, directory and record reader, and that the monster natural key
- * prefers the sub-slug.
+ * right entity
  *
  * @module tests/unit/src/lib/metadata/syncTargets.test
  * @version 1.0.0

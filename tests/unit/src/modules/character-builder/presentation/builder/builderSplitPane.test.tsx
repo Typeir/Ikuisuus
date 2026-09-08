@@ -1,8 +1,6 @@
 /**
  * @fileoverview BuilderSplitPane Unit Tests
- * @description Tests the viewport-aware two-pane wrapper: ResizablePane
- * pass-through on desktop, single-pane + summoned bottom sheet on phone
- * viewports, controlled sheet state, and the mobilePrimary inversion.
+ * @description Tests the viewport-aware two-pane wrapper
  *
  * @module tests/unit/src/modules/character-builder/presentation/builder/builderSplitPane.test
  * @version 1.0.0

@@ -8,8 +8,7 @@
 import type { PoolClient } from 'pg';
 
 /**
- * Applies the migration: creates `audit_logs` and `banned_ips` tables
- * with supporting indexes.
+ * Applies the migration
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}
@@ -54,7 +53,7 @@ export async function up(client: PoolClient): Promise<void> {
 }
 
 /**
- * Reverses the migration: drops both tables and their indexes.
+ * Reverses the migration
  *
  * @param {PoolClient} client - Transactional pg client (BEGIN already called).
  * @returns {Promise<void>}

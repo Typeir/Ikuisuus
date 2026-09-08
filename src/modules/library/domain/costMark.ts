@@ -1,9 +1,6 @@
 /**
  * @fileoverview What a block costs to use, read off the cost it states.
- * @description A card draws a glyph for the cost rather than typing one, so
- * the mark cannot drift from the cost beside it. Feature blocks and the head
- * of a spell card both take their glyph from here, so a Major Action is the
- * same mark wherever it is spent.
+ * @description A card draws a glyph for the cost rather than typing one
  *
  * @module modules/library/domain/costMark
  * @version 0.1.0
@@ -16,7 +13,13 @@ import type { ReactNode } from 'react';
 /**
  * What a block costs to use, as a card's glyph reports it.
  */
-export type CostMark = 'major' | 'minor' | 'deed' | 'other';
+export type CostMark =
+  | 'major'
+  | 'minor'
+  | 'reaction'
+  | 'reflex'
+  | 'deed'
+  | 'other';
 
 /**
  * Marks read off a cost, in the order they are tested.
@@ -24,12 +27,36 @@ export type CostMark = 'major' | 'minor' | 'deed' | 'other';
 const COST_MARKS: ReadonlyArray<readonly [RegExp, CostMark]> = [
   [/\bmajor\s+action\b/i, 'major'],
   [/\bminor\s+action\b/i, 'minor'],
+  [/\breactions?\b/i, 'reaction'],
+  /* A reflex is asked of a creature and costs it nothing, so it is not an
+     action and never wears an action's pip. */
+  [/\breflexe?s?\b/i, 'reflex'],
   [/\bdeeds?\b/i, 'deed'],
 ];
 
 /**
- * The mark a cost earns: the author's when given, otherwise the action the
- * cost names, and `other` for anything that costs no action.
+ * How many of a cost a block spends.
+ *
+ * @description A block that spends two deeds wears two glyphs, so the price is
+ * read at a glance rather than counted out of the text. A cost with no number
+ * is one of whatever it names.
+ *
+ * @param {ReactNode} cost - The cost as the page states it
+ * @returns {number} Units spent, at least one
+ *
+ * @example
+ * markCount('2 Deeds'); // 2
+ * markCount('1 Major Action'); // 1
+ */
+export function markCount(cost: ReactNode): number {
+  if (typeof cost !== 'string') return 1;
+  const match = cost.match(/(\d+)/);
+  const value = match ? Number(match[1]) : 1;
+  return Number.isFinite(value) && value > 0 ? value : 1;
+}
+
+/**
+ * The mark a cost earns
  *
  * @param {CostMark} [explicit] - Mark the author set
  * @param {ReactNode} cost - The cost as the page states it

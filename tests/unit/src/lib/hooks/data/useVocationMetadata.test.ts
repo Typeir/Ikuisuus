@@ -1,8 +1,7 @@
 /**
  * @fileoverview Unit tests for useVocationMetadata
  * @description Tests that useVocationMetadata fetches all three endpoints on
- * entering edit mode, does not re-fetch once loaded or when editing is false,
- * passes the locale to each endpoint, and returns empty arrays on fetch failure.
+ * entering edit mode, does not re-fetch once loaded or when editing is false
  *
  * @module tests/unit/src/lib/hooks/data/useVocationMetadata.test
  * @version 1.0.0

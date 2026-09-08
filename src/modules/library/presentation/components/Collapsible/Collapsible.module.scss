@@ -5,6 +5,35 @@
   background: var(--color-surface);
   overflow: hidden;
 
+  /* The light skin is the sidebar's disclosure: no ground, no frame, a rule
+     under the row and the same caret the tree uses. A sheet of these reads as
+     a list to run an eye down rather than a stack of panels. */
+  &[data-skin='light'] {
+    border: none;
+    border-radius: 0;
+    background: none;
+    margin-bottom: 0.25rem;
+
+    > summary {
+      padding: 0.3rem 0;
+      border-bottom: var(--border-width-xs) solid var(--color-border-secondary);
+
+      &:hover,
+      &:focus-visible {
+        background: none;
+        color: var(--color-accent);
+      }
+
+      &::after {
+        content: '';
+      }
+    }
+
+    &[open] > summary {
+      border-bottom-color: var(--color-accent);
+    }
+  }
+
   &[open] .chevron {
     transform: rotate(90deg);
   }
@@ -53,7 +82,7 @@
   --gradient-tabs-well: var(--color-transparent);
 }
 
-/* ── Dark theme: visible table separators inside collapsible content ── */
+/* ── Dark theme */
 :global(html[data-theme='dark']) .content {
   th,
   td {
@@ -73,7 +102,7 @@
   }
 }
 
-/* ── Light theme: lighter card bg, visible separators ── */
+/* ── Light theme */
 :global(html[data-theme='light']) .collapsible {
   background: var(--color-bg-secondary);
   border-color: var(--color-bg-tertiary);

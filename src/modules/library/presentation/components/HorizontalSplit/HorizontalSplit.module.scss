@@ -12,7 +12,7 @@
   box-sizing: border-box;
 }
 
-/* Responsive: stack vertically, right slot first */
+/* Responsive */
 @media (max-width: 768px) {
   .horizontalSplit {
     flex-direction: column-reverse;

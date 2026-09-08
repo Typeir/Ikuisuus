@@ -74,6 +74,7 @@ const rowToFeat = (row: FeatEntity): FeatMetadata => {
     file: row.file,
     link: row.link,
     description: orUndef(row.description),
+    category: orUndef(row.category),
     prerequisite: orUndef(row.prerequisite),
     hasPrerequisite: row.hasPrerequisite,
     abilityIncrease: buildAbilityIncrease(row.abilityIncrease),

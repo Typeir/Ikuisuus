@@ -1,8 +1,7 @@
 /**
  * @fileoverview Collects search index records for a locale.
  * @description Walks content directories for the 9 searchable content types,
- * extracts prose from MDX files, and joins `.metadata.json` sidecars to
- * produce IndexRecord entries for the Pagefind index.
+ * extracts prose from MDX files
  *
  * @module scripts/search/collectRecords
  * @version 1.0.0
@@ -91,8 +90,7 @@ function humanizeFolderName(folderName: string): string {
 }
 
 /**
- * Derives a display title for a record: the sidecar `title` when set, else
- * the filename-derived slug.
+ * Derives a display title for a record
  *
  * @param {string} filePath - Absolute path to the source MDX file
  * @param {string} contentType - Content type key
@@ -263,7 +261,7 @@ function metadataToMeta(
   return meta;
 }
 
-/** Shape of an aspect token: kebab-case segments joined by colons. */
+/** Shape of an aspect token */
 const ASPECT_TOKEN = /^[a-z][a-z0-9-]*(:[a-z0-9-]+)+$/;
 
 /**

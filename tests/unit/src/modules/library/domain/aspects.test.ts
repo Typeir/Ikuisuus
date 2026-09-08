@@ -15,6 +15,7 @@ import {
   ASPECT_GROUP_ORDER,
   aspectColour,
   aspectMark,
+  collapseImplied,
   displayAspects,
   isInternalAspect,
   parseAspect,
@@ -81,7 +82,7 @@ describe('displayAspects', () => {
 
   /**
    * Order comes from the taxonomy, not from the order tags happen to be
-   * generated in, so the same axis sits in the same place on every page.
+   * generated in
    */
   it('should order groups by the taxonomy rather than alphabetically', () => {
     const result = displayAspects([
@@ -111,6 +112,124 @@ describe('displayAspects', () => {
   });
 });
 
+describe('collapseImplied', () => {
+  /**
+   * Resolves raw tokens the way the render surfaces do, so the cases below read
+   * as the tag lists the generator actually emits.
+   */
+  const collapsed = (tags: string[]): string[] =>
+    collapseImplied(displayAspects(tags)).map((aspect) => aspect.raw);
+
+  it('should drop a stratum whose own type is present', () => {
+    expect(collapsed(['damage:elemental', 'damage:frost'])).toEqual([
+      'damage:frost',
+    ]);
+  });
+
+  it('should keep a stratum with none of its types beside it', () => {
+    expect(collapsed(['damage:elemental'])).toEqual(['damage:elemental']);
+    expect(collapsed(['damage:elemental', 'damage:poison'])).toEqual([
+      'damage:elemental',
+      'damage:poison',
+    ]);
+  });
+
+  it('should collapse each stratum independently', () => {
+    expect(
+      collapsed([
+        'damage:akashic',
+        'damage:elemental',
+        'damage:frost',
+        'damage:physical',
+        'damage:slashing',
+      ]),
+    ).toEqual(['damage:akashic', 'damage:frost', 'damage:slashing']);
+  });
+
+  it('should collapse the scoped defences on their own group', () => {
+    expect(
+      collapsed([
+        'resistance:elemental',
+        'resistance:frost',
+        'immunity:somatic',
+        'vulnerability:akashic',
+      ]),
+    ).toEqual([
+      'resistance:frost',
+      'immunity:somatic',
+      'vulnerability:akashic',
+    ]);
+  });
+
+  /**
+   * A type only cancels the stratum it was tagged against.
+   */
+  it('should not let a type in one group cancel a stratum in another', () => {
+    expect(collapsed(['damage:frost', 'resistance:elemental'])).toEqual([
+      'damage:frost',
+      'resistance:elemental',
+    ]);
+  });
+
+  /**
+   * `somatic` names both a damage stratum and a spell component, and the
+   * component is not the stratum.
+   */
+  it('should leave a stratum name reused by another group alone', () => {
+    expect(collapsed(['component:somatic', 'damage:poison'])).toEqual([
+      'damage:poison',
+      'component:somatic',
+    ]);
+  });
+
+  it('should pass through a list with no parents in it', () => {
+    expect(collapsed(['save:dex', 'tempo:major'])).toEqual([
+      'tempo:major',
+      'save:dex',
+    ]);
+  });
+
+  it('should drop a defence parent whose own group has an aspect', () => {
+    expect(collapsed(['defense:immunity', 'immunity:poison'])).toEqual([
+      'immunity:poison',
+    ]);
+    expect(collapsed(['defense:resistance', 'resistance:elemental'])).toEqual([
+      'resistance:elemental',
+    ]);
+  });
+
+  /**
+   * `defense:immunity` beside conditions alone is immunity to those conditions,
+   * which no other aspect in the row states.
+   */
+  it('should keep a defence parent whose own group is empty', () => {
+    expect(collapsed(['defense:immunity', 'condition:terrified'])).toEqual([
+      'defense:immunity',
+      'condition:terrified',
+    ]);
+  });
+
+  /** Damage reduction names no group, so nothing can subsume it. */
+  it('should keep a defence value that names no group', () => {
+    expect(collapsed(['defense:reduction', 'resistance:fire'])).toEqual([
+      'defense:reduction',
+      'resistance:fire',
+    ]);
+  });
+
+  it('should apply both rules to one row', () => {
+    expect(
+      collapsed([
+        'damage:elemental',
+        'damage:frost',
+        'defense:resistance',
+        'resistance:elemental',
+        'resistance:frost',
+      ]),
+    ).toEqual(['damage:frost', 'resistance:frost']);
+  });
+});
+
 describe('aspectColour', () => {
   it('should resolve damage per value with a group fallback', () => {
     expect(aspectColour(parseAspect('damage:fire')!)).toBe(
@@ -134,8 +253,7 @@ describe('aspectColour', () => {
 
 describe('aspectMark', () => {
   /**
-   * Scoped defences are drawn as a modifier over the element they apply to, so
-   * `resistance:` needs no glyph of its own.
+   * Scoped defences are drawn as a modifier over the element they apply to
    */
   it('should compose a scoped defence from a modifier and its element', () => {
     const mark = aspectMark(parseAspect('resistance:fire')!);

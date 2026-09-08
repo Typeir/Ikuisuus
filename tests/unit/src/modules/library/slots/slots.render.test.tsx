@@ -1,6 +1,5 @@
 /**
- * @fileoverview Slot card render checks: shortcodes in slots (T2) and no
- * shortcode literals in static output (T8), in both spellings.
+ * @fileoverview Slot card render checks
  *
  * @module tests/unit/src/modules/library/slots/slots.render.test
  * @version 0.3.0
@@ -62,7 +61,10 @@ describe('T2 shortcodes render in slots', () => {
     expect(attributes, 'stats filed under Attributes').toContain(
       'data-heirloom-stats',
     );
-    const stats = attributes.match(/<ul data-heirloom-stats="true">[\s\S]*?<\/ul>/)?.[0] ?? '';
+    const stats =
+      attributes.match(
+        /<div [^>]*data-heirloom-stats="true">[\s\S]*?<\/div>/,
+      )?.[0] ?? '';
     const rows = stats.match(/data-slot="([a-zA-Z]+)"/g) ?? [];
     expect(rows).toEqual([
       'data-slot="damage"',

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Migration 026: add anchors to features; move boon options to child table.
+ * @fileoverview Migration 026
  * @description Anchors are heading slugs shared with shards; knowledge_tiers converged to text[].
  *
  * @module scripts/db/migrations/026_feature_anchors

@@ -1,9 +1,6 @@
 /**
  * @fileoverview GradientTabs Styles
- * @description Verbatim copy of the spell table tab nav CSS. Outer bordered
- * container, scrollable tablist with bottom gradient fade and ::after overlay,
- * bordered card-tab buttons, and a surface panel with box-shadow.
- * All colors via CSS variables.
+ * @description Verbatim copy of the spell table tab nav CSS.
  *
  * @module lib/components/ui/gradientTabs/gradientTabs.module
  */
@@ -122,14 +119,12 @@
 }
 
 /* ── Compact variant (opt-in via the `variant` prop) ─────────────
-   Tighter paddings and touch-sized tab buttons for narrow layouts.
-   The default variant is byte-identical to the original rules. */
+   Tighter paddings and touch-sized tab buttons for narrow layouts. */
 
 .compact {
   padding-top: 1.25rem;
 
-  /* Right-edge fade signalling more tabs off-screen. Lives on the
-     non-scrolling container so it stays pinned while the strip scrolls. */
+  /* Right-edge fade signalling more tabs off-screen. */
   &::after {
     content: '';
     display: none;
@@ -164,8 +159,7 @@
 
 /* ── Strip scroll chevrons ───────────────────────────────────────
    Transparent, borderless glowing icon buttons flanking the strip —
-   same treatment as the roster collapse/delete icons. Rendered only
-   while the tab list actually overflows. */
+   same treatment as the roster collapse/delete icons. */
 
 .navChevron {
   position: absolute;

@@ -105,7 +105,7 @@ async function loadExtensionDefaults(
 
 /**
  * Resolve the line-count threshold for a single file using the priority
- * chain: per-file allowlist → per-extension default → hard default.
+ * chain
  *
  * @param {string} filePath - Normalized relative file path
  * @param {Map<string, number>} allowlist - Per-file overrides

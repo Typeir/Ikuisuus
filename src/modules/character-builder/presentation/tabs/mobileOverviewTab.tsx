@@ -1,7 +1,6 @@
 /**
  * @fileoverview Mobile Overview Tab.
- * @description Phone-layout overview: tab strip (skills / trades / attacks / notes)
- * above selected-shard chip clouds.
+ * @description Phone-layout overview
  *
  * @module modules/character-builder/presentation/tabs/mobileOverviewTab
  * @version 2.0.0

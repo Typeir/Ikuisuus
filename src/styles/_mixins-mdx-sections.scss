@@ -1,8 +1,7 @@
 /**
- * @fileoverview MDX section mixins — nine-slice frame, stream rail, first-letter decor
+ * @fileoverview MDX section mixins — nine-slice frame
  * @description Reusable mixins for MDX section nine-slice borders, the vertical
- * stream rail and the decorative first-letter used by MDX headings. Extracted
- * from the global stylesheet so other components can opt-in via `@include`.
+ * stream rail and the decorative first-letter used by MDX headings.
  *
  * @module styles/mixins-mdx-sections
  */
@@ -53,8 +52,7 @@
   user-select: none;
 }
 
-/* Variant used for nested sections (not-last-child): the base with its
-   defaults moved to the bottom-right corner. */
+/* Variant used for nested sections (not-last-child) */
 @mixin mdx-nine-slice-nested(
   $image: '/render/terminalKnotwork9slice.png',
   $border: 48px,
@@ -87,12 +85,7 @@
 }
 
 /**
- * Mixin: mdx-crt-glow
- *
- * Applies a two-layer radial-gradient CRT glow via `::before` (inner, smaller)
- * and `::after` (outer, larger). Intended to be included on an element with
- * `position: relative`. The pseudo-elements are hidden at rest and revealed by
- * the parent's hover/active state setting `opacity`.
+ * Mixin
  *
  * @param {string} $color (default `var(--color-primary)`) — inner glow colour
  * @param {string} $outer-color (default `var(--color-actionable)`) — outer glow colour
@@ -214,10 +207,7 @@
   }
 
   /* A gradient clipped to the glyph is a background image, and print drops
-     background images: the letter arrives with a transparent fill over nothing
-     and the initial goes missing. Paint it solid instead, and drop the two
-     bloom layers, which are gradients on the same terms. Last in the mixin so
-     these win on source order over the rules above at equal specificity. */
+     background images */
   @media print {
     color: var(--color-accent) !important;
     background: none;
@@ -247,9 +237,7 @@
   }
 }
 
-/* The bloom breathes by scale over a fixed blur. Chromium keeps transform and
-   opacity animations on the compositor; animating a pixel-moving filter
-   forces a main-thread frame every tick. */
+/* The bloom breathes by scale over a fixed blur. */
 @keyframes crt-bloom {
   0%,
   100% {
@@ -263,10 +251,7 @@
 }
 
 /**
- * Mixin: hide-list-marker
- *
- * Suppresses the default browser list marker on `<li>` elements by setting
- * `content: ''` on the `::marker` pseudo-element. Apply inside an `li` rule.
+ * Mixin
  */
 @mixin hide-list-marker {
   &::marker {
@@ -275,14 +260,7 @@
 }
 
 /**
- * Mixin: mdx-stream-rail
- *
- * Vertical monospace ticker beside a section. Include on the rail element
- * (`<span aria-hidden data-stream-rail>`). The rail stays put and owns the
- * fade mask and the clip; its in-flow `::before` sizes it to one copy of
- * `--stream-text`, and its `::after` carries four copies and is the only box
- * that moves, so the loop runs on the compositor. A `-25%` translate of a
- * four-copy box is exactly one copy at any text length.
+ * Mixin
  *
  * @param {string} $side (`left` | `right`) — which edge of the host the rail hugs
  */
@@ -352,12 +330,7 @@
 }
 
 /**
- * Mixin: mdx-heading-rule
- *
- * The rule under a heading: a hairline in the heading's own colour, fading
- * out at the right the way the blockquote's ground does. Drawn as a pseudo
- * from the heading's own box, so it runs the element's full measure whatever
- * the text does, and painted behind so floated art crosses over it.
+ * Mixin
  *
  * @param {number} $gap (default `0.2em`) — space between the text and the rule
  */
@@ -384,12 +357,7 @@
 }
 
 /**
- * Mixin: mdx-slot-card
- *
- * Heirloom slot card rhythm. Include on the card host (`[data-heirloom]`).
- * The brief, the stats lines, and each block's slot lines hug their heading;
- * the blocks carry no ornament of their own, the `###` group sections around
- * them do.
+ * Mixin
  */
 @mixin mdx-slot-card {
   > p[data-heirloom-brief] {
@@ -398,46 +366,52 @@
 
 
   /* The rule closing the primer carries the site's 3rem section gap on both
-     sides, and `hr` is a formatting context, so those margins cannot collapse
-     through it. In the card the mechanical half opens right under it, so the
-     gap is spent once. */
+     sides */
   > hr {
     margin-block: 2rem 0;
   }
 
-  /* Glyphs say what a heading introduces: a group of blocks, or a block by
-     what using it costs. Drawn, not typed, so a heading's text stays its
-     name and the mark cannot drift from the cost beside it. */
-  > section[data-heading-level] > :is(h1, h2, h3, h4, h5, h6)::before {
+  /* Glyphs say what a heading introduces */
+  > section[data-heading-level] > :is(#{$mdx-headings})::before,
+  > section[data-heading-level]
+    > details
+    > summary
+    > :is(#{$mdx-headings})::before {
     content: '❖ ';
   }
 
   article[data-kind] {
     @include mdx-mark-glyphs;
 
-    > :is(h1, h2, h3, h4, h5, h6) {
+    > :is(#{$mdx-headings}),
+    > details > summary > :is(#{$mdx-headings}) {
       margin-top: 0.25rem;
       margin-bottom: 0.25rem;
     }
   }
 }
 
-/* The glyphs a block wears to say what using it costs. A deed is spent from a
-   pool the whole encounter shares, so it is marked apart from the action costs
-   rather than among them. */
+/* The glyphs a block wears to say what using it costs. */
+/* The pips, and what each one says a block costs:
+   ◇ an interaction, or something else that costs nothing named
+   ⬖ a minor action, the diamond filled on one side
+   ◆ a major action, the diamond filled
+   ◈ a reaction, the diamond with a pip inside it
+   ◇ also a reflex, which is asked of a creature and costs it nothing
+   ▣ a deed, the square within a square
+   ❖ a group of blocks, and turned on its corner, a group of deeds */
+/* Headings, as a selector list. A division that collapses moves its heading
+   into the summary that opens it, so a rule reaching for one reaches twice. */
+$mdx-headings: 'h1, h2, h3, h4, h5, h6';
 $mdx-mark-glyph-other: '◇ ';
 $mdx-mark-glyph-minor: '⬖ ';
 $mdx-mark-glyph-major: '◆ ';
-$mdx-mark-glyph-deed: '◈ ';
+$mdx-mark-glyph-reaction: '◈ ';
+$mdx-mark-glyph-reflex: '◇ ';
+$mdx-mark-glyph-deed: '▣ ';
 
 /**
- * Mixin: mdx-card-face
- *
- * A card's ground: an accent rule down the left and a surface fading out to
- * the right, the face a v1 blockquote card wore. It isolates, so the heading
- * rules inside — drawn behind their own text, so floated art crosses over
- * them — paint above this ground instead of under it. The margin is left to
- * the card, which knows what it sits between.
+ * Mixin
  */
 @mixin mdx-card-face {
   isolation: isolate;
@@ -453,15 +427,7 @@ $mdx-mark-glyph-deed: '◈ ';
 }
 
 /**
- * Mixin: mdx-card-boundaries
- *
- * Where a card's edge stops the page's ornament. The knotwork clasps and
- * stream rails of the sections inside a card, a fold or a quote end at its
- * edge; the heading rules and cost glyphs that name what is inside do not,
- * since they are not ornament. A card also reclaims the room a section holds
- * for a frame it no longer draws, and a block that says it takes no ornament
- * bares the section around it — a folding block draws its own summary bar, and
- * the frame would land in its top-left corner on every boon of every bloodline.
+ * Mixin
  */
 @mixin mdx-card-boundaries {
   details,
@@ -509,64 +475,103 @@ $mdx-mark-glyph-deed: '◈ ';
     > [data-stream-rail] {
     display: none !important;
   }
+
+  /* A block inside another block is a step of it, not a section of the page:
+     the frame and the rail belong to the outermost block alone. */
+  article[data-kind] section[data-heading-level]::before,
+  article[data-kind] section[data-heading-level]::after,
+  article[data-kind] article[data-kind]::before,
+  article[data-kind] article[data-kind]::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  article[data-kind] [data-stream-rail] {
+    display: none !important;
+  }
 }
 
 /**
- * Mixin: mdx-slot-run
- *
- * A slot run — a card's stat block, or a block's own slot lines — closes with
- * the rule a heading draws, in the border colour, since it divides what it
- * qualifies from what follows rather than naming anything. It sits closer to
- * that prose than a paragraph would. Include on the card host.
+ * Mixin
  */
 @mixin mdx-slot-run {
   [data-slot-grid] {
     @include mdx-heading-rule(0.4rem);
-    margin-bottom: 0.4em;
+    /* The run is a paragraph, and prose gives every paragraph a wide margin on
+       both sides. It opens directly under the heading it belongs to, so the
+       leading one is taken back rather than left to prose. */
+    margin-block: 0 0.4em;
 
     &::after {
       color: var(--color-border-secondary);
     }
   }
 
-  /* The prose under a slot run opens at the run's own margin. The body wrapper
-     carries no edge of its own, so its first paragraph's top margin collapses
-     through it and against the run, and the larger of the two would win. */
+  /* The prose under a slot run opens at the run's own margin. */
   [data-slot-grid] + * > :first-child {
     margin-top: 0;
   }
 }
 
 /**
+ * Mixin
+ */
+/**
+ * The glyph each mark is drawn with, by name.
+ */
+$mdx-mark-glyphs: (
+  'other': $mdx-mark-glyph-other,
+  'minor': $mdx-mark-glyph-minor,
+  'major': $mdx-mark-glyph-major,
+  'reaction': $mdx-mark-glyph-reaction,
+  'reflex': $mdx-mark-glyph-reflex,
+  'deed': $mdx-mark-glyph-deed,
+);
+
+/**
  * Mixin: mdx-mark-glyphs
  *
- * The cost glyph, drawn rather than typed so a block's heading stays its name
- * and the mark cannot drift from the cost beside it. Include on the element
- * carrying `data-mark`; the glyph prints on its heading child.
+ * The pip a block wears for what it costs, one per unit spent.
  */
 @mixin mdx-mark-glyphs {
-  > :is(h1, h2, h3, h4, h5, h6)::before {
-    content: $mdx-mark-glyph-other;
+  --mdx-glyph: '#{$mdx-mark-glyph-other}';
+
+  @each $name, $glyph in $mdx-mark-glyphs {
+    &[data-mark='#{$name}'] {
+      --mdx-glyph: '#{$glyph}';
+    }
+
+    /* A block spending two of something wears two of them. */
+    @for $count from 2 through 5 {
+      $repeated: '';
+
+      @for $step from 1 through $count {
+        $repeated: $repeated + $glyph;
+      }
+
+      &[data-mark='#{$name}'][data-mark-count='#{$count}'] {
+        --mdx-glyph: '#{$repeated}';
+      }
+    }
   }
 
-  &[data-mark='minor'] > :is(h1, h2, h3, h4, h5, h6)::before {
-    content: $mdx-mark-glyph-minor;
-  }
-
-  &[data-mark='major'] > :is(h1, h2, h3, h4, h5, h6)::before {
-    content: $mdx-mark-glyph-major;
-  }
-
-  &[data-mark='deed'] > :is(h1, h2, h3, h4, h5, h6)::before {
-    content: $mdx-mark-glyph-deed;
+  /* The glyph sits on the text baseline, which drops it below the middle of
+     the line it heads; the nudge is spacing on the pseudo, since a pseudo has
+     no line box of its own to align against. Blocking it also drops the space
+     the glyph is written with, so the gap is asked for outright. The mark is
+     carried down as a property, so the block that collapses keeps its glyph
+     with the heading that opens it. */
+  > :is(#{$mdx-headings})::before,
+  > details > summary > :is(#{$mdx-headings})::before {
+    display: inline-block;
+    margin-inline-end: 0.3em;
+    translate: 0 -0.06em;
+    content: var(--mdx-glyph);
   }
 }
 
 /**
- * Mixin: mdx-mark-glyphs-self
- *
- * The same glyph where the heading itself carries the mark, as a card's own
- * head does rather than a block nested inside one.
+ * Mixin
  */
 @mixin mdx-mark-glyphs-self {
   &::before {
@@ -581,6 +586,10 @@ $mdx-mark-glyph-deed: '◈ ';
     content: $mdx-mark-glyph-major;
   }
 
+  &[data-mark='reaction']::before {
+    content: $mdx-mark-glyph-reaction;
+  }
+
   &[data-mark='deed']::before {
     content: $mdx-mark-glyph-deed;
   }
@@ -588,15 +597,6 @@ $mdx-mark-glyph-deed: '◈ ';
 
 /**
  * Closing clasps on a sheet's sections.
- *
- * A section that closes its parent opens nothing. The one closing a closing
- * parent ends the sheet, so it draws both clasps: the knot on the right and
- * the geometric one on the left, as a list's last item does. Only the
- * outermost of those closes — a closing section inside another ends at the
- * same edge, so its pair would stack on the outer one's.
- *
- * Two levels is all a selector can ask for; a deeper chain would have to be
- * marked at compile time.
  */
 @mixin mdx-section-clasps {
   & > section[data-heading-level]:not(:last-child)::before {
@@ -631,9 +631,7 @@ $mdx-mark-glyph-deed: '◈ ';
     }
   }
 
-  /* A list closes with the geometric clasp at its owner's lower left, and the
-     next section opens with one at its upper left; back to back the two sit
-     almost on top of each other, so the section after a list gets air. */
+  /* A list closes with the geometric clasp at its owner's lower left */
   &:has(> ul, > ol) + section[data-heading-level] {
     margin-top: 2.5rem;
   }

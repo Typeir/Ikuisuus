@@ -1,7 +1,7 @@
 /**
  * @fileoverview How a spell grows, when it grows by something other than a slot.
  * @description A cantrip strengthens at character levels rather than by being
- * cast from a higher slot, so its tail block is not an overcast.
+ * cast from a higher slot
  *
  * @module modules/library/presentation/components/slots/Scaling
  * @version 0.1.0

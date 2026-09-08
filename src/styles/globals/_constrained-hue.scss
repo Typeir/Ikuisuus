@@ -1,22 +1,7 @@
 /* ============================================
    CONSTRAINED HUE
-
-   Collapses every aspect token onto one theme-keyed colour. Group identity
-   moves entirely to the glyph, which each group already carries, so a reader
-   who cannot separate the hues loses nothing that was not already redundant.
-
-   Every token redirects through --aspect-constrained rather than naming a
-   colour, so the hover state in Aspects.module.scss re-points one property
-   and the whole chain re-resolves. aspectColour() hands the pill a var()
-   reference, never a resolved colour, which is what lets a root-level
-   redefinition reach an inline style at all.
-
-   --color-phase-* is deliberately absent: the encounter tracker's phase ramp
-   is a health gauge, not a taxonomy, and its meaning is carried by lightness
-   rather than hue. The --aspect-phase-* tokens below intercept the pill
-   before it falls through to that ramp, so the pill collapses and the
-   tracker keeps its semantics.
-============================================ */
+   
+   Collapses every aspect token onto one theme-keyed colour. */
 html[data-constrained-hue='true'] {
   --aspect-constrained-rest: color-mix(
     in oklab,

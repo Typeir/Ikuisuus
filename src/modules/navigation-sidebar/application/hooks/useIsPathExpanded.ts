@@ -1,8 +1,7 @@
 /**
  * @fileoverview Per-path read of sidebar expansion state
  * @description Subscribes a component to whether one path is expanded and
- * nothing else, so dispatches on other paths, the theme, or display prefs
- * skip it.
+ * nothing else
  *
  * @module modules/navigation-sidebar/application/hooks/useIsPathExpanded
  * @author Typeir

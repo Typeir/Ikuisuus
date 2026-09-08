@@ -31,8 +31,7 @@ export interface ShardTypeConfig {
 }
 
 /**
- * Builds a repository-backed type: the slug looks up a metadata record, whose
- * `file` and `link` place the target and whose entries come from the record.
+ * Builds a repository-backed type
  *
  * @template M - Metadata record the lookup returns
  * @param {string} label - Capitalized kind

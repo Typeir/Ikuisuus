@@ -1,5 +1,5 @@
 /**
- * @fileoverview Next.js 16 config: MDX, i18n, Turbopack loaders.
+ * @fileoverview Next.js 16 config
  *
  * @module next.config
  * @version 2.0.0

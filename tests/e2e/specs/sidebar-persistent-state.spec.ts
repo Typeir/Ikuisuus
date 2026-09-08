@@ -2,7 +2,7 @@
  * Sidebar Persistent State E2E Tests
  *
  * @fileoverview Verifies sidebar tree expansion state persists to storage, survives full page
- * reload, and restores immediately on load.
+ * reload
  *
  * @description Verifies expansion state persists to storage, restores across reload, and applies
  * immediately on page load.

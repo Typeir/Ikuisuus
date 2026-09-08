@@ -1,7 +1,7 @@
 /**
  * @fileoverview useLeafRowPitch Tests
  * @description Covers the rem-to-px resolution of the virtualized row pitch
- * against the root font size, and the fallback when it cannot be measured.
+ * against the root font size
  *
  * @module tests/unit/src/modules/navigation-sidebar/application/hooks/useLeafRowPitch.test
  * @version 1.0.0

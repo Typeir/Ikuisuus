@@ -1,5 +1,5 @@
 /**
- * @fileoverview Aspect pill: icon mark plus label, rendered as link, button, span or removable chip.
+ * @fileoverview Aspect pill
  *
  * @module modules/library/presentation/components/Aspects/AspectPill
  * @version 1.0.0
@@ -15,6 +15,7 @@ import {
   type ParsedAspect,
 } from '@/modules/library/domain/aspects';
 import { IconButton } from '@/lib/components/ui/iconButton';
+import { Tooltip } from '@/lib/components/ui/tooltip';
 import React from 'react';
 import styles from './Aspects.module.scss';
 
@@ -26,15 +27,15 @@ const STRATUM_SLOTS = ['top', 'left', 'right'] as const;
 /**
  * Pill/glyph size step.
  */
-export type AspectSize = 's' | 'm' | 'l';
+export type AspectSize = 'xs' | 's' | 'm' | 'l';
 
 /**
- * Aspect pill: icon mark plus label.
+ * Aspect pill
  *
  * @param {object} props - Component properties
  * @param {ParsedAspect} props.aspect - The aspect to render
  * @param {string} props.locale - Active locale, for search link
- * @param {boolean} [props.compact] - Glyph-only rendering
+ * @param {boolean} [props.compact] - Glyph-only rendering; the dropped label is carried by a tooltip
  * @param {(aspect: ParsedAspect) => void} [props.onSelect] - Button click handler
  * @param {boolean} [props.inert] - Plain span for cells in link/button
  * @param {boolean} [props.pressed] - Button aria-pressed state
@@ -115,21 +116,30 @@ export const AspectPill: React.FC<{
   const shared = {
     className: compact ? styles.glyph : styles.aspect,
     'aria-label': name,
-    title: name,
+    title: compact ? undefined : name,
     'data-group': aspect.group,
     'data-size': size && size !== 'm' ? size : undefined,
     style: { '--aspect-fg': aspectColour(aspect) } as React.CSSProperties,
   };
 
+  const tip = (pill: React.ReactElement): React.ReactElement =>
+    compact ? (
+      <Tooltip content={name} inline>
+        {pill}
+      </Tooltip>
+    ) : (
+      pill
+    );
+
   if (inert) {
-    return <span {...shared}>{body}</span>;
+    return tip(<span {...shared}>{body}</span>);
   }
 
   /* The remove control is a button, so the pill around it cannot be one too:
      a nested button is closed by the HTML parser and the pill loses its
      contents on hydration. */
   if (onRemove) {
-    return (
+    return tip(
       <span {...shared} className={`${shared.className} ${styles.removable}`}>
         {body}
         <IconButton
@@ -139,12 +149,12 @@ export const AspectPill: React.FC<{
           label={removeLabel ?? `Remove ${name}`}
           onClick={() => onRemove(aspect)}
         />
-      </span>
+      </span>,
     );
   }
 
   if (onSelect || disabled) {
-    return (
+    return tip(
       <button
         type='button'
         {...shared}
@@ -153,16 +163,16 @@ export const AspectPill: React.FC<{
         onClick={onSelect ? () => onSelect(aspect) : undefined}
       >
         {body}
-      </button>
+      </button>,
     );
   }
 
-  return (
+  return tip(
     <a
       {...shared}
       href={`/${locale}/search?aspect=${encodeURIComponent(aspect.raw)}`}
     >
       {body}
-    </a>
+    </a>,
   );
 };

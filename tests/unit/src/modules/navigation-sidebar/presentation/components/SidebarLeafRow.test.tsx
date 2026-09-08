@@ -1,8 +1,6 @@
 /**
  * @fileoverview SidebarLeafRow Tests
- * @description Covers the link-only leaf markup contract: locale-prefixed
- * href, hover-prefetch link semantics, and the label-free structure the
- * sidebar stylesheet keys leaf styling on.
+ * @description Covers the link-only leaf markup contract
  *
  * @module tests/unit/src/modules/navigation-sidebar/presentation/components/SidebarLeafRow.test
  * @version 1.0.0

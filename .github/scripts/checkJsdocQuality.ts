@@ -1,9 +1,7 @@
 /**
  * JSDoc Quality Check
  *
- * @fileoverview Validates JSDoc compliance against project hard rules:
- * inline comments in function bodies, typed @param tags, color literals in
- * TSX, and disallowed browser dialog calls.
+ * @fileoverview Validates JSDoc compliance against project hard rules
  *
  * @module .github/scripts/check-jsdoc-quality
  * @author Typeir

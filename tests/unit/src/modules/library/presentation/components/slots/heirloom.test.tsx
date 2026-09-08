@@ -91,7 +91,7 @@ describe('Heirloom', () => {
     );
     expect(filed).not.toBeNull();
     const rows = Array.from(
-      filed?.querySelectorAll(':scope > li > [data-slot]') ?? [],
+      filed?.querySelectorAll(':scope > [data-slot]') ?? [],
     ).map((row) => row.getAttribute('data-slot'));
     expect(rows).toEqual(['armorClass', 'stealth', 'burden']);
     expect(
@@ -120,7 +120,7 @@ describe('Heirloom', () => {
       </Heirloom>,
     );
     const rows = Array.from(
-      document.querySelectorAll('[data-heirloom-stats] > li > [data-slot]'),
+      document.querySelectorAll('[data-heirloom-stats] > [data-slot]'),
     ).map((row) => row.getAttribute('data-slot'));
     expect(rows).toEqual(['armorClass', 'burden']);
   });

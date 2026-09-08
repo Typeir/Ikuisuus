@@ -1,7 +1,6 @@
 /**
  * @fileoverview Compares each migrated heirloom against its committed version
- * and reports mechanical drift: dice, units, keywords and bare numbers that
- * were dropped, added or changed.
+ * and reports mechanical drift
  */
 
 import { execFileSync } from 'node:child_process';

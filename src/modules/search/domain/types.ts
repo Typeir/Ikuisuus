@@ -1,8 +1,7 @@
 /**
  * @fileoverview Search domain types
  * @module modules/search/domain/types
- * @description Shared, JSON-safe contracts for the search system: index/result
- * record, query, result, facet, and response shapes.
+ * @description Shared, JSON-safe contracts for the search system
  *
  * @author Typeir
  * @version 1.0.0
@@ -43,7 +42,7 @@ export interface SearchRecord {
 }
 
 /**
- * A scored search result: a record plus relevance and match provenance.
+ * A scored search result
  *
  * @interface SearchResult
  * @property {SearchRecord} record - The matched record

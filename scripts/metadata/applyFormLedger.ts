@@ -1,6 +1,6 @@
 /**
  * @fileoverview Apply curated form ledger to spell frontmatter.
- * @description Reads form-analysis-curated.md and syncs form: aspects; ledger is source of truth.
+ * @description Reads form-analysis-curated.md and syncs form
  *
  * @module scripts/metadata/applyFormLedger
  * @version 1.0.0

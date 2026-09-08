@@ -1,12 +1,7 @@
 /**
  * @fileoverview The lists a spell appears on.
  * @description A spell page declares the vocations that can learn it, and the
- * block writes the links. The page states each list once, as a slug, so the
- * link, the display name and the metadata cannot drift from one another the
- * way three hand-written copies of a URL can.
- *
- * Named in the plural against `SpellList`, which is the other direction: the
- * spells one creature casts.
+ * block writes the links.
  *
  * @module modules/library/presentation/components/slots/SpellLists
  * @version 0.1.0

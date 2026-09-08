@@ -1,7 +1,6 @@
 /**
  * @fileoverview stripInlineMarkdown Unit Tests
- * @description Verifies inline markdown removal: paired emphasis/code/links and
- * stray unpaired bold markers split across values.
+ * @description Verifies inline markdown removal
  *
  * @module tests/unit/src/lib/utils/stripInlineMarkdown.test
  * @version 1.0.0

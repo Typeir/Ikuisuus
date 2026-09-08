@@ -1,6 +1,6 @@
 /**
  * @fileoverview MikroORM Entity — Bloodline Boon Option
- * @description One selectable option of a variable-cost boon: name, anchor, cost, effect, aspects.
+ * @description One selectable option of a variable-cost boon
  *
  * @module lib/db/orm/entities/BloodlineBoonOptionEntity
  * @version 1.0.0

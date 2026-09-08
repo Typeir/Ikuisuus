@@ -11,13 +11,7 @@
  * @requires lib/fetch/fetcher Typed global JSON fetcher
  *
  * @description
- * Applied defaults:
- * - `fetcher` — URL-string-based typed JSON fetcher from `lib/fetch/fetcher`
- * - `revalidateOnFocus: false` — no refetch on window focus
- * - `shouldRetryOnError: false` — errors surface immediately; retries are
- *   opt-in per hook
- * - `dedupingInterval: 5000` — deduplicates same-key requests within 5 seconds
- * - `errorRetryCount: 0` — no automatic retry on error
+ * Applied defaults
  *
  * @example
  * // Already mounted in ClientProviders.tsx — no manual setup needed:

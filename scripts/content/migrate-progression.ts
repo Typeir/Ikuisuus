@@ -57,7 +57,7 @@ function cells(line: string): string[] {
 }
 
 /**
- * Plain text of a cell: bold and links stripped.
+ * Plain text of a cell
  *
  * @param {string} text - Markdown
  * @returns {string} Text
@@ -67,9 +67,7 @@ function plain(text: string): string {
 }
 
 /**
- * Whether a table name and a heading name the same feature: equal, or one
- * inside the other, as `Action Surge (One Use)` names `Action Surge` and
- * `Spellcasting` names `Esper Spellcasting`.
+ * Whether a table name and a heading name the same feature
  *
  * @param {string} cell - Table name
  * @param {string} heading - Heading name

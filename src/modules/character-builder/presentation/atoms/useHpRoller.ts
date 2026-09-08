@@ -54,7 +54,7 @@ function groupByVocation(entries: HitDieRollEntry[]): HpRollerVocationGroup[] {
 }
 
 /**
- * Rounded average for a die: `floor(faces/2) + 1`.
+ * Rounded average for a die
  *
  * @function dieAverage
  * @param {number} faces - Die face count

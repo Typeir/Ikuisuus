@@ -45,8 +45,8 @@ export const SPEED = {
 /**
  * Stat block heading detection patterns for title extraction.
  *
- * @property {RegExp} blockquoteHeading - Blockquote heading: "> ## Title"
- * @property {RegExp} normalHeading - Normal H1–H3 heading: "## Title"
+ * @property {RegExp} blockquoteHeading - Blockquote heading
+ * @property {RegExp} normalHeading - Normal H1–H3 heading
  */
 export const MONSTER_HEADING = {
   blockquoteHeading: /^>\s*#{1,4}\s+\*?\*?(.+?)\*?\*?\s*$/,

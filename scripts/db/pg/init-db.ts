@@ -2,19 +2,14 @@
  * @fileoverview PostgreSQL Database Initialisation Script
  * @description Synchronises all content and auth tables via MikroORM
  * SchemaGenerator, then applies supplementary indexes that cannot be expressed
- * via `@Index` decorators (COALESCE expressions, GIN array indexes, child-table
- * FK/composite indexes).
+ * via `@Index` decorators (COALESCE expressions
  *
  * @module scripts/db/pg/init-db
  * @author Typeir
  * @version 1.0.0
  * @since 1.0.0
  *
- * Usage:
- *   npx tsx scripts/db/pg/init-db.ts
- *
- * Required env:
- *   DATABASE_URL — Neon / Postgres connection string
+ * Usage
  */
 
 import { createLogger } from '@/lib/logging/logger';
@@ -88,8 +83,7 @@ if (!process.env.DATABASE_URL) {
 /* ───────────────────  Supplementary Indexes  ─────────────────────── */
 
 /**
- * Supplementary indexes MikroORM `@Index` decorators cannot express:
- * COALESCE expressions, GIN array indexes, child-table FK/composite indexes.
+ * Supplementary indexes MikroORM `@Index` decorators cannot express
  */
 const SUPPLEMENTARY_INDEXES: string[] = [
   `CREATE UNIQUE INDEX IF NOT EXISTS monsters_locale_display_slug_uidx

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Shared Search Field
- * @description The root search's input chrome as a reusable field: underline
- * console styling, search icon, optional hint and loading pulse.
+ * @description The root search's input chrome as a reusable field
  *
  * @module modules/search/presentation/SearchField/SearchField
  * @version 1.0.0

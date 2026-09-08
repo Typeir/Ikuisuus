@@ -39,9 +39,9 @@ export type VocationFeatureCardSection = 'both' | 'vocation' | 'specialization';
  * @property {string} [specializationTitle] - Display name for the specialization section header
  * @property {boolean} [hasVocation] - Whether a vocation has been selected; controls empty-state text
  * @property {boolean} [hasSpecialization] - Whether a specialization has been selected; controls empty-state text
- * @property {VocationFeatureCardSection} [section] - Which section to render: `'both'` (default), `'vocation'`, or `'specialization'`
+ * @property {VocationFeatureCardSection} [section] - Which section to render
  * @property {boolean} [hideTitle] - When true, suppresses the section heading (useful inside tab panels that already label the section)
- * @property {(shard: { contentType: string; slug: string }) => void} [onFocusShard] - Called when a feature shard is expanded, with the derived content type and slug for the right panel
+ * @property {(shard: { contentType: string; slug: string }) => void} [onFocusShard] - Called when a feature shard is expanded
  */
 export interface VocationFeatureCardProps {
   vocationFeatures: CharacterShard[];
@@ -68,9 +68,9 @@ export interface VocationFeatureCardProps {
  * @param {string} [props.specializationTitle] - Display name for the specialization section header
  * @param {boolean} [props.hasVocation=false] - Whether a vocation has been selected; controls empty-state text
  * @param {boolean} [props.hasSpecialization=false] - Whether a specialization has been selected; controls empty-state text
- * @param {VocationFeatureCardSection} [props.section='both'] - Which section to render: `'both'` (default), `'vocation'`, or `'specialization'`
+ * @param {VocationFeatureCardSection} [props.section='both'] - Which section to render
  * @param {boolean} [props.hideTitle=false] - When true, suppresses the section heading (useful inside tab panels that already label the section)
- * @param {(shard: { contentType: string; slug: string }) => void} [props.onFocusShard] - Called when a feature shard is expanded, with the derived content type and slug for the right panel
+ * @param {(shard: { contentType: string; slug: string }) => void} [props.onFocusShard] - Called when a feature shard is expanded
  * @returns {JSX.Element} Rendered feature viewer
  */
 export const VocationFeatureCard: React.FC<VocationFeatureCardProps> = ({

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tests for the bloodline slot schema.
  * @description The two Core Features rows name the slots the card prints as
- * tables, and the schema is reachable from the main slot module.
+ * tables
  *
  * @module tests/unit/src/modules/library/domain/bloodlineSlots.test
  * @version 0.1.0

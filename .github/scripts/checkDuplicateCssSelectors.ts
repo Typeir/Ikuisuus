@@ -2,7 +2,7 @@
  * Detects duplicate CSS selectors and property blocks across SCSS/CSS files;
  * reports exact duplicates as warning findings.
  *
- * @module .github/scripts/check-duplicate-css
+ * @module .github/scripts/checkDuplicateCssSelectors
  */
 
 import { promises as fs } from 'node:fs';
@@ -57,7 +57,7 @@ async function findStyleFiles(
 }
 
 /**
- * Matches keyframe stop selectors: `from`, `to`, or a percentage value.
+ * Matches keyframe stop selectors
  */
 const KEYFRAME_STOP_RE = /^(from|to|\d+(\.\d+)?%)$/;
 
@@ -85,9 +85,15 @@ function isExcludedSelector(selector: string): boolean {
  */
 function extractSelectors(content: string): Map<string, string[]> {
   const selectorMap = new Map<string, string[]>();
+  /* Comments are stripped first: a block comment above a rule would otherwise
+     be read as part of its selector, so two mixins sharing a doc-comment
+     opening are reported as the same rule. */
+  const source = content
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|\s)\/\/[^\n]*/g, '$1');
   const ruleRegex = /([^{}]+)\{([^{}]+)\}/g;
   let match: RegExpExecArray | null;
-  while ((match = ruleRegex.exec(content)) !== null) {
+  while ((match = ruleRegex.exec(source)) !== null) {
     const selector = match[1].trim().replace(/\s+/g, ' ');
     const body = match[2].trim();
     if (isExcludedSelector(selector)) {
@@ -117,7 +123,7 @@ function normalizeProperties(body: string): string {
 }
 
 /**
- * Execute the duplicate-css check and return a structured result.
+ * Execute the duplicate-css-selectors check and return a structured result.
  *
  * @param {CheckOptions} [options] - Optional execution context from PAW gates
  * @returns Check result with any violations
@@ -151,7 +157,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
         if (seenRules.has(key)) {
           violations.push({
             file: normalizedRel,
-            rule: 'duplicate-css',
+            rule: 'duplicate-css-selectors',
             message: `Duplicate rule "${selector}" also found in ${seenRules.get(key)}`,
             suggestion:
               'Extract shared styles to a common mixin or shared class',
@@ -165,7 +171,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
   }
 
   return {
-    check: 'duplicate-css',
+    check: 'duplicate-css-selectors',
     severity: violations.length > 0 ? 'warning' : 'info',
     passed: violations.length === 0,
     failures: violations,

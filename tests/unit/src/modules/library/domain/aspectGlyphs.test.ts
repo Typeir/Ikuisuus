@@ -1,8 +1,7 @@
 /**
  * @fileoverview Aspect Glyph Table Tests
  * @description Guards the glyph tables themselves — that every condition the
- * rules define has a mark, and that the tables stay in step with the closed
- * vocabulary in shared data.
+ * rules define has a mark
  *
  * @module tests/unit/src/modules/library/domain/aspectGlyphs.test
  * @version 1.0.0

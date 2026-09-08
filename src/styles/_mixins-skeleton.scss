@@ -1,22 +1,9 @@
 /**
  * Skeleton lattice mixins — "static ink, moving light".
- *
- * The dithered character-cell lattice and its traveling density band,
- * shared by the skeleton loader and by any surface that wants to read as
- * console matter (toast fences). One pitch, one mask, one strip; consumers
- * recolor through the `--skeleton-matter` / `--skeleton-glint-1` /
- * `--skeleton-glint-2` custom properties and never redraw the geometry.
- *
- * Mixins:
- *   - skeleton-lattice   — host: resting matter under the 2D dither mask
- *   - skeleton-strip     — ::before: the sweeping density band (needs the
- *                          skeletonSweep keyframes in scope)
  */
 
-/* Dither lattice — everything derives from the pitch. Single pitch is
-   load-bearing: overlaying two different pitches beats at their common
-   period and reads as periodic "orbs". */
-$skeleton-pitch: 8px; /* character-cell size, straight row/column grid */
+/* Dither lattice — everything derives from the pitch. */
+$skeleton-pitch: 8px; /* character-cell size */
 $skeleton-cell-solid: 60%; /* solid square side — resting pixel size */
 $skeleton-cell-apron: 85%; /* growth ceiling — crest pixel size */
 $skeleton-apron-alpha: 0.3;
@@ -45,9 +32,7 @@ $skeleton-band-half-width: 15%;
 $skeleton-sweep-duration: 2.4s;
 
 /**
- * Host: faint resting matter, visible only inside the dither cells of the
- * static two-band mask (x ∩ y). Matter color and resting alpha are the
- * `--skeleton-matter` and `--skeleton-rest-alpha` custom properties.
+ * Host
  *
  * @mixin skeleton-lattice
  * @param {string} $rest-alpha - Default resting strength between band passes
@@ -82,10 +67,7 @@ $skeleton-sweep-duration: 2.4s;
 }
 
 /**
- * The traveling density band. Strip is 2x host width; translateX
- * percentages resolve against the strip itself, so -100% → 50% is one full
- * left-to-right pass. Sparse matter swelling to a glint crest and tapering
- * back, so the dither reads sparse → dense → sparse as it moves.
+ * The traveling density band.
  *
  * @mixin skeleton-strip
  * @param {number} $duration - Sweep duration
