@@ -30,17 +30,15 @@ import React, {
 } from 'react';
 import {
   anchorsOf,
-  anyDivision,
   byAnchor,
   byRank,
   labelsOf,
-  nestDepth,
   readDivisions,
   type Division,
   type DivisionProps,
 } from './divisions';
 import { CardFoldProvider } from './cardFold';
-import { foldDivision } from './foldDivision';
+import { foldHolders, holdOf, rebuild } from './sheetFolding';
 import styles from './sheet.module.scss';
 
 /**
@@ -59,124 +57,6 @@ export interface SheetProps {
   nest?: number;
   closed?: boolean;
   children?: ReactNode;
-}
-
-/** How long to wait for a turn that never reports finishing, in milliseconds. */
-const TURN_BACKSTOP = 1000;
-
-/**
- * How long to hold a page that is leaving, should it never say it has gone.
- *
- * @description Read off the element rather than written down, so the stylesheet
- * stays the one place a turn's length is set.
- *
- * @param {HTMLElement | null} panel - The page leaving
- * @returns {number} Milliseconds to wait
- */
-function holdOf(panel: HTMLElement | null): number {
-  if (!panel) return TURN_BACKSTOP;
-  const { transitionDuration, transitionDelay } = getComputedStyle(panel);
-  const longest = (list: string): number =>
-    Math.max(
-      0,
-      ...list.split(',').map((part) => {
-        const value = Number.parseFloat(part);
-        return Number.isFinite(value)
-          ? value * (part.includes('ms') ? 1 : 1000)
-          : 0;
-      }),
-    );
-  return longest(transitionDuration) + longest(transitionDelay) + TURN_BACKSTOP;
-}
-
-/**
- * Whether a node is a rendered card rather than a division of the sheet.
- *
- * @description A card owns its heading, its slot rows and its body, and
- * reading those as divisions would lift the heading out of the card it titles.
- *
- * @param {ReactElement<DivisionProps>} node - Node to test
- * @returns {boolean} True when the node is a card
- */
-function isCard(node: ReactElement<DivisionProps>): boolean {
-  const props = node.props as Record<string, unknown>;
-  return props['data-kind'] !== undefined || props['data-entry'] !== undefined;
-}
-
-/**
- * Collapses everything on a page that holds divisions of its own.
- *
- * @description A block that nests deeply enough is a holder, and a holder is
- * worth a heading and nothing more until it is asked for. One that nests less
- * is a leaf, and folding it away would hide its whole substance behind a
- * heading that says the same thing.
- *
- * @param {ReactNode} children - Nodes to walk
- * @param {number} nest - Depth at which a division starts collapsing
- * @param {boolean} closed - Whether the folds start closed
- * @returns {ReactNode} The run, with its holders folded
- */
-function foldHolders(
-  children: ReactNode,
-  nest: number,
-  closed: boolean,
-): ReactNode {
-  return readDivisions(children, anyDivision).map((part, index) => {
-    if (part.kind === 'division') {
-      const { division } = part;
-      const body = foldHolders(division.body, nest, closed);
-      const deep = nestDepth(division.body) >= nest;
-      return (
-        <React.Fragment key={division.anchor}>
-          {deep
-            ? foldDivision(division, body, closed)
-            : rebuild(division, body)}
-        </React.Fragment>
-      );
-    }
-
-    const node = part.node;
-    if (!React.isValidElement<DivisionProps>(node)) return node;
-    /* A card is left whole. Its heading has not been drawn yet — the block
-       that draws it reads it out of these same children — so rewriting them
-       would take the heading away from it. Collapsing a card is the card's
-       own to do, asked for through context. */
-    if (node.props.children === undefined || isCard(node)) return node;
-
-    return React.cloneElement(node, {
-      ...node.props,
-      key: node.key ?? index,
-      children: foldHolders(node.props.children, nest, closed),
-    } as DivisionProps);
-  });
-}
-
-/**
- * Puts a division back together around a body that was walked.
- *
- * @param {Division} division - The division
- * @param {ReactNode} body - Its walked body
- * @returns {ReactNode} The division
- */
-function rebuild(division: Division, body: ReactNode): ReactNode {
-  const content = (
-    <>
-      {division.heading}
-      {body}
-    </>
-  );
-  if (division.section) {
-    return React.cloneElement(
-      division.section,
-      { ...division.section.props },
-      content,
-    );
-  }
-  return (
-    <section data-anchor={division.anchor} data-heading-level={division.rank}>
-      {content}
-    </section>
-  );
 }
 
 /**

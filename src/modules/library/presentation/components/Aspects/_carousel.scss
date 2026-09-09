@@ -1,0 +1,313 @@
+/**
+ * Aspect carousel: the packed stack of glyphs, its controls, and the two
+ * sizes it is set at. Emitted into `Aspects.module.scss`, so its classes
+ * are that module's.
+ */
+
+@use 'mixins-icon' as *;
+@use 'mixins-focus' as *;
+@use 'mixins-button' as *;
+@use 'mixins-rhombus' as *;
+@use 'variables' as *;
+
+/* The controls sit outside the scrolling box. */
+.carouselWrap {
+  /* Declared here so the controls can size themselves to the same box as the
+     carousel. */
+  --size: 32px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 0.15rem;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  height: calc(var(--size) + 8px);
+  flex: none;
+}
+
+/* The count hangs off this rather than off the column, so the box stays exactly
+   one button tall and the alignment holds however many digits the count grows
+   to. */
+.toggleWrap {
+  position: relative;
+  display: flex;
+}
+
+/* Solid-surface icon button. */
+.carousel {
+  --step-packed: 7px;
+  --step-open: 42px;
+  --step: var(--step-packed);
+  /* Room for the leading edge fade. */
+  --inset: 6px;
+
+  /* A rhombus glyph is √2 taller than its slot, and the alternating offsets add
+     to that. */
+  --bleed: 0.5rem;
+
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: calc(var(--size) + 8px + 2 * var(--bleed));
+  padding-block: var(--bleed);
+  margin-block: calc(-1 * var(--bleed));
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 var(--inset),
+    #000 calc(100% - 18px),
+    transparent
+  );
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &:hover,
+  &:focus-within {
+    --step: var(--step-open);
+  }
+
+  /* Set by the toggle on the document root, so one press unpacks every carousel
+     on the page with no React work at all. */
+  :global(html[data-aspect-expanded='true']) & {
+    --step: var(--step-open);
+  }
+}
+
+.track {
+  position: relative;
+  height: 100%;
+  /* The left inset is part of the scroll width. */
+  width: calc(
+    var(--inset) + (var(--count) - 1) * var(--step) + var(--size) + 14px
+  );
+  transition: width 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* `--z` arrives inline and descends with the track, so the packed stack
+   shingles left over right. */
+.slot {
+  position: absolute;
+  top: 4px;
+  left: var(--inset);
+  width: var(--size);
+  height: var(--size);
+  z-index: var(--z);
+  transform: translate3d(calc(var(--index) * var(--step)), 0, 0) scale(0.86);
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(var(--index) * 8ms);
+
+  .carousel:hover &,
+  .carousel:focus-within & {
+    transform: translate3d(calc(var(--index) * var(--step)), 0, 0) scale(1);
+  }
+
+  /* Above every sibling, packed or open */
+  &:hover,
+  &:focus-within {
+    z-index: calc(var(--count) + 1);
+  }
+
+  /* PoC */
+  &:nth-child(even) {
+    translate: 0 -0.15rem;
+  }
+
+  &:nth-child(odd) {
+    translate: 0 0.15rem;
+  }
+}
+
+/* The controls lead the stack, which reads correctly while the carousel opens
+   to the right. Set at the right edge of a heading it opens toward the text
+   instead, so the pair swaps and the fade swaps with it. */
+.carouselWrap[data-flip='true'] {
+  flex-direction: row-reverse;
+
+  .carousel {
+    mask-image: linear-gradient(
+      270deg,
+      transparent,
+      #000 var(--inset),
+      #000 calc(100% - 18px),
+      transparent
+    );
+  }
+}
+
+/* Set into a heading, the carousel has a line to live in rather than a row of
+   its own. Every measure it is built from is a step of one size, so they all
+   come down together and the box keeps its proportions. */
+.carouselWrap[data-size='xs'] {
+  --size: 15px;
+
+  flex: 0 0 auto;
+  gap: 0.1rem;
+
+  .controls {
+    height: calc(var(--size) + 4px);
+  }
+
+  /* Set in a heading there is no room beneath the toggle to hang a count, and
+     one hung there lands on the heading rule and the tag beside it. It reads
+     along the button instead. */
+  .toggleWrap {
+    align-items: center;
+  }
+
+  .count {
+    position: static;
+    transform: none;
+    margin-inline-start: 1px;
+    font-size: 0.58rem;
+  }
+
+  .carousel {
+    --step-packed: 6px;
+    --step-open: 19px;
+    --inset: 3px;
+    --bleed: 0.22rem;
+
+    height: calc(var(--size) + 4px + 2 * var(--bleed));
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 var(--inset),
+      #000 calc(100% - 8px),
+      transparent
+    );
+  }
+
+  &[data-flip='true'] .carousel {
+    mask-image: linear-gradient(
+      270deg,
+      transparent,
+      #000 var(--inset),
+      #000 calc(100% - 8px),
+      transparent
+    );
+  }
+
+  .track {
+    width: calc(
+      var(--inset) + (var(--count) - 1) * var(--step) + var(--size) + 7px
+    );
+  }
+
+  .slot {
+    top: 2px;
+
+    /* The alternating lift is a share of the glyph, so at this size it is a
+       nudge rather than the stagger it is in a row. */
+    &:nth-child(even) {
+      translate: 0 -0.07rem;
+    }
+
+    &:nth-child(odd) {
+      translate: 0 0.07rem;
+    }
+  }
+
+  .count {
+    font-size: 0.5rem;
+  }
+}
+
+/* Glyphs fill their carousel slot; a glyph in a plain row (`AspectGlyphs`)
+   sizes itself instead. */
+a.glyph,
+button.glyph,
+span.glyph {
+  --aspect-fg: var(--aspect-default);
+
+  @include rhombus;
+  /* PoC */
+  scale: 0.8;
+  position: relative;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  color: var(--aspect-fg) !important;
+  background: color-mix(in oklab, var(--aspect-fg) 13%, var(--color-bg));
+  border: var(--border-width-s) solid color-mix(in oklab, var(--aspect-fg) 38%, var(--color-bg));
+  border-radius: var(--border-round-circle);
+  text-decoration: none;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    scale 0.18s ease;
+
+  .mark {
+    display: block;
+    width: calc(15.3px * var(--pip-icon-scale, 1));
+    height: calc(15.3px * var(--pip-icon-scale, 1));
+  }
+
+  &:hover {
+    background: color-mix(in oklab, var(--aspect-fg) 30%, var(--color-bg));
+    border-color: var(--aspect-fg);
+    scale: 0.9;
+    z-index: 1;
+  }
+
+  /* The ring belongs to keyboard focus alone; folding it into the hover rule
+     drew it under the mouse. */
+  &:focus-visible {
+    background: color-mix(in oklab, var(--aspect-fg) 30%, var(--color-bg));
+    border-color: var(--aspect-fg);
+    outline: var(--outline-width) solid var(--aspect-fg);
+    outline-offset: 2px;
+    z-index: 1;
+  }
+}
+
+/* Same authored emphasis on carousel glyphs. */
+a.glyph[data-group='form'],
+a.glyph[data-group='myth'],
+span.glyph[data-group='form'],
+span.glyph[data-group='myth'] {
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--aspect-fg) 55%, var(--color-bg));
+}
+
+/* Floats under the button rather than sitting at the far edge */
+.count {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.62rem;
+  line-height: 1;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel {
+    --step: var(--step-open);
+  }
+
+  .track,
+  .slot,
+  a.aspect,
+  a.glyph {
+    transition: none;
+  }
+
+  .slot {
+    transform: translate3d(calc(var(--index) * var(--step)), 0, 0) scale(1);
+  }
+}
+
+/* `AspectGlyphs` */
