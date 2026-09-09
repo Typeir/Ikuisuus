@@ -49,6 +49,7 @@ export const BLOCK_COMPONENTS = [
   'Action',
   'Pool',
   'Attack',
+  'Statlet',
 ] as const;
 
 /**
@@ -120,6 +121,8 @@ export const MONSTER_SLOTS = {
   conditionImmunities: 'ConditionImmunities',
   senses: 'Senses',
   languages: 'Languages',
+  damageThreshold: 'DamageThreshold',
+  material: 'Material',
   saveDc: 'SaveDc',
   challenge: 'Challenge',
   xp: 'Xp',
@@ -379,6 +382,7 @@ export const MONSTER_LIST_SLOTS: readonly MonsterSlotName[] = [
   'conditionImmunities',
   'senses',
   'languages',
+  'material',
   'saveDc',
   'challenge',
   'xp',
@@ -427,6 +431,7 @@ export const SLOT_HOSTS: Readonly<
   Spell: SPELL_SLOTS,
   Trinket: TRINKET_SLOTS,
   Monster: MONSTER_SLOTS,
+  Statlet: MONSTER_SLOTS,
   Vocation: VOCATION_SLOTS,
   Specialization: SPECIALIZATION_SLOTS,
   Bloodline: BLOODLINE_SLOTS,

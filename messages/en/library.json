@@ -73,7 +73,9 @@
     "abilityScores": "Ability Scores",
     "speeds": "Movement Speeds",
     "creatureTypes": "Creature Types",
-    "age": "Age"
+    "age": "Age",
+    "damageThreshold": "Damage Threshold",
+    "material": "Material"
   },
   "heirloom": {
     "kind": "Heirloom",

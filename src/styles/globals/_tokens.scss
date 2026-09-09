@@ -14,9 +14,12 @@
   --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
   /* Ease in is for what leaves and does not come back: it holds, then goes. */
   --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  /* Even at both ends, for what arrives on its own rather than on a click. */
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
   --dur-2: 180ms;
   --dur-3: 240ms;
   --dur-4: 300ms;
+  --dur-5: 500ms;
 }
 
 /* Typeface roles. */

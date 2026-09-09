@@ -312,6 +312,8 @@ export const {
   Range,
   Accuracy,
   ArmorClass,
+  DamageThreshold,
+  Material,
   Stealth,
   Mastery,
   MasterfulBlow,

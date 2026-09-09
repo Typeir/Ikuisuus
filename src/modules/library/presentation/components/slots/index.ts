@@ -22,6 +22,7 @@ import Heirloom, { Trinket } from './Heirloom';
 import Lore from './Lore';
 import Monster from './Monster';
 import Overcast from './Overcast';
+import Statlet from './Statlet';
 import Progression, { Column, Row } from './Progression';
 import Scaling from './Scaling';
 import Spell from './Spell';
@@ -60,6 +61,7 @@ export const slotComponents: Record<string, unknown> = {
   SpellList,
   SpellLists,
   Feat,
+  Statlet,
   ...Object.fromEntries(
     Object.values(SLOT_ELEMENT_NAMES).map((elementName) => [
       elementName,

@@ -154,6 +154,13 @@ export function persistentUiReducer(
       };
     }
 
+    case PERSISTED_UI_ACTION_TYPES.SET_SHEET_PAGE: {
+      return {
+        ...state,
+        sheetPage: action.payload.anchor,
+      };
+    }
+
     case PERSISTED_UI_ACTION_TYPES.SET_SIDEBAR_EXPANSION: {
       const { path, expanded } = action.payload;
       const currentPaths = state.sidebarMenu.expandedPaths ?? [];

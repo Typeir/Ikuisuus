@@ -14,6 +14,11 @@
 'use client';
 
 import { CONTENT_CHANGED_EVENT } from '@/lib/constants/domEvents';
+import {
+  usePersistentUiDispatchOptional,
+  usePersistentUiStateOptional,
+} from '@/lib/context/PersistentUiContext';
+import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
 import React, {
   useCallback,
   useEffect,
@@ -216,6 +221,8 @@ const Sheet: React.FC<SheetProps> = ({
 
   const [active, setActive] = useState(0);
   const [leaving, setLeaving] = useState<number | null>(null);
+  const remember = usePersistentUiDispatchOptional();
+  const { sheetPage } = usePersistentUiStateOptional();
   const [stuck, setStuck] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
   const body = useRef<HTMLDivElement>(null);
@@ -294,9 +301,33 @@ const Sheet: React.FC<SheetProps> = ({
     (index: number) => {
       setLeaving((was) => (was === null ? active : was));
       setActive(index);
+      const anchor = pages[index]?.anchor;
+      if (remember && anchor) {
+        remember({
+          type: PERSISTED_UI_ACTION_TYPES.SET_SHEET_PAGE,
+          payload: { anchor },
+        });
+      }
     },
-    [active],
+    [active, pages, remember],
   );
+
+  /* A reader who was on the Features of one sheet wants the Features of the
+     next, not to be put back to the front of it. The division is looked up by
+     anchor, so a sheet that has no such division simply opens where it would
+     have. This runs before the browser paints, so the page it settles on is
+     the first one drawn rather than a correction of one. */
+  useLayoutEffect(() => {
+    const at = pages.findIndex((page) => page.anchor === sheetPage);
+    if (sheetPage && at > 0) setActive(at);
+    /* The article it sits in is what waited, so the article is what is told:
+       whichever division it settled on is the one that gets painted, rather
+       than the server's guess and then a correction. */
+    body.current
+      ?.closest('.prose')
+      ?.setAttribute('data-settled', 'true');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* The turn is over when the page leaving has actually faded, not when a
      clock says it should have. The browser can be several frames late to
@@ -365,7 +396,7 @@ const Sheet: React.FC<SheetProps> = ({
     leaving !== null && leaving !== active && pages[leaving] !== undefined;
 
   return (
-    <div className={styles.sheet}>
+    <div className={styles.sheet} data-sheet>
       {lead}
       {/* A sticky box travels only inside its containing block, so the header
           and the page it heads share one. */}

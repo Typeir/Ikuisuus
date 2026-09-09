@@ -110,6 +110,7 @@ export function readPersistedState(
   let constrainedHue = false;
   let streamText = DEFAULT_STREAM_TEXT;
   let sectionDecor = DEFAULT_SECTION_DECOR;
+  let sheetPage = '';
   const stored = fetchPersistentData(PERSISTENT_UI_STORAGE_KEY);
 
   if (stored) {
@@ -148,6 +149,9 @@ export function readPersistedState(
       if (typeof parsed.sectionDecor === 'boolean') {
         sectionDecor = parsed.sectionDecor;
       }
+      if (typeof parsed.sheetPage === 'string') {
+        sheetPage = parsed.sheetPage;
+      }
     } catch {
       const legacyTheme = fetchPersistentData(LEGACY_THEME_KEY);
       if (legacyTheme === 'dark' || legacyTheme === 'light') {
@@ -172,6 +176,7 @@ export function readPersistedState(
     constrainedHue,
     streamText,
     sectionDecor,
+    sheetPage,
     sidebarMenu: { expandedPaths, isOpen: false },
   };
 }
@@ -198,6 +203,7 @@ export function writePersistedState(state: PersistentUiState): void {
     constrainedHue: state.constrainedHue,
     streamText: state.streamText,
     sectionDecor: state.sectionDecor,
+    sheetPage: state.sheetPage,
   };
 
   storePersistentData(PERSISTENT_UI_STORAGE_KEY, JSON.stringify(serialized));
@@ -210,6 +216,7 @@ export function writePersistedState(state: PersistentUiState): void {
     state.aspectExpanded ? 'true' : 'false',
   );
   root.setAttribute('data-aspect-display', state.aspectDisplay);
+  root.setAttribute('data-sheet-page', state.sheetPage);
   root.setAttribute(
     'data-constrained-hue',
     state.constrainedHue ? 'true' : 'false',

@@ -87,7 +87,7 @@ function textOf(value: ReactNode): string | null {
  * @param {string} props.mark - Data attribute naming the table, without the `data-` prefix
  * @returns {JSX.Element} The table
  */
-function SlotTable({
+export function SlotTable({
   names,
   values,
   cell,
