@@ -126,6 +126,7 @@ function wrapFirstLetterInHeading(children: ReactNode): ReactNode {
  * @property {ReactNode} children - Heading content (text or React elements)
  * @property {string} [anchor] - Custom anchor slug (auto-generated if omitted)
  * @property {string} [data-anchor] - Compile-time anchor stamped by rehypeSectionize; used when no `anchor` prop is given
+ * @property {string} [data-title] - Compile-time heading words stamped by rehypeSectionize, kept for whatever labels the heading later
  * @property {string} [className] - Additional CSS classes to apply
  */
 interface HeadingProps {
@@ -133,6 +134,7 @@ interface HeadingProps {
   children?: ReactNode;
   anchor?: string;
   'data-anchor'?: string;
+  'data-title'?: string;
   className?: string;
 }
 
@@ -165,6 +167,7 @@ export function Heading({
   children,
   anchor,
   'data-anchor': stampedAnchor,
+  'data-title': stampedTitle,
   className,
 }: HeadingProps): JSX.Element {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
@@ -172,8 +175,13 @@ export function Heading({
   const headingAnchor = anchor || stampedAnchor || textToSlug(headingText);
   const wrappedChildren = wrapFirstLetterInHeading(children);
 
+  /* The compiler stamps the heading's own words beside its anchor, because
+     the anchor is a slug and has lost them. Rebuilding the props here would
+     drop the stamp, and whatever labels this heading later would have only
+     the slug to unpick. */
   const props = {
     'data-anchor': headingAnchor,
+    'data-title': stampedTitle,
     className,
   };
 
@@ -202,12 +210,14 @@ function createHeadingComponent(
       children,
       anchor,
       'data-anchor': stampedAnchor,
+      'data-title': stampedTitle,
       className,
     }: Omit<HeadingProps, 'level'>) => (
       <Heading
         level={level}
         anchor={anchor}
         data-anchor={stampedAnchor}
+        data-title={stampedTitle}
         className={className}>
         {children}
       </Heading>

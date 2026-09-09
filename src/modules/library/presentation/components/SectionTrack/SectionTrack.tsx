@@ -120,10 +120,13 @@ export function SectionTrack(): JSX.Element | null {
       aria-label='Page sections'
       data-visible={visible && !menuOpen}
       data-menu-open={menuOpen}>
+      {/* A page holding several creatures gives each the same anchors — every
+          one of them has Traits — so a bar is identified by where it stands as
+          well as by what it points at. */}
       <div className={styles.inner}>
         {items.map((item, i) => (
           <SectionTrackBar
-            key={item.anchor}
+            key={`${item.anchor}-${i}`}
             item={item}
             topPercent={topPercents[i]}
             active={item.anchor === activeAnchor}

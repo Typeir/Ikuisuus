@@ -1,9 +1,7 @@
 /**
  * @fileoverview A sheet read as pages rather than one scroll.
  * @description A monster sheet is long, and most of it is not what a reader
- * wants this turn. Its subsections become pages with a selector that stays in
- * reach, and inside a page anything that holds further divisions collapses, so
- * what is on screen is a page of headings rather than a page of everything.
+ * wants this turn.
  *
  * @module modules/library/presentation/components/slots/Sheet
  * @version 2.0.0
@@ -19,7 +17,7 @@ import {
   usePersistentUiStateOptional,
 } from '@/lib/context/PersistentUiContext';
 import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
-import { scrollParentOf } from '@/lib/utils/scrollParentOf';
+import { useResizeSignal, useStuck } from '@/lib/hooks/motion';
 import React, {
   useCallback,
   useEffect,
@@ -40,6 +38,8 @@ import {
 } from './divisions';
 import { CardFoldProvider } from './cardFold';
 import { foldHolders, holdOf, rebuild } from './sheetFolding';
+import { measureSheet } from './sheetMeasure';
+import { usePagePresence } from './sheetPresence';
 import SheetBar from './SheetBar';
 import styles from './sheet.module.scss';
 
@@ -59,46 +59,83 @@ export interface SheetProps {
   nest?: number;
   closed?: boolean;
   foot?: boolean;
+  multi?: boolean;
   children?: ReactNode;
 }
 
 /**
- * The layout's own bars, and the properties the sheet keeps their heights in.
+ * The rank the sheet around this one pages at, or zero outside any.
  *
- * @description The sheet's header stands as tall as the sidebar's title and
- * its footer as tall as the sidebar's footer, so both are read from the same
- * place at the same time and neither can drift from the other.
+ * @description A page carries one first-level heading, its title, so a sheet
+ * inside a sheet opens one rank below the one holding it.
  */
-const EDGES: ReadonlyArray<readonly [string, string]> = [
-  ['.sidebar-header', '--sheet-headline'],
-  ['.sidebar-footer', '--sheet-footline'],
-];
+const SheetRank = React.createContext(0);
 
 /**
  * Sheet component.
  *
  * @description The selector sticks to the top of the viewport and grows once it
- * does, so it reads as the sheet's own header rather than a strip left behind
- * by the scroll. Only its ground grows, so nothing is laid out twice. A page
- * arriving is wiped in from the leading edge, the way a sheet is drawn past a
- * scanner head, which shows that the page was replaced.
+ * does
  *
  * @param {SheetProps} props - Component props
  * @returns {JSX.Element} The sheet
  */
+/**
+ * Names for the bar, with the opening every page shares taken off.
+ *
+ * @param {Division[]} pages - The pages the bar carries
+ * @returns {string[]} What to print for each, in order
+ */
+function unprefixed(pages: Division[]): string[] {
+  const names = pages.map((page) => page.name);
+  if (names.length < 2) return names;
+
+  let shared = names[0];
+  for (const name of names.slice(1)) {
+    let at = 0;
+    while (at < shared.length && at < name.length && shared[at] === name[at]) {
+      at += 1;
+    }
+    shared = shared.slice(0, at);
+  }
+  const cut = Math.max(
+    ...[' ', ',', '(', '–', '-'].map((mark) => shared.lastIndexOf(mark)),
+  );
+  if (cut < 1) return names;
+
+  const trimmed = names.map((name) => {
+    const rest = name
+      .slice(cut + 1)
+      .replace(/^[\s,–(-]+/, '')
+      .trim();
+    return /^[^()]*\)$/.test(rest) ? rest.slice(0, -1).trim() : rest;
+  });
+  return trimmed.every((name) => name !== '') ? trimmed : names;
+}
+
 const Sheet: React.FC<SheetProps> = ({
   pages: wantedList,
-  level = 2,
+  level,
   nest = 1,
   closed = false,
   foot = false,
+  multi = false,
   children,
 }) => {
   const labels = labelsOf(wantedList);
   const named = anchorsOf(wantedList);
+  const outer = React.useContext(SheetRank);
   /* Written in content the rank arrives as text, and a rank that never equals
-     any heading's would quietly page nothing. */
-  const rank = typeof level === 'number' ? level : Number(level) || 2;
+     any heading's would quietly page nothing. Left unwritten it is the rank
+     below the sheet around this one: a page's own creatures at two, and the
+     sections each of them holds at three. */
+  const rank = multi
+    ? 2
+    : level === undefined
+      ? Math.max(2, outer + 1)
+      : typeof level === 'number'
+        ? level
+        : Number(level) || 2;
   /* Naming the pages is an override; left alone, every subsection is one. */
   const wanted = named.size > 0 ? byAnchor(named) : byRank(rank);
   const lead: ReactNode[] = [];
@@ -122,16 +159,16 @@ const Sheet: React.FC<SheetProps> = ({
   const [leaving, setLeaving] = useState<number | null>(null);
   const remember = usePersistentUiDispatchOptional();
   const { sheetPage } = usePersistentUiStateOptional();
-  const [stuck, setStuck] = useState(false);
   const strip = useRef<HTMLDivElement>(null);
   const body = useRef<HTMLDivElement>(null);
+  const shell = useRef<HTMLDivElement>(null);
   const outgoing = useRef<HTMLDivElement>(null);
+  const rack = useRef<HTMLDivElement>(null);
   /* Whether the header is pinned, readable from an effect without making the
      effect run on every change of it. */
-  const pinned = useRef(false);
   /** The trailing height last written, so a rounding wobble is not rewritten. */
-  const trailing = useRef(-1);
   const [offset, setOffset] = useState(0);
+  const { stuck, pinned } = useStuck(strip, offset);
 
   /* Where the header rests is the stylesheet's to say, and it says something
      different once a title bar of the layout's own holds the top of the
@@ -146,69 +183,13 @@ const Sheet: React.FC<SheetProps> = ({
     return () => window.removeEventListener('resize', read);
   }, []);
 
-  /* The page's run has to end exactly where the document does, or the header
-     lands on the page's own heading at the bottom of the scroll. What lies
-     under the sheet is the layout's — padding, and nothing the sheet can know
-     from a stylesheet — so it is measured. The body's own height cancels out
-     of the measurement, so growing it never moves the number. */
   const measure = useCallback(() => {
     const box = body.current;
-    if (!box) return;
-    const root = document.documentElement;
-    /* Embedded in a frame the page scrolls inside a container, so the run ends
-       where that container's content does rather than where the document's
-       does. */
-    const view = scrollParentOf(box);
-    const scroller = view ?? document.scrollingElement ?? root;
-    const bottom =
-      box.getBoundingClientRect().bottom -
-      (view ? view.getBoundingClientRect().top : 0) +
-      (view ? view.scrollTop : window.scrollY);
-    /* This number sets the run's own height, so writing it resizes what was
-       just measured and the observer runs again. The two cancel exactly, but
-       `scrollHeight` is a whole number and the box's edge is not, so the
-       result can land a pixel either side and hand the loop a reason to go
-       round forever. A pixel is below what anyone can see and above what the
-       rounding can invent, so a change that small is not worth a write. */
-    const next = Math.max(0, Math.round(scroller.scrollHeight - bottom));
-    if (Math.abs(next - trailing.current) >= 2) {
-      trailing.current = next;
-      box.style.setProperty('--sheet-trailing', `${next}px`);
-    }
-
-    /* The header's ground reaches the edges of the page and no further. Told
-       to run a viewport past each side it would clear them, but the surplus is
-       real width the page then has to hold, and a narrow screen ends up able
-       to pan sideways over it. */
-    const row = strip.current;
-    if (!row) return;
-    const edges = row.getBoundingClientRect();
-    box.style.setProperty('--sheet-bleed-start', `${Math.max(0, edges.left)}px`);
-    box.style.setProperty(
-      '--sheet-bleed-end',
-      `${Math.max(0, root.clientWidth - edges.right)}px`,
-    );
-
-    /* The rule across the top of the page is the layout's, not the sheet's.
-       Its height is read rather than written down, and rather than imposed:
-       holding the layout's header to a number the sheet chose is what makes it
-       grow and the menu beneath it stutter. */
-    /* One reading for both bars, so the header cannot come out level with the
-       layout's title while the footer drifts off its rule. */
-    for (const [selector, prop] of EDGES) {
-      const edge = document.querySelector(selector);
-      const tall = edge ? edge.getBoundingClientRect().height : 0;
-      if (tall > 0) box.style.setProperty(prop, `${tall}px`);
-      else box.style.removeProperty(prop);
-    }
+    const shelf = shell.current;
+    if (box && shelf) measureSheet(box, shelf);
   }, []);
 
-  useEffect(() => {
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(document.body);
-    return () => observer.disconnect();
-  }, [measure]);
+  useResizeSignal(() => document.body, measure);
 
   /* Turning the page while the header is pinned opens the new page at its top,
      under the header. The measure is retaken first, before anything paints, so
@@ -242,9 +223,7 @@ const Sheet: React.FC<SheetProps> = ({
     /* The article it sits in is what waited, so the article is what is told:
        whichever division it settled on is the one that gets painted, rather
        than the server's guess and then a correction. */
-    body.current
-      ?.closest('.prose')
-      ?.setAttribute('data-settled', 'true');
+    body.current?.closest('.prose')?.setAttribute('data-settled', 'true');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -276,6 +255,8 @@ const Sheet: React.FC<SheetProps> = ({
     window.scrollTo({ top, behavior: 'instant' });
   }, [active, measure, offset]);
 
+  usePagePresence(rack, active, leaving, turn);
+
   /* What reads the page rather than renders it — the section track, the
      scroll progress — has no way to know a page was turned. It is told, both
      when the new page arrives and again when the old one is finally taken
@@ -284,50 +265,20 @@ const Sheet: React.FC<SheetProps> = ({
     window.dispatchEvent(new Event(CONTENT_CHANGED_EVENT));
   }, [active, leaving]);
 
-  /* The strip is watched directly. With the root's top edge pulled in past
-     where the strip rests, a pinned strip is no longer wholly inside it, so
-     the ratio leaves 1 at the exact moment it sticks. The rect check keeps a
-     strip still arriving from below, also partly outside, from counting. */
-  useEffect(() => {
-    const row = strip.current;
-    if (!row) return;
-    const edge = offset + 1;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        /* The strip pins to the top of whatever it scrolls in, which is the
-           viewport on a page and a container in a frame. `rootBounds` already
-           carries the margin below, so it is the pin line in both. */
-        const line = entry.rootBounds?.top ?? edge;
-        const on =
-          entry.intersectionRatio < 1 && entry.boundingClientRect.top <= line;
-        pinned.current = on;
-        setStuck(on);
-      },
-      /* Zero as well as one: arriving by a jump rather than a scroll takes the
-         strip from outside the root straight to pinned, never passing through
-         wholly-inside, and a lone threshold of one would not fire at all. */
-      {
-        root: scrollParentOf(row),
-        threshold: [0, 1],
-        rootMargin: `-${edge}px 0px 0px 0px`,
-      },
-    );
-    observer.observe(row);
-    return () => observer.disconnect();
-  }, [offset]);
 
   if (pages.length === 0) return <>{children}</>;
 
-  const page = pages[Math.min(active, pages.length - 1)];
   const turning =
     leaving !== null && leaving !== active && pages[leaving] !== undefined;
 
   /* A footer carries the sheets a page holds rather than the sections one
      sheet holds, so it rests at the bottom and is grounded from the start:
      there is nothing above it for it to rise out of. */
+  const printed = multi ? unprefixed(pages) : pages.map((page) => page.name);
   const bar = (
     <SheetBar
       pages={pages}
+      names={printed}
       labels={labels}
       active={active}
       foot={foot}
@@ -338,45 +289,54 @@ const Sheet: React.FC<SheetProps> = ({
   );
 
   return (
-    <div className={styles.sheet} data-sheet>
-      {lead}
-      {/* A sticky box travels only inside its containing block, so the header
+    <SheetRank.Provider value={rank}>
+      <div
+        ref={shell}
+        className={styles.sheet}
+        data-sheet
+        data-foot={foot ? 'true' : undefined}
+        data-multi={multi ? 'true' : undefined}>
+        {lead}
+        {/* A sticky box travels only inside its containing block, so the header
           and the page it heads share one. */}
-      <div ref={body} className={styles.body} data-foot={foot ? 'true' : undefined}>
-        {!foot && bar}
-        {/* Both panels are keyed by their page, so turning mounts the one
+        <div
+          ref={body}
+          className={styles.body}
+          data-foot={foot ? 'true' : undefined}>
+          {!foot && bar}
+          {/* Both panels are keyed by their page, so turning mounts the one
             arriving and keeps the one leaving until the seam has crossed. */}
-        <div className={styles.stack}>
-          {turning && (
-            <div
-              key={`${pages[leaving].anchor}-leaving`}
-              ref={outgoing}
-              className={styles.page}
-              data-leaving='true'
-              data-sheet-page
-              aria-hidden='true'>
-              <CardFoldProvider value={true}>
-                {rebuild(
-                  pages[leaving],
-                  foldHolders(pages[leaving].body, nest, closed),
-                )}
-              </CardFoldProvider>
-            </div>
-          )}
-          <div
-            key={page.anchor}
-            className={styles.page}
-            data-entering={turning ? 'true' : undefined}
-            data-sheet-page
-            role='tabpanel'>
-            <CardFoldProvider value={true}>
-              {rebuild(page, foldHolders(page.body, nest, closed))}
-            </CardFoldProvider>
+          <div ref={rack} className={styles.stack}>
+            {pages.map((entry, index) => {
+              const shown = index === active;
+              const going = turning && index === leaving;
+              return (
+                <div
+                  key={entry.anchor}
+                  ref={going ? outgoing : undefined}
+                  className={styles.page}
+                  data-sheet-page
+                  data-anchor={entry.anchor}
+                  data-shown={shown ? 'true' : undefined}
+                  data-leaving={going ? 'true' : undefined}
+                  aria-hidden={going ? 'true' : undefined}
+                  role='tabpanel'>
+                  <CardFoldProvider value={true}>
+                    {rebuild(
+                      entry,
+                      multi
+                        ? entry.body
+                        : foldHolders(entry.body, nest, closed),
+                    )}
+                  </CardFoldProvider>
+                </div>
+              );
+            })}
           </div>
         </div>
         {foot && bar}
       </div>
-    </div>
+    </SheetRank.Provider>
   );
 };
 

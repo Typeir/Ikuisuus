@@ -1,9 +1,7 @@
 /**
  * @fileoverview Asks the cards on a page to collapse themselves.
  * @description A card's heading is drawn by the card, out of children nothing
- * else may rewrite, so a sheet cannot fold one from the outside without taking
- * the heading away from it. It asks instead, and a card that holds cards of its
- * own answers by opening on its heading.
+ * else may rewrite
  *
  * @module modules/library/presentation/components/slots/cardFold
  * @version 1.0.0
@@ -38,7 +36,7 @@ export function useCardFold(): boolean {
  * Whether a run of nodes holds a card of its own.
  *
  * @description The compiler files each card in a wrapper of its own before a
- * card ever renders, so holding one is visible without drawing anything.
+ * card ever renders
  *
  * @param {ReactNode[]} nodes - The card's body, as written
  * @returns {boolean} True when a card sits inside

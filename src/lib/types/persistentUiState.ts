@@ -443,11 +443,13 @@ export const DEFAULT_PROSE_MEASURE = 100;
 export const DEFAULT_STREAM_TEXT = true;
 
 /**
- * Sections ship with their knotwork frames drawn.
+ * Sections ship without their knotwork frames.
+ *
+ * @description The frames were drawn for the prose the sections used to hold.
  *
  * @constant
  */
-export const DEFAULT_SECTION_DECOR = true;
+export const DEFAULT_SECTION_DECOR = false;
 
 /**
  * Narrows a stored preference to a usable positive number.

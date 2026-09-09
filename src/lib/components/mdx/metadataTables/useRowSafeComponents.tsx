@@ -15,7 +15,7 @@ import { mdxComponents } from '@/modules/library/presentation';
 import { useMemo, type ComponentProps } from 'react';
 
 /**
- * Anchor replacement: the label, carrying its destination as the title.
+ * Anchor replacement
  *
  * @param {ComponentProps<'a'>} props - Anchor props from the compiled prose
  * @param {string} [props.href] - Destination the prose named
@@ -32,8 +32,7 @@ function InertLink({ href, title, children }: ComponentProps<'a'>) {
  *
  * @description Anchors become inert labels and keywords render on their
  * `noLink` form, so a cell shows what the page shows without nesting an
- * anchor inside the row's own. The map is built during render because the
- * library barrel imports the tables back.
+ * anchor inside the row's own.
  *
  * @returns {Record<string, unknown>} Component registry for {@link compileRuntimeSync}
  */

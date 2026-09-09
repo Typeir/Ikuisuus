@@ -1,7 +1,7 @@
 /**
  * @fileoverview How a sheet's page decides what to fold and how long to wait.
  * @description The parts of a sheet that read its divisions and put them back
- * together, kept apart from the component that holds the turn's state.
+ * together
  *
  * @module modules/library/presentation/components/slots/sheetFolding
  * @version 1.0.0
@@ -94,9 +94,7 @@ export function rebuild(division: Division, body: ReactNode): ReactNode {
  * Collapses everything on a page that holds divisions of its own.
  *
  * @description A block that nests deeply enough is a holder, and a holder is
- * worth a heading and nothing more until it is asked for. One that nests less
- * is a leaf, and folding it away would hide its whole substance behind a
- * heading that says the same thing.
+ * worth a heading and nothing more until it is asked for.
  *
  * @param {ReactNode} children - Nodes to walk
  * @param {number} nest - Depth at which a division starts collapsing

@@ -10,9 +10,7 @@
  * The nearest ancestor that scrolls, or null when the document does.
  *
  * @description A page embedded in a frame scrolls inside a container rather
- * than the viewport, so anything measuring against the document reads the
- * wrong number there. Asking for the scroller instead of assuming one keeps a
- * component right in both places without knowing which it is in.
+ * than the viewport
  *
  * @param {HTMLElement | null} node - Node to look up from.
  * @returns {HTMLElement | null} The scrolling ancestor, or null for the document.

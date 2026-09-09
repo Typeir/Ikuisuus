@@ -392,16 +392,8 @@
 }
 
 /* The glyphs a block wears to say what using it costs. */
-/* The pips, and what each one says a block costs:
-   ◇ an interaction, or something else that costs nothing named
-   ⬖ a minor action, the diamond filled on one side
-   ◆ a major action, the diamond filled
-   ◈ a reaction, the diamond with a pip inside it
-   ◇ also a reflex, which is asked of a creature and costs it nothing
-   ▣ a deed, the square within a square
-   ❖ a group of blocks, and turned on its corner, a group of deeds */
-/* Headings, as a selector list. A division that collapses moves its heading
-   into the summary that opens it, so a rule reaching for one reaches twice. */
+/* The pips, and what each one says a block costs */
+/* Headings, as a selector list. */
 $mdx-headings: 'h1, h2, h3, h4, h5, h6';
 $mdx-mark-glyph-other: '◇ ';
 $mdx-mark-glyph-minor: '⬖ ';
@@ -476,8 +468,7 @@ $mdx-mark-glyph-deed: '▣ ';
     display: none !important;
   }
 
-  /* A block inside another block is a step of it, not a section of the page:
-     the frame and the rail belong to the outermost block alone. */
+  /* A block inside another block is a step of it, not a section of the page */
   article[data-kind] section[data-heading-level]::before,
   article[data-kind] section[data-heading-level]::after,
   article[data-kind] article[data-kind]::before,
@@ -498,8 +489,7 @@ $mdx-mark-glyph-deed: '▣ ';
   [data-slot-grid] {
     @include mdx-heading-rule(0.4rem);
     /* The run is a paragraph, and prose gives every paragraph a wide margin on
-       both sides. It opens directly under the heading it belongs to, so the
-       leading one is taken back rather than left to prose. */
+       both sides. */
     margin-block: 0 0.4em;
 
     &::after {
@@ -529,9 +519,7 @@ $mdx-mark-glyphs: (
 );
 
 /**
- * Mixin: mdx-mark-glyphs
- *
- * The pip a block wears for what it costs, one per unit spent.
+ * Mixin
  */
 @mixin mdx-mark-glyphs {
   --mdx-glyph: '#{$mdx-mark-glyph-other}';
@@ -556,11 +544,7 @@ $mdx-mark-glyphs: (
   }
 
   /* The glyph sits on the text baseline, which drops it below the middle of
-     the line it heads; the nudge is spacing on the pseudo, since a pseudo has
-     no line box of its own to align against. Blocking it also drops the space
-     the glyph is written with, so the gap is asked for outright. The mark is
-     carried down as a property, so the block that collapses keeps its glyph
-     with the heading that opens it. */
+     the line it heads; the nudge is spacing on the pseudo */
   > :is(#{$mdx-headings})::before,
   > details > summary > :is(#{$mdx-headings})::before {
     display: inline-block;

@@ -11,6 +11,7 @@
 
 'use client';
 
+import { useFrameLoop } from '@/lib/hooks/motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   useCallback,
@@ -77,23 +78,23 @@ export const ChevronScroll: React.FC<ChevronScrollProps> = ({
     setCanScrollRight(overflow > 1 && scroller.scrollLeft < overflow - 1);
   }, []);
 
+  const schedule = useFrameLoop(updateScrollState);
+
   useEffect(() => {
     updateScrollState();
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    scroller.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState);
+    scroller.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
     const observer =
-      typeof ResizeObserver !== 'undefined'
-        ? new ResizeObserver(updateScrollState)
-        : null;
+      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(schedule) : null;
     observer?.observe(scroller);
     return () => {
-      scroller.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
+      scroller.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
       observer?.disconnect();
     };
-  }, [updateScrollState, children]);
+  }, [schedule, updateScrollState, children]);
 
   const scrollByStep = useCallback((direction: 1 | -1) => {
     scrollerRef.current?.scrollBy({

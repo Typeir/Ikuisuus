@@ -51,7 +51,8 @@ describe('useDisplayPrefs', () => {
     expect(result.current.state.proseMeasure).toBe(100);
     expect(result.current.state.constrainedHue).toBe(false);
     expect(result.current.state.streamText).toBe(true);
-    expect(result.current.state.sectionDecor).toBe(true);
+    /* Section frames ship off until they are redrawn for the prose format. */
+    expect(result.current.state.sectionDecor).toBe(false);
   });
 
   it('should apply the text scale as a root custom property', () => {

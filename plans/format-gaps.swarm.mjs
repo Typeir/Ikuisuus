@@ -21,7 +21,7 @@ const CANON = [
 
 /**
  * The war machine is the worked example in CANON, and the two prototypes are
- * copies of it, so none of the three is also surveyed.
+ * copies of it
  */
 const EXEMPLARS = new Set([
   'abandoned-old-war-machine.sheet.mdx',

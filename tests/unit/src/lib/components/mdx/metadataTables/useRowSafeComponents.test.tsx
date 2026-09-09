@@ -1,8 +1,7 @@
 /**
  * @fileoverview useRowSafeComponents tests
  * @description Verifies the registry replaces anchors with inert labels and
- * puts keywords on their `noLink` form, so prose compiled inside a row link
- * emits no nested anchor.
+ * puts keywords on their `noLink` form
  *
  * @module tests/unit/src/lib/components/mdx/metadataTables/useRowSafeComponents.test
  * @version 1.0.0

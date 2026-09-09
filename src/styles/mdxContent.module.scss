@@ -299,8 +299,7 @@
   }
 
   /* A monster holds its sections in a body wrapper, and a paged sheet holds
-     them in a panel, so the card's own rules, which reach for direct children,
-     are given both. */
+     them in a panel */
   [data-heirloom],
   [data-monster],
   [data-monster] > [data-monster-body],
@@ -309,16 +308,13 @@
     @include mdx-slot-run;
   }
 
-  /* A group under Features holds cards, so it reads as the thing holding them:
-     a rule down its side and its cards indented against it, rather than a
-     heading with loose text under it. */
+  /* A group under Features holds cards, so it reads as the thing holding them */
   [data-monster] > [data-monster-body] section[data-heading-level]:has(
       > section[data-entry],
       > article[data-kind]
     ) {
     /* Traits, Actions, Attacks and Deeds are the sheet's divisions whatever
-       depth they sit at, so they are headed alike rather than shrinking by a
-       step each time one is nested inside another. */
+       depth they sit at */
     > :is(h2, h3, h4, h5) {
       font-size: 1.75rem;
     }
@@ -333,8 +329,7 @@
     }
   }
 
-  /* Deeds wear the group ornament turned on its corner: squares against the
-     diamonds every other group carries. */
+  /* Deeds wear the group ornament turned on its corner */
   /* Turned on its corner the ornament reads larger than it is, so it is scaled
      up to sit level with the diamonds and lifted to share their baseline. */
   [data-monster] [data-anchor='deeds'] > :is(#{$mdx-headings})::before,

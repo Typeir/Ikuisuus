@@ -5,9 +5,7 @@
   background: var(--color-surface);
   overflow: hidden;
 
-  /* The light skin is the sidebar's disclosure: no ground, no frame, a rule
-     under the row and the same caret the tree uses. A sheet of these reads as
-     a list to run an eye down rather than a stack of panels. */
+  /* The light skin is the sidebar's disclosure */
   &[data-skin='light'] {
     border: none;
     border-radius: 0;

@@ -1,13 +1,10 @@
 @use 'mixins' as *;
 
-/* The disclosure adds no ground of its own: the division already has a heading,
-   a rule and a pip, and a panel around it would say the same thing twice. */
+/* The disclosure adds no ground of its own */
 .fold {
   display: block;
 
-  /* Opening is a movement, not a jump. `interpolate-size` is what lets the
-     panel run to its own height instead of a number guessed in the stylesheet;
-     where it is not supported the panel still opens, just at once. */
+  /* Opening is a movement, not a jump. */
   interpolate-size: allow-keywords;
 
   &::details-content {
@@ -26,7 +23,7 @@
   }
 }
 
-/* The arrow sits where the sidebar's does: at the far edge of the row. */
+/* The arrow sits where the sidebar's does */
 .summary {
   display: flex;
   align-items: center;

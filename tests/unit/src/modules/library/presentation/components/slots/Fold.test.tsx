@@ -13,8 +13,7 @@ import { describe, expect, it } from 'vitest';
 import Fold from '@/modules/library/presentation/components/slots/Fold';
 
 /**
- * A sheet shaped the way the compiler hands one over: the first heading bare,
- * the rest wrapped in sections, and one division nested inside another.
+ * A sheet shaped the way the compiler hands one over
  *
  * @returns {JSX.Element} The sheet's children
  */

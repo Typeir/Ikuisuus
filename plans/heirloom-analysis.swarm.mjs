@@ -1,6 +1,6 @@
 /**
  * @fileoverview Heirloom analysis — reads each item against the settled sheet
- * format and reports only what it cannot express, changing nothing.
+ * format and reports only what it cannot express
  */
 
 import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';

@@ -40,7 +40,7 @@ const DECLARED_KIND = /^\s*<[A-Z]\w*[^>]*\bdeed="([a-z]+)"/;
 
 /**
  * Matches the heading that names a kind for a run of options that declare none
- * of their own, which is how a bullet list of deeds says what it is.
+ * of their own
  */
 const KIND_HEADING = /^\s*#{4,6} +(Act|Stratagem|Lair|Phase|Resist)\s*$/i;
 
@@ -48,8 +48,7 @@ const KIND_HEADING = /^\s*#{4,6} +(Act|Stratagem|Lair|Phase|Resist)\s*$/i;
  * Splits a Deeds section into one run per declared kind.
  *
  * @description A run starts where a block declares a kind and ends where the
- * next block declares a different one, so the lines between — the prose that
- * introduces a kind's options — stay with the kind they belong to.
+ * next block declares a different one
  *
  * @param {string[]} lines - The section's lines
  * @returns {Array<{ kind: string; start: number; lines: string[] }>} Runs in

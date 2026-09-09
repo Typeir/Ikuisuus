@@ -1,7 +1,6 @@
 @use 'mixins' as *;
 
-/* A keyword is a defined term, and reads as one: capitalised wherever it
-   falls, so the eye tells it from the prose carrying it. */
+/* A keyword is a defined term, and reads as one */
 .keyword {
   color: var(--color-accent);
   text-decoration: none;

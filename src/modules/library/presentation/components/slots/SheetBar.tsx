@@ -1,8 +1,6 @@
 /**
  * @fileoverview The row of tabs a sheet is turned by.
- * @description One row, set at whichever end the sheet is read from: a header
- * over the sections of one sheet, a footer under the sheets a page holds. Both
- * are this, so neither can drift from the other.
+ * @description One row, set at whichever end the sheet is read from
  *
  * @module modules/library/presentation/components/slots/SheetBar
  * @version 1.0.0
@@ -20,6 +18,7 @@ import styles from './sheet.module.scss';
  * Props for the bar.
  *
  * @property {Division[]} pages - The pages it turns between
+ * @property {string[]} names - What to print for each page, in order
  * @property {Map<string, string>} labels - Names given in content, by anchor
  * @property {number} active - Index of the page showing
  * @property {boolean} foot - Set at the bottom rather than the top
@@ -29,6 +28,7 @@ import styles from './sheet.module.scss';
  */
 export interface SheetBarProps {
   pages: Division[];
+  names: string[];
   labels: Map<string, string>;
   active: number;
   foot: boolean;
@@ -45,6 +45,7 @@ export interface SheetBarProps {
  */
 const SheetBar = ({
   pages,
+  names,
   labels,
   active,
   foot,
@@ -67,7 +68,7 @@ const SheetBar = ({
         className={styles.tab}
         data-active={index === active ? 'true' : undefined}
         onClick={() => onTurn(index)}>
-        {labels.get(entry.anchor) ?? entry.name}
+        {labels.get(entry.anchor) ?? names[index] ?? entry.name}
       </button>
     ))}
   </div>

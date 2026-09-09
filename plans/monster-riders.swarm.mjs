@@ -1,7 +1,6 @@
 /**
  * @fileoverview Rider migration — a save with one consequence stays in prose,
- * and only a rider that is a choice, does several things, or runs long earns a
- * name. Missing DCs get stated, and slots that repeat another slot are dropped.
+ * and only a rider that is a choice
  */
 
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -48,7 +47,7 @@ const slugOf = (name) => name.replace(/\.sheet\.mdx$/, '');
  * Every save sentence a sheet's blocks state in their own prose.
  *
  * @description Nested blocks are stripped before a block is read, so a rider
- * already lifted into its own block is counted once, against itself.
+ * already lifted into its own block is counted once
  *
  * @param {string} text - The sheet.
  * @returns {string[]} The sentences.
@@ -68,7 +67,7 @@ const saveSentences = (text) => {
  * Whether a save sentence carries more than one save with one consequence.
  *
  * @description Two conditions, or a choice, or a damage line and a save in the
- * same breath. These are the only riders that earn a name.
+ * same breath.
  *
  * @param {string} sentence - The sentence.
  * @returns {boolean} True when it is substantial.
@@ -82,7 +81,7 @@ const isSubstantial = (sentence) =>
  * Whether a save sentence never says what its DC is.
  *
  * @description A DC derived from something else — an escape DC, a DC equal to
- * the damage taken — already says it, and is left alone.
+ * the damage taken — already says it
  *
  * @param {string} sentence - The sentence.
  * @returns {boolean} True when the DC is missing.

@@ -15,9 +15,7 @@
   margin-block: 0.35rem 0.6rem;
 }
 
-/* Set into a heading rather than given a row of its own: no margins to open a
-   gap in the line, and it takes the slack between the cost and the tag so it
-   sits hard against the tag however long the name is. */
+/* Set into a heading rather than given a row of its own */
 .inlineRow {
   display: flex;
   align-items: center;

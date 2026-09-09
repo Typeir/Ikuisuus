@@ -30,7 +30,7 @@ export interface CollapsibleProps {
 }
 
 /**
- * How a disclosure is dressed: as a panel, or as a row in a list.
+ * How a disclosure is dressed
  */
 export type CollapsibleSkin = 'panel' | 'light';
 

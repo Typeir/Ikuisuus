@@ -1,6 +1,6 @@
 /**
  * @fileoverview Trinket analysis — reads each item's single run of prose and
- * reports whether it separates into colour and blocks, changing nothing.
+ * reports whether it separates into colour and blocks
  */
 
 import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';

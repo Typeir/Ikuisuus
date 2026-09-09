@@ -1,7 +1,5 @@
 /**
- * Aspect carousel: the packed stack of glyphs, its controls, and the two
- * sizes it is set at. Emitted into `Aspects.module.scss`, so its classes
- * are that module's.
+ * Aspect carousel
  */
 
 @use 'mixins-icon' as *;
@@ -128,8 +126,7 @@
 }
 
 /* The controls lead the stack, which reads correctly while the carousel opens
-   to the right. Set at the right edge of a heading it opens toward the text
-   instead, so the pair swaps and the fade swaps with it. */
+   to the right. */
 .carouselWrap[data-flip='true'] {
   flex-direction: row-reverse;
 
@@ -145,10 +142,9 @@
 }
 
 /* Set into a heading, the carousel has a line to live in rather than a row of
-   its own. Every measure it is built from is a step of one size, so they all
-   come down together and the box keeps its proportions. */
+   its own. */
 .carouselWrap[data-size='xs'] {
-  --size: 15px;
+  --size: 18px;
 
   flex: 0 0 auto;
   gap: 0.1rem;
@@ -157,9 +153,7 @@
     height: calc(var(--size) + 4px);
   }
 
-  /* Set in a heading there is no room beneath the toggle to hang a count, and
-     one hung there lands on the heading rule and the tag beside it. It reads
-     along the button instead. */
+  /* Set in a heading there is no room beneath the toggle to hang a count */
   .toggleWrap {
     align-items: center;
   }

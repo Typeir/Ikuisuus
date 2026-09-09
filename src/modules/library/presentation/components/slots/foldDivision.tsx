@@ -1,9 +1,7 @@
 /**
  * @fileoverview Turns one division of a sheet into a disclosure.
  * @description The fold is taken at the division and the heading itself becomes
- * the control, so the heading element survives with its anchor, its rule and
- * the pip that says what the division holds. Both the folded sheet and the
- * paged one collapse divisions this way, so they share the control.
+ * the control
  *
  * @module modules/library/presentation/components/slots/foldDivision
  * @version 1.0.0

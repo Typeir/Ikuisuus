@@ -25,6 +25,13 @@ export type RehypeSectionizeOptions = {
   streamText?: string;
   articles?: boolean;
   entryComponents?: readonly string[];
+  /**
+   * Whether headings are wrapped in sections, on by default.
+   *
+   * @description Freeform prose is structured by its headings, so it is
+   * wrapped.
+   */
+  wrap?: boolean;
 };
 
 
@@ -103,6 +110,22 @@ function leadHeadingOf(container: Parent): Element | null {
  * @param {Element} heading - Heading element
  * @returns {string} Anchor slug
  */
+/**
+ * The words a heading says, kept for whoever labels it later.
+ *
+ * @description The anchor is a slug and has lost the heading's punctuation and
+ * its capitals.
+ *
+ * @param {Element} heading - Heading element
+ * @returns {string} The heading's own words
+ */
+export function headingTitle(heading: Element): string {
+  const own = heading.children.filter(
+    (c) => (c.type as unknown as string) !== 'mdxJsxTextElement',
+  );
+  return toPlainMeasure(own.map((c) => textOf(c)).join('')).trim();
+}
+
 export function headingAnchor(heading: Element): string {
   const own = heading.children.filter(
     (c) => (c.type as unknown as string) !== 'mdxJsxTextElement',
@@ -121,6 +144,8 @@ type StackItem = { level: number; section: Element; anchor: string };
  * @param {RehypeSectionizeOptions | undefined} opts - Plugin options
  * @param {Anchors} anchors - Document anchor registry
  * @param {string | undefined} parentAnchor - Anchor of the enclosing section, if any
+ * @param {boolean} ownerHeading - Whether the enclosing node is a component, whose first heading is its summary
+ * @param {boolean} ownerIsEntry - Whether that component is an entry, which claims its own lead heading
  * @returns {RootContent[]} Sectioned siblings
  */
 function sectionize(
@@ -129,6 +154,7 @@ function sectionize(
   anchors: Anchors,
   parentAnchor: string | undefined,
   ownerHeading = false,
+  ownerIsEntry = false,
 ): RootContent[] {
   const result: RootContent[] = [];
   const stack: StackItem[] = [];
@@ -159,13 +185,20 @@ function sectionize(
     if (isContainer(node)) {
       const owner = stack.length ? stack[stack.length - 1].anchor : parentAnchor;
       const isJsx = (node.type as unknown as string) === 'mdxJsxFlowElement';
-      node.children = sectionize(node.children, opts, anchors, owner, isJsx);
-
       const isEntry =
         isJsx &&
         (opts?.entryComponents ?? []).includes(
           (node as unknown as { name?: string }).name ?? '',
         );
+      node.children = sectionize(
+        node.children,
+        opts,
+        anchors,
+        owner,
+        isJsx,
+        isEntry,
+      );
+
       const lead = isEntry ? leadHeadingOf(node) : null;
       if (lead) {
         /* An entry sections like a heading of its own level, beside its
@@ -199,10 +232,15 @@ function sectionize(
 
     if (isHeading(node) && leadHeadingPending) {
       leadHeadingPending = false;
-      /* Unclaimed on purpose: duplicate lead headings keep identical slugs. */
+      const slug = headingAnchor(node);
+      /* An entry's lead heading is claimed where the entry is read, and
+         claiming it here as well would collide with that claim. Every other
+         component's lead heading is claimed here or nowhere, and nowhere
+         leaves a sheet's pages sharing one anchor between them. */
       node.properties = {
         ...node.properties,
-        'data-anchor': headingAnchor(node),
+        'data-anchor': ownerIsEntry ? slug : anchors.claim(slug, parentAnchor),
+        'data-title': headingTitle(node),
       };
       result.push(node);
       continue;
@@ -215,7 +253,17 @@ function sectionize(
       const owner = stack.length ? stack[stack.length - 1].anchor : parentAnchor;
       const slug = headingAnchor(node);
       const anchor = anchors.claim(slug, owner);
-      node.properties = { ...node.properties, 'data-anchor': anchor };
+      node.properties = {
+        ...node.properties,
+        'data-anchor': anchor,
+        'data-title': headingTitle(node),
+      };
+      /* Anchored but left where it stands: the heading opens its division by
+         being one, and what follows it are its siblings. */
+      if (opts?.wrap === false) {
+        append(node);
+        continue;
+      }
       const section = (h as unknown as (t: string, p: object) => Element)(
         'section',
         props({ 'data-heading-level': level, 'data-anchor': anchor }),
@@ -320,6 +368,7 @@ const rehypeSectionize: Plugin<[RehypeSectionizeOptions?], Root> = (
   return (tree: Root) => {
     const anchors = new Anchors();
     tree.children = sectionize(tree.children, opts, anchors, undefined);
+    if (opts?.wrap === false) return;
     if (opts?.articles !== false) {
       articleize(tree as unknown as Parent, anchors, undefined, false, false, false);
     }

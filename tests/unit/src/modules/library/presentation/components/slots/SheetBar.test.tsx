@@ -36,6 +36,7 @@ const draw = (over: Partial<React.ComponentProps<typeof SheetBar>> = {}) =>
   render(
     <SheetBar
       pages={PAGES}
+      names={PAGES.map((page) => page.name)}
       labels={new Map()}
       active={0}
       foot={false}
@@ -84,6 +85,7 @@ describe('SheetBar', () => {
     rerender(
       <SheetBar
         pages={PAGES}
+        names={PAGES.map((page) => page.name)}
         labels={new Map()}
         active={0}
         foot={false}

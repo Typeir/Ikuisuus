@@ -60,6 +60,10 @@ function scanHeadings(): SectionTrackItem[] {
     /* A page on its way out is still on screen while it fades, and its
        headings are already spoken for by the page replacing it. */
     if (el.closest('[aria-hidden="true"]')) continue;
+    /* A page nobody is reading stays in the document so it can be found and
+       linked to, and has no box to measure. Counted here it would pile every
+       one of its headings onto the same point of the track. */
+    if (el.closest('[hidden]')) continue;
 
     const level = parseInt(el.tagName[1], 10) as SectionTrackItem['level'];
     const rect = el.getBoundingClientRect();

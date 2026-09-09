@@ -29,6 +29,7 @@
 
 import {
   DEFAULT_PROSE_MEASURE,
+  DEFAULT_SECTION_DECOR,
   DEFAULT_TEXT_SCALE,
   LEGACY_THEME_KEY,
   PERSISTENT_UI_STORAGE_KEY,
@@ -80,7 +81,7 @@ export function getPersistentUiInitScript(): string {
         var aspectExpanded = false;
         var streamText = true;
         var sheetPage = '';
-        var sectionDecor = true;
+        var sectionDecor = ${DEFAULT_SECTION_DECOR};
         var constrainedHue = false;
         var textScale = ${DEFAULT_TEXT_SCALE};
         var proseMeasure = ${DEFAULT_PROSE_MEASURE};

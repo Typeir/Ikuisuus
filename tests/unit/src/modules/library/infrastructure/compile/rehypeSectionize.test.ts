@@ -50,7 +50,9 @@ describe('rehypeSectionize', () => {
   it('wraps a heading and following content in a section', () => {
     const output = process('<h2>Title</h2><p>Body</p>');
     expect(output).toContain('<section data-heading-level="2" data-anchor="title">');
-    expect(output).toContain('<h2 data-anchor="title">Title</h2>');
+    expect(output).toContain(
+      '<h2 data-anchor="title" data-title="Title">Title</h2>',
+    );
     expect(output).toContain('<p>Body</p>');
     expect(output).toContain('</section>');
   });
@@ -129,7 +131,7 @@ describe('rehypeSectionize', () => {
         streamText: 'FOO',
       });
       expect(output).toContain(
-        '<h2 data-anchor="title">Title</h2><span aria-hidden="true" data-stream-rail="left"></span><p>Body</p>',
+        '<h2 data-anchor="title" data-title="Title">Title</h2><span aria-hidden="true" data-stream-rail="left"></span><p>Body</p>',
       );
     });
 

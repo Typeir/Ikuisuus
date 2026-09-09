@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for the rehypeAspects rehype plugin.
  * @description Verifies that a row lands on the title of a record and nowhere
- * else, and that a key is resolved against the record it sits under.
+ * else
  *
  * @version 2.0.0
  * @author Typeir

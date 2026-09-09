@@ -133,12 +133,15 @@ async function hasTestFile(
   sourcePath: string,
   rootDir: string,
 ): Promise<boolean> {
-  const ext = path.extname(sourcePath);
   const baseName = sourcePath.replace(/\.(ts|tsx)$/, '');
-  const candidates = [
-    path.join(rootDir, 'tests', 'unit', `${baseName}.test${ext}`),
-    path.join(rootDir, 'tests', 'integration', `${baseName}.test${ext}`),
-  ];
+  /* Both extensions, either way round: a `.ts` module that has to be rendered
+     to be tested needs JSX in its test, and a `.tsx` component may be covered
+     by one that renders nothing. */
+  const candidates = ['unit', 'integration'].flatMap((kind) =>
+    ['.ts', '.tsx'].map((ext) =>
+      path.join(rootDir, 'tests', kind, `${baseName}.test${ext}`),
+    ),
+  );
   for (const candidate of candidates) {
     try {
       await fs.access(candidate);

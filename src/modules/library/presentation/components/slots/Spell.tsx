@@ -50,10 +50,7 @@ const ROW_SLOTS: readonly SpellSlotName[] = [
  * Slots the head takes out of the body.
  *
  * @description Overcasting is written where it is read, at the end of the
- * spell, and a spell may tier it over several blocks. Lifting those out would
- * collapse them into one row and lose the level each began at, so a written
- * `<Overcast>` stays where the author put it. An overcast given as an
- * attribute is a single line with no tier to lose, and still prints as a row.
+ * spell
  */
 const HEAD_SLOTS: readonly SpellSlotName[] = SPELL_SLOT_NAMES.filter(
   (slot) => slot !== 'overcast',

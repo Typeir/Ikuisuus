@@ -8,15 +8,12 @@ $seam-feather: 13%;
 $ground-lead: 0.6rem;
 
 .sheet {
-  /* Where the header comes to rest. Narrow, the title bar is already fixed to
-     the top of the screen, so the sheet's own header stops below it. */
+  /* Where the header comes to rest. */
   --sheet-offset: 0px;
 
-  /* How long a page turn takes: the seam crossing, and the fades that carry
-     what hangs outside it. The fade is given four fifths of the crossing, so
-     what the seam cannot reach has settled before the seam lands. */
-  --sheet-turn: 1s;
-  --sheet-fade: 0.8s;
+  /* How long a page turn takes */
+  --sheet-turn: 0.5s;
+  --sheet-fade: 0.4s;
 
   display: block;
 
@@ -26,14 +23,10 @@ $ground-lead: 0.6rem;
 }
 
 /* Header and page share one screen's budget, less whatever the layout puts
-   under the sheet, so the bottom of the scroll is the bottom of the page and
-   the header is pinned for the whole of it. The measurement is the sheet's
-   own. This is also what bounds the sticky travel, so it has to hold both. */
+   under the sheet */
 .body {
   /* Its own formatting context, so a page's closing margin stays inside it
-     and what lies under the sheet measures the same whichever page is up. The
-     strip's leading margin sits here for the same reason: inside, it would
-     hold the strip off the top of the box it has to pin against. */
+     and what lies under the sheet measures the same whichever page is up. */
   display: flow-root;
   margin-block-start: 0.5rem;
   min-block-size: calc(
@@ -42,10 +35,32 @@ $ground-lead: 0.6rem;
 }
 
 /* A footer carries the sheets a page holds rather than the sections one sheet
-   holds, so it needs no run beneath it to stay pinned against: it rests at the
-   bottom of what is there. */
+   holds */
 .body[data-foot='true'] {
   min-block-size: 0;
+}
+
+/* Fixed rather than stuck: a sheet holding several creatures is turned between
+   them for the whole page, and a bar answering to the viewport answers to
+   nothing the page measures. The run reserves the height it covers. */
+.sheet[data-foot='true'] {
+  padding-block-end: calc(var(--sheet-footline, 3.25rem) + 1.25rem);
+}
+
+/* A page holding several creatures names each one where a page would name
+   itself */
+.sheet[data-multi='true'] {
+  h2 {
+    font-size: 1.9rem;
+  }
+
+  h2:has(:global(.first-letter)) {
+    @include mdx-first-letter-headroom();
+  }
+
+  h2 :global(.first-letter) {
+    @include mdx-first-letter-decor($size: 3.8em);
+  }
 }
 
 .strip {
@@ -62,11 +77,10 @@ $ground-lead: 0.6rem;
 
   /* Wide, the row stands as tall as the layout's own header, so what it
      carries sits on the same line as the sidebar's title and the ground ends
-     on the same rule. It stands that tall whether stuck or not, so sticking
-     moves nothing. */
+     on the same rule. */
   @media (min-width: 1024px) {
     /* The fallback stands in for the one frame before the layout's header has
-       been read, so it is the height that header comes out at. */
+       been read */
     min-block-size: var(--sheet-headline, 5.07rem);
   }
 
@@ -86,8 +100,7 @@ $ground-lead: 0.6rem;
       box-shadow 0.18s ease;
   }
 
-  /* Loose in the page it is a row of tabs and carries no ground; stuck, it
-     takes one and runs past every edge of the row to read as a header. */
+  /* Loose in the page it is a row of tabs and carries no ground; stuck */
   &[data-stuck='true']::after {
     inset-block: calc(-1 * #{$ground-lead}) -0.85rem;
     inset-inline: calc(-1 * var(--sheet-bleed-start, 0px))
@@ -97,21 +110,24 @@ $ground-lead: 0.6rem;
     box-shadow: 0 8px 16px -12px var(--color-shadow);
 
     /* Wide, the row is already the height of the layout's header, so the
-       ground has only to fill it and the two rules meet. Narrow, the title bar
-       holds that line and the sheet's header hangs below it. */
+       ground has only to fill it and the two rules meet. */
     @media (min-width: 1024px) {
       inset-block: 0;
     }
   }
 
-  /* The same bar read from the other end: it rests at the bottom, stands as
-     tall as the layout's own footer rather than its title, and its rule and
-     its shadow face up. Every measure it uses is the header's, so moving one
-     moves both. */
+  /* The same bar read from the other end */
   &[data-foot='true'] {
+    position: fixed;
     top: auto;
     bottom: 0;
-    margin-block: 1.25rem 0;
+    /* The ground runs the width of the screen, the way a footer does, while
+       what it carries is inset to the column the page is read in — past the
+       sidebar and the prose's own margin, which is what the run's left edge
+       already measures. */
+    inset-inline: 0;
+    padding-inline: var(--sheet-bleed-start, 0px) var(--sheet-bleed-end, 0px);
+    margin-block: 0;
 
     @media (min-width: 1024px) {
       min-block-size: var(--sheet-footline, 3.25rem);
@@ -148,8 +164,7 @@ $ground-lead: 0.6rem;
     border-color 0.15s ease,
     font-size var(--dur-3) var(--ease-out-quart);
 
-  /* The site's buttons wash and swell on hover; a tab is a label, so it says
-     which page it is with its colour and its rule and nothing else. */
+  /* The site's buttons wash and swell on hover; a tab is a label */
   &:hover,
   &:focus-visible {
     color: var(--color-accent);
@@ -164,98 +179,86 @@ $ground-lead: 0.6rem;
 }
 
 /* Stuck, the row is a header, and a header's labels are set at a header's
-   size. The row already stands at its full height, so the labels grow inside
-   it and nothing around them is laid out again. */
+   size. */
 @media (min-width: 1024px) {
   .strip[data-stuck='true'] .tab {
     font-size: 1.25rem;
   }
 }
 
-/* A mask is an image, and an image does not interpolate. A registered
-   property inside one does, so both pages read their seam off a single
-   number and cannot drift apart. */
+/* A mask is an image, and an image does not interpolate. */
 @property --sheet-seam {
   syntax: '<percentage>';
   inherits: false;
-  initial-value: 115%;
+  initial-value: 0%;
+}
+
+@property --sheet-wipe {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
 }
 
 .stack {
   position: relative;
 }
 
-/* The page turning away is lifted out of flow, so the one arriving sets the
-   height and nothing below the sheet moves while both are on screen. */
+/* Every page stays in the document, so find-in-page reaches it and an anchor
+   has something to point at. Only the page being read is in flow, and it is
+   what the run takes its height from. A page is hidden by the attribute rather
+   than by a rule here, since `until-found` is what keeps it findable. */
 .page {
-  position: relative;
-  z-index: 2;
-}
-
-.page[data-leaving='true'] {
   position: absolute;
   inset-block-start: 0;
   inset-inline: 0;
   z-index: 1;
-  pointer-events: none;
-}
+  opacity: 0;
 
-/* One seam sweeps the column. Ahead of it the arriving page is drawn, behind
-   it the leaving one is let go, and the two are complementary, so the pages
-   hand over inside the same soft band rather than crossing a hard edge. Both
-   are masked only while the turn runs: the stream rails hang outside the
-   page, and a mask taken at its edge would cut them off. */
-.page[data-entering='true'],
-.page[data-leaving='true'] {
-  --sheet-seam: 115%;
+  --sheet-seam: 0%;
+  --sheet-wipe: 0%;
 
   mask-clip: no-clip;
   mask-repeat: no-repeat;
-  transition: --sheet-seam var(--sheet-turn) var(--ease-out-quart);
-
-  @starting-style {
-    --sheet-seam: 0%;
-  }
 }
 
-/* The page carries more than the seam can reach: the stream rails hang off
-   its sides, outside the box a mask is measured against. Fading the block
-   along with the seam takes them with it instead of snapping them on. */
-.page[data-entering='true'] {
+/* Both seams run the same way, from nothing to past the far edge, so each is
+   read from its own resting value rather than from a starting style. A page
+   that is never taken out of the document is never newly inserted, and a
+   starting style has nothing to fire on. */
+.page[data-shown='true'] {
+  position: relative;
   opacity: 1;
-  /* The fades are given less time than the seam so both have settled before
-     the page turning away is taken off, which is what stops it vanishing
-     part-faded. */
+
+  --sheet-seam: 115%;
+
+  /* The fade is given less time than the seam so both have settled before the
+     page turning away is taken off */
   transition:
     --sheet-seam var(--sheet-turn) var(--ease-out-quart),
     opacity var(--sheet-fade) var(--ease-out-quart);
   mask-image: linear-gradient(
-    to right,
+    to left,
     #000 calc(var(--sheet-seam) - #{$seam-feather}),
     transparent var(--sheet-seam)
   );
-
-  @starting-style {
-    opacity: 0;
-  }
 }
 
-/* Its fade eases in where the arriving page's eases out, so the two hold the
-   column between them rather than both thinning out across the middle. */
+/* Held over the page arriving and erased ahead of the same sweep, so the two
+   are one seam crossing the column rather than two fades meeting in the
+   middle. Its own fade eases in where the arriving page's eases out. */
 .page[data-leaving='true'] {
-  opacity: 0;
+  z-index: 2;
+
+  --sheet-wipe: 115%;
+
   transition:
-    --sheet-seam var(--sheet-turn) var(--ease-out-quart),
+    --sheet-wipe var(--sheet-turn) var(--ease-out-quart),
     opacity var(--sheet-fade) var(--ease-in-cubic);
   mask-image: linear-gradient(
-    to right,
-    transparent calc(var(--sheet-seam) - #{$seam-feather}),
-    #000 var(--sheet-seam)
+    to left,
+    transparent calc(var(--sheet-wipe) - #{$seam-feather}),
+    #000 var(--sheet-wipe)
   );
-
-  @starting-style {
-    opacity: 1;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -268,7 +271,7 @@ $ground-lead: 0.6rem;
 
   /* With no sweep to watch, a half-drawn seam would simply be a page with a
      bite taken out of it. */
-  .page[data-entering='true'],
+  .page[data-shown='true'],
   .page[data-leaving='true'] {
     mask-image: none;
   }

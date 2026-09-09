@@ -12,6 +12,7 @@ import {
   CONTENT_CHANGED_EVENT,
   DETAILS_OPENED_EVENT,
 } from '@/lib/constants/domEvents';
+import { useViewportSignal } from '@/lib/hooks/motion';
 import { useEffect, useRef, useState } from 'react';
 
 /**
@@ -48,6 +49,9 @@ function readScrollState(): ScrollProgress {
   };
 }
 
+/** Page events that change the document's length without any scrolling. */
+const WATCHED = [DETAILS_OPENED_EVENT, CONTENT_CHANGED_EVENT];
+
 /**
  * Returns current scroll position, viewport height, document height,
  * and normalized scroll percentage (readScrollState).
@@ -57,58 +61,24 @@ function readScrollState(): ScrollProgress {
 export function useScrollProgress(): ScrollProgress {
   const [state, setState] = useState<ScrollProgress>(readScrollState);
   const prevRef = useRef<ScrollProgress>(state);
-  const rafRef = useRef<number | null>(null);
   const lockedRef = useRef(false);
 
-  useEffect(() => {
-    const update = () => {
-      rafRef.current = null;
+  useViewportSignal(() => {
+    if (lockedRef.current) return;
 
-      if (lockedRef.current) return;
-
-      const next = readScrollState();
-
-      const p = prevRef.current;
-      if (
-        next.scrollY !== p.scrollY ||
-        next.viewportH !== p.viewportH ||
-        next.docH !== p.docH ||
-        next.scrollPercent !== p.scrollPercent
-      ) {
-        prevRef.current = next;
-        lockedRef.current = true;
-        setState(next);
-      }
-    };
-
-    const onScroll = () => {
-      if (rafRef.current !== null) return;
-      rafRef.current = window.requestAnimationFrame(update);
-    };
-
-    const onResize = () => {
-      if (rafRef.current !== null) return;
-      rafRef.current = window.requestAnimationFrame(update);
-    };
-
-    update();
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true });
-    window.addEventListener(DETAILS_OPENED_EVENT, update);
-    window.addEventListener(CONTENT_CHANGED_EVENT, update);
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener(DETAILS_OPENED_EVENT, update);
-      window.removeEventListener(CONTENT_CHANGED_EVENT, update);
-
-      if (rafRef.current !== null) {
-        window.cancelAnimationFrame(rafRef.current);
-      }
-    };
-  }, []);
+    const next = readScrollState();
+    const p = prevRef.current;
+    if (
+      next.scrollY !== p.scrollY ||
+      next.viewportH !== p.viewportH ||
+      next.docH !== p.docH ||
+      next.scrollPercent !== p.scrollPercent
+    ) {
+      prevRef.current = next;
+      lockedRef.current = true;
+      setState(next);
+    }
+  }, WATCHED);
 
   useEffect(() => {
     lockedRef.current = false;

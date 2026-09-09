@@ -45,11 +45,7 @@
 }
 
 /* A reader who stored a division of a sheet is moved to it the moment the
-   page comes alive, and the server drew a different one — it had no way to
-   know. Theme never flashes because a colour is something a stylesheet can
-   hold; which division is open is not, so the article waits and then arrives.
-   Only an article holding a sheet waits, and only for a reader who stored
-   something; everyone else is already looking at the right page. */
+   page comes alive */
 html[data-sheet-page]:not([data-sheet-page=''])
   .prose:has([data-sheet]):not([data-settled='true']) {
   opacity: 0;
@@ -65,9 +61,7 @@ html[data-sheet-page]:not([data-sheet-page=''])
 .prose {
   margin-left: 8vw;
   /* The article arrives on its own, with no click to answer, so the curve
-     that makes a menu feel responsive only makes this one flash: it would be
-     all but opaque in its first fifth and then sit there. Even at both ends,
-     and given a large surface's length. */
+     that makes a menu feel responsive only makes this one flash */
   transition: opacity var(--dur-5) var(--ease-in-out-cubic);
 
   @media (max-width: 1023px) {

@@ -1,8 +1,6 @@
 /**
  * @fileoverview Rehype plugin inserting the Aspects row a record wears.
- * @description Only the title of a record carries a row. Its parts are read
- * through it, and repeating the aspects down every heading buried the reading
- * they were there to give.
+ * @description Only the title of a record carries a row.
  *
  * @module modules/library/infrastructure/compile/rehypeAspects
  * @version 1.0.0

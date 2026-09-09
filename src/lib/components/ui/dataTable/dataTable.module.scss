@@ -19,7 +19,7 @@
   text-align: inherit;
 
   /* `all: unset` cannot reach the global `body button:hover` fill, which
-     outranks it; a header is a sort control, not a button surface. */
+     outranks it; a header is a sort control */
   &:hover,
   &:focus,
   &:active {

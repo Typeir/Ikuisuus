@@ -11,6 +11,7 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useFrameLoop } from '@/lib/hooks/motion';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import styles from './gradientTabs.module.scss';
 
@@ -102,17 +103,19 @@ export const GradientTabs: React.FC<GradientTabsProps> = ({
     active?.scrollIntoView?.({ inline: 'nearest', block: 'nearest' });
   }, [activeTab]);
 
+  const schedule = useFrameLoop(updateScrollState);
+
   useEffect(() => {
     updateScrollState();
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    scroller.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState);
+    scroller.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
     return () => {
-      scroller.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
+      scroller.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
     };
-  }, [updateScrollState, tabs]);
+  }, [schedule, updateScrollState, tabs]);
 
   const scrollByStep = useCallback((direction: 1 | -1) => {
     scrollerRef.current?.scrollBy({

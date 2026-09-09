@@ -83,11 +83,13 @@ describe('PreferencesModal', () => {
     await user.click(screen.getByRole('checkbox', { name: 'sectionDecor' }));
 
     expect(document.documentElement.getAttribute('data-section-decor')).toBe(
-      'false',
+      'true',
     );
   });
 
-  it('should render both decorators drawn by default', () => {
+  /* The frames were drawn for prose the sections no longer hold, so they ship
+     off until they are drawn again; the ticker is unaffected. */
+  it('should ship the ticker drawn and the frames not', () => {
     renderModal();
 
     expect(
@@ -95,7 +97,7 @@ describe('PreferencesModal', () => {
     ).toHaveAttribute('aria-checked', 'true');
     expect(
       screen.getByRole('checkbox', { name: 'sectionDecor' }),
-    ).toHaveAttribute('aria-checked', 'true');
+    ).toHaveAttribute('aria-checked', 'false');
   });
 
   it('should carry the unit switcher, headed by the panel itself', () => {

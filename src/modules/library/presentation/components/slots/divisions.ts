@@ -1,12 +1,7 @@
 /**
  * @fileoverview Reads a sheet's divisions out of its compiled children.
  * @description A sheet is written as headings and read as divisions, and the
- * compiler hands those over in two shapes. Most divisions arrive as a section
- * that holds its own heading. The first heading inside a component is left
- * unsectioned so that the component can use it as its summary, so a division
- * that opens a shell arrives bare, with the rest of the division following it
- * as siblings. Every presentation that reshapes a sheet — folding it, paging
- * it — needs both shapes read the same way, which is what this does.
+ * compiler hands those over in two shapes.
  *
  * @module modules/library/presentation/components/slots/divisions
  * @version 1.0.0
@@ -26,6 +21,7 @@ import { headingLevelOf, isHeadingNode } from '../headingParts';
  */
 export interface DivisionProps {
   'data-anchor'?: string;
+  'data-title'?: string;
   'data-heading-level'?: number | string;
   children?: ReactNode;
 }
@@ -115,10 +111,7 @@ export function labelsOf(list: string | undefined): Map<string, string> {
 /**
  * The label an anchor stands for.
  *
- * @description The anchor is the slug of the heading it was cut from, so
- * unslugging it gives the heading back. The heading's own text is not read,
- * because a division rendered on the server reaches a client slot with parts of
- * itself still unresolved, and a label built from that would lose letters.
+ * @description The anchor is the slug of the heading it was cut from
  *
  * @param {string} anchor - Anchor to read
  * @returns {string} The label
@@ -132,11 +125,29 @@ export function titleOf(anchor: string): string {
 }
 
 /**
+ * What a heading says, when it says it in plain words.
+ *
+ * @description The anchor is the safe name, but it is a slug
+ *
+ * @param {ReactNode} heading - The heading node
+ * @returns {string | null} The words, or null when they cannot be trusted
+ */
+export function wordsOf(heading: ReactNode): string | null {
+  /* The words are read off the stamp the compiler left, never out of the
+     heading's own children: those arrive whole on the server and in pieces in
+     the browser, and a label built from them differs between the two renders,
+     which is a hydration mismatch rather than a label. */
+  if (!React.isValidElement<DivisionProps>(heading)) return null;
+  const said = heading.props['data-title'];
+  return typeof said === 'string' && said.trim() !== '' ? said.trim() : null;
+}
+
+/**
  * The run of siblings a children prop stands for.
  *
  * @description `React.Children.toArray` flattens arrays but not fragments, and
  * a single fragment is what a caller gets when the divisions were written as
- * one group. Descending through it puts both shapes on the same footing.
+ * one group.
  *
  * @param {ReactNode} children - The children prop
  * @returns {ReactNode[]} The siblings
@@ -169,8 +180,7 @@ function anchorOf(node: ReactNode): string | null {
  * The heading rank a node stands at.
  *
  * @description A heading stands at its own rank and a section stands at the
- * rank of the heading it holds. A node that carries no heading, such as the
- * anonymous section a rule opens, stands at no rank at all.
+ * rank of the heading it holds.
  *
  * @param {ReactNode} node - Node to read
  * @returns {number | null} Rank 1-6, or null when the node holds no heading
@@ -185,9 +195,7 @@ function rankOf(node: ReactNode): number | null {
 /**
  * Whether a node ends the division a bare heading opened.
  *
- * @description A heading of the same rank or higher starts the next division,
- * and a rule ends the current one outright — which is why the compiler clears
- * its section stack when it meets one.
+ * @description A heading of the same rank or higher starts the next division
  *
  * @param {ReactNode} node - Node to test
  * @param {number} rank - Rank of the heading that opened the division
@@ -266,7 +274,7 @@ export function readDivisions(
         kind: 'division',
         division: {
           anchor,
-          name: titleOf(anchor),
+          name: wordsOf(node) ?? titleOf(anchor),
           rank,
           heading: node,
           body: nodes.slice(index + 1, end),
@@ -289,7 +297,7 @@ export function readDivisions(
       kind: 'division',
       division: {
         anchor,
-        name: titleOf(anchor),
+        name: wordsOf(inner[at]) ?? titleOf(anchor),
         rank,
         heading: inner[at],
         body: inner.filter((_, position) => position !== at),
@@ -305,8 +313,7 @@ export function readDivisions(
  * How many divisions deep a run of siblings goes.
  *
  * @description A run that holds no division at all is flat; one holding a
- * division that holds another is two deep. This is what says whether a block
- * is a holder worth collapsing or a leaf that would collapse to nothing.
+ * division that holds another is two deep.
  *
  * @param {ReactNode} children - Siblings to measure
  * @returns {number} Depth, zero when nothing nests

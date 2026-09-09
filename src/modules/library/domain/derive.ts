@@ -272,10 +272,7 @@ export interface DerivedDc {
 /**
  * The DC a block's accuracy sets, with the calculation that reaches it.
  *
- * @description Every DC in the game is ten plus the accuracy behind it. The
- * card prints the number a reader needs and the working beside it, so the rule
- * is learnt from the same line that answers the question. An accuracy written
- * as a formula has no total to print, and gives only the working.
+ * @description Every DC in the game is ten plus the accuracy behind it.
  *
  * @param {string} accuracy - Accuracy as the block declares it
  * @returns {DerivedDc | null} The DC, or null when there is no accuracy to add to

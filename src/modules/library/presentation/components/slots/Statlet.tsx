@@ -1,11 +1,6 @@
 /**
  * @fileoverview A stat block for something a sheet describes rather than is.
- * @description Sheets keep running into the same thing: a plating, a drone, a
- * summoned blade, a bound homunculus — something with defences of its own, and
- * often features of its own, that is not the creature the sheet is about. It
- * is the monster block over again at a smaller size, so it is written with the
- * monster's own slots; the only question is whether the thing is a creature or
- * an object, which decides what it has to say about itself.
+ * @description Sheets keep running into the same thing
  *
  * @module modules/library/presentation/components/slots/Statlet
  * @version 1.0.0
@@ -44,8 +39,7 @@ export type StatletProps = SlotProps<MonsterSlotName> & {
 };
 
 /**
- * The defences each kind is measured by. An object does not move, and takes
- * nothing at all from a hit under its threshold.
+ * The defences each kind is measured by.
  */
 const DEFENCES: Record<StatletKind, readonly MonsterSlotName[]> = {
   creature: ['armorClass', 'hitPoints', 'speed'],
@@ -53,8 +47,7 @@ const DEFENCES: Record<StatletKind, readonly MonsterSlotName[]> = {
 };
 
 /**
- * What each kind lists under its table, in order. An object has no mind to
- * save with, nothing to perceive with, and no language.
+ * What each kind lists under its table, in order.
  */
 const LISTS: Record<StatletKind, readonly MonsterSlotName[]> = {
   creature: [
@@ -77,8 +70,7 @@ const LISTS: Record<StatletKind, readonly MonsterSlotName[]> = {
 };
 
 /**
- * The line a thing opens with. A creature names its size, kind and bearing the
- * way a monster does; an object is only ever its size.
+ * The line a thing opens with.
  *
  * @param {StatletKind} kind - What the thing is
  * @param {Partial<Record<MonsterSlotName, ReactNode>>} values - Its slots

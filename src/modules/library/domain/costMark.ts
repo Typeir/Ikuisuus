@@ -38,8 +38,7 @@ const COST_MARKS: ReadonlyArray<readonly [RegExp, CostMark]> = [
  * How many of a cost a block spends.
  *
  * @description A block that spends two deeds wears two glyphs, so the price is
- * read at a glance rather than counted out of the text. A cost with no number
- * is one of whatever it names.
+ * read at a glance rather than counted out of the text.
  *
  * @param {ReactNode} cost - The cost as the page states it
  * @returns {number} Units spent, at least one

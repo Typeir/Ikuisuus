@@ -13,7 +13,8 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useEffect, useMemo, useRef } from 'react';
+import { useViewportSignal } from '@/lib/hooks/motion';
+import React, { useMemo, useRef } from 'react';
 import styles from './ParallaxBackdrop.module.scss';
 
 /**
@@ -81,7 +82,6 @@ export const ParallaxBackdrop: React.FC<ParallaxBackdropProps> = ({
   className,
 }) => {
   const imgRef = useRef<HTMLImageElement | null>(null);
-  const rafRef = useRef<number | null>(null);
 
   const clamp = useMemo(
     () => (value: number, min: number, max: number) =>
@@ -89,32 +89,12 @@ export const ParallaxBackdrop: React.FC<ParallaxBackdropProps> = ({
     [],
   );
 
-  useEffect(() => {
+  useViewportSignal(() => {
     const img = imgRef.current;
     if (!img) return;
-
-    const update = () => {
-      const scrollY = window.scrollY || 0;
-      const shift = clamp(-scrollY * intensity, -maxShiftPx, maxShiftPx);
-      img.style.transform = `translate3d(0, ${shift}px, 0) scale(1.06)`;
-      rafRef.current = null;
-    };
-
-    const onScroll = () => {
-      if (rafRef.current !== null) return;
-      rafRef.current = window.requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (rafRef.current !== null) {
-        window.cancelAnimationFrame(rafRef.current);
-      }
-    };
-  }, [clamp, intensity, maxShiftPx]);
+    const shift = clamp(-(window.scrollY || 0) * intensity, -maxShiftPx, maxShiftPx);
+    img.style.transform = `translate3d(0, ${shift}px, 0) scale(1.06)`;
+  });
 
   return (
     <div

@@ -1,7 +1,6 @@
 /**
  * @fileoverview Folds named divisions of a sheet into disclosures.
- * @description A long sheet is easier to skim when its divisions collapse. The
- * fold is taken at the division, not at the blocks inside it.
+ * @description A long sheet is easier to skim when its divisions collapse.
  *
  * @module modules/library/presentation/components/slots/Fold
  * @version 1.1.0
@@ -37,9 +36,7 @@ export interface FoldProps {
  * Walks a run of siblings, folding the divisions the caller named.
  *
  * @description A node that is not a named division is still walked, since a
- * named division may sit anywhere beneath it. Divisions nest, so a body is
- * folded before it is put away: Attacks sits inside Features and folds in its
- * own right.
+ * named division may sit anywhere beneath it.
  *
  * @param {ReactNode} children - Nodes to walk
  * @param {Set<string>} anchors - Anchors to fold
