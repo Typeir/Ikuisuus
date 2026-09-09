@@ -41,6 +41,13 @@ $ground-lead: 0.6rem;
   );
 }
 
+/* A footer carries the sheets a page holds rather than the sections one sheet
+   holds, so it needs no run beneath it to stay pinned against: it rests at the
+   bottom of what is there. */
+.body[data-foot='true'] {
+  min-block-size: 0;
+}
+
 .strip {
   position: sticky;
   top: var(--sheet-offset);
@@ -94,6 +101,35 @@ $ground-lead: 0.6rem;
        holds that line and the sheet's header hangs below it. */
     @media (min-width: 1024px) {
       inset-block: 0;
+    }
+  }
+
+  /* The same bar read from the other end: it rests at the bottom, stands as
+     tall as the layout's own footer rather than its title, and its rule and
+     its shadow face up. Every measure it uses is the header's, so moving one
+     moves both. */
+  &[data-foot='true'] {
+    top: auto;
+    bottom: 0;
+    margin-block: 1.25rem 0;
+
+    @media (min-width: 1024px) {
+      min-block-size: var(--sheet-footline, 3.25rem);
+    }
+
+    &::after {
+      border-bottom: none;
+      border-top: var(--border-width-xs) solid var(--color-border);
+    }
+
+    &[data-stuck='true']::after {
+      inset-block: -0.85rem calc(-1 * #{$ground-lead});
+      border-top-color: var(--color-accent);
+      box-shadow: 0 -8px 16px -12px var(--color-shadow);
+
+      @media (min-width: 1024px) {
+        inset-block: 0;
+      }
     }
   }
 }

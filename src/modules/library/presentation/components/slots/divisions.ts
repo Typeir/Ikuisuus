@@ -311,10 +311,30 @@ export function readDivisions(
  * @param {ReactNode} children - Siblings to measure
  * @returns {number} Depth, zero when nothing nests
  */
+/**
+ * Whether a node is a sheet in its own right.
+ *
+ * @description A sheet nested in another pages its own divisions, so the one
+ * around it reads it as a single node and never rewrites what is inside.
+ *
+ * @param {ReactNode} node - Node to test
+ * @returns {boolean} True when the node is a sheet
+ */
+export function isSheet(node: ReactNode): boolean {
+  return (
+    React.isValidElement(node) &&
+    (node.type as { displayName?: string })?.displayName === 'Sheet'
+  );
+}
+
 export function nestDepth(children: ReactNode): number {
   let deepest = 0;
   for (const node of siblingsOf(children)) {
     if (!React.isValidElement<DivisionProps>(node)) continue;
+    /* A sheet inside a sheet pages its own divisions. They belong to its depth
+       and not to this one's, and counting them would fold a whole sheet away
+       behind a heading. */
+    if (isSheet(node)) continue;
     const inner = nestDepth(node.props.children);
     /* A card's own heading is not a level of its own, and the card that holds
        it has not drawn it yet — the depth is read off the anchors the compiler

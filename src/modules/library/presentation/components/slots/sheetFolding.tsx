@@ -12,6 +12,7 @@
 import React, { type ReactElement, type ReactNode } from 'react';
 import {
   anyDivision,
+  isSheet,
   nestDepth,
   readDivisions,
   type Division,
@@ -123,6 +124,8 @@ export function foldHolders(
 
     const node = part.node;
     if (!React.isValidElement<DivisionProps>(node)) return node;
+    /* A sheet nested in another keeps its own insides. */
+    if (isSheet(node)) return node;
     /* A card is left whole. Its heading has not been drawn yet — the block
        that draws it reads it out of these same children — so rewriting them
        would take the heading away from it. Collapsing a card is the card's

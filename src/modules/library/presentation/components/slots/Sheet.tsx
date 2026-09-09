@@ -19,6 +19,7 @@ import {
   usePersistentUiStateOptional,
 } from '@/lib/context/PersistentUiContext';
 import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
+import { scrollParentOf } from '@/lib/utils/scrollParentOf';
 import React, {
   useCallback,
   useEffect,
@@ -39,6 +40,7 @@ import {
 } from './divisions';
 import { CardFoldProvider } from './cardFold';
 import { foldHolders, holdOf, rebuild } from './sheetFolding';
+import SheetBar from './SheetBar';
 import styles from './sheet.module.scss';
 
 /**
@@ -53,11 +55,24 @@ import styles from './sheet.module.scss';
  */
 export interface SheetProps {
   pages?: string;
-  level?: number;
+  level?: number | string;
   nest?: number;
   closed?: boolean;
+  foot?: boolean;
   children?: ReactNode;
 }
+
+/**
+ * The layout's own bars, and the properties the sheet keeps their heights in.
+ *
+ * @description The sheet's header stands as tall as the sidebar's title and
+ * its footer as tall as the sidebar's footer, so both are read from the same
+ * place at the same time and neither can drift from the other.
+ */
+const EDGES: ReadonlyArray<readonly [string, string]> = [
+  ['.sidebar-header', '--sheet-headline'],
+  ['.sidebar-footer', '--sheet-footline'],
+];
 
 /**
  * Sheet component.
@@ -76,12 +91,16 @@ const Sheet: React.FC<SheetProps> = ({
   level = 2,
   nest = 1,
   closed = false,
+  foot = false,
   children,
 }) => {
   const labels = labelsOf(wantedList);
   const named = anchorsOf(wantedList);
+  /* Written in content the rank arrives as text, and a rank that never equals
+     any heading's would quietly page nothing. */
+  const rank = typeof level === 'number' ? level : Number(level) || 2;
   /* Naming the pages is an override; left alone, every subsection is one. */
-  const wanted = named.size > 0 ? byAnchor(named) : byRank(level);
+  const wanted = named.size > 0 ? byAnchor(named) : byRank(rank);
   const lead: ReactNode[] = [];
   const pages: Division[] = [];
 
@@ -110,6 +129,8 @@ const Sheet: React.FC<SheetProps> = ({
   /* Whether the header is pinned, readable from an effect without making the
      effect run on every change of it. */
   const pinned = useRef(false);
+  /** The trailing height last written, so a rounding wobble is not rewritten. */
+  const trailing = useRef(-1);
   const [offset, setOffset] = useState(0);
 
   /* Where the header rests is the stylesheet's to say, and it says something
@@ -134,12 +155,26 @@ const Sheet: React.FC<SheetProps> = ({
     const box = body.current;
     if (!box) return;
     const root = document.documentElement;
-    const scroller = document.scrollingElement ?? root;
-    const bottom = box.getBoundingClientRect().bottom + window.scrollY;
-    box.style.setProperty(
-      '--sheet-trailing',
-      `${Math.max(0, scroller.scrollHeight - bottom)}px`,
-    );
+    /* Embedded in a frame the page scrolls inside a container, so the run ends
+       where that container's content does rather than where the document's
+       does. */
+    const view = scrollParentOf(box);
+    const scroller = view ?? document.scrollingElement ?? root;
+    const bottom =
+      box.getBoundingClientRect().bottom -
+      (view ? view.getBoundingClientRect().top : 0) +
+      (view ? view.scrollTop : window.scrollY);
+    /* This number sets the run's own height, so writing it resizes what was
+       just measured and the observer runs again. The two cancel exactly, but
+       `scrollHeight` is a whole number and the box's edge is not, so the
+       result can land a pixel either side and hand the loop a reason to go
+       round forever. A pixel is below what anyone can see and above what the
+       rounding can invent, so a change that small is not worth a write. */
+    const next = Math.max(0, Math.round(scroller.scrollHeight - bottom));
+    if (Math.abs(next - trailing.current) >= 2) {
+      trailing.current = next;
+      box.style.setProperty('--sheet-trailing', `${next}px`);
+    }
 
     /* The header's ground reaches the edges of the page and no further. Told
        to run a viewport past each side it would clear them, but the surplus is
@@ -158,10 +193,14 @@ const Sheet: React.FC<SheetProps> = ({
        Its height is read rather than written down, and rather than imposed:
        holding the layout's header to a number the sheet chose is what makes it
        grow and the menu beneath it stutter. */
-    const headline = document.querySelector('.sidebar-header');
-    const tall = headline ? headline.getBoundingClientRect().height : 0;
-    if (tall > 0) box.style.setProperty('--sheet-headline', `${tall}px`);
-    else box.style.removeProperty('--sheet-headline');
+    /* One reading for both bars, so the header cannot come out level with the
+       layout's title while the footer drifts off its rule. */
+    for (const [selector, prop] of EDGES) {
+      const edge = document.querySelector(selector);
+      const tall = edge ? edge.getBoundingClientRect().height : 0;
+      if (tall > 0) box.style.setProperty(prop, `${tall}px`);
+      else box.style.removeProperty(prop);
+    }
   }, []);
 
   useEffect(() => {
@@ -255,15 +294,23 @@ const Sheet: React.FC<SheetProps> = ({
     const edge = offset + 1;
     const observer = new IntersectionObserver(
       ([entry]) => {
+        /* The strip pins to the top of whatever it scrolls in, which is the
+           viewport on a page and a container in a frame. `rootBounds` already
+           carries the margin below, so it is the pin line in both. */
+        const line = entry.rootBounds?.top ?? edge;
         const on =
-          entry.intersectionRatio < 1 && entry.boundingClientRect.top <= edge;
+          entry.intersectionRatio < 1 && entry.boundingClientRect.top <= line;
         pinned.current = on;
         setStuck(on);
       },
       /* Zero as well as one: arriving by a jump rather than a scroll takes the
          strip from outside the root straight to pinned, never passing through
          wholly-inside, and a lone threshold of one would not fire at all. */
-      { threshold: [0, 1], rootMargin: `-${edge}px 0px 0px 0px` },
+      {
+        root: scrollParentOf(row),
+        threshold: [0, 1],
+        rootMargin: `-${edge}px 0px 0px 0px`,
+      },
     );
     observer.observe(row);
     return () => observer.disconnect();
@@ -275,30 +322,28 @@ const Sheet: React.FC<SheetProps> = ({
   const turning =
     leaving !== null && leaving !== active && pages[leaving] !== undefined;
 
+  /* A footer carries the sheets a page holds rather than the sections one
+     sheet holds, so it rests at the bottom and is grounded from the start:
+     there is nothing above it for it to rise out of. */
+  const bar = (
+    <SheetBar
+      pages={pages}
+      labels={labels}
+      active={active}
+      foot={foot}
+      stuck={stuck}
+      innerRef={strip}
+      onTurn={turn}
+    />
+  );
+
   return (
     <div className={styles.sheet} data-sheet>
       {lead}
       {/* A sticky box travels only inside its containing block, so the header
           and the page it heads share one. */}
-      <div ref={body} className={styles.body}>
-        <div
-          ref={strip}
-          className={styles.strip}
-          data-stuck={stuck ? 'true' : undefined}
-          role='tablist'>
-          {pages.map((entry, index) => (
-            <button
-              key={entry.anchor}
-              type='button'
-              role='tab'
-              aria-selected={index === active}
-              className={styles.tab}
-              data-active={index === active ? 'true' : undefined}
-              onClick={() => turn(index)}>
-              {labels.get(entry.anchor) ?? entry.name}
-            </button>
-          ))}
-        </div>
+      <div ref={body} className={styles.body} data-foot={foot ? 'true' : undefined}>
+        {!foot && bar}
         {/* Both panels are keyed by their page, so turning mounts the one
             arriving and keeps the one leaving until the seam has crossed. */}
         <div className={styles.stack}>
@@ -329,6 +374,7 @@ const Sheet: React.FC<SheetProps> = ({
             </CardFoldProvider>
           </div>
         </div>
+        {foot && bar}
       </div>
     </div>
   );
