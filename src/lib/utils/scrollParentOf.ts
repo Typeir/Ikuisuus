@@ -18,9 +18,17 @@
  * @returns {HTMLElement | null} The scrolling ancestor, or null for the document.
  */
 export function scrollParentOf(node: HTMLElement | null): HTMLElement | null {
-  for (let el = node?.parentElement ?? null; el; el = el.parentElement) {
+  const stop = [document.body, document.documentElement];
+  for (
+    let el = node?.parentElement ?? null;
+    el && !stop.includes(el);
+    el = el.parentElement
+  ) {
     const { overflowY } = getComputedStyle(el);
     if (overflowY === 'auto' || overflowY === 'scroll') return el;
   }
+  /* The document scrolling is the viewport scrolling, and the two are not the
+     same to an observer: rooted at the document element it reports nothing a
+     page can use. Null is what asks for the viewport. */
   return null;
 }

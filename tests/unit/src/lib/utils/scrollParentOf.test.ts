@@ -63,6 +63,17 @@ describe('scrollParentOf', () => {
     expect(scrollParentOf(leaf)).toBe(middle);
   });
 
+  it('should ask for the viewport when only the document scrolls', () => {
+    const [, , leaf] = chain(3);
+    document.documentElement.style.overflowY = 'auto';
+    document.body.style.overflowY = 'auto';
+
+    expect(scrollParentOf(leaf)).toBeNull();
+
+    document.documentElement.style.overflowY = '';
+    document.body.style.overflowY = '';
+  });
+
   it('should not treat the node itself as its own scroller', () => {
     const [, , leaf] = chain(3);
     leaf.style.overflowY = 'auto';
