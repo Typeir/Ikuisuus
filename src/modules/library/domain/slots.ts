@@ -187,6 +187,8 @@ export const FEAT_SLOTS = {
  * Slots of an attack inside an action
  */
 export const ATTACK_SLOTS = {
+  cost: 'Cost',
+  recharge: 'Recharge',
   accuracy: 'Accuracy',
   reach: 'Reach',
   range: 'Range',

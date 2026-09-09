@@ -193,8 +193,22 @@ const Feature: React.FC<FeatureProps> = ({
   const entries = slotNames
     .filter((name) => printed[name] !== undefined)
     .map((name) => ({ name, value: constructed(name, printed[name], t) }));
-  const cost = entries.find((entry) => entry.name === 'cost')?.value;
-  const rows = entries.filter((entry) => entry.name !== 'cost');
+  /* What a block costs and how it comes back are one statement, read beside
+     the name: "Giant Hammer — 1 Major Action (Recharge 5–6)". Neither takes a
+     row of its own in the grid. */
+  const spend = entries.find((entry) => entry.name === 'cost')?.value;
+  const recharge = entries.find((entry) => entry.name === 'recharge')?.value;
+  const cost =
+    recharge === undefined ? (
+      spend
+    ) : (
+      <>
+        {spend !== undefined && <>{spend} </>}({t('slots.recharge')} {recharge})
+      </>
+    );
+  const rows = entries.filter(
+    (entry) => entry.name !== 'cost' && entry.name !== 'recharge',
+  );
 
   const level = headingNode ? headingLevelOf(headingNode) : 0;
   const Tag = HEADING_TAGS[level];

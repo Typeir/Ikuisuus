@@ -138,10 +138,18 @@
 }
 
 /* The cost at the right edge of the heading's first line. */
+/* A baseline here is the bottom of the carousel's box, not of any text in it,
+   since its glyphs are taken out of flow — which lifts the whole cluster off
+   the line it sits on. The centre is what the row actually shares.
+   The float pins this box's top to the line box, so a box taller than the
+   heading's text hangs its centred contents below the text's own centre. Held
+   to one line of the heading, the overflow is even on both sides and the two
+   centres are the same. */
 .headingMeta {
   float: right;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
+  block-size: 1lh;
   gap: 0.75rem;
   margin-left: 1rem;
   white-space: nowrap;

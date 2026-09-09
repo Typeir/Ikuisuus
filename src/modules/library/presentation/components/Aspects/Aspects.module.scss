@@ -422,15 +422,29 @@ span.aspect {
 .carouselWrap[data-size='xs'] {
   --size: 15px;
 
-  flex: 0 1 auto;
+  flex: 0 0 auto;
   gap: 0.1rem;
 
   .controls {
     height: calc(var(--size) + 4px);
   }
 
+  /* Set in a heading there is no room beneath the toggle to hang a count, and
+     one hung there lands on the heading rule and the tag beside it. It reads
+     along the button instead. */
+  .toggleWrap {
+    align-items: center;
+  }
+
+  .count {
+    position: static;
+    transform: none;
+    margin-inline-start: 1px;
+    font-size: 0.58rem;
+  }
+
   .carousel {
-    --step-packed: 4px;
+    --step-packed: 6px;
     --step-open: 19px;
     --inset: 3px;
     --bleed: 0.22rem;
