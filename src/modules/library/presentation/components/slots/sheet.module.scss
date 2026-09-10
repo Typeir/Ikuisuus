@@ -234,7 +234,13 @@ $ground-lead: 0.6rem;
   opacity: 0.9;
 }
 
+/* A footer already stands in the page's own column — it is fixed to it — so
+   its rail has only to fill the bar it is drawn on. Pulled out to the sidebar
+   the way a header's rail is, it would start under the sidebar and run off the
+   far edge by the same amount. */
 .strip[data-foot='true'] .rail {
   inset-block: 0 auto;
+  inset-inline: 0;
+  inline-size: auto;
 }
 
