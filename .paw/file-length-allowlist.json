@@ -103,5 +103,15 @@
     "file": "src/lib/components/characterSheet/characterSheetWidgets.module.scss",
     "maxLines": 400,
     "justification": "Comprehensive widget styles for ability score blocks, combat stats, skills, tools, attacks, features, boons, notes, and shard markdown rendering — all tightly coupled to the character sheet layout"
+  },
+  {
+    "file": "vitest.config.ts",
+    "maxLines": 320,
+    "justification": "Vitest project definitions must stay inline in one config so the whole split is visible and the include globs stay grep-able"
+  },
+  {
+    "file": "tests/scripts/runTests.ts",
+    "maxLines": 300,
+    "justification": "Test orchestrator keeps project orchestration, concurrency parsing, and summary reporting in one CLI module"
   }
 ]

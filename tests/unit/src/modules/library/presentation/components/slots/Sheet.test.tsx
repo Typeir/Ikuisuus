@@ -72,7 +72,7 @@ describe('Sheet', () => {
   it('makes one tab per named division, bare or wrapped', () => {
     render(<Sheet pages='traits, features'>{sheet()}</Sheet>);
 
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+    expect(screen.getAllByRole('button').map((tab) => tab.textContent)).toEqual([
       'Traits',
       'Features',
     ]);
@@ -81,27 +81,34 @@ describe('Sheet', () => {
   it('prints the label an entry asks for', () => {
     render(<Sheet pages='traits: What It Is, features'>{sheet()}</Sheet>);
 
-    expect(screen.getAllByRole('tab')[0].textContent).toBe('What It Is');
+    expect(screen.getAllByRole('button')[0].textContent).toBe('What It Is');
   });
 
-  it('shows only the selected page, first one first', () => {
-    render(<Sheet pages='traits, features'>{sheet()}</Sheet>);
-
-    expect(screen.getByRole('tabpanel').textContent).toContain('A passive.');
-    expect(screen.getByRole('tabpanel').textContent).not.toContain('A swing.');
-  });
-
-  it('turns to the page a tab names', async () => {
-    const user = userEvent.setup();
-    render(<Sheet pages='traits, features'>{sheet()}</Sheet>);
-
-    await user.click(screen.getAllByRole('tab')[1]);
-
-    expect(screen.getByRole('tabpanel').textContent).toContain('A swing.');
-    expect(screen.getAllByRole('tab')[1]).toHaveAttribute(
-      'aria-selected',
-      'true',
+  it('writes every section out, in the order they were given', () => {
+    const { container } = render(
+      <Sheet pages='traits, features'>{sheet()}</Sheet>,
     );
+
+    const sections = container.querySelectorAll('[data-sheet-page]');
+    expect(sections).toHaveLength(2);
+    expect(sections[0].textContent).toContain('A passive.');
+    expect(sections[1].textContent).toContain('A swing.');
+  });
+
+  /* The bar names where the reader is, so asking for a section is asking to
+     be taken there rather than setting anything. */
+  it('takes the reader to the section a tab names', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <Sheet pages='traits, features'>{sheet()}</Sheet>,
+    );
+    const into = vi.fn();
+    const second = container.querySelectorAll('[data-sheet-page]')[1];
+    (second as HTMLElement).scrollIntoView = into;
+
+    await user.click(screen.getAllByRole('button')[1]);
+
+    expect(into).toHaveBeenCalledTimes(1);
   });
 
   /* What comes before the first page introduces the sheet, so it stays put
@@ -120,7 +127,7 @@ describe('Sheet', () => {
   it('makes a tab of every subsection when it is told none', () => {
     render(<Sheet>{sheet()}</Sheet>);
 
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+    expect(screen.getAllByRole('button').map((tab) => tab.textContent)).toEqual([
       'Traits',
       'Features',
     ]);
@@ -138,7 +145,7 @@ describe('Sheet', () => {
       </Sheet>,
     );
 
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+    expect(screen.getAllByRole('button').map((tab) => tab.textContent)).toEqual([
       'Attacks',
       'Deeds',
     ]);
@@ -172,7 +179,7 @@ describe('Sheet', () => {
       </Sheet>,
     );
 
-    expect(screen.queryAllByRole('tab')).toHaveLength(0);
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
     expect(screen.getByText('Only prose.')).toBeInTheDocument();
   });
 });

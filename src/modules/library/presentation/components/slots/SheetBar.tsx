@@ -1,6 +1,9 @@
 /**
  * @fileoverview The row of tabs a sheet is turned by.
- * @description One row, set at whichever end the sheet is read from
+ * @description One row, set at whichever end the sheet is read from. Every
+ * section is on the page at once, so this names the one the reader has
+ * reached and takes them to any of the others; it is a way about the sheet
+ * rather than a choice of what the sheet shows.
  *
  * @module modules/library/presentation/components/slots/SheetBar
  * @version 1.0.0
@@ -20,11 +23,12 @@ import styles from './sheet.module.scss';
  * @property {Division[]} pages - The pages it turns between
  * @property {string[]} names - What to print for each page, in order
  * @property {Map<string, string>} labels - Names given in content, by anchor
- * @property {number} active - Index of the page showing
+ * @property {number} active - Index of the section the reader has reached
  * @property {boolean} foot - Set at the bottom rather than the top
  * @property {boolean} stuck - Whether it has taken its ground
  * @property {RefObject<HTMLDivElement | null>} innerRef - Handle on the row
- * @property {(index: number) => void} onTurn - Asked for another page
+ * @property {(index: number) => void} onTurn - Asked to be taken to a section
+ * @property {boolean} [read] - Whether it draws how far the reader has come
  */
 export interface SheetBarProps {
   pages: Division[];
@@ -58,13 +62,16 @@ const SheetBar = ({
     className={styles.strip}
     data-foot={foot ? 'true' : undefined}
     data-stuck={foot || stuck ? 'true' : undefined}
-    role='tablist'>
+    role='group'
+    aria-label='Sections'>
+    <div className={styles.rail} aria-hidden='true'>
+      <div className={styles.railFill} />
+    </div>
     {pages.map((entry, index) => (
       <button
         key={entry.anchor}
         type='button'
-        role='tab'
-        aria-selected={index === active}
+        aria-current={index === active ? 'true' : undefined}
         className={styles.tab}
         data-active={index === active ? 'true' : undefined}
         onClick={() => onTurn(index)}>

@@ -46,7 +46,6 @@ export const PERSISTED_UI_ACTION_TYPES = {
   SET_CONSTRAINED_HUE: 'PERSISTED_UI/SET_CONSTRAINED_HUE',
   SET_STREAM_TEXT: 'PERSISTED_UI/SET_STREAM_TEXT',
   SET_SECTION_DECOR: 'PERSISTED_UI/SET_SECTION_DECOR',
-  SET_SHEET_PAGE: 'PERSISTED_UI/SET_SHEET_PAGE',
   RESET: 'PERSISTED_UI/RESET',
 } as const;
 
@@ -137,8 +136,6 @@ export interface PersistentUiState {
   constrainedHue: boolean;
   streamText: boolean;
   sectionDecor: boolean;
-  /** Anchor of the division a reader last opened on a sheet. */
-  sheetPage: string;
   isHydrated: boolean;
 }
 
@@ -182,7 +179,6 @@ export interface SerializedPersistentUiState {
   textScale?: number;
   proseMeasure?: number;
   constrainedHue?: boolean;
-  sheetPage?: string;
   streamText?: boolean;
   sectionDecor?: boolean;
 }
@@ -376,18 +372,6 @@ export interface SetSectionDecorAction {
 }
 
 /**
- * Action to remember which division of a sheet a reader has open.
- *
- * @interface SetSheetPageAction
- * @property {typeof PERSISTED_UI_ACTION_TYPES.SET_SHEET_PAGE} type - Action type identifier
- * @property {{ anchor: string }} payload - Anchor of the division now open
- */
-export interface SetSheetPageAction {
-  type: typeof PERSISTED_UI_ACTION_TYPES.SET_SHEET_PAGE;
-  payload: { anchor: string };
-}
-
-/**
  * Action to reset state to defaults
  *
  * @interface ResetAction
@@ -418,7 +402,6 @@ export type PersistentUiAction =
   | SetConstrainedHueAction
   | SetStreamTextAction
   | SetSectionDecorAction
-  | SetSheetPageAction
   | ResetAction;
 
 /**
@@ -485,7 +468,6 @@ export const DEFAULT_PERSISTENT_UI_STATE: PersistentUiState = {
   constrainedHue: false,
   streamText: DEFAULT_STREAM_TEXT,
   sectionDecor: DEFAULT_SECTION_DECOR,
-  sheetPage: '',
   isHydrated: false,
 };
 

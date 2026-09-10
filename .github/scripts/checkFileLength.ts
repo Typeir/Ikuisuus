@@ -5,6 +5,9 @@
  * thresholds and reports them as critical findings.
  *
  * @module .github/scripts/check-file-length
+ * @version 1.0.0
+ * @author Typeir
+ * @since 1.0.0
  */
 
 import { promises as fs } from 'node:fs';
@@ -159,7 +162,7 @@ async function findFiles(
 /**
  * Count effective (non-blank, non-comment) lines from file content.
  *
- * @param content File content string
+ * @param {string} content - File content string
  * @returns Effective line count
  */
 function countLinesFromContent(content: string): number {
@@ -249,7 +252,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
  */
 async function main(): Promise<void> {
   const result = await runCheck();
-  console.log(JSON.stringify(result, null, 2));
+  process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   process.exit(result.passed ? 0 : 1);
 }
 

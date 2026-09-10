@@ -1,4 +1,3 @@
-/* paw:gate:antipatterns:console-log ignore */
 /**
  * Test Runner — Parallel Project Orchestrator
  *
@@ -244,7 +243,7 @@ function resolveConcurrency(args: string[]): number {
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
 
-    // Skip non-flag arguments (test paths)
+    /* Skip non-flag arguments (test paths) */
     if (!arg.startsWith('--')) {
       continue;
     }
@@ -301,9 +300,9 @@ function isSuppressedStderr(output: string): boolean {
  */
 function runProject(project: string): Promise<number> {
   return new Promise((resolve) => {
-    console.log(`\n${'─'.repeat(50)}`);
-    console.log(`▶ Running project: ${project}`);
-    console.log('─'.repeat(50));
+    process.stdout.write(`\n${'─'.repeat(50)}\n`);
+    process.stdout.write(`▶ Running project: ${project}\n`);
+    process.stdout.write('─'.repeat(50) + '\n');
 
     const child = spawn('vitest', ['run', '--project', project], {
       stdio: ['inherit', 'inherit', 'pipe'],
@@ -320,9 +319,9 @@ function runProject(project: string): Promise<number> {
     child.on('close', (code: number | null) => {
       const exitCode = code ?? 1;
       if (exitCode === 0) {
-        console.log(`✅ ${project} — passed`);
+        process.stdout.write(`✅ ${project} — passed\n`);
       } else {
-        console.log(`❌ ${project} — failed (exit ${exitCode})`);
+        process.stdout.write(`❌ ${project} — failed (exit ${exitCode})\n`);
       }
       resolve(exitCode);
     });
@@ -377,35 +376,35 @@ async function main(): Promise<void> {
   const cliArgs = process.argv.slice(2);
   const concurrency = resolveConcurrency(cliArgs);
 
-  // Extract specific projects from test paths if provided
+  /* Extract specific projects from test paths if provided */
   const specifiedProjects = extractProjectsFromArgs(cliArgs);
   const projects = specifiedProjects
     ? sortProjectsByWeight(Array.from(specifiedProjects))
     : sortProjectsByWeight(PROJECTS);
 
   const source = specifiedProjects ? 'specified' : 'all';
-  console.log(
+  process.stdout.write(
     `🧪 Running ${projects.length} test projects (${source}) with concurrency ${concurrency}...\n`,
   );
 
   const results = await runProjects(projects, concurrency);
 
-  console.log(`\n${'═'.repeat(50)}`);
-  console.log('📊 Test Results Summary');
-  console.log('═'.repeat(50));
+  process.stdout.write(`\n${'═'.repeat(50)}\n`);
+  process.stdout.write('📊 Test Results Summary\n');
+  process.stdout.write('═'.repeat(50) + '\n');
 
   const failed = results.filter((r) => r.exitCode !== 0);
   const passed = results.filter((r) => r.exitCode === 0);
 
   for (const r of results) {
     const icon = r.exitCode === 0 ? '✅' : '❌';
-    console.log(`  ${icon} ${r.project}`);
+    process.stdout.write(`  ${icon} ${r.project}\n`);
   }
 
-  console.log(`\n  Passed: ${passed.length}/${projects.length}`);
+  process.stdout.write(`\n  Passed: ${passed.length}/${projects.length}\n`);
 
   if (failed.length > 0) {
-    console.log(`  Failed: ${failed.map((f) => f.project).join(', ')}`);
+    process.stdout.write(`  Failed: ${failed.map((f) => f.project).join(', ')}\n`);
     process.exit(1);
   }
 

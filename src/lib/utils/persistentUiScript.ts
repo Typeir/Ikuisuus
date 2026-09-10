@@ -80,7 +80,6 @@ export function getPersistentUiInitScript(): string {
         var aspectDisplay = 'compact';
         var aspectExpanded = false;
         var streamText = true;
-        var sheetPage = '';
         var sectionDecor = ${DEFAULT_SECTION_DECOR};
         var constrainedHue = false;
         var textScale = ${DEFAULT_TEXT_SCALE};
@@ -102,9 +101,6 @@ export function getPersistentUiInitScript(): string {
             if (typeof state.aspectExpanded === 'boolean') {
               aspectExpanded = state.aspectExpanded;
             }
-            if (typeof state.sheetPage === 'string') {
-              sheetPage = state.sheetPage;
-            }
             if (typeof state.streamText === 'boolean') {
               streamText = state.streamText;
             }
@@ -120,7 +116,6 @@ export function getPersistentUiInitScript(): string {
           }
         }
 
-        document.documentElement.setAttribute('data-sheet-page', sheetPage);
         document.documentElement.setAttribute('data-aspect-display', aspectDisplay);
         document.documentElement.setAttribute('data-aspect-expanded', aspectExpanded ? 'true' : 'false');
         document.documentElement.setAttribute('data-stream-text', streamText ? 'true' : 'false');

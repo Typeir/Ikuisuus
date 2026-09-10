@@ -3,6 +3,7 @@
  * @module tests/unit/src/lib/hooks/motion/useResizeSignal.test
  * @version 2.0.0
  * @author Typeir
+ * @since 8.0.0
  *
  * @requires vitest Testing framework
  *

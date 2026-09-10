@@ -28,9 +28,11 @@ vi.mock('next-intl', async (importOriginal) => {
 beforeAll(() => {
   class MockObserver {
     constructor(private readonly callback: IntersectionObserverCallback) {}
-    observe(): void {
+    /* A real observer names the element it saw, and what shares one observer
+       between many elements has nothing else to tell them apart by. */
+    observe(target: Element): void {
       this.callback(
-        [{ isIntersecting: true } as IntersectionObserverEntry],
+        [{ target, isIntersecting: true } as IntersectionObserverEntry],
         this as unknown as IntersectionObserver,
       );
     }

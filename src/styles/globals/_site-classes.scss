@@ -1,5 +1,16 @@
 @use 'mixins' as *;
 
+/* How wide the sidebar stands, so anything meant to span the page beside it
+   can be sized without measuring. It matches the width the layout shell gives
+   its aside, and is nothing at all on a screen too narrow to hold one. */
+:root {
+  --layout-sidebar: 0px;
+
+  @media (min-width: 1024px) {
+    --layout-sidebar: 20rem;
+  }
+}
+
 /* ============================================
    SITE-WIDE CLASSES
 ============================================ */
@@ -42,13 +53,6 @@
       display: none;
     }
   }
-}
-
-/* A reader who stored a division of a sheet is moved to it the moment the
-   page comes alive */
-html[data-sheet-page]:not([data-sheet-page=''])
-  .prose:has([data-sheet]):not([data-settled='true']) {
-  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

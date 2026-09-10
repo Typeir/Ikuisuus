@@ -1,9 +1,6 @@
 @use 'mixins' as *;
 @use 'variables' as *;
 
-/* Softness of the seam, as a share of the page's width. */
-$seam-feather: 13%;
-
 /* How far the header's ground reaches above the row it carries. */
 $ground-lead: 0.6rem;
 
@@ -11,9 +8,10 @@ $ground-lead: 0.6rem;
   /* Where the header comes to rest. */
   --sheet-offset: 0px;
 
-  /* How long a page turn takes */
-  --sheet-turn: 0.5s;
-  --sheet-fade: 0.4s;
+
+  /* How far through the sheet the reader has come, nought to one, written by
+     the bar as they scroll. Only the bar's own gradient reads it. */
+  --sheet-read: 0;
 
   display: block;
 
@@ -25,13 +23,9 @@ $ground-lead: 0.6rem;
 /* Header and page share one screen's budget, less whatever the layout puts
    under the sheet */
 .body {
-  /* Its own formatting context, so a page's closing margin stays inside it
-     and what lies under the sheet measures the same whichever page is up. */
+  /* Its own formatting context, so a section's closing margin stays inside it. */
   display: flow-root;
   margin-block-start: 0.5rem;
-  min-block-size: calc(
-    100svh - var(--sheet-trailing, 0px) - var(--sheet-offset)
-  );
 }
 
 /* A footer carries the sheets a page holds rather than the sections one sheet
@@ -121,12 +115,13 @@ $ground-lead: 0.6rem;
     position: fixed;
     top: auto;
     bottom: 0;
-    /* The ground runs the width of the screen, the way a footer does, while
-       what it carries is inset to the column the page is read in — past the
-       sidebar and the prose's own margin, which is what the run's left edge
-       already measures. */
-    inset-inline: 0;
-    padding-inline: var(--sheet-bleed-start, 0px) var(--sheet-bleed-end, 0px);
+    /* The ground runs the page's own column, the way a footer does — beside
+       the sidebar rather than under it, so what it draws lines up with what
+       it is drawn about. What it carries is inset further, to the column the
+       prose is read in, which is what the run's left edge already measures. */
+    inset-inline: var(--layout-sidebar) 0;
+    padding-inline: calc(var(--sheet-bleed-start, 0px) - var(--layout-sidebar))
+      var(--sheet-bleed-end, 0px);
     margin-block: 0;
 
     @media (min-width: 1024px) {
@@ -186,93 +181,60 @@ $ground-lead: 0.6rem;
   }
 }
 
-/* A mask is an image, and an image does not interpolate. */
-@property --sheet-seam {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: 0%;
-}
-
-@property --sheet-wipe {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: 0%;
-}
-
 .stack {
-  position: relative;
+  display: flow-root;
 }
 
-/* Every page stays in the document, so find-in-page reaches it and an anchor
-   has something to point at. Only the page being read is in flow, and it is
-   what the run takes its height from. A page is hidden by the attribute rather
-   than by a rule here, since `until-found` is what keeps it findable. */
+/* A section is written where it was written, at whatever height it needs. The
+   bar over it says which one has been reached; nothing here hides, holds, or
+   moves any of them. */
 .page {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline: 0;
-  z-index: 1;
-  opacity: 0;
+  display: flow-root;
 
-  --sheet-seam: 0%;
-  --sheet-wipe: 0%;
-
-  mask-clip: no-clip;
-  mask-repeat: no-repeat;
-}
-
-/* Both seams run the same way, from nothing to past the far edge, so each is
-   read from its own resting value rather than from a starting style. A page
-   that is never taken out of the document is never newly inserted, and a
-   starting style has nothing to fire on. */
-.page[data-shown='true'] {
-  position: relative;
-  opacity: 1;
-
-  --sheet-seam: 115%;
-
-  /* The fade is given less time than the seam so both have settled before the
-     page turning away is taken off */
-  transition:
-    --sheet-seam var(--sheet-turn) var(--ease-out-quart),
-    opacity var(--sheet-fade) var(--ease-out-quart);
-  mask-image: linear-gradient(
-    to left,
-    #000 calc(var(--sheet-seam) - #{$seam-feather}),
-    transparent var(--sheet-seam)
-  );
-}
-
-/* Held over the page arriving and erased ahead of the same sweep, so the two
-   are one seam crossing the column rather than two fades meeting in the
-   middle. Its own fade eases in where the arriving page's eases out. */
-.page[data-leaving='true'] {
-  z-index: 2;
-
-  --sheet-wipe: 115%;
-
-  transition:
-    --sheet-wipe var(--sheet-turn) var(--ease-out-quart),
-    opacity var(--sheet-fade) var(--ease-in-cubic);
-  mask-image: linear-gradient(
-    to left,
-    transparent calc(var(--sheet-wipe) - #{$seam-feather}),
-    #000 var(--sheet-wipe)
+  /* Taken to by the bar, it comes to rest below the bar rather than under it. */
+  scroll-margin-block-start: calc(
+    var(--sheet-offset) + var(--sheet-headline, 3.25rem) + 0.75rem
   );
 }
 
 @media (prefers-reduced-motion: reduce) {
   .strip,
   .strip::after,
-  .tab,
-  .page {
+  .tab {
     transition: none;
   }
-
-  /* With no sweep to watch, a half-drawn seam would simply be a page with a
-     bite taken out of it. */
-  .page[data-shown='true'],
-  .page[data-leaving='true'] {
-    mask-image: none;
-  }
 }
+
+/* How far through the sheet the reader has come, drawn along the whole of the
+   bar rather than the column its tabs are set in: the bar's ground reaches the
+   edges of the screen, and a rail that stopped at the prose would be a rail
+   over part of a header. The sidebar is the one edge it does not cross, since
+   the page it measures does not run under it either. */
+.rail {
+  @include progress-rail(var(--border-width-sm, 2px));
+
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: calc(
+    -1 * (var(--sheet-bleed-start, 0px) - var(--layout-sidebar))
+  );
+  inline-size: calc(100vw - var(--layout-sidebar));
+  background: none;
+  pointer-events: none;
+}
+
+/* Scaled rather than resized: scale is the compositor's to do, and this moves
+   with every frame of scroll. */
+.railFill {
+  @include progress-fill;
+
+  inline-size: 100%;
+  transform: scaleX(var(--sheet-read, 0));
+  transform-origin: left center;
+  opacity: 0.9;
+}
+
+.strip[data-foot='true'] .rail {
+  inset-block: 0 auto;
+}
+

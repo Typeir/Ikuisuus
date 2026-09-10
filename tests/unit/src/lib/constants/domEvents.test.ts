@@ -3,6 +3,7 @@
  * @module tests/unit/src/lib/constants/domEvents.test
  * @version 1.0.0
  * @author Typeir
+ * @since 8.0.0
  *
  * @requires vitest Testing framework
  */

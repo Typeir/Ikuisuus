@@ -13,7 +13,7 @@ import {
   DETAILS_OPENED_EVENT,
 } from '@/lib/constants/domEvents';
 import { useViewportSignal } from '@/lib/hooks/motion';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 /**
  * Return type for the `useScrollProgress` hook.
@@ -61,28 +61,28 @@ const WATCHED = [DETAILS_OPENED_EVENT, CONTENT_CHANGED_EVENT];
 export function useScrollProgress(): ScrollProgress {
   const [state, setState] = useState<ScrollProgress>(readScrollState);
   const prevRef = useRef<ScrollProgress>(state);
-  const lockedRef = useRef(false);
 
+  /* Read on the frame every watcher shares, so this runs once a frame however
+     many things moved, and reports only when one of the numbers it carries has
+     actually changed. It once held a lock it released after every commit,
+     which let a scroll long enough to span many of them chain one update onto
+     the next until React called a halt. A frame cannot happen inside a commit,
+     so the frame is the whole of the guard. */
   useViewportSignal(() => {
-    if (lockedRef.current) return;
-
     const next = readScrollState();
     const p = prevRef.current;
     if (
-      next.scrollY !== p.scrollY ||
-      next.viewportH !== p.viewportH ||
-      next.docH !== p.docH ||
-      next.scrollPercent !== p.scrollPercent
+      next.scrollY === p.scrollY &&
+      next.viewportH === p.viewportH &&
+      next.docH === p.docH &&
+      next.scrollPercent === p.scrollPercent
     ) {
-      prevRef.current = next;
-      lockedRef.current = true;
-      setState(next);
+      return;
     }
-  }, WATCHED);
 
-  useEffect(() => {
-    lockedRef.current = false;
-  });
+    prevRef.current = next;
+    setState(next);
+  }, WATCHED);
 
   return state;
 }

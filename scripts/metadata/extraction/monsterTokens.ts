@@ -96,10 +96,13 @@ export function recognizeHitLine(text: string): HitToken | null {
   if (!match || !match[2]) return null;
   const result: HitToken = { dice: match[2].trim() };
   if (match[1]) result.average = parseInt(match[1], 10);
-  if (match[3]) {
-    const typeLower = match[3].toLowerCase();
-    if (DAMAGE_TYPES.has(typeLower)) {
+  /* Whichever place the type was written in, and only if it names one:
+     the word after the bracket is as often "and" as it is a damage. */
+  for (const said of [match[3], match[4]]) {
+    const typeLower = said?.toLowerCase();
+    if (typeLower && DAMAGE_TYPES.has(typeLower)) {
       result.type = typeLower;
+      break;
     }
   }
   return result;

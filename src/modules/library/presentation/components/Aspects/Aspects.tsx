@@ -14,6 +14,7 @@ import {
   usePersistentUiStateOptional,
 } from '@/lib/context/PersistentUiContext';
 import { PERSISTED_UI_ACTION_TYPES } from '@/lib/types/persistentUiState';
+import { watchVisible } from '@/lib/utils/motion';
 import { useArticleMetadata } from '@/modules/library/application/context/ArticleMetadataContext';
 import {
   collapseImplied,
@@ -113,23 +114,20 @@ const AspectCarousel: React.FC<{
     const node = ref.current;
     if (!node) return;
 
-    if (typeof IntersectionObserver === 'undefined') {
-      setVisible(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setVisible(true);
-          observer.disconnect();
-        }
+    /* Every carousel on the page shares one observer, and lets go of it as
+       soon as it has been seen once. A sheet carries a stat block for each
+       thing a creature can do, and all of them ask this at the same moment. */
+    let stop = () => {};
+    stop = watchVisible(
+      node,
+      (near) => {
+        if (!near) return;
+        setVisible(true);
+        stop();
       },
-      { rootMargin: '200px' },
+      '200px',
     );
-
-    observer.observe(node);
-    return () => observer.disconnect();
+    return () => stop();
   }, []);
 
   return (

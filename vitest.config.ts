@@ -113,14 +113,14 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit:utils:a',
-          include: ['tests/unit/src/lib/utils/[a-m]*.test.{ts,tsx}'],
+          include: ['tests/unit/src/lib/utils/**/[a-m]*.test.{ts,tsx}'],
         },
       },
       {
         extends: true,
         test: {
           name: 'unit:utils:b',
-          include: ['tests/unit/src/lib/utils/[n-z]*.test.{ts,tsx}'],
+          include: ['tests/unit/src/lib/utils/**/[n-z]*.test.{ts,tsx}'],
           exclude: ['tests/unit/src/lib/utils/repositoryWalk.test.ts'],
         },
       },

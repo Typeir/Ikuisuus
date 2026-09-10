@@ -9,6 +9,8 @@
 
 'use client';
 
+import { READING_LINE } from '@/lib/constants/reading';
+import { atPageEnd } from '@/lib/utils/atPageEnd';
 import {
     CONTENT_CHANGED_EVENT,
     DETAILS_OPENED_EVENT,
@@ -60,11 +62,6 @@ function scanHeadings(): SectionTrackItem[] {
     /* A page on its way out is still on screen while it fades, and its
        headings are already spoken for by the page replacing it. */
     if (el.closest('[aria-hidden="true"]')) continue;
-    /* A page nobody is reading stays in the document so it can be found and
-       linked to, and has no box to measure. Counted here it would pile every
-       one of its headings onto the same point of the track. */
-    if (el.closest('[hidden]')) continue;
-
     const level = parseInt(el.tagName[1], 10) as SectionTrackItem['level'];
     const rect = el.getBoundingClientRect();
     const top = rect.top + window.scrollY;
@@ -179,7 +176,7 @@ export function useSectionTrack(): SectionTrackState {
       return;
     }
 
-    const threshold = scrollY + viewportH * 0.4;
+    const threshold = scrollY + viewportH * READING_LINE;
     let active: string | null = null;
 
     for (const item of items) {
@@ -190,8 +187,15 @@ export function useSectionTrack(): SectionTrackState {
       }
     }
 
+    /* The last heading on a page is one the reader can never bring up to the
+       line, because the page runs out before it gets there. Scrolled as far as
+       they can go, they have reached it. */
+    if (atPageEnd(scrollY, viewportH, docH)) {
+      active = items[items.length - 1].anchor;
+    }
+
     setActiveAnchor(active);
-  }, [items, scrollY, viewportH]);
+  }, [items, scrollY, viewportH, docH]);
 
   /** Mobile detection and auto-hide logic. */
   useEffect(() => {

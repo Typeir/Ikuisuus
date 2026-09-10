@@ -67,6 +67,13 @@ function extractFeaturesFromSection(
       return extractTraits(section);
     case 'actions':
       return extractActions(section, 'action');
+    case 'attacks':
+      return extractActions(section, 'attack');
+    /* A v2 sheet files its Actions and Attacks under Features, and those open
+       sections of their own. What is left is whatever was written directly
+       beneath the heading, which stands on its own like a trait does. */
+    case 'features':
+      return extractTraits(section);
     case 'minor_actions':
       return extractActions(section, 'minor_action');
     case 'reactions':

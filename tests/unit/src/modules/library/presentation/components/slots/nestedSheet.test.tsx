@@ -72,7 +72,7 @@ describe('a sheet inside a sheet', () => {
       </Sheet>,
     );
 
-    const bars = screen.getAllByRole('tablist');
+    const bars = screen.getAllByRole('group');
     expect(bars).toHaveLength(2);
   });
 
@@ -94,7 +94,7 @@ describe('a sheet inside a sheet', () => {
       </Sheet>,
     );
 
-    expect(screen.getAllByRole('tablist')).toHaveLength(2);
+    expect(screen.getAllByRole('group')).toHaveLength(2);
   });
 
   /* The compiler leaves the first heading inside a component unsectioned, so
@@ -115,7 +115,7 @@ describe('a sheet inside a sheet', () => {
       </Sheet>,
     );
 
-    expect(screen.getAllByRole('tablist')).toHaveLength(2);
+    expect(screen.getAllByRole('group')).toHaveLength(2);
   });
 
   it('should name a tab by its heading, punctuation and all', () => {
@@ -132,7 +132,7 @@ describe('a sheet inside a sheet', () => {
     );
 
     expect(
-      screen.getByRole('tab', { name: 'Husk of Xanthosis (Spellcaster/Ranged)' }),
+      screen.getByRole('button', { name: 'Husk of Xanthosis (Spellcaster/Ranged)' }),
     ).toBeInTheDocument();
   });
 });
@@ -167,7 +167,7 @@ describe('wordsOf', () => {
       </Sheet>,
     );
 
-    expect(screen.getByRole('tab', { name: 'Lion' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Lion' })).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'Lunar Chimera, Lion' }),
     ).toBeInTheDocument();
@@ -183,7 +183,7 @@ describe('wordsOf', () => {
     );
 
     for (const name of ['Sword-Wielder', 'Biter', 'Spellcaster/Ranged']) {
-      expect(screen.getByRole('tab', { name })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name })).toBeInTheDocument();
     }
   });
 
@@ -195,7 +195,7 @@ describe('wordsOf', () => {
       </Sheet>,
     );
 
-    expect(screen.getByRole('tab', { name: 'Hunter Frog' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Golden Frog' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Hunter Frog' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Golden Frog' })).toBeInTheDocument();
   });
 });

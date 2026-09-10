@@ -10,7 +10,6 @@
 
 import {
   TURN_BACKSTOP,
-  holdOf,
   isCard,
   rebuild,
 } from '@/modules/library/presentation/components/slots/sheetFolding';
@@ -26,34 +25,6 @@ import { describe, expect, it } from 'vitest';
  */
 const nodeWith = (props: Record<string, unknown>): ReactElement =>
   React.createElement('div', props);
-
-describe('holdOf', () => {
-  it('should fall back to the backstop with no element', () => {
-    expect(holdOf(null)).toBe(TURN_BACKSTOP);
-  });
-
-  it('should read the transition off the element and add the backstop', () => {
-    const panel = document.createElement('div');
-    panel.style.transitionDuration = '0.5s';
-    panel.style.transitionDelay = '0.25s';
-    document.body.appendChild(panel);
-
-    expect(holdOf(panel)).toBe(750 + TURN_BACKSTOP);
-
-    panel.remove();
-  });
-
-  it('should take the longest of several durations', () => {
-    const panel = document.createElement('div');
-    panel.style.transitionDuration = '0.2s, 0.8s, 0.4s';
-    document.body.appendChild(panel);
-
-    expect(holdOf(panel)).toBe(800 + TURN_BACKSTOP);
-
-    panel.remove();
-  });
-});
-
 describe('isCard', () => {
   it('should treat a node carrying a kind or an entry as a card', () => {
     expect(isCard(nodeWith({ 'data-kind': 'trait' }))).toBe(true);

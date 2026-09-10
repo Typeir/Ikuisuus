@@ -265,7 +265,7 @@ export const MONSTER = {
      average is left to the roller, `**Hit**: [% 4d12 +8 force %]`. The average
      is optional in both, and the dice sit inside the roll macro. */
   hitLine:
-    /(?:_?Hit:?_?|\*\*Hit\*\*:|On a hit,)\s*\*{0,2}(?:(\d+)\s*)?\(?\s*(?:\[%\s*)?(\d+d\d+(?:\s*[+-]\s*\d+)?)\s*([a-z]+)?[^%)]*(?:%\]|\))?/i,
+    /(?:_?Hit:?_?|\*\*Hit\*\*:|On a hit,)\s*\*{0,2}(?:(\d+)\s*)?\(?\s*(?:\[%\s*)?(\d+d\d+(?:\s*[+-]\s*\d+)?)\s*([a-z]+)?[^%)]*(?:%\]|\))?\s*\*{0,2}\s*([a-z]+)?/i,
   multiattack: /multiattack/i,
   attackSegment:
     /(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+((?:\w+\s+)*\w+)\s+attacks?/i,
@@ -498,6 +498,8 @@ export const ENRICHMENT = {
  * @property {RegExp} minorActions - Minor / Bonus Actions heading
  * @property {RegExp} reactions - Reactions heading
  * @property {RegExp} actions - Actions / Major Actions heading
+ * @property {RegExp} attacks - Attacks heading
+ * @property {RegExp} features - Features heading
  * @property {RegExp} traits - Traits heading
  * @property {RegExp} heading - Any heading with level and text capture
  */
@@ -514,6 +516,12 @@ export const CLASSIFIER = {
   minorActions: /^(?:bonus|minor)\s*actions?$/i,
   reactions: /^reactions?$/i,
   actions: /^(?:major\s+)?actions?$/i,
+  /* Each attack is a feature of its own, and so is each alteration and rider
+     filed beneath it. */
+  attacks: /^attacks?$/i,
+  /* The section holding the Actions and Attacks of a v2 sheet. Blocks written
+     directly beneath it are features in their own right. */
+  features: /^features?$/i,
   traits: /^traits?$/i,
   heading: /^(#{1,6})\s+(.+?)\s*$/,
 } as const;

@@ -6,6 +6,7 @@
  */
 
 @use '@/styles/mixins-button' as *;
+@use '@/styles/mixins-progress' as *;
 @use '@/styles/mixins-responsive' as *;
 @use 'variables' as *;
 
@@ -123,34 +124,20 @@ input.nameInput {
 }
 
 .xpTrackNext {
-  position: relative;
+  @include progress-rail;
+
   width: 100%;
-  height: 3px;
-  background: var(--color-surface);
-  overflow: hidden;
 }
 
 .xpTrackNextFill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  height: 100%;
-  background: linear-gradient(
-    to right,
-    var(--color-actionable),
-    var(--color-accent)
-  );
+  @include progress-fill($reversed: true);
+
   transition: width 0.4s ease;
 }
 
 .xpTrackFill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  height: 100%;
-  background: linear-gradient(
-    to right,
-    var(--color-accent),
-    var(--color-actionable)
-  );
+  @include progress-fill;
+
   transition: width 0.4s ease;
 }
 

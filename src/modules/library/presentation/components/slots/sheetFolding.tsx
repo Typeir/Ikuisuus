@@ -20,33 +20,6 @@ import {
 } from './divisions';
 import { foldDivision } from './foldDivision';
 
-/** How long to wait for a turn that never reports finishing, in milliseconds. */
-export const TURN_BACKSTOP = 1000;
-
-/**
- * How long to hold a page that is leaving, should it never say it has gone.
- *
- * @description Read off the element rather than written down, so the stylesheet
- * stays the one place a turn's length is set.
- *
- * @param {HTMLElement | null} panel - The page leaving
- * @returns {number} Milliseconds to wait
- */
-export function holdOf(panel: HTMLElement | null): number {
-  if (!panel) return TURN_BACKSTOP;
-  const { transitionDuration, transitionDelay } = getComputedStyle(panel);
-  const longest = (list: string): number =>
-    Math.max(
-      0,
-      ...list.split(',').map((part) => {
-        const value = Number.parseFloat(part);
-        return Number.isFinite(value)
-          ? value * (part.includes('ms') ? 1 : 1000)
-          : 0;
-      }),
-    );
-  return longest(transitionDuration) + longest(transitionDelay) + TURN_BACKSTOP;
-}
 
 /**
  * Whether a node is a rendered card rather than a division of the sheet.

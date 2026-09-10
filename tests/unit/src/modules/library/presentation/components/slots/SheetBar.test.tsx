@@ -50,31 +50,30 @@ const draw = (over: Partial<React.ComponentProps<typeof SheetBar>> = {}) =>
 describe('SheetBar', () => {
   it('should render one tab per page, named by its heading', () => {
     draw();
-    expect(screen.getByRole('tab', { name: 'Traits' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Features' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Traits' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Features' })).toBeInTheDocument();
   });
 
   it('should prefer a label given in content over the heading', () => {
     draw({ labels: new Map([['traits', 'Qualities']]) });
-    expect(screen.getByRole('tab', { name: 'Qualities' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Qualities' })).toBeInTheDocument();
   });
 
   it('should mark only the active tab as selected', () => {
     draw({ active: 1 });
-    expect(screen.getByRole('tab', { name: 'Features' })).toHaveAttribute(
-      'aria-selected',
+    expect(screen.getByRole('button', { name: 'Features' })).toHaveAttribute(
+      'aria-current',
       'true',
     );
-    expect(screen.getByRole('tab', { name: 'Traits' })).toHaveAttribute(
-      'aria-selected',
-      'false',
-    );
+    expect(
+      screen.getByRole('button', { name: 'Traits' }),
+    ).not.toHaveAttribute('aria-current');
   });
 
   it('should ask for the page a tab names', () => {
     const onTurn = vi.fn();
     draw({ onTurn });
-    fireEvent.click(screen.getByRole('tab', { name: 'Features' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Features' }));
     expect(onTurn).toHaveBeenCalledWith(1);
   });
 
@@ -99,7 +98,7 @@ describe('SheetBar', () => {
 
   it('should be grounded from the start when set at the bottom', () => {
     const { container } = draw({ foot: true, stuck: false });
-    const row = container.querySelector('[role="tablist"]');
+    const row = container.querySelector('[role="group"]');
     expect(row).toHaveAttribute('data-foot', 'true');
     expect(row).toHaveAttribute('data-stuck', 'true');
   });

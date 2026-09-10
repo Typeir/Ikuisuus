@@ -18,4 +18,5 @@ export { frameLoop, type FrameLoop } from './frameLoop';
 export { setPx, setPxOrDrop } from './setPx';
 export { watchResize } from './watchResize';
 export { watchStuck } from './watchStuck';
+export { watchVisible } from './watchVisible';
 export { watchViewport } from './watchViewport';

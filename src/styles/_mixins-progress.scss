@@ -1,0 +1,30 @@
+/* A rail that fills from the left to show how far something has come. */
+
+/* The groove the fill runs in. */
+@mixin progress-rail($thickness: 3px) {
+  position: relative;
+  block-size: $thickness;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+/* What has been covered so far, drawn from the left edge. */
+@mixin progress-fill($reversed: false) {
+  position: absolute;
+  inset: 0 auto 0 0;
+  block-size: 100%;
+
+  @if $reversed {
+    background: linear-gradient(
+      to right,
+      var(--color-actionable),
+      var(--color-accent)
+    );
+  } @else {
+    background: linear-gradient(
+      to right,
+      var(--color-accent),
+      var(--color-actionable)
+    );
+  }
+}

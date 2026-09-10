@@ -414,14 +414,27 @@ export function aspectAnchor(text: string): string {
   return featureAnchor(text);
 }
 
+/** An inline element written beside a heading, and its self-closing form. */
+const INLINE_JSX = [
+  /<([a-zA-Z][\w.-]*)\b[^>]*>[\s\S]*?<\/\1\s*>/g,
+  /<[a-zA-Z][\w.-]*\b[^>]*\/>/g,
+];
+
 /**
- * Anchor of a feature
+ * Anchor of a feature.
+ *
+ * @description An attack names itself and then says what kind of attack it is,
+ * in a span beside the title. The compiler drops those from the anchor it
+ * stamps, so an anchor derived here has to drop them too, or the two names for
+ * one heading disagree and whatever is keyed by anchor goes unfound.
  *
  * @param {string} text - Rendered heading text, or the feature name
  * @returns {string} Anchor slug
  */
 export function featureAnchor(text: string): string {
-  return anchorSlug(toPlainMeasure(text));
+  let bare = text;
+  for (const inline of INLINE_JSX) bare = bare.replace(inline, ' ');
+  return anchorSlug(toPlainMeasure(bare));
 }
 
 /**

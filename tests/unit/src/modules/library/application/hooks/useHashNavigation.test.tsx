@@ -13,6 +13,7 @@
  */
 
 import { useHashNavigation } from '@/modules/library/application/hooks/useHashNavigation';
+import { READING_LINE } from '@/lib/constants/reading';
 import { renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -210,7 +211,7 @@ describe('useHashNavigation', () => {
       );
     });
 
-    it('should position target at ~40% from viewport top', () => {
+    it('should position target on the line a reader reads at', () => {
       const elementTop = 1200;
       const viewportHeight = 800;
 
@@ -244,7 +245,7 @@ describe('useHashNavigation', () => {
 
       const expectedTop = Math.max(
         0,
-        (window.scrollY as number) + elementTop - viewportHeight * 0.4,
+        (window.scrollY as number) + elementTop - viewportHeight * READING_LINE,
       );
 
       expect(mockScrollTo).toHaveBeenCalledWith({

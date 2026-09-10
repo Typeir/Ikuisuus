@@ -126,10 +126,22 @@
   line-height: 1.5;
 }
 
+/* How tall the far edge of a heading stands: the aspects it carries there are
+   sized in pixels and do not shrink with the type. */
+$heading-meta-height: 1.5rem;
+
 /* Feature heading bar */
 .heading {
   display: block;
   @include mdx-heading-rule;
+
+  /* A heading's rule sits along its bottom edge, and what it carries at its
+     far edge is taller than one line of a small heading — the aspects beside
+     the name keep their size as the type shrinks. Given the difference as
+     room, the rule stays under the words instead of through the aspects. */
+  &:has(.headingMeta:not(:empty)) {
+    padding-bottom: calc(0.2em + max(0px, #{$heading-meta-height} - 1lh));
+  }
 }
 
 /* The name, one span so the first-letter wrap stays inside it. */

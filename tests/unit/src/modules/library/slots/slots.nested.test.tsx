@@ -86,24 +86,20 @@ describe('a sheet whose pages hold sheets', () => {
 
   it('gives every creature an inner bar of its own', async () => {
     const html = await renderSource(SOURCE);
-    const bars = html.match(/role="tablist"/g) ?? [];
-    /* The outer swapper, and one inside each creature: the creature nobody is
-       reading is hidden rather than absent, so its own sheet is there too. */
+    const bars = html.match(/aria-label="Sections"/g) ?? [];
+    /* The outer sheet, and one inside each creature. */
     expect(bars).toHaveLength(3);
   });
 
-  it('keeps the creature nobody is reading in the document', async () => {
+  it('writes every creature out', async () => {
     const html = await renderSource(SOURCE);
     const pages = html.match(/data-sheet-page/g) ?? [];
     expect(pages.length).toBeGreaterThan(2);
     expect(html).toMatch(/Creature Two/);
   });
 
-  it('shows exactly one page of each swapper', async () => {
+  it('hides none of them', async () => {
     const html = await renderSource(SOURCE);
-    const shown = html.match(/data-shown="true"/g) ?? [];
-    /* One creature, and one section inside each creature's own sheet: the
-       hidden creature still settles its own sheet on a page. */
-    expect(shown).toHaveLength(3);
+    expect(html).not.toMatch(/hidden="until-found"/);
   });
 });
