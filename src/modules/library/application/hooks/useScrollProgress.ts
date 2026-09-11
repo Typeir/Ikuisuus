@@ -8,10 +8,7 @@
 
 'use client';
 
-import {
-  CONTENT_CHANGED_EVENT,
-  DETAILS_OPENED_EVENT,
-} from '@/lib/constants/domEvents';
+import { DETAILS_OPENED_EVENT } from '@/lib/constants/domEvents';
 import { useViewportSignal } from '@/lib/hooks/motion';
 import { useRef, useState } from 'react';
 
@@ -49,8 +46,8 @@ function readScrollState(): ScrollProgress {
   };
 }
 
-/** Page events that change the document's length without any scrolling. */
-const WATCHED = [DETAILS_OPENED_EVENT, CONTENT_CHANGED_EVENT];
+/** The page event that changes the document's length with no scrolling. */
+const WATCHED = [DETAILS_OPENED_EVENT];
 
 /**
  * Returns current scroll position, viewport height, document height,

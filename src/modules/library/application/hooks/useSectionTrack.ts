@@ -11,18 +11,15 @@
 
 import { READING_LINE } from '@/lib/constants/reading';
 import { atPageEnd } from '@/lib/utils/atPageEnd';
-import {
-    CONTENT_CHANGED_EVENT,
-    DETAILS_OPENED_EVENT,
-} from '@/lib/constants/domEvents';
+import { DETAILS_OPENED_EVENT } from '@/lib/constants/domEvents';
 import type { SectionTrackItem } from '@/modules/library/domain';
 import {
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
 import { useScrollProgress } from './useScrollProgress';
 
@@ -154,13 +151,11 @@ export function useSectionTrack(): SectionTrackState {
 
     window.addEventListener('resize', rescan, { passive: true });
     window.addEventListener(DETAILS_OPENED_EVENT, rescan);
-    window.addEventListener(CONTENT_CHANGED_EVENT, rescan);
     document.addEventListener('toggle', onDetailsToggle, true);
 
     return () => {
       window.removeEventListener('resize', rescan);
       window.removeEventListener(DETAILS_OPENED_EVENT, rescan);
-      window.removeEventListener(CONTENT_CHANGED_EVENT, rescan);
       document.removeEventListener('toggle', onDetailsToggle, true);
 
       if (rafRef.current !== null) {

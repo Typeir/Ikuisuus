@@ -1,5 +1,3 @@
-/* paw:gate:console-log ignore */
-/* paw:gate:no-inline-comments ignore */
 /**
  * @fileoverview Build-Time Pagefind Search Index
  * @description Collects records for each configured locale, feeds them into
@@ -27,8 +25,8 @@ const OUTPUT_ROOT = path.resolve(process.cwd(), 'public', 'pagefind');
  */
 async function main(): Promise<void> {
   const startMs = Date.now();
-  console.log(
-    `[search:index] Starting build for locales: ${LOCALES.join(', ')}`,
+  process.stdout.write(
+    `[search:index] Starting build for locales: ${LOCALES.join(', ')}\n`,
   );
 
   let totalRecords = 0;
@@ -47,10 +45,14 @@ async function main(): Promise<void> {
       continue;
     }
 
-    console.log(`[search:index] Collecting records for locale: ${locale}`);
+    process.stdout.write(
+      `[search:index] Collecting records for locale: ${locale}\n`,
+    );
     const records = await collectRecords(locale);
     totalRecords += records.length;
-    console.log(`[search:index] Collected ${records.length} records`);
+    process.stdout.write(
+      `[search:index] Collected ${records.length} records\n`,
+    );
 
     for (const record of records) {
       await index.addCustomRecord({
@@ -66,7 +68,7 @@ async function main(): Promise<void> {
     /* Remove the previous bundle first — writeFiles does not clean, so stale
        fragments from earlier builds would otherwise accumulate. */
     await fs.rm(outputPath, { recursive: true, force: true });
-    console.log(`[search:index] Writing index to: ${outputPath}`);
+    process.stdout.write(`[search:index] Writing index to: ${outputPath}\n`);
     await index.writeFiles({ outputPath });
 
     /* Post-process: replace import.meta.url in pagefind.js so it runs as a
@@ -80,13 +82,15 @@ async function main(): Promise<void> {
     );
     if (patched !== raw) {
       await fs.writeFile(pagefindJs, patched, 'utf-8');
-      console.log(`[search:index] Patched import.meta.url in pagefind.js`);
+      process.stdout.write(
+        `[search:index] Patched import.meta.url in pagefind.js\n`,
+      );
     }
   }
 
   const elapsed = ((Date.now() - startMs) / 1000).toFixed(1);
-  console.log(
-    `[search:index] Done — indexed ${totalRecords} records across ${LOCALES.length} locale(s) in ${elapsed}s`,
+  process.stdout.write(
+    `[search:index] Done — indexed ${totalRecords} records across ${LOCALES.length} locale(s) in ${elapsed}s\n`,
   );
 }
 

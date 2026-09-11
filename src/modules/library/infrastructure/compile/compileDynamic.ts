@@ -12,6 +12,7 @@ import { resolveReusableSource } from '@/lib/content/reusable/resolveReusableSou
 import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
 import { resolveDocumentKeywords } from '@/lib/md/resolveShardByRef';
 import desugarSlotAttributes from '@/lib/md/desugarSlotAttributes';
+import stampElementNames from '@/lib/md/stampElementNames';
 import { BLOCK_COMPONENTS, SLOT_HOSTS } from '@/modules/library/domain/slots';
 import type { EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import type { CompileOptions } from '../../domain/compileOptions';
@@ -65,6 +66,7 @@ export async function compileDynamic(opts: CompileOptions) {
         {
           remarkPlugins: [
             [desugarSlotAttributes, { hosts: SLOT_HOSTS }],
+            stampElementNames,
             [remarkLibraryLink, { locale }],
             remarkGfm,
             remarkMath,

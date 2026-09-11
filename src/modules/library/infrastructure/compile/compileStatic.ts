@@ -15,6 +15,7 @@ import remarkKeyword from '@/lib/md/remarkKeyword';
 import remarkUnit from '@/lib/md/remarkUnit';
 import { DEFAULT_KEYWORD_LOCALE } from '@/lib/constants/locales';
 import desugarSlotAttributes from '@/lib/md/desugarSlotAttributes';
+import stampElementNames from '@/lib/md/stampElementNames';
 import { BLOCK_COMPONENTS, SLOT_HOSTS } from '@/modules/library/domain/slots';
 import { resolveDocumentKeywords } from '@/lib/md/resolveShardByRef';
 import remarkLibraryLink from '@/lib/md/remarkLibraryLink';
@@ -60,6 +61,7 @@ export async function compileStatic(opts: CompileOptions) {
         {
           remarkPlugins: [
             [desugarSlotAttributes, { hosts: SLOT_HOSTS }],
+            stampElementNames,
             [remarkLibraryLink, { locale }],
             remarkGfm,
             remarkMath,

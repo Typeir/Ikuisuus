@@ -4,13 +4,16 @@
  * and surface-position-to-world conversion with known analytical results.
  *
  * @module tests/unit/src/modules/world-sim/domain/celestials/OrbitalMechanics.test
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2026-09-10
  */
 
 import {
-    DEG_TO_RAD,
-    computeOrbitalPosition,
-    solveKeplerEquation,
-    surfacePositionToWorld,
+  DEG_TO_RAD,
+  computeOrbitalPosition,
+  solveKeplerEquation,
+  surfacePositionToWorld,
 } from '@/modules/world-sim/domain/celestials/orbitalMechanics';
 import { Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
@@ -71,7 +74,6 @@ describe('computeOrbitalPosition', () => {
 
     const pos = computeOrbitalPosition(orbit, 0);
 
-    /** At t=0, M=0, E=0 → x = a(cos(0) - 0) = a, y/z = 0 */
     expect(pos.x).toBeCloseTo(100, 2);
     expect(pos.y).toBeCloseTo(0, 5);
     expect(pos.z).toBeCloseTo(0, 5);

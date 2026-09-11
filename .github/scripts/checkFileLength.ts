@@ -5,7 +5,7 @@
  * thresholds and reports them as critical findings.
  *
  * @module .github/scripts/check-file-length
- * @version 1.0.0
+ * @version 1.1.0
  * @author Typeir
  * @since 1.0.0
  */
@@ -25,7 +25,9 @@ const SCAN_DIRS = ['src'];
 const EXCLUDED_PATTERNS = [
   /\.d\.ts$/,
   /\.test\.(ts|tsx)$/,
+  /\.spec\.(ts|tsx)$/,
   /\.stories\.(ts|tsx)$/,
+  /(?:^|\/)tests\//,
   /node_modules/,
   /\.next/,
   /globals\.scss$/,
@@ -214,8 +216,7 @@ export async function runCheck(options?: CheckOptions): Promise<CheckResult> {
 
   for (const rel of files) {
     const normalized = rel.replace(/\\/g, '/');
-    if (!options?.files && EXCLUDED_PATTERNS.some((p) => p.test(normalized)))
-      continue;
+    if (EXCLUDED_PATTERNS.some((p) => p.test(normalized))) continue;
     const threshold = resolveThreshold(
       normalized,
       allowlist,

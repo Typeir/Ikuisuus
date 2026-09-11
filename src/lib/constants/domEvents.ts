@@ -11,6 +11,3 @@
 
 /** Raised when a disclosure opens to reveal what a hash was pointing at. */
 export const DETAILS_OPENED_EVENT = 'ik:details-opened';
-
-/** Raised when a component swaps out what the page is showing. */
-export const CONTENT_CHANGED_EVENT = 'ik:content-changed';

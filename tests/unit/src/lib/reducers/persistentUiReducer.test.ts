@@ -3,13 +3,18 @@
  *
  * @fileoverview Tests for the persistent UI state reducer including all action types
  * and state transitions.
+ *
+ * @module tests/unit/src/lib/reducers/persistentUiReducer.test
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2026-09-10
  */
 
 import { persistentUiReducer } from '@/lib/reducers/persistentUiReducer';
 import {
-    DEFAULT_PERSISTENT_UI_STATE,
-    PERSISTED_UI_ACTION_TYPES,
-    PersistentUiState,
+  DEFAULT_PERSISTENT_UI_STATE,
+  PERSISTED_UI_ACTION_TYPES,
+  PersistentUiState,
 } from '@/lib/types/persistentUiState';
 import { describe, expect, it } from 'vitest';
 
@@ -78,25 +83,25 @@ describe('persistentUiReducer', () => {
   });
 
   describe('SET_STREAM_TEXT', () => {
-    it('should ship drawn and drop the ticker on request', () => {
+    it('should ship the ticker drawn and drop it on request', () => {
       expect(DEFAULT_PERSISTENT_UI_STATE.streamText).toBe(true);
       const result = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {
         type: PERSISTED_UI_ACTION_TYPES.SET_STREAM_TEXT,
         payload: { enabled: false },
       });
       expect(result.streamText).toBe(false);
-      expect(result.sectionDecor).toBe(true);
+      expect(result.sectionDecor).toBe(false);
     });
   });
 
   describe('SET_SECTION_DECOR', () => {
-    it('should ship drawn and drop the frames on request', () => {
-      expect(DEFAULT_PERSISTENT_UI_STATE.sectionDecor).toBe(true);
+    it('should ship the frames off and draw them on request', () => {
+      expect(DEFAULT_PERSISTENT_UI_STATE.sectionDecor).toBe(false);
       const result = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {
         type: PERSISTED_UI_ACTION_TYPES.SET_SECTION_DECOR,
-        payload: { enabled: false },
+        payload: { enabled: true },
       });
-      expect(result.sectionDecor).toBe(false);
+      expect(result.sectionDecor).toBe(true);
       expect(result.streamText).toBe(true);
     });
   });

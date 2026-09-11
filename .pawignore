@@ -10,6 +10,7 @@ dist
 .vercel
 temp
 .ignore
+.ignore/**
 public/full-size
 .github/scripts
 .github

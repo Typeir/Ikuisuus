@@ -22,6 +22,20 @@ describe('markOf', () => {
   it('reads a cost however it was cased or pluralised', () => {
     expect(markOf(undefined, '2 DEEDS')).toBe('deed');
     expect(markOf(undefined, 'reactions')).toBe('reaction');
+    expect(markOf(undefined, '2 Major Actions')).toBe('major');
+    expect(markOf(undefined, '2 Minor Actions')).toBe('minor');
+  });
+
+  /* A shortcode inside a cost arrives as nodes, and the currency still has to
+     be read off the words. */
+  it('reads the currency through the nodes a shortcode leaves', () => {
+    expect(
+      markOf(undefined, [
+        '1 Reaction, taken when receiving ',
+        React.createElement('span', { key: 'a' }, 'elemental'),
+        ' damage',
+      ]),
+    ).toBe('reaction');
   });
 
   /* A reflex is asked of a creature and costs it nothing, so it must not fall
@@ -52,6 +66,12 @@ describe('markCount', () => {
     expect(markCount('Reaction')).toBe(1);
     expect(markCount(undefined)).toBe(1);
     expect(markCount(React.createElement('span'))).toBe(1);
+  });
+
+  it('counts through the nodes a shortcode leaves', () => {
+    expect(
+      markCount(['2 Deeds', React.createElement('span', { key: 'a' }, 'x')]),
+    ).toBe(2);
   });
 
   it('never goes below one', () => {

@@ -13,7 +13,7 @@
  */
 
 import { READING_LINE } from '@/lib/constants/reading';
-import Sheet from '@/modules/library/presentation/components/slots/Sheet';
+import Sheet from '@/modules/library/presentation/components/slots/sheet/Sheet';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

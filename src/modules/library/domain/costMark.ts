@@ -3,12 +3,12 @@
  * @description A card draws a glyph for the cost rather than typing one
  *
  * @module modules/library/domain/costMark
- * @version 0.1.0
+ * @version 0.2.0
  * @author Typeir
  * @since 2026-09-07
  */
 
-import type { ReactNode } from 'react';
+import { isValidElement, type ReactNode } from 'react';
 
 /**
  * What a block costs to use, as a card's glyph reports it.
@@ -25,14 +25,30 @@ export type CostMark =
  * Marks read off a cost, in the order they are tested.
  */
 const COST_MARKS: ReadonlyArray<readonly [RegExp, CostMark]> = [
-  [/\bmajor\s+action\b/i, 'major'],
-  [/\bminor\s+action\b/i, 'minor'],
+  [/\bmajor\s+actions?\b/i, 'major'],
+  [/\bminor\s+actions?\b/i, 'minor'],
   [/\breactions?\b/i, 'reaction'],
   /* A reflex is asked of a creature and costs it nothing, so it is not an
      action and never wears an action's pip. */
   [/\breflexe?s?\b/i, 'reflex'],
   [/\bdeeds?\b/i, 'deed'],
 ];
+
+/**
+ * The words a cost is written in.
+ *
+ * @param {ReactNode} cost - The cost as the page states it
+ * @returns {string} The words the cost is written in
+ */
+function costText(cost: ReactNode): string {
+  if (typeof cost === 'string') return cost;
+  if (typeof cost === 'number') return String(cost);
+  if (Array.isArray(cost)) return cost.map(costText).join('');
+  if (isValidElement<{ children?: ReactNode }>(cost)) {
+    return costText(cost.props.children);
+  }
+  return '';
+}
 
 /**
  * How many of a cost a block spends.
@@ -48,8 +64,7 @@ const COST_MARKS: ReadonlyArray<readonly [RegExp, CostMark]> = [
  * markCount('1 Major Action'); // 1
  */
 export function markCount(cost: ReactNode): number {
-  if (typeof cost !== 'string') return 1;
-  const match = cost.match(/(\d+)/);
+  const match = costText(cost).match(/(\d+)/);
   const value = match ? Number(match[1]) : 1;
   return Number.isFinite(value) && value > 0 ? value : 1;
 }
@@ -66,6 +81,6 @@ export function markOf(
   cost: ReactNode,
 ): CostMark {
   if (explicit) return explicit;
-  if (typeof cost !== 'string') return 'other';
-  return COST_MARKS.find(([pattern]) => pattern.test(cost))?.[1] ?? 'other';
+  const text = costText(cost);
+  return COST_MARKS.find(([pattern]) => pattern.test(text))?.[1] ?? 'other';
 }

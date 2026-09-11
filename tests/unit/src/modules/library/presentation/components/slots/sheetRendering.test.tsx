@@ -26,11 +26,11 @@ const { readDivisions, labelsOf } = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/modules/library/presentation/components/slots/divisions',
+  '@/modules/library/presentation/components/slots/utils/divisions',
   async (real) => {
     const actual =
       await real<
-        typeof import('@/modules/library/presentation/components/slots/divisions')
+        typeof import('@/modules/library/presentation/components/slots/utils/divisions')
       >();
     readDivisions.mockImplementation(actual.readDivisions);
     labelsOf.mockImplementation(actual.labelsOf);
@@ -39,7 +39,7 @@ vi.mock(
 );
 
 const { default: Sheet } = await import(
-  '@/modules/library/presentation/components/slots/Sheet'
+  '@/modules/library/presentation/components/slots/sheet/Sheet'
 );
 
 beforeEach(() => {

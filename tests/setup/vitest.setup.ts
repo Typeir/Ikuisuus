@@ -1,6 +1,11 @@
 /**
  * @fileoverview Vitest Global Setup
  * @description Mocks logger, next-intl, SVG imports, and filters stderr/console output.
+ *
+ * @module tests/setup/vitest.setup
+ * @version 1.0.0
+ * @author Typeir
+ * @since 2026-09-11
  */
 
 import '@testing-library/jest-dom';
@@ -58,12 +63,15 @@ vi.mock('next-intl', async (importOriginal) => {
   };
 });
 
+/** jsdom implements no layout, so scrollIntoView is absent and a sheet's paging calls it */
+Element.prototype.scrollIntoView = vi.fn();
+
 import React from 'react';
 
 /**
  * Factory for mock SVG components used in place of real .svg imports.
  *
- * @param testId - data-testid attribute for the mock SVG element
+ * @param {string} testId - data-testid attribute for the mock SVG element
  * @returns React component rendering a stub `<svg>` element
  */
 const createMockSvg = (testId: string) => {
@@ -102,7 +110,7 @@ vi.mock('@/lib/components/icon/icons/unlock.svg', () => ({
 /**
  * Evaluate simple width-based media queries against window.innerWidth.
  *
- * @param query - CSS media query string
+ * @param {string} query - CSS media query string
  * @returns True if the query matches the current mocked viewport width
  */
 function evaluateMediaQuery(query: string): boolean {
@@ -139,13 +147,21 @@ Object.defineProperty(window, 'matchMedia', {
       },
       media: query,
       onchange: null,
-      addEventListener: (_type: string, cb: (e: { matches: boolean }) => void) => {
-        if (listeners.size === 0) window.addEventListener('resize', handleResize);
+      addEventListener: (
+        _type: string,
+        cb: (e: { matches: boolean }) => void,
+      ) => {
+        if (listeners.size === 0)
+          window.addEventListener('resize', handleResize);
         listeners.add(cb);
       },
-      removeEventListener: (_type: string, cb: (e: { matches: boolean }) => void) => {
+      removeEventListener: (
+        _type: string,
+        cb: (e: { matches: boolean }) => void,
+      ) => {
         listeners.delete(cb);
-        if (listeners.size === 0) window.removeEventListener('resize', handleResize);
+        if (listeners.size === 0)
+          window.removeEventListener('resize', handleResize);
       },
       addListener: vi.fn(),
       removeListener: vi.fn(),
@@ -172,7 +188,7 @@ Object.defineProperty(window, 'ResizeObserver', {
 /**
  * Determine if a stderr chunk is a known deprecation warning to suppress.
  *
- * @param chunk - stderr output string
+ * @param {string} chunk - stderr output string
  * @returns True if the chunk matches a suppressed pattern
  */
 function isSuppressedStderrChunk(chunk: string): boolean {
@@ -186,7 +202,7 @@ function isSuppressedStderrChunk(chunk: string): boolean {
 /**
  * Determine if a console.error message is a known React hydration warning.
  *
- * @param message - First argument to console.error
+ * @param {unknown} message - First argument to console.error
  * @returns True if the message matches a suppressed pattern
  */
 function isSuppressedConsoleError(message: unknown): boolean {

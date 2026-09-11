@@ -1,0 +1,231 @@
+@use 'mixins' as *;
+
+/**
+ * @fileoverview Slot row, brief, and feature heading layout.
+ * @description Layout-only styles for slot rows, the heirloom brief, and the
+ * feature heading bar
+ *
+ * @module modules/library/presentation/components/slots/feature/slots.module
+ * @version 0.5.0
+ * @author Typeir
+ * @since 2026-09-02
+ */
+
+/* The spell card, which a v1 spell wrote as a blockquote and which keeps that
+   card's face. */
+.spellCard {
+  @include mdx-card-face;
+  margin: 0.25rem 0;
+}
+
+/* An item's numbers, carded like a spell but with no name to head them. */
+.attributesCard.attributesCard {
+  @include mdx-card-face;
+  display: flow-root;
+  max-width: 50%;
+  margin: 0.25rem 0 1rem;
+
+  @include desktop {
+    max-width: none;
+  }
+}
+
+/* The card's head */
+.spellCard .spellHead {
+  @include mdx-heading-rule;
+  @include mdx-mark-glyphs-self;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  margin-top: 0;
+  padding-top: 0;
+
+  .tag {
+    margin-left: auto;
+  }
+}
+
+/* The card's stat block and each feature's own slot lines, both closing with
+   the same rule an heirloom's do. */
+.spellCard {
+  @include mdx-slot-run;
+}
+
+/* The block that closes a card by saying how the spell grows. */
+.spellCard .tail {
+  margin-top: 0.5rem;
+}
+
+/* A run that carries no mechanics */
+.lore {
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+/* A set of blocks that exclude one another. */
+.choice {
+  margin-block: 0.5rem;
+}
+
+/* A collapsed block wraps a details and nothing else, so the details' margin
+   escapes the article and stacks with its neighbour's. */
+.block[data-collapsible] {
+  display: flow-root;
+  margin-block: 0 0.75rem;
+
+  > details {
+    margin-bottom: 0;
+  }
+}
+
+/* A block sits one level inside whatever holds it, and takes the nested card's
+   face so the reader sees where it belongs. */
+.spellCard .block,
+.block .block {
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+  border-left: var(--border-width-s) solid var(--color-border-secondary);
+}
+
+/* What the group asks of the reader, above the blocks it fences. */
+.choiceLead {
+  font-family: var(--font-default);
+  font-weight: 700;
+  font-synthesis-weight: none;
+  color: var(--color-emphasis);
+}
+
+/* One slot row */
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-headings), var(--font-default);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+/* Slot label */
+.label {
+  font-weight: 700;
+  font-family: var(--font-default);
+  font-synthesis-weight: none;
+  color: var(--color-emphasis);
+
+  &::after {
+    content: ':';
+  }
+}
+
+/* The italic brief under the title. */
+.brief {
+  line-height: 1.5;
+}
+
+/* How tall the far edge of a heading stands: the aspects it carries there are
+   sized in pixels and do not shrink with the type. */
+$heading-meta-height: 1.5rem;
+
+/* Feature heading bar */
+.heading {
+  display: block;
+  @include mdx-heading-rule;
+
+  /* A heading's rule sits along its bottom edge, and what it carries at its
+     far edge is taller than one line of a small heading — the aspects beside
+     the name keep their size as the type shrinks. Given the difference as
+     room, the rule stays under the words instead of through the aspects. */
+  &:has(.headingMeta:not(:empty)) {
+    padding-bottom: calc(0.2em + max(0px, #{$heading-meta-height} - 1lh));
+  }
+}
+
+/* The name, one span so the first-letter wrap stays inside it. */
+.headingTitle {
+  display: inline;
+}
+
+/* The cost at the right edge of the heading's first line. */
+/* A baseline here is the bottom of the carousel's box, not of any text in it */
+.headingMeta {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  block-size: 1lh;
+  gap: 0.75rem;
+  margin-left: 1rem;
+  white-space: nowrap;
+
+  /* A block with neither aspects nor a tag leaves this empty, and an empty
+     float would still hold its margin against the heading. */
+  &:empty {
+    display: none;
+  }
+}
+
+/* Feature heading tag */
+.tag {
+  font-weight: 400;
+  font-style: italic;
+  font-size: 0.8em;
+  color: var(--color-accent);
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Feature cost */
+/* What using a block costs, beside the name it belongs to. */
+.cost {
+  font-weight: 600;
+  font-size: 0.8em;
+  color: var(--color-actionable);
+  filter: drop-shadow(0 0 1px var(--color-actionable));
+  white-space: nowrap;
+
+  &::before {
+    content: '—';
+    margin-right: 0.35rem;
+  }
+}
+
+/* Stat-block table */
+/* Fills the width its wrapper is given. */
+.statTable {
+  width: 100%;
+  margin-block: 0.75rem;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.25rem 0.9rem;
+    text-align: center;
+  }
+
+  th {
+    font-family: var(--font-default);
+    font-weight: 700;
+    font-synthesis-weight: none;
+    color: var(--color-emphasis);
+  }
+
+  /* A value the card worked out rather than read, marked so a reviewer can
+     see which numbers no longer live in the source. */
+  [data-derived-from] {
+    border-bottom: var(--border-width-xs) dotted var(--color-border);
+  }
+}
+
+/* The header of a tail block. */
+.overcastLabel {
+  @include mdx-heading-rule;
+  display: block;
+  margin: 0 0 0.75rem;
+  font-family: var(--font-headings), var(--font-default);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color-accent);
+}

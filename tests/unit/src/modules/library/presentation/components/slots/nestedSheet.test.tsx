@@ -8,8 +8,8 @@
  * @requires vitest Testing framework
  */
 
-import Monster from '@/modules/library/presentation/components/slots/Monster';
-import Sheet from '@/modules/library/presentation/components/slots/Sheet';
+import Monster from '@/modules/library/presentation/components/slots/monster/Monster';
+import Sheet from '@/modules/library/presentation/components/slots/sheet/Sheet';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { beforeAll, describe, expect, it } from 'vitest';

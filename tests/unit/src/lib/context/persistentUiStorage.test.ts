@@ -2,6 +2,11 @@
  * persistentUiStorage Tests
  *
  * @fileoverview Covers reading stored preferences and stamping the root.
+ *
+ * @module tests/unit/src/lib/context/persistentUiStorage.test
+ * @author Typeir
+ * @version 1.0.0
+ * @since 2026-09-10
  */
 
 import {
@@ -35,11 +40,11 @@ describe('persistentUiStorage', () => {
       expect(state.constrainedHue).toBe(false);
     });
 
-    it('should default both decorators to drawn', () => {
+    it('should ship the ticker drawn and the section frames off', () => {
       const state = readPersistedState([]);
 
       expect(state.streamText).toBe(true);
-      expect(state.sectionDecor).toBe(true);
+      expect(state.sectionDecor).toBe(false);
     });
 
     it('should read stored decorator preferences', () => {
@@ -54,7 +59,7 @@ describe('persistentUiStorage', () => {
       expect(state.sectionDecor).toBe(false);
     });
 
-    it('should keep decorators drawn when the stored flag is not a boolean', () => {
+    it('should keep the shipped defaults when a stored flag is not a boolean', () => {
       localStorage.setItem(
         PERSISTENT_UI_STORAGE_KEY,
         JSON.stringify({ streamText: 'off', sectionDecor: null }),
@@ -63,7 +68,7 @@ describe('persistentUiStorage', () => {
       const state = readPersistedState([]);
 
       expect(state.streamText).toBe(true);
-      expect(state.sectionDecor).toBe(true);
+      expect(state.sectionDecor).toBe(false);
     });
 
     it('should read stored display preferences', () => {

@@ -1,0 +1,375 @@
+/**
+ * @fileoverview Slot elements and slot helpers.
+ * @description Generates one inline element per schema row (`<Cost>`,
+ * `<Attunement>`, …) and provides the helpers both parents share
+ *
+ * @module modules/library/presentation/components/slots/utils/slotElements
+ * @version 0.4.0
+ * @author Typeir
+ * @since 2026-09-02
+ */
+
+'use client';
+
+import { SLOT_NAME_ATTRIBUTE } from '@/lib/md/desugarSlotAttributes';
+import {
+  SLOT_ELEMENT_NAMES,
+  SLOT_NAME_BY_ELEMENT,
+  SLOT_NAMES,
+  slotLabelKey,
+  type SlotElementName,
+  type SlotName,
+  type SlotValue,
+} from '@/modules/library/domain/slots';
+import { useTranslations } from 'next-intl';
+import React, { type ReactNode } from 'react';
+import styles from '../feature/slots.module.scss';
+
+export type { SlotName } from '@/modules/library/domain/slots';
+
+/**
+ * Slot name of a React node, read from the component's `displayName`.
+ *
+ * @param {ReactNode} node - Node to inspect
+ * @returns {SlotName | null} Slot name, or null when the node is not a slot
+ */
+export function slotNameOf(node: ReactNode): SlotName | null {
+  if (!React.isValidElement(node)) return null;
+
+  /* The compile step stamps the slot name, because a client reference hides
+     the component's identity from a server render. */
+  const stamped = (node.props as Record<string, unknown>)?.[
+    SLOT_NAME_ATTRIBUTE
+  ];
+  if (typeof stamped === 'string' && stamped in SLOT_ELEMENT_NAMES) {
+    return stamped as SlotName;
+  }
+
+  const type = node.type as { displayName?: string; name?: string } | string;
+  if (typeof type === 'string') return null;
+  const displayName = type.displayName || type.name || '';
+  return SLOT_NAME_BY_ELEMENT[displayName] ?? null;
+}
+
+/**
+ * Whether a React node is a slot element.
+ *
+ * @param {ReactNode} node - Node to test
+ * @returns {boolean} True when the node is a slot element
+ */
+export function isSlotNode(node: ReactNode): boolean {
+  return slotNameOf(node) !== null;
+}
+
+/**
+ * Children with whitespace-only strings removed.
+ *
+ * @param {ReactNode} children - Node children
+ * @returns {ReactNode[]} Filtered children
+ */
+export function cleanChildren(children: ReactNode): ReactNode[] {
+  return React.Children.toArray(children).filter((node) => {
+    if (typeof node === 'string') {
+      return node.trim().length > 0;
+    }
+    return true;
+  });
+}
+
+/**
+ * Renders a slot value as it arrived
+ *
+ * @param {ReactNode} value - Slot value
+ * @returns {ReactNode} Value ready to print
+ */
+export function inlineValue(value: ReactNode): ReactNode {
+  return typeof value === 'string' ? value.trim() : value;
+}
+
+/**
+ * One slot to render.
+ *
+ * @property {SlotName} name - Slot name
+ * @property {ReactNode} value - Value as MDX delivered it
+ */
+export interface SlotEntry {
+  name: SlotName;
+  value: ReactNode;
+}
+
+/**
+ * Splits the parent's own slot elements (the element form) out of a node list.
+ *
+ * @description Takes them as a paragraph made only of them, which is what MDX
+ * builds from a run of inline elements.
+ *
+ * @param {ReactNode[]} nodes - Cleaned child nodes
+ * @param {readonly SlotName[]} names - Slot names the parent accepts
+ * @param {boolean} [standalone] - Also take a slot element that stands alone
+ * @returns {{ entries: SlotEntry[]; kept: ReactNode[] }} Slot entries, and the
+ * nodes that remain once the slot elements are removed
+ */
+export function splitSlotRuns(
+  nodes: ReactNode[],
+  names: readonly SlotName[],
+  standalone = false,
+): {
+  entries: SlotEntry[];
+  kept: ReactNode[];
+} {
+  const entries: SlotEntry[] = [];
+  const kept: ReactNode[] = [];
+  const accepted = new Set<SlotName>(names);
+
+  for (const node of nodes) {
+    const own = standalone ? slotNameOf(node) : null;
+    if (own !== null && accepted.has(own)) {
+      entries.push({
+        name: own,
+        value: (node as React.ReactElement<{ children?: ReactNode }>).props
+          .children,
+      });
+      continue;
+    }
+
+    const isParagraph =
+      React.isValidElement(node) &&
+      typeof node.type === 'string' &&
+      node.type === 'p';
+    if (!isParagraph) {
+      kept.push(node);
+      continue;
+    }
+
+    const kids = cleanChildren(
+      (node.props as { children?: ReactNode }).children,
+    );
+    const allSlots =
+      kids.length > 0 &&
+      kids.every((kid) => {
+        const name = slotNameOf(kid);
+        return name !== null && accepted.has(name);
+      });
+    if (!allSlots) {
+      kept.push(node);
+      continue;
+    }
+
+    for (const kid of kids) {
+      const name = slotNameOf(kid);
+      if (!name) continue;
+      const value = (kid as React.ReactElement<{ children?: ReactNode }>).props
+        .children;
+      entries.push({ name, value });
+    }
+  }
+
+  return { entries, kept };
+}
+
+/**
+ * Slot entries of a parent in schema order
+ *
+ * @param {readonly N[]} names - The parent's slot names in display order
+ * @param {Partial<Record<N, SlotValue>>} props - The parent's props
+ * @param {SlotEntry[]} childEntries - Entries from the element form
+ * @returns {SlotEntry[]} Entries to render
+ */
+export function collectSlotEntries<N extends SlotName>(
+  names: readonly N[],
+  props: Partial<Record<N, SlotValue>>,
+  childEntries: SlotEntry[],
+): SlotEntry[] {
+  const entries: SlotEntry[] = [];
+  for (const name of names) {
+    const value = props[name];
+    if (value === undefined) continue;
+    entries.push({ name, value: value as ReactNode });
+  }
+  const filled = new Set(entries.map((entry) => entry.name));
+  for (const entry of childEntries) {
+    if (filled.has(entry.name)) continue;
+    entries.push(entry);
+  }
+  return entries;
+}
+
+/**
+ * Label + value row for one slot.
+ *
+ * @param {object} props - Row props
+ * @param {SlotName} props.name - Slot name, drives label key and data attribute
+ * @param {string} [props.host] - Host component name, when it renames the slot
+ * @param {string} [props.label] - Label already resolved, where a slot builds its own
+ * @param {ReactNode} [props.children] - Slot value
+ * @returns {JSX.Element} The row
+ */
+export function SlotRow({
+  name,
+  host,
+  label,
+  children,
+}: {
+  name: SlotName;
+  host?: string;
+  label?: string;
+  children?: ReactNode;
+}): React.JSX.Element {
+  const t = useTranslations('library');
+  return (
+    <span className={styles.row} data-slot={name}>
+      <span className={styles.label} data-slot-label>
+        {label ?? t(slotLabelKey(name, host))}
+      </span>
+      <span data-slot-value>{children}</span>
+    </span>
+  );
+}
+
+/**
+ * A host's slot values keyed by slot name, and the children that remain once
+ * element-form slot paragraphs are lifted out.
+ *
+ * @property {Partial<Record<N, ReactNode>>} values - Slot values by name
+ * @property {ReactNode[]} kept - Body nodes
+ */
+export interface SlotReading<N extends SlotName> {
+  values: Partial<Record<N, ReactNode>>;
+  kept: ReactNode[];
+}
+
+/**
+ * Reads a host's slots from both spellings at once
+ *
+ * @param {ReactNode} children - The host's children
+ * @param {readonly N[]} names - Slot names the host accepts, in display order
+ * @param {Partial<Record<N, SlotValue>>} props - The host's slot props
+ * @returns {SlotReading<N>} Values and remaining body
+ */
+export function readSlots<N extends SlotName>(
+  children: ReactNode,
+  names: readonly N[],
+  props: Partial<Record<N, SlotValue>>,
+  standalone = false,
+): SlotReading<N> {
+  const nodes = cleanChildren(children);
+  const { entries, kept } = splitSlotRuns(nodes, names, standalone);
+  const values = Object.fromEntries(
+    collectSlotEntries(names, props, entries).map((entry) => [
+      entry.name,
+      entry.value,
+    ]),
+  ) as Partial<Record<N, ReactNode>>;
+  return { values, kept };
+}
+
+/**
+ * Slot element component type.
+ */
+export type SlotElement = React.FC<{ children?: ReactNode }>;
+
+/**
+ * Creates the element for one schema row; its `displayName` is the authored
+ * element name and its identity.
+ *
+ * @param {SlotName} name - Slot name
+ * @returns {SlotElement} The slot element
+ */
+function makeSlot(name: SlotName): SlotElement {
+  const Component: SlotElement = ({ children }) => (
+    <SlotRow name={name}>{children}</SlotRow>
+  );
+  Component.displayName = SLOT_ELEMENT_NAMES[name];
+  return Component;
+}
+
+/**
+ * Generated slot elements keyed by authored element name.
+ */
+export const slotElements = Object.fromEntries(
+  SLOT_NAMES.map((name) => [SLOT_ELEMENT_NAMES[name], makeSlot(name)]),
+) as Record<SlotElementName, SlotElement>;
+
+/**
+ * Slot element for a slot name.
+ *
+ * @param {SlotName} name - Slot name
+ * @returns {SlotElement} The generated element
+ */
+export function slotElementOf(name: SlotName): SlotElement {
+  return slotElements[SLOT_ELEMENT_NAMES[name]];
+}
+
+export const {
+  Rarity,
+  Attunement,
+  Base,
+  Quality,
+  Enchantment,
+  Damage,
+  Versatile,
+  Reach,
+  Range,
+  Accuracy,
+  ArmorClass,
+  DamageThreshold,
+  Material,
+  Stealth,
+  Mastery,
+  MasterfulBlow,
+  Charges,
+  Burden,
+  Focus,
+  Nullifying,
+  SaveDc,
+  Category,
+  Properties,
+  Price,
+  Cost,
+  Recharge,
+  Level,
+  Trigger,
+  Deed,
+  Targets,
+  Max,
+  Ritual,
+  Components,
+  Duration,
+  Overcast,
+  Size,
+  Type,
+  Alignment,
+  HitPoints,
+  Speed,
+  Str,
+  Dex,
+  Con,
+  Int,
+  Wis,
+  Cha,
+  Saves,
+  Skills,
+  Resistances,
+  Vulnerabilities,
+  Immunities,
+  ConditionImmunities,
+  Senses,
+  Languages,
+  Challenge,
+  Xp,
+  TierBonus,
+  Parent,
+  PrimaryAbility,
+  HitDie,
+  Trades,
+  Weapons,
+  Armor,
+  Equipment,
+  Prerequisite,
+  Ability,
+  Repeatable,
+  AbilityScores,
+  Speeds,
+  CreatureTypes,
+  Age,
+} = slotElements;

@@ -12,8 +12,8 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
-import { Action } from '@/modules/library/presentation/components/slots/Feature';
-import { Trinket } from '@/modules/library/presentation/components/slots/Heirloom';
+import { Action } from '@/modules/library/presentation/components/slots/feature/Feature';
+import { Trinket } from '@/modules/library/presentation/components/slots/item/Heirloom';
 import { briefText, printed } from './cardQueries';
 
 describe('Trinket', () => {

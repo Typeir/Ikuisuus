@@ -10,26 +10,26 @@
  */
 
 import { SLOT_ELEMENT_NAMES } from '@/modules/library/domain/slots';
-import Attributes from './Attributes';
-import Bloodline from './Bloodline';
-import Boons from './Boons';
-import Choice from './Choice';
-import Fold from './Fold';
-import Sheet from './Sheet';
-import Feat from './Feat';
-import Feature, { Action, Attack, Curse, Pool, Trait } from './Feature';
-import Heirloom, { Trinket } from './Heirloom';
-import Lore from './Lore';
-import Monster from './Monster';
-import Overcast from './Overcast';
-import Statlet from './Statlet';
-import Progression, { Column, Row } from './Progression';
-import Scaling from './Scaling';
-import Spell from './Spell';
-import SpellList from './SpellList';
-import SpellLists from './SpellLists';
-import Vocation, { Specialization } from './Vocation';
-import * as slotModule from './slotElements';
+import Attributes from './item/Attributes';
+import Bloodline from './bloodline/Bloodline';
+import Boons from './bloodline/Boons';
+import Choice from './utils/Choice';
+import Fold from './sheet/Fold';
+import Sheet from './sheet/Sheet';
+import Feat from './feat/Feat';
+import Feature, { Action, Attack, Curse, Pool, Trait } from './feature/Feature';
+import Heirloom, { Trinket } from './item/Heirloom';
+import Lore from './utils/Lore';
+import Monster from './monster/Monster';
+import Overcast from './spell/Overcast';
+import Statlet from './item/Statlet';
+import Progression, { Column, Row } from './vocation/Progression';
+import Scaling from './spell/Scaling';
+import Spell from './spell/Spell';
+import SpellList from './spell/SpellList';
+import SpellLists from './spell/SpellLists';
+import Vocation, { Specialization } from './vocation/Vocation';
+import * as slotModule from './utils/slotElements';
 
 /**
  * Slot card component map, keyed by MDX component name.
