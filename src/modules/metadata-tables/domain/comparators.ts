@@ -1,7 +1,7 @@
 /**
  * @fileoverview Generic comparison functions for sortable table columns.
- * @description Order-based comparison via lookup map, Challenge Rating parsing
- * with fraction support, and CR comparison with missing-value handling.
+ * @description Order-based comparison via lookup map, Lethality parsing
+ * with fraction support, and Lethality comparison with missing-value handling.
  * 
  * @version 2.0.0
  * @author Typeir
@@ -11,7 +11,7 @@
  * 
  * @example
  * ```typescript
- * import { compareByOrder, parseChallengeRating } from '@/modules/metadata-tables/domain/comparators';
+ * import { compareByOrder, parseLethality } from '@/modules/metadata-tables/domain/comparators';
  * import { SIZE_SORT_ORDER } from '@/modules/metadata-tables/domain/constants';
  * 
  * // Use in table column configuration
@@ -20,8 +20,8 @@
  *   compareValues: (a, b) => compareByOrder(a, b, SIZE_SORT_ORDER)
  * }];
  * 
- * // Parse fractional CR values
- * const cr = parseChallengeRating('1/2'); // Returns 0.5
+ * // Parse fractional Lethality values
+ * const cr = parseLethality('1/2'); // Returns 0.5
  * ```
  * @module modules/metadata-tables/domain/comparators
  */
@@ -45,12 +45,12 @@ export function compareByOrder(
 }
 
 /**
- * Parses Challenge Rating values including fractions.
+ * Parses Lethality values including fractions.
  * 
- * @param {unknown} cr - Challenge rating string or number (e.g., "1/2", "5", 0.25)
- * @returns {number} Numeric CR value
+ * @param {unknown} cr - Lethality string or number (e.g., "1/2", "5", 0.25)
+ * @returns {number} Numeric Lethality value
  */
-export function parseChallengeRating(cr: unknown): number {
+export function parseLethality(cr: unknown): number {
   if (typeof cr === 'number') return cr;
   const str = String(cr).trim();
   
@@ -63,18 +63,18 @@ export function parseChallengeRating(cr: unknown): number {
 }
 
 /**
- * Comparison utility for Challenge Rating values.
+ * Comparison utility for Lethality values.
  *
- * @param {unknown} a - First CR value
- * @param {unknown} b - Second CR value
+ * @param {unknown} a - First Lethality value
+ * @param {unknown} b - Second Lethality value
  * @returns {number} Comparison result (-1, 0, 1)
  */
-export function compareChallengeRating(a: unknown, b: unknown): number {
+export function compareLethality(a: unknown, b: unknown): number {
   if (!a && !b) return 0;
   if (!a) return 1;
   if (!b) return -1;
   
-  const numA = parseChallengeRating(a);
-  const numB = parseChallengeRating(b);
+  const numA = parseLethality(a);
+  const numB = parseLethality(b);
   return numA - numB;
 }

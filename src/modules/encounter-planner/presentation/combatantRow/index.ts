@@ -10,7 +10,7 @@
  * @exports CombatantRow - Main combatant row component
  * @exports CombatantRowProps - Props interface for CombatantRow
  * @exports CombatantMainStats - Displays HP, AC, stats, initiative, slain toggle
- * @exports CombatantNameSection - Displays name, CR, awakening badges
+ * @exports CombatantNameSection - Displays name, Lethality, awakening badges
  * @exports CombatantMechanicsSection - Manages legendary deeds and resists
  * @exports CombatantHeroicSection - Manages heroic awakening state
  * @exports CombatantConditionsManager - Manages active conditions

@@ -88,7 +88,7 @@ const createMockCombatant = (
   legendaryDeedsUsed: [],
   resistRemaining: 0,
   phaseDeeds: { wounded: false, bloodied: false, doomed: false },
-  crText: 'CR 5',
+  crText: 'Lethality 5',
   ...overrides,
 });
 

@@ -276,7 +276,7 @@ defensive answer has to grow at that rate to stay relevant.
 ## 8. Corpus monster data
 
 Parsed from 123 statblocks in `.meta/en/monsters/*.metadata.json`; 97 have a
-usable CR + AC + HP. Grouped by the Tier Bonus each statblock carries.
+usable Lethality + AC + HP. Grouped by the Tier Bonus each statblock carries.
 
 | TB | n | HP median | HP max | AC median | AC max | band centre (10+2·TB) |
 |---|---|---|---|---|---|---|

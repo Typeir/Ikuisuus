@@ -17,7 +17,7 @@ import type { MonsterIndexEntry } from '@/lib/db/content/schemas/monsterMetadata
  * @interface MonsterData
  * @property {string} slug - Unique identifier
  * @property {string} title - Display name
- * @property {string} cr - Challenge rating
+ * @property {string} cr - Lethality
  * @property {string} size - Size category
  * @property {string} creatureType - Monster type
  * @property {Object} [hp] - Hit points with average and formula

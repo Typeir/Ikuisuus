@@ -1,7 +1,7 @@
 /**
  * Combatant Name Section Component
  *
- * @fileoverview Renders combatant name, CR badge, awakening badges, and action controls.
+ * @fileoverview Renders combatant name, Lethality badge, awakening badges, and action controls.
  *
  * @module modules/encounter-planner/presentation/combatantRow/combatantNameSection
  * @version 2.0.0
@@ -16,7 +16,7 @@
  * @requires ../playMode/CombatantContext useCombatant hook for context
  *
  * @description
- * Renders the combatant name section with CR badge, awakening tier badges, and control buttons.
+ * Renders the combatant name section with Lethality badge, awakening tier badges, and control buttons.
  */
 
 'use client';

@@ -57,15 +57,15 @@ export function abilityCell(score: string | number): string {
 }
 
 /**
- * Challenge rating as a number, accepting the fractional ratings a low-end
+ * Lethality as a number, accepting the fractional ratings a low-end
  * sheet carries.
  *
- * @param {string | number} challenge - Challenge rating, possibly `1/4`
+ * @param {string | number} lethality - Lethality, possibly `1/4`
  * @returns {number | null} Rating, or null when unreadable
  */
-export function challengeValue(challenge: string | number): number | null {
-  if (typeof challenge === 'number') return challenge;
-  const text = String(challenge).trim();
+export function lethalityValue(lethality: string | number): number | null {
+  if (typeof lethality === 'number') return lethality;
+  const text = String(lethality).trim();
   const fraction = text.match(/^(\d+)\s*\/\s*(\d+)/);
   if (fraction) return Number(fraction[1]) / Number(fraction[2]);
   const whole = text.match(/^-?\d+(?:\.\d+)?/);
@@ -73,9 +73,9 @@ export function challengeValue(challenge: string | number): number | null {
 }
 
 /**
- * XP awarded for each challenge rating, in rating order.
+ * XP awarded for each lethality, in rating order.
  */
-export const XP_BY_CHALLENGE: ReadonlyArray<readonly [number, number]> = [
+export const XP_BY_LETHALITY: ReadonlyArray<readonly [number, number]> = [
   [0, 10],
   [0.125, 25],
   [0.25, 50],
@@ -118,19 +118,19 @@ export const XP_BY_CHALLENGE: ReadonlyArray<readonly [number, number]> = [
 ];
 
 /**
- * XP for a challenge rating.
+ * XP for a lethality.
  *
- * @param {string | number} challenge - Challenge rating
+ * @param {string | number} lethality - Lethality
  * @returns {number | null} XP, or null when the rating is unreadable or off the table
  *
  * @example
  * xpFor(3); // 700
  * xpFor('1/4'); // 50
  */
-export function xpFor(challenge: string | number): number | null {
-  const value = challengeValue(challenge);
+export function xpFor(lethality: string | number): number | null {
+  const value = lethalityValue(lethality);
   if (value === null) return null;
-  return XP_BY_CHALLENGE.find(([rating]) => rating === value)?.[1] ?? null;
+  return XP_BY_LETHALITY.find(([rating]) => rating === value)?.[1] ?? null;
 }
 
 /**
@@ -146,21 +146,21 @@ export function xpValue(xp: string | number): number | null {
 }
 
 /**
- * Challenge rating for an XP value
+ * Lethality for an XP value
  *
  * @param {string | number} xp - XP value
- * @returns {number | null} Challenge rating, or null when the XP is unreadable
+ * @returns {number | null} Lethality, or null when the XP is unreadable
  *
  * @example
- * challengeFor(700); // 3
- * challengeFor('10,000'); // 13
- * challengeFor(800); // 3
+ * lethalityFor(700); // 3
+ * lethalityFor('10,000'); // 13
+ * lethalityFor(800); // 3
  */
-export function challengeFor(xp: string | number): number | null {
+export function lethalityFor(xp: string | number): number | null {
   const value = xpValue(xp);
   if (value === null) return null;
-  let rating = XP_BY_CHALLENGE[0][0];
-  for (const [candidate, threshold] of XP_BY_CHALLENGE) {
+  let rating = XP_BY_LETHALITY[0][0];
+  for (const [candidate, threshold] of XP_BY_LETHALITY) {
     if (threshold > value) break;
     rating = candidate;
   }
@@ -170,7 +170,7 @@ export function challengeFor(xp: string | number): number | null {
 /**
  * The XP band of a rating
  *
- * @param {string | number} challenge - Challenge rating
+ * @param {string | number} lethality - Lethality
  * @returns {readonly [number, number | null] | null} Low and high XP, or null for an unknown rating
  *
  * @example
@@ -178,26 +178,26 @@ export function challengeFor(xp: string | number): number | null {
  * xpBand('1/2'); // [100, 199]
  * xpBand(35); // [425000, null]
  */
-export function xpBand(challenge: string | number): readonly [number, number | null] | null {
-  const value = challengeValue(challenge);
+export function xpBand(lethality: string | number): readonly [number, number | null] | null {
+  const value = lethalityValue(lethality);
   if (value === null) return null;
-  const index = XP_BY_CHALLENGE.findIndex(([rating]) => rating === value);
+  const index = XP_BY_LETHALITY.findIndex(([rating]) => rating === value);
   if (index < 0) return null;
-  const next = XP_BY_CHALLENGE[index + 1];
-  return [XP_BY_CHALLENGE[index][1], next ? next[1] - 1 : null];
+  const next = XP_BY_LETHALITY[index + 1];
+  return [XP_BY_LETHALITY[index][1], next ? next[1] - 1 : null];
 }
 
 /**
- * A challenge rating as a sheet writes it
+ * A lethality as a sheet writes it
  *
- * @param {number} rating - Challenge rating
+ * @param {number} rating - Lethality
  * @returns {string} Rating text
  *
  * @example
- * challengeLabel(0.25); // '1/4'
- * challengeLabel(13); // '13'
+ * lethalityLabel(0.25); // '1/4'
+ * lethalityLabel(13); // '13'
  */
-export function challengeLabel(rating: number): string {
+export function lethalityLabel(rating: number): string {
   if (rating === 0.125) return '1/8';
   if (rating === 0.25) return '1/4';
   if (rating === 0.5) return '1/2';
@@ -205,9 +205,9 @@ export function challengeLabel(rating: number): string {
 }
 
 /**
- * Tier bonus for a challenge rating
+ * Tier bonus for a lethality
  *
- * @param {string | number} challenge - Challenge rating
+ * @param {string | number} lethality - Lethality
  * @returns {number | null} Tier bonus, or null when the rating is unreadable
  *
  * @example
@@ -215,8 +215,8 @@ export function challengeLabel(rating: number): string {
  * tierBonusFor('1/4'); // 1
  * tierBonusFor(23); // 8
  */
-export function tierBonusFor(challenge: string | number): number | null {
-  const value = challengeValue(challenge);
+export function tierBonusFor(lethality: string | number): number | null {
+  const value = lethalityValue(lethality);
   if (value === null) return null;
   return Math.max(1, Math.ceil(value / 3));
 }

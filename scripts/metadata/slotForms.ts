@@ -216,16 +216,16 @@ function restoreAttacks(lines: string[]): void {
 }
 
 /**
- * Tier bonus a challenge rating implies
+ * Tier bonus a lethality implies
  *
- * @param {string} challenge - Rating text
+ * @param {string} lethality - Rating text
  * @returns {number | null} Bonus, or null when unreadable
  */
-function tierBonusFor(challenge: string): number | null {
-  const fraction = challenge.match(/^(\d+)\/(\d+)/);
+function tierBonusFor(lethality: string): number | null {
+  const fraction = lethality.match(/^(\d+)\/(\d+)/);
   const value = fraction
     ? Number(fraction[1]) / Number(fraction[2])
-    : Number(challenge.match(/^\d+/)?.[0]);
+    : Number(lethality.match(/^\d+/)?.[0]);
   return Number.isFinite(value) ? Math.max(1, Math.ceil(value / 3)) : null;
 }
 
@@ -276,11 +276,11 @@ export function unslotMonster(text: string): string {
       );
     }
 
-    const challenge = get('challenge');
-    if (challenge) {
+    const lethality = get('lethality');
+    if (lethality) {
       const xp = get('xp');
-      header.push(`- **Challenge**: ${challenge}${xp ? ` (${xp} XP)` : ''}`);
-      const derived = tierBonusFor(challenge);
+      header.push(`- **Lethality**: ${lethality}${xp ? ` (${xp} XP)` : ''}`);
+      const derived = tierBonusFor(lethality);
       const tierBonus = get('tierBonus') ?? (derived === null ? undefined : `+${derived}`);
       if (tierBonus) header.push(`- **Tier Bonus**: ${tierBonus}`);
     }

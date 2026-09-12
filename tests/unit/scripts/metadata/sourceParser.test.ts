@@ -255,7 +255,7 @@ describe('authored aspects frontmatter', () => {
       '| --- | --- | --- |',
       '| 10 | 10 ([% 2d8 %]) | [= 6 stride =] |',
       '',
-      '- **Challenge**: 1 (200 XP)',
+      '- **Lethality**: 1 (200 XP)',
       '',
     ].join('\n');
     const record = parseMetadataFromSource(raw, '', sharedData)
@@ -283,7 +283,7 @@ describe('feature-scoped authored aspects', () => {
       '| --- | --- | --- |',
       '| 10 | 10 ([% 2d8 %]) | [= 6 stride =] |',
       '',
-      '- **Challenge**: 1 (200 XP)',
+      '- **Lethality**: 1 (200 XP)',
       '',
       '---',
       '',

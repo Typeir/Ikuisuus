@@ -138,7 +138,7 @@ All generators import utilities from the shared `src/lib/metadata/` TypeScript m
 
    ```typescript
    ItemData.getRarities(sharedData); // ['common', 'uncommon', ..., 'legendary']
-   ItemData.getWeaponProperties(sharedData); // ['ammunition', 'finesse', 'heavy', ...]
+   ItemData.getWeaponProperties(sharedData); // ['ammunition', 'finesse', 'unwieldy', ...]
    ItemData.getMasteryProperties(sharedData); // ['cleave', 'graze', 'nick', ...]
    ItemData.getSpellSchools(sharedData); // ['Abjuration', ..., 'Transmutation']
    ```
@@ -295,7 +295,7 @@ parseArmorClass(line); // "**Armor Class** 20 (natural armor)"
 parseHitPoints(line); // "**Hit Points** 780 (60d10 + 420)"
 parseSpeed(line); // "**Speed** 40 ft., fly 80 ft."
 parseAbilities(tableRows); // Parse ability score table
-parseChallengeRating(line); // "**Challenge** 23 (50,000 XP)"
+parseLethality(line); // "**Lethality** 23 (50,000 XP)"
 ```
 
 **Example** (from actual codebase):
@@ -322,7 +322,7 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
 - **Condition Immunities**: Terrified, Paralyzed, Poisoned, Prone, Banishment
 - **Senses**: Truesight 120 ft., Tremorsense 120 ft., passive Perception 25
 - **Languages**: Empyrean; telepathy 300 ft.
-- **Challenge**: 23 (32,000 XP)
+- **Lethality**: 23 (32,000 XP)
 - **Proficiency Bonus**: +7
 ```
 
@@ -399,7 +399,7 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
   itemType: string;                // 'weapon', 'armor', 'wondrous item'
   weaponType?: string;             // 'greatsword', 'longsword'
   requiresAttunement: boolean;     // true/false
-  weaponProperties?: string[];     // ['heavy', 'two-handed', 'magical']
+  weaponProperties?: string[];     // ['unwieldy', 'two-handed', 'magical']
   mastery?: string[];              // ['push', 'enhanced sunder']
   weaponDamage?: {                 // Weapon damage info
     damage: string;                // '4d8'
@@ -434,11 +434,11 @@ parseCharges(content); // "X charges (recharge Y)"
 # Blackbone Crusher
 
 _Mythic Artifact (requires attunement)_  
-_Greatsword +4 (Two-Handed, Large, Heavy, Magical, Mastery: Push, Enhanced Sunder)_
+_Greatsword +4 (Two-Handed, Large, Unwieldy, Magical, Mastery: Push, Enhanced Sunder)_
 
 ## Item Properties
 
-- **Type**: Greatsword (Two-Handed, Large, Heavy)
+- **Type**: Greatsword (Two-Handed, Large, Unwieldy)
 - **Damage**: 4d8 bludgeoning + 4
 - **Range**: 25 ft. (extended whip-like reach)
 - **Weight**: 45 lbs
@@ -456,7 +456,7 @@ _Greatsword +4 (Two-Handed, Large, Heavy, Magical, Mastery: Push, Enhanced Sunde
   "itemType": "weapon",
   "weaponType": "greatsword",
   "requiresAttunement": true,
-  "weaponProperties": ["heavy", "large", "magical", "two-handed"],
+  "weaponProperties": ["unwieldy", "large", "magical", "two-handed"],
   "mastery": ["enhanced sunder", "push"],
   "weaponDamage": {
     "damage": "4d8",

@@ -40,7 +40,7 @@ const createCombatant = (slain: boolean = false): InProgressCombatant => ({
   slain,
   sessionOnly: false,
   sourceHref: undefined,
-  crText: 'CR 5',
+  crText: 'Lethality 5',
   heroicAwakening: {
     fateDieResult: 0,
     heroicDc: 0,

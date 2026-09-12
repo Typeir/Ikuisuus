@@ -56,9 +56,9 @@ function extractBonuses(content) {
     // End of stat header
     if (/^---$/.test(line.trim())) passedDivider = true;
 
-    // Extract CR
+    // Extract Lethality
     if (!passedDivider && cr === null) {
-      const m = line.match(/\*\*Challenge\*\*:\s*([\d/]+)/);
+      const m = line.match(/\*\*Lethality\*\*:\s*([\d/]+)/);
       if (m) cr = parseCR(m[1]);
     }
 
@@ -78,7 +78,7 @@ function extractBonuses(content) {
     if (/^\|\s*\*?\*?STR\*?\*?\s*\|/.test(line)) continue; // ability header
     if (/^\|\s*\d+\s*\(\+?\d+\)/.test(line)) continue; // ability score row
     if (
-      /^\*\*Armor Class\*\*|\*\*Hit Points\*\*|\*\*Speed\*\*|\*\*Challenge\*\*|\*\*Tier Bonus\*\*/.test(
+      /^\*\*Armor Class\*\*|\*\*Hit Points\*\*|\*\*Speed\*\*|\*\*Lethality\*\*|\*\*Tier Bonus\*\*/.test(
         line,
       )
     )
@@ -209,9 +209,9 @@ async function main() {
       )
       .join('; ');
 
-    const flag = tbOk ? '' : ` ⚠ ceil(CR/3)=+${expTB}`;
+    const flag = tbOk ? '' : ` ⚠ ceil(Lethality/3)=+${expTB}`;
     console.log(`  ${filename}`);
-    console.log(`    CR ${cr}, TB +${listedTB}${flag}`);
+    console.log(`    Lethality ${cr}, TB +${listedTB}${flag}`);
     console.log(`    ${findings.length} bonuses: ${summary}\n`);
   }
 

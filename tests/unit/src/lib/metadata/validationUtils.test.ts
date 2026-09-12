@@ -1,6 +1,6 @@
 /**
  * @fileoverview Validation Utilities Unit Tests
- * @description Tests for tag validation, CR-to-rarity mapping, and metadata schema checks.
+ * @description Tests for tag validation, Lethality-to-rarity mapping, and metadata schema checks.
  *
  * @module tests/unit/src/lib/metadata/validationUtils.test
  * @version 1.0.0
@@ -122,27 +122,27 @@ describe('validateTag', () => {
 });
 
 describe('getRarityFromCR', () => {
-  it('should assign common for low CR', () => {
+  it('should assign common for low Lethality', () => {
     expect(getRarityFromCR(1, MOCK_DATA)).toBe('rarity:common');
   });
 
-  it('should assign rare for mid CR', () => {
+  it('should assign rare for mid Lethality', () => {
     expect(getRarityFromCR(5, MOCK_DATA)).toBe('rarity:rare');
   });
 
-  it('should assign very rare for high CR', () => {
+  it('should assign very rare for high Lethality', () => {
     expect(getRarityFromCR(11, MOCK_DATA)).toBe('rarity:very-rare');
   });
 
-  it('should assign legendary for top CR', () => {
+  it('should assign legendary for top Lethality', () => {
     expect(getRarityFromCR(17, MOCK_DATA)).toBe('rarity:legendary');
   });
 
-  it('should parse string CR', () => {
+  it('should parse string Lethality', () => {
     expect(getRarityFromCR('0.25', MOCK_DATA)).toBe('rarity:common');
   });
 
-  it('should handle CR 0', () => {
+  it('should handle Lethality 0', () => {
     expect(getRarityFromCR(0, MOCK_DATA)).toBe('rarity:common');
   });
 });
@@ -193,13 +193,13 @@ describe('validateMetadata', () => {
     expect(result.errors).toContain('Missing creature type');
   });
 
-  it('should fail on missing CR for monsters', () => {
+  it('should fail on missing Lethality for monsters', () => {
     const result = validateMetadata(
       { slug: 'goblin', title: 'Goblin', creatureType: 'humanoid' },
       'monster',
       MOCK_DATA,
     );
-    expect(result.errors).toContain('Missing challenge rating');
+    expect(result.errors).toContain('Missing lethality');
   });
 
   it('should fail on missing rarity for heirlooms', () => {

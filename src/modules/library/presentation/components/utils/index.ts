@@ -64,7 +64,7 @@ function fromMonster(
   record: import('@/lib/db/content/schemas/monsterMetadata').MonsterMetadata,
 ): string {
   const parts: string[] = [titleCaseToken(record.subSlug ?? record.slug)];
-  if (record.cr) parts.push(`CR:${record.cr}`);
+  if (record.cr) parts.push(`Lethality:${record.cr}`);
   if (record.size) parts.push(record.size.toUpperCase());
   if (record.creatureType) parts.push(record.creatureType.toUpperCase());
   if (record.hp?.average) parts.push(`HP:${record.hp.average}`);

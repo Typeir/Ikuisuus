@@ -75,7 +75,7 @@ export default function MonsterTableWrapper({
         filters={[
           { label: 'Size', type: 'select' },
           { label: 'Type', type: 'select' },
-          { label: 'CR', type: 'range' },
+          { label: 'Lethality', type: 'range' },
           { label: 'AC', type: 'range' },
           { label: 'HP', type: 'range' },
         ]}

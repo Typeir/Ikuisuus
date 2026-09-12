@@ -70,8 +70,8 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
       expect(combatant.locked).toBeInstanceOf(Array);
     });
 
-    it('should initialize locked for creatures with various CR values', () => {
-      for (const crText of ['CR 1/8', 'CR 5', 'CR 20', 'CR 35']) {
+    it('should initialize locked for creatures with various Lethality values', () => {
+      for (const crText of ['Lethality 1/8', 'Lethality 5', 'Lethality 20', 'Lethality 35']) {
         const creature = createEmptyCreature();
         creature.crText = crText;
         const combatant = createInProgressCombatant(creature);

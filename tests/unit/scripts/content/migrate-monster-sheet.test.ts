@@ -35,7 +35,7 @@ _Small monstrosity, Unaligned_
 | ------- | ------- | ------- | ------ | ------- | ------ |
 | 12 (+1) | 10 (+0) | 13 (+1) | 2 (−4) | 10 (+0) | 5 (−3) |
 
-- **Challenge**: 1
+- **Lethality**: 1
 - **Tier Bonus**: +1
 - **Saving Throws**: Con +2
 - **Damage Resistances**: Dark
@@ -96,7 +96,7 @@ describe('migrateMonsterSheet', () => {
       '  int="2"',
       '  wis="10"',
       '  cha="5"',
-      '  challenge="1"',
+      '  lethality="1"',
       '  saves="Con +2"',
       '  resistances="Dark"',
       '  conditionImmunities="[# kw:condition:Terrified #]"',
@@ -128,13 +128,13 @@ describe('migrateMonsterSheet', () => {
     expect(text).toContain('one creature.\n\n</Action>\n\n</Monster>');
   });
 
-  it('splits challenge and XP, keeps a tier bonus the rating does not give', () => {
+  it('splits lethality and XP, keeps a tier bonus the rating does not give', () => {
     const text = SHEET.replace(
-      '- **Challenge**: 1\n- **Tier Bonus**: +1',
-      '- **Challenge**: 23 (32,000 XP)\n- **Tier Bonus**: +9',
+      '- **Lethality**: 1\n- **Tier Bonus**: +1',
+      '- **Lethality**: 23 (32,000 XP)\n- **Tier Bonus**: +9',
     );
     const { lines, notes } = convert(text);
-    expect(lines).toContain('  challenge="23"');
+    expect(lines).toContain('  lethality="23"');
     expect(lines).toContain('  xp="32,000"');
     expect(lines).toContain('  tierBonus="+9">');
     expect(notes).toEqual(['tier bonus +9 kept: the rating gives +8']);
@@ -215,7 +215,7 @@ Blocks.
       'already on the slot form',
       SHEET.replace('_Small monstrosity, Unaligned_', '<Monster size="Small">'),
     ],
-    ['2 stat blocks; convert by hand', SHEET + '\n- **Challenge**: 2\n'],
+    ['2 stat blocks; convert by hand', SHEET + '\n- **Lethality**: 2\n'],
     [
       'no Armor Class / Hit Points / Speed table',
       SHEET.replace('**Armor Class**', 'AC'),
@@ -247,7 +247,7 @@ describe('tierBonusFor', () => {
     ['4', 2],
     ['23', 8],
     ['x', null],
-  ])('%s → %s', (challenge, bonus) => {
-    expect(tierBonusFor(challenge)).toBe(bonus);
+  ])('%s → %s', (lethality, bonus) => {
+    expect(tierBonusFor(lethality)).toBe(bonus);
   });
 });

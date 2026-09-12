@@ -133,7 +133,7 @@ export const createCreatureFromMonster = (
   const sourceHref = monsterData.link
     ? `/${locale}${monsterData.link}`
     : undefined;
-  const crText = monsterData.cr ? `CR ${monsterData.cr}` : undefined;
+  const crText = monsterData.cr ? `Lethality ${monsterData.cr}` : undefined;
   const tierBonus = monsterData.tierBonus || null;
   const speed =
     typeof monsterData.speed === 'string'

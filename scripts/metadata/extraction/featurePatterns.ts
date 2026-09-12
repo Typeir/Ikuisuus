@@ -248,7 +248,7 @@ export const TEMPLATES = {
  * @property {RegExp} hover - "hover"
  * @property {RegExp} armorClassHeader - "| **Armor Class**"
  * @property {RegExp} savingThrowBonus - "Str +5"
- * @property {RegExp} challengeRating - "1/2" or "17"
+ * @property {RegExp} lethality - "1/2" or "17"
  */
 export const MONSTER = {
   attackLine:
@@ -285,7 +285,7 @@ export const MONSTER = {
   hover: /\bhover\b/i,
   armorClassHeader: /\|\s*\*\*Armor\s*Class\*\*/i,
   savingThrowBonus: /^(Str|Dex|Con|Int|Wis|Cha)\s*([+-]?\d+)/i,
-  challengeRating: /(\d+\/\d+|\d+)/,
+  lethality: /(\d+\/\d+|\d+)/,
 } as const;
 
 /**

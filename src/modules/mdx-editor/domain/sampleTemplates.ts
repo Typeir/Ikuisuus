@@ -43,7 +43,7 @@ _Medium Beast, Neutral_
 - **Condition Immunities**: None
 - **Senses**: passive Perception 10
 - **Languages**: None
-- **Challenge**: 1 (200 XP)
+- **Lethality**: 1 (200 XP)
 - **Tier Bonus**: +2
 
 ---

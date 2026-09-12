@@ -63,10 +63,10 @@ interface FoundryNpcActor {
 }
 
 /**
- * Parses a CR string to a numeric value.
+ * Parses a Lethality string to a numeric value.
  *
- * @param {string} cr - Challenge rating string (e.g. "1/4", "10")
- * @returns {number} Numeric CR value
+ * @param {string} cr - Lethality string (e.g. "1/4", "10")
+ * @returns {number} Numeric Lethality value
  */
 function parseCr(cr: string): number {
   if (cr.includes('/')) {

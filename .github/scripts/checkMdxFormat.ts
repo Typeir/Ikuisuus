@@ -13,9 +13,9 @@ import { REGEX_CONTENT_SUFFIX } from '@/lib/constants/content';
 import { toKebabCase } from '@/lib/utils/toKebabCase';
 import { getMatchingFiles } from '@/lib/utils/getMatchingFiles';
 import {
-  challengeFor,
-  challengeLabel,
-  challengeValue,
+  lethalityFor,
+  lethalityLabel,
+  lethalityValue,
   xpBand,
   xpValue,
 } from '@/modules/library/domain/derive';
@@ -165,15 +165,15 @@ export function xpBandNotes(content: string): string | false {
     for (const attribute of tag[2].matchAll(ATTRIBUTE)) {
       written[attribute[1]] = attribute[2] ?? attribute[3] ?? '';
     }
-    if (!written.challenge || !written.xp) continue;
-    const band = xpBand(written.challenge);
-    const rating = challengeValue(written.challenge);
+    if (!written.lethality || !written.xp) continue;
+    const band = xpBand(written.lethality);
+    const rating = lethalityValue(written.lethality);
     const actual = xpValue(written.xp);
-    const falls = actual === null ? null : challengeFor(actual);
+    const falls = actual === null ? null : lethalityFor(actual);
     if (band && rating !== null && actual !== null && falls !== rating) {
       const high = band[1] === null ? 'up' : `–${band[1]}`;
       notes.push(
-        `<Monster challenge="${written.challenge}" xp="${written.xp}"> — CR ${written.challenge} runs ${band[0]}${high} XP; ${written.xp} sits in the CR ${challengeLabel(falls ?? rating)} band`,
+        `<Monster lethality="${written.lethality}" xp="${written.xp}"> — Lethality ${written.lethality} runs ${band[0]}${high} XP; ${written.xp} sits in the Lethality ${lethalityLabel(falls ?? rating)} band`,
       );
     }
   }
@@ -298,11 +298,11 @@ const RULES: FormatRule[] = [
     name: 'monster-sheet-missing-cr',
     check: (content: string, rel: string) =>
       rel.endsWith('.sheet.mdx') &&
-      !content.match(/\*\*Challenge\*\*.*\d/) &&
-      !/<Monster\b[^>]*\b(?:challenge|xp)=["'][^"']+["']/.test(content),
-    message: 'Monster sheet missing Challenge line',
+      !content.match(/\*\*Lethality\*\*.*\d/) &&
+      !/<Monster\b[^>]*\b(?:lethality|xp)=["'][^"']+["']/.test(content),
+    message: 'Monster sheet missing Lethality line',
     suggestion:
-      'Add **Challenge**: X (Y XP) line, or a challenge or xp slot on <Monster>',
+      'Add **Lethality**: X (Y XP) line, or a lethality or xp slot on <Monster>',
     severity: 'warning',
     appliesTo: ['monsters'],
   },
@@ -317,7 +317,7 @@ const RULES: FormatRule[] = [
   {
     name: 'monster-xp-band',
     check: xpBandNotes,
-    message: 'Written XP sits in a different rating band than the written CR',
+    message: 'Written XP sits in a different rating band than the written Lethality',
     suggestion:
       'Both numbers are as authored; change one only if the pairing was unintended',
     severity: 'info',

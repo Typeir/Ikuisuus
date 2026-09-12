@@ -25,9 +25,9 @@ export interface AbilityRef {
 }
 
 /**
- * Rarity threshold mapping from CR to rarity tag.
+ * Rarity threshold mapping from Lethality to rarity tag.
  *
- * @property {number} minCR - Minimum challenge rating for this tier
+ * @property {number} minCR - Minimum lethality for this tier
  * @property {string} tag - Tag string (e.g. "rarity:legendary")
  */
 export interface RarityThreshold {
@@ -111,7 +111,7 @@ export interface WorldDataSection {
  * Taxonomy and classification data.
  *
  * @property {string[]} tagCategories - Valid tag category prefixes
- * @property {RarityThreshold[]} rarityThresholds - CR-to-rarity mappings (descending order)
+ * @property {RarityThreshold[]} rarityThresholds - Lethality-to-rarity mappings (descending order)
  */
 export interface TaxonomySection {
   tagCategories: string[];

@@ -20,7 +20,7 @@ import {
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-import { CONTENT_REPO, MAIN_REPO } from './constants';
+import { CONTENT_REPO } from './constants';
 
 /** ANSI helpers for console output. */
 const RED = '\x1b[31m';
@@ -89,6 +89,35 @@ function resolveHooksDir(repo: string): string {
   return resolve(gitPath, 'hooks');
 }
 
+/** Shell prelude that resolves the main repo root from the committing repo. */
+const REPO_PRELUDE = [
+  '#!/usr/bin/env bash',
+  'set -euo pipefail',
+  'CURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0',
+  'if [ -f "$CURRENT_REPO/.git" ]; then',
+  '  MAIN_REPO="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0',
+  'else',
+  '  MAIN_REPO="$CURRENT_REPO"',
+  'fi',
+].join('\n');
+
+/**
+ * Builds an advisory hook that runs a `scripts/multirepo` entry point under the
+ * main repo's local `tsx`, exiting quietly when no `tsx` binary is available.
+ * @param {string} script - Script basename under `scripts/multirepo`.
+ * @returns The hook file content.
+ */
+function multirepoHook(script: string): string {
+  return [
+    REPO_PRELUDE,
+    'TSX="$MAIN_REPO/node_modules/.bin/tsx"',
+    '[ -x "$TSX" ] || TSX="$(command -v tsx || true)"',
+    `[ -n "$TSX" ] || { echo "multirepo ${script} hook skipped: tsx not found" >&2; exit 0; }`,
+    `exec "$TSX" "$MAIN_REPO/scripts/multirepo/${script}.ts"`,
+    '',
+  ].join('\n');
+}
+
 /**
  * Entry point.
  * @returns {Promise<void>}
@@ -105,19 +134,19 @@ export async function main(): Promise<void> {
 
   writeHook(
     resolve(hooksDir, 'pre-commit'),
-    `#!/usr/bin/env bash\nexec tsx "${MAIN_REPO}/scripts/multirepo/pre-commit-warn.ts"\n`,
+    multirepoHook('pre-commit-warn'),
     'pre-commit hook (content repo)',
   );
 
   writeHook(
     resolve(hooksDir, 'post-commit'),
-    `#!/usr/bin/env bash\nexec tsx "${MAIN_REPO}/scripts/multirepo/validate-sync.ts"\n`,
+    multirepoHook('validate-sync'),
     'post-commit hook (content repo)',
   );
 
   writeHook(
     resolve(hooksDir, 'commit-msg'),
-    `#!/usr/bin/env bash\nset -euo pipefail\nCURRENT_REPO="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0\nif [ -f "$CURRENT_REPO/.git" ]; then\n  MAIN_REPO="$(cd "$CURRENT_REPO/../.." 2>/dev/null && pwd)" || exit 0\nelse\n  MAIN_REPO="$CURRENT_REPO"\nfi\nnpx tsx --tsconfig "$MAIN_REPO/tsconfig.scripts.json" "$MAIN_REPO/.paw/git-hooks/commit-msg.ts" "$1"\n`,
+    `${REPO_PRELUDE}\nnpx tsx --tsconfig "$MAIN_REPO/tsconfig.scripts.json" "$MAIN_REPO/.paw/git-hooks/commit-msg.ts" "$1"\n`,
     'commit-msg hook (content repo)',
   );
 

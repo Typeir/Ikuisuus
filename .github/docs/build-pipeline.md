@@ -137,7 +137,7 @@ URL:    /library/monsters/albedo-the-bleak-bloom
 
 1. **Monster Generator**:
    - Parses Damocles stat block format (italic lines, tables, blockquotes)
-   - Extracts: AC, HP, CR, abilities, resistances, damage types
+   - Extracts: AC, HP, Lethality, abilities, resistances, damage types
    - Handles multi-variant files (arrays of stat blocks)
    - Tags: creature type, size, legendary deeds, spellcasting
 

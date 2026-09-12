@@ -9,6 +9,7 @@
 export { FeatTable } from './FeatTable';
 export { FilteredSpellTable } from './FilteredSpellTable';
 export { HeirloomTable } from './HeirloomTable';
+export { LethalityTable } from './LethalityTable';
 export { MonsterTable } from './MonsterTable';
 export { SpellTable } from './SpellTable';
 export { SpellTableSkeleton } from './SpellTableSkeleton';

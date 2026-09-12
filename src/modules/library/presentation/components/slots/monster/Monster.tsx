@@ -19,8 +19,8 @@ import {
 } from '@/lib/components/ui/dataTable';
 import {
   abilityCell,
-  challengeFor,
-  challengeLabel,
+  lethalityFor,
+  lethalityLabel,
   signed,
   tierBonusFor,
   xpFor,
@@ -141,28 +141,28 @@ const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
       inlineValue(values[name])
     );
 
-  const writtenChallenge = textOf(values.challenge);
+  const writtenLethality = textOf(values.lethality);
   const writtenXp = textOf(values.xp);
   const derivedChallenge =
-    writtenChallenge === null && writtenXp !== null
-      ? challengeFor(writtenXp)
+    writtenLethality === null && writtenXp !== null
+      ? lethalityFor(writtenXp)
       : null;
   const derivedXp =
-    writtenXp === null && writtenChallenge !== null
-      ? xpFor(writtenChallenge)
+    writtenXp === null && writtenLethality !== null
+      ? xpFor(writtenLethality)
       : null;
-  const challenge =
-    writtenChallenge ??
-    (derivedChallenge === null ? null : challengeLabel(derivedChallenge));
+  const lethality =
+    writtenLethality ??
+    (derivedChallenge === null ? null : lethalityLabel(derivedChallenge));
 
   const derivedTier =
-    values.tierBonus === undefined && challenge !== null
-      ? tierBonusFor(challenge)
+    values.tierBonus === undefined && lethality !== null
+      ? tierBonusFor(lethality)
       : null;
 
   const listSlots = MONSTER_LIST_SLOTS.filter((name) => {
     if (name === 'xp') return false;
-    if (name === 'challenge') return challenge !== null;
+    if (name === 'lethality') return lethality !== null;
     if (name === 'tierBonus') {
       return values.tierBonus !== undefined || derivedTier !== null;
     }
@@ -210,16 +210,16 @@ const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
           {listSlots.map((name) => (
             <SlotRow key={name} name={name} host='Monster'>
               {name === 'tierBonus' && derivedTier !== null ? (
-                <span data-derived-from='challenge'>{signed(derivedTier)}</span>
-              ) : name === 'challenge' ? (
+                <span data-derived-from='lethality'>{signed(derivedTier)}</span>
+              ) : name === 'lethality' ? (
                 <>
-                  {writtenChallenge ?? (
-                    <span data-derived-from='xp'>{challenge}</span>
+                  {writtenLethality ?? (
+                    <span data-derived-from='xp'>{lethality}</span>
                   )}
                   {writtenXp !== null ? (
                     <span data-monster-xp> ({writtenXp} XP)</span>
                   ) : derivedXp !== null ? (
-                    <span data-monster-xp data-derived-from='challenge'>
+                    <span data-monster-xp data-derived-from='lethality'>
                       {' '}
                       ({derivedXp} XP)
                     </span>

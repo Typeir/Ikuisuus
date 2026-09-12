@@ -31,9 +31,9 @@ Required elements:
 - Subheading with size/type/alignment: `_Size Type, Alignment_`
 - AC / HP / Speed table (first markdown table)
 - Ability score table with STR/DEX/CON/INT/WIS/CHA (bold or plain)
-- Property list: Saving Throws, Damage Resistances/Immunities, Condition Immunities, Senses, Languages, Challenge, Proficiency Bonus
+- Property list: Saving Throws, Damage Resistances/Immunities, Condition Immunities, Senses, Languages, Lethality, Proficiency Bonus
 - Sections separated by `---`: Traits, Actions, Legendary Deeds (if applicable)
-- All property labels are bold: `**Challenge**: 16 (10,900 XP)`
+- All property labels are bold: `**Lethality**: 16 (10,900 XP)`
 
 ### Spells (`src/content/en/spells/*.mdx`)
 
@@ -68,7 +68,7 @@ Required elements:
 
 - Serve as category overview pages
 - Excluded from metadata generation
-- May use `<MonsterTable>`, `<HeirloomTable>`, `<SpellTable>`, `<TrinketTable>` components
+- May use `<MonsterTable>`, `<LethalityTable>`, `<HeirloomTable>`, `<SpellTable>`, `<TrinketTable>` components
 
 ## Critical Format Checks (Enforced by `check-mdx-format.mjs`)
 
@@ -81,7 +81,7 @@ Required elements:
 | `monster-sheet-missing-stat-table`    | critical | `.sheet.mdx` must have ability score table       |
 | `missing-h1`                          | warning  | Content files need `# Title` (except `main.mdx`) |
 | `multiple-h1`                         | warning  | Only one `#` per file for spells/world/items     |
-| `monster-sheet-missing-cr`            | warning  | `.sheet.mdx` should have Challenge line        |
+| `monster-sheet-missing-cr`            | warning  | `.sheet.mdx` should have Lethality line        |
 | `spell-missing-blockquote-stat-block` | warning  | Spells need `>` stat block                       |
 | `missing-alt-text`                    | warning  | `<Image>` needs alt text                         |
 | `color-literal-in-mdx`                | warning  | No inline color styles                           |
@@ -97,7 +97,7 @@ Components available in MDX (from `src/modules/library/presentation/components/i
 - `<ParallaxBackdrop src='...' alt='...' blurPx={N} opacity={N}>` — Parallax background
 - `<HorizontalSplit>` — Side-by-side content
 - `<FlexRenderer>` — Flexible rendering
-- `<MonsterTable>` / `<HeirloomTable>` / `<SpellTable>` / `<TrinketTable>` — Metadata tables
+- `<MonsterTable>` / `<LethalityTable>` / `<HeirloomTable>` / `<SpellTable>` / `<TrinketTable>` — Metadata tables
 
 Content files that opt in with `reusable: true` in frontmatter are also valid tags
 (e.g. `<LesserMooncleave />`). See [Reusable Content Regions](../docs/build-pipeline.md).

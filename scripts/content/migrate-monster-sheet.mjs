@@ -50,20 +50,20 @@ const AC_HEADER = /^\|\s*\*\*Armor Class\*\*/;
 const STR_HEADER = /^\|\s*\*{0,2}STR\*{0,2}\s*\|/;
 const BULLET = /^- \*\*([^*]+?)\*\*:?\s*(.*?)\s*$/;
 const SCORE = /^(\d+)\s*\([^)]*\)$/;
-const CHALLENGE = /^(\d+(?:\/\d+)?)(?:\s*\(([\d,.]+)\s*XP\))?$/i;
+const LETHALITY = /^(\d+(?:\/\d+)?)(?:\s*\(([\d,.]+)\s*XP\))?$/i;
 const SAVE_DC = /spell save dc\**\s*:?\s*\**\s*(\d+)/gi;
 
 /**
- * Tier bonus the challenge rating implies
+ * Tier bonus the lethality implies
  *
- * @param {string} challenge - Rating text
+ * @param {string} lethality - Rating text
  * @returns {number | null} Bonus, or null when unreadable
  */
-export function tierBonusFor(challenge) {
-  const fraction = challenge.match(/^(\d+)\/(\d+)/);
+export function tierBonusFor(lethality) {
+  const fraction = lethality.match(/^(\d+)\/(\d+)/);
   const value = fraction
     ? Number(fraction[1]) / Number(fraction[2])
-    : Number(challenge.match(/^\d+/)?.[0]);
+    : Number(lethality.match(/^\d+/)?.[0]);
   return Number.isFinite(value) ? Math.max(1, Math.ceil(value / 3)) : null;
 }
 
@@ -136,14 +136,14 @@ function readHeader(lines) {
     bodyAt = i + 1;
     const label = bullet[1].trim().toLowerCase();
     const value = bullet[2];
-    if (label === 'challenge') {
-      const match = value.match(CHALLENGE);
+    if (label === 'lethality') {
+      const match = value.match(LETHALITY);
       if (match) {
-        slots.challenge = match[1];
+        slots.lethality = match[1];
         if (match[2]) slots.xp = match[2];
       } else {
-        slots.challenge = value;
-        notes.push(`challenge kept as written: ${value}`);
+        slots.lethality = value;
+        notes.push(`lethality kept as written: ${value}`);
       }
       consumed.add(i);
     } else if (label === 'tier bonus') {
@@ -158,7 +158,7 @@ function readHeader(lines) {
   }
 
   if (tierBonus !== undefined) {
-    const derived = slots.challenge ? tierBonusFor(slots.challenge) : null;
+    const derived = slots.lethality ? tierBonusFor(slots.lethality) : null;
     if (derived === null || `+${derived}` !== tierBonus) {
       slots.tierBonus = tierBonus;
       const gives = derived === null ? 'nothing' : `+${derived}`;
@@ -235,7 +235,7 @@ export function migrateMonsterSheet(text) {
   if (lines.some((line) => /^<Monster\b/.test(line))) {
     return done(text, false, 'already on the slot form');
   }
-  const blocks = lines.filter((line) => /^- \*\*Challenge\*\*/.test(line)).length;
+  const blocks = lines.filter((line) => /^- \*\*Lethality\*\*/.test(line)).length;
   if (blocks > 1) return done(text, false, `${blocks} stat blocks; convert by hand`);
 
   const header = readHeader(lines);

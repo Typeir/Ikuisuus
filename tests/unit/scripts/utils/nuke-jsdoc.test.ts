@@ -21,7 +21,7 @@ import {
 const MONSTER = `/**
  * Header slots of a monster. The six ability scores are written as scores
  * alone; the card derives each modifier, so no sheet hand-maintains a number
- * arithmetic already knows. \`tierBonus\` derives from \`challenge\` on the same
+ * arithmetic already knows. \`tierBonus\` derives from \`lethality\` on the same
  * principle and is written only where a sheet overrides it. \`saveDc\` is the
  * one fixed DC a sheet's effects share, and it is a number: a DC that is a
  * formula belongs in the prose of the block that uses it.

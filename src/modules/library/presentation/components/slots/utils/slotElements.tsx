@@ -355,7 +355,7 @@ export const {
   ConditionImmunities,
   Senses,
   Languages,
-  Challenge,
+  Lethality,
   Xp,
   TierBonus,
   Parent,

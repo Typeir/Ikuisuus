@@ -277,7 +277,7 @@ describe('extractContentTypeTags', () => {
   it('should tag monster content', () => {
     const result = extractContentTypeTags(
       'goblin.mdx',
-      '**Armor Class** 13\n**Challenge Rating** 1/4',
+      '**Armor Class** 13\n**Lethality** 1/4',
     );
     expect(result).toContain('meta:content:statblock');
     expect(result).toContain('meta:content:monster');

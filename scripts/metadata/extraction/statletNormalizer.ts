@@ -27,7 +27,7 @@ const STAT_LINE_LABELS = new Set(
     'Saving Throws',
     'Skills',
     'Tier Bonus',
-    'Challenge',
+    'Lethality',
     'Speed',
     'Hit',
   ].map((l) => l.toLowerCase()),

@@ -258,12 +258,20 @@ export const PATTERNS = [
     hint: 'tier bonus',
   },
   {
-    id: 'challenge-rating-prose',
+    id: 'heavy-weapon-property',
     family: 'misc',
-    severity: 'review',
-    label: 'challenge rating in prose',
-    regex: /\bchallenge rating\b/i,
-    hint: 'stays on sheets; check prose uses mean what the term means',
+    severity: 'legacy',
+    label: 'Heavy weapon property',
+    regex: /\b[Hh]eavy weapons?\b|\*\*[Hh]eavy\*\*(?!\s+armou?r)/,
+    hint: 'unwieldy; heavy armour and a heavy door are still heavy',
+  },
+  {
+    id: 'challenge-rating',
+    family: 'misc',
+    severity: 'legacy',
+    label: 'Challenge Rating / CR',
+    regex: /\b[Cc]hallenge [Rr]ating\b|(?<!\[)\bCR\b/,
+    hint: 'lethality',
   },
 ];
 

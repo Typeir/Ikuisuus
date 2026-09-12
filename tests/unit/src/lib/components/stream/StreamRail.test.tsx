@@ -49,7 +49,7 @@ describe('cssString', () => {
 
 describe('streamStyle', () => {
   it('sets the quoted text and a length-derived duration', () => {
-    const text = '// Mucklord · CR:28 · GARGANTUAN · CONSTRUCT · HP:999 //';
+    const text = '// Mucklord · Lethality:28 · GARGANTUAN · CONSTRUCT · HP:999 //';
     const style = vars(text);
     expect(style['--stream-text']).toBe(`"${text}"`);
     expect(style['--stream-speed']).toBe('8.7s');

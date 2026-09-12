@@ -103,7 +103,7 @@ const rollAffixesAndDetermineTier = (
  *
  * @function applyHeroicAwakening
  * @param {InProgressCombatant} combatant - The combatant to awaken (mutated in place)
- * @param {string} [crText] - CR text like "CR 5" (skips awakening if not provided)
+ * @param {string} [crText] - Lethality text like "Lethality 5" (skips awakening if not provided)
  * @param {string} [locale='en'] - Locale for affix wiki links
  */
 export const applyHeroicAwakening = (

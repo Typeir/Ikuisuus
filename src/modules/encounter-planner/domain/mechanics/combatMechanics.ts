@@ -20,10 +20,10 @@ import { affixSlug } from '../shared/utils';
 const heroic_dcs = { '0': 15, '5': 15, '10': 16, '15': 17, '20': 18 };
 
 /**
- * Parse CR input into a finite numeric value.
+ * Parse Lethality input into a finite numeric value.
  *
- * @param {(string | number)} cr - Challenge rating input
- * @returns {number} Parsed CR number, or 0 when parsing fails
+ * @param {(string | number)} cr - Lethality input
+ * @returns {number} Parsed Lethality number, or 0 when parsing fails
  */
 const parseCrValue = (cr: string | number): number => {
   if (typeof cr === 'number') {
@@ -35,9 +35,9 @@ const parseCrValue = (cr: string | number): number => {
 };
 
 /**
- * Map CR to heroic DC threshold
+ * Map Lethality to heroic DC threshold
  *
- * @param {(string | number)} cr - Challenge rating
+ * @param {(string | number)} cr - Lethality
  * @returns {number} DC threshold (15–19)
  */
 export const getHeroicDc = (cr: string | number): number => {
@@ -132,7 +132,7 @@ export const parseMechanicsFromTags = (tags?: string[]): CombatantMechanics => {
  * Get default number of resist uses.
  *
  * @function getDefaultResistCount
- * @param {string} [_crText] - CR text (currently unused, reserved for future scaling)
+ * @param {string} [_crText] - Lethality text (currently unused, reserved for future scaling)
  * @returns {number} Default resist count (3)
  */
 export const getDefaultResistCount = (_crText?: string): number => {
@@ -143,7 +143,7 @@ export const getDefaultResistCount = (_crText?: string): number => {
  * Get default number of legendary deeds.
  *
  * @function getDefaultDeedCount
- * @param {string} [_crText] - CR text (currently unused, reserved for future scaling)
+ * @param {string} [_crText] - Lethality text (currently unused, reserved for future scaling)
  * @returns {number} Default deed count (3)
  */
 export const getDefaultDeedCount = (_crText?: string): number => {

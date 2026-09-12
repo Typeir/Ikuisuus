@@ -3,7 +3,7 @@
 /**
  * @fileoverview Monster Tier Bonus Recalculator
  *
- * Recalculates **Tier Bonus** in `.sheet.mdx` files from ceil(CR/3).
+ * Recalculates **Tier Bonus** in `.sheet.mdx` files from ceil(Lethality/3).
  *
  * @module scripts/wip/recalculate-monster-tier-bonus
  * @version 1.0.0
@@ -18,7 +18,7 @@ const MONSTERS_DIR = join(ROOT, 'src', 'content', 'en', 'monsters');
 
 // ─── Parsers ─────────────────────────────────────────────────────────────────
 
-/** Parse CR string like "1/4", "12", "0". */
+/** Parse Lethality string like "1/4", "12", "0". */
 function parseCR(s) {
   if (!s) return 0;
   const t = s.trim();
@@ -40,9 +40,9 @@ function parseTB(line) {
   return m ? parseInt(m[1], 10) : null;
 }
 
-/** Extract challenge rating from "**Challenge** */
+/** Extract lethality from "**Lethality** */
 function parseChallenge(line) {
-  const m = line.match(/\*\*Challenge\*\*:\s*([\d/]+)/);
+  const m = line.match(/\*\*Lethality\*\*:\s*([\d/]+)/);
   return m ? parseCR(m[1]) : null;
 }
 
@@ -58,8 +58,8 @@ function isImmune(line) {
   if (/\|\s*\*?\*?STR\*?\*?\s*\|/.test(L)) return true;
   // Ability score value row: "| 24 (+7) |"
   if (/^\|\s*\d+\s*\(\+?\d+\)/.test(L)) return true;
-  // AC / HP / Speed / Challenge / XP rows
-  if (/\*\*(Armor Class|Hit Points|Speed|Challenge)\*\*/.test(L)) return true;
+  // AC / HP / Speed / Lethality / XP rows
+  if (/\*\*(Armor Class|Hit Points|Speed|Lethality)\*\*/.test(L)) return true;
   // Damage expressions: "2d10 + 7 slashing" or "55 (8d10 + 10) bludgeoning"
   if (/\d+d\d+\s*[+-]\s*\d+\s+\w+/.test(L)) return true;
   if (/^[-*]\s+\*?\*?Hit\*?\*?:/.test(L)) return true;
@@ -128,7 +128,7 @@ async function processFile(filePath, dryRun) {
   const content = await readFile(filePath, 'utf-8');
   const lines = content.split('\n');
 
-  // Find CR and current TB (only in stat block header, before first "---")
+  // Find Lethality and current TB (only in stat block header, before first "---")
   let cr = null,
     currentTB = null,
     tbLineIdx = -1;
@@ -268,7 +268,7 @@ async function main() {
     if (r.changed) {
       const s = r.delta > 0 ? '+' : '';
       console.log(
-        `  ${f}: CR ${r.cr}, TB +${r.oldTB}→+${r.newTB} (${s}${r.delta}), ${r.adj} adj`,
+        `  ${f}: Lethality ${r.cr}, TB +${r.oldTB}→+${r.newTB} (${s}${r.delta}), ${r.adj} adj`,
       );
       changed++;
       totalAdj += r.adj;

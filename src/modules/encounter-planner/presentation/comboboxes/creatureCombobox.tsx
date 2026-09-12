@@ -87,7 +87,7 @@ export const CreatureCombobox: React.FC<CreatureComboboxProps> = ({
         <>
           <div className={styles.spellTitle}>{monster.title}</div>
           <div className={styles.spellMeta}>
-            {monster.size} {monster.creatureType} • CR {monster.cr}
+            {monster.size} {monster.creatureType} • Lethality {monster.cr}
           </div>
         </>
       )}

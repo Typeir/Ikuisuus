@@ -95,7 +95,7 @@ describe('monster fixture', () => {
 
   it('derives the tier bonus the sheet no longer carries', async () => {
     const html = await renderNamed('monster.mdx');
-    expect(html).toContain('data-derived-from="challenge"');
+    expect(html).toContain('data-derived-from="lethality"');
     expect(html).toContain('data-slot="tierBonus"');
   });
 

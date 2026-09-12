@@ -12,7 +12,7 @@ import type {
 } from '@/lib/components/mdx/metadataTables/metadataTable';
 import {
     compareByOrder,
-    compareChallengeRating,
+    compareLethality,
 } from '@/modules/metadata-tables/domain/comparators';
 import { SIZE_SORT_ORDER } from '@/modules/metadata-tables/domain/constants';
 import { capitalize } from '@/modules/metadata-tables/domain/format';
@@ -26,7 +26,7 @@ import { capitalize } from '@/modules/metadata-tables/domain/format';
  * @property {string} title - Display name of the monster.
  * @property {string} size - Creature size.
  * @property {string} creatureType - Creature type.
- * @property {string} cr - Challenge rating.
+ * @property {string} cr - Lethality.
  * @property {number | { value: number; notes?: string }} ac - Armor class value or object.
  * @property {number | { average: number; formula?: string }} hp - Hit points value or object.
  * @property {string} [alignment] - Creature alignment.
@@ -98,7 +98,7 @@ export function buildMonsterColumns(
         if (value === null || value === undefined || value === '') return '—';
         return String(value);
       },
-      compareValues: (a, b) => compareChallengeRating(a, b),
+      compareValues: (a, b) => compareLethality(a, b),
       sortable: true,
       filterable: true,
       filterType: 'range',

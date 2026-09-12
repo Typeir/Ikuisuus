@@ -64,13 +64,13 @@ describe('resolveStreamText', () => {
       } as never);
     });
 
-    it('includes CR, SIZE, and creature type from the record', async () => {
+    it('includes Lethality, SIZE, and creature type from the record', async () => {
       const result = await resolveStreamText(
         'en',
         ['monsters', 'wraithwarden'],
         '',
       );
-      expect(result).toContain('CR:14');
+      expect(result).toContain('Lethality:14');
       expect(result).toContain('LARGE');
       expect(result).toContain('UNDEAD');
       expect(result).toContain('HP:168');
@@ -83,7 +83,7 @@ describe('resolveStreamText', () => {
         '',
       );
       expect(result).toBe(result.replace(/\s+/g, ' ').trim());
-      expect(result.indexOf('CR:14')).toBe(result.lastIndexOf('CR:14'));
+      expect(result.indexOf('Lethality:14')).toBe(result.lastIndexOf('Lethality:14'));
     });
   });
 

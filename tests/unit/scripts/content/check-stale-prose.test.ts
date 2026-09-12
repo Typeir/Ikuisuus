@@ -151,9 +151,15 @@ describe('review versus legacy', () => {
   });
 
   it('marks next dawn and immune-until for review, since both can be real durations', () => {
-    for (const id of ['next-dawn', 'immune-until', 'challenge-rating-prose']) {
+    for (const id of ['next-dawn', 'immune-until']) {
       expect(PATTERNS.find((p) => p.id === id)?.severity, id).toBe('review');
     }
+  });
+
+  it('marks the old Challenge Rating term legacy, leaving the Confirmed Roll alone', () => {
+    expect(idsFor('a monster of CR 8')).toEqual(['challenge-rating']);
+    expect(idsFor('its challenge rating is 8')).toEqual(['challenge-rating']);
+    expect(idsFor('a **Confirmed Roll [CR]** succeeds twice')).toEqual([]);
   });
 
   it.each([

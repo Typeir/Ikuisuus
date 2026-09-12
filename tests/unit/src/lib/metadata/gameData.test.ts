@@ -37,7 +37,7 @@ const MOCK_SHARED_DATA: SharedData = {
     weaponTypes: ['sword', 'axe', 'bow'],
     armorTypes: ['plate', 'chainmail'],
     clothingTypes: ['cloak', 'robe'],
-    weaponProperties: ['finesse', 'light', 'heavy'],
+    weaponProperties: ['finesse', 'light', 'unwieldy'],
     masteryProperties: ['cleave', 'graze'],
   },
   spellData: { schools: ['Evocation'], qualities: ['Legendary'] },

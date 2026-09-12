@@ -9,12 +9,12 @@
 
 import { describe, expect, it } from 'vitest';
 import {
-  XP_BY_CHALLENGE,
+  XP_BY_LETHALITY,
   abilityCell,
   abilityModifier,
-  challengeFor,
-  challengeLabel,
-  challengeValue,
+  lethalityFor,
+  lethalityLabel,
+  lethalityValue,
   ordinal,
   signed,
   spellLevelPhrase,
@@ -64,19 +64,19 @@ describe('abilityCell', () => {
   });
 });
 
-describe('challengeValue', () => {
+describe('lethalityValue', () => {
   it('reads whole and fractional ratings', () => {
-    expect(challengeValue('3')).toBe(3);
-    expect(challengeValue('1/4')).toBe(0.25);
-    expect(challengeValue('1/8')).toBe(0.125);
+    expect(lethalityValue('3')).toBe(3);
+    expect(lethalityValue('1/4')).toBe(0.25);
+    expect(lethalityValue('1/8')).toBe(0.125);
   });
 
   it('reads a rating that carries its XP', () => {
-    expect(challengeValue('3 (700 XP)')).toBe(3);
+    expect(lethalityValue('3 (700 XP)')).toBe(3);
   });
 
   it('gives up on an unreadable rating', () => {
-    expect(challengeValue('—')).toBeNull();
+    expect(lethalityValue('—')).toBeNull();
   });
 });
 
@@ -107,11 +107,11 @@ describe('tierBonusFor', () => {
   });
 });
 
-describe('XP_BY_CHALLENGE', () => {
+describe('XP_BY_LETHALITY', () => {
   it('rises with the rating, so every XP value falls in exactly one band', () => {
-    for (let i = 1; i < XP_BY_CHALLENGE.length; i++) {
-      expect(XP_BY_CHALLENGE[i][0]).toBeGreaterThan(XP_BY_CHALLENGE[i - 1][0]);
-      expect(XP_BY_CHALLENGE[i][1]).toBeGreaterThan(XP_BY_CHALLENGE[i - 1][1]);
+    for (let i = 1; i < XP_BY_LETHALITY.length; i++) {
+      expect(XP_BY_LETHALITY[i][0]).toBeGreaterThan(XP_BY_LETHALITY[i - 1][0]);
+      expect(XP_BY_LETHALITY[i][1]).toBeGreaterThan(XP_BY_LETHALITY[i - 1][1]);
     }
   });
 });
@@ -156,39 +156,39 @@ describe('xpValue', () => {
   });
 });
 
-describe('challengeFor', () => {
+describe('lethalityFor', () => {
   it('returns the rating whose XP band the value falls in', () => {
-    expect(challengeFor(700)).toBe(3);
-    expect(challengeFor('10,000')).toBe(13);
-    expect(challengeFor(800)).toBe(3);
-    expect(challengeFor(1099)).toBe(3);
-    expect(challengeFor(1100)).toBe(4);
-    expect(challengeFor(50)).toBe(0.25);
+    expect(lethalityFor(700)).toBe(3);
+    expect(lethalityFor('10,000')).toBe(13);
+    expect(lethalityFor(800)).toBe(3);
+    expect(lethalityFor(1099)).toBe(3);
+    expect(lethalityFor(1100)).toBe(4);
+    expect(lethalityFor(50)).toBe(0.25);
   });
 
   it('floors below the table and caps above it', () => {
-    expect(challengeFor(1)).toBe(0);
-    expect(challengeFor(999999)).toBe(35);
+    expect(lethalityFor(1)).toBe(0);
+    expect(lethalityFor(999999)).toBe(35);
   });
 
   it('gives up on unreadable XP', () => {
-    expect(challengeFor('lots')).toBeNull();
+    expect(lethalityFor('lots')).toBeNull();
   });
 
   it('inverts xpFor at every rating on the table', () => {
-    for (const [rating, xp] of XP_BY_CHALLENGE) {
-      expect(challengeFor(xp), String(rating)).toBe(rating);
+    for (const [rating, xp] of XP_BY_LETHALITY) {
+      expect(lethalityFor(xp), String(rating)).toBe(rating);
     }
   });
 });
 
-describe('challengeLabel', () => {
+describe('lethalityLabel', () => {
   it('writes the low ratings as fractions', () => {
-    expect(challengeLabel(0.125)).toBe('1/8');
-    expect(challengeLabel(0.25)).toBe('1/4');
-    expect(challengeLabel(0.5)).toBe('1/2');
-    expect(challengeLabel(0)).toBe('0');
-    expect(challengeLabel(13)).toBe('13');
+    expect(lethalityLabel(0.125)).toBe('1/8');
+    expect(lethalityLabel(0.25)).toBe('1/4');
+    expect(lethalityLabel(0.5)).toBe('1/2');
+    expect(lethalityLabel(0)).toBe('0');
+    expect(lethalityLabel(13)).toBe('13');
   });
 });
 

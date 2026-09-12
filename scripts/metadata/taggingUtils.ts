@@ -381,7 +381,7 @@ export function extractContentTypeTags(
   }
 
   if (content.includes('**Armor Class**')) tags.push('statblock', 'creature');
-  if (content.includes('**Challenge Rating**'))
+  if (content.includes('**Lethality**'))
     tags.push('monster', 'encounter');
   if (content.includes('_Spell level_') || content.includes('**Casting Time**'))
     tags.push('spell');

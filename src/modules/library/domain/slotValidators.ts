@@ -31,8 +31,8 @@ const GROUPED_COUNT = /^(?:\d+|\d{1,3}(?:,\d{3})+)$/;
 /** Hit points as a sheet writes them */
 const HIT_POINTS = /^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\s*\(.+\))?$/;
 
-/** A challenge rating */
-const CHALLENGE = /^(?:\d+|1\/(?:8|4|2))$/;
+/** A lethality */
+const LETHALITY = /^(?:\d+|1\/(?:8|4|2))$/;
 
 /** A signed bonus, as a sheet prints one. */
 const BONUS = /^[+-]\d+$/;
@@ -63,8 +63,8 @@ export const SLOT_RULES: Readonly<Partial<Record<SlotName, SlotRule>>> = {
       { pattern: COUNT, expects: 'a whole number, such as 18' },
     ]),
   ),
-  challenge: {
-    pattern: CHALLENGE,
+  lethality: {
+    pattern: LETHALITY,
     expects: 'a whole number or 1/8, 1/4, 1/2 — XP belongs in its own slot',
   },
   xp: { pattern: GROUPED_COUNT, expects: 'a whole number of XP, such as 10000' },

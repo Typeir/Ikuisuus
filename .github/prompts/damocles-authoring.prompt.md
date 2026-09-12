@@ -250,7 +250,7 @@ _Size Type, Alignment_
 - **Condition Immunities**: ...
 - **Senses**: ...
 - **Languages**: ...
-- **Challenge**: CR (XP)
+- **Lethality**: Lethality (XP)
 - **Proficiency Bonus**: +N
 
 ---
@@ -506,7 +506,7 @@ List every invented detail for white-room pages:
 
 ## Stat Block Notes (if applicable)
 
-- CR justification: how you arrived at the Challenge Rating
+- Lethality justification: how you arrived at the Lethality
 - Legendary Deed count and type rationale
 - Key balance notes referencing Damocles rest economy
 
@@ -520,7 +520,7 @@ List every invented detail for white-room pages:
 - [ ] Etymology documented for all proper nouns
 - [ ] All flags placed where information is uncertain
 - [ ] MDX format passes `node .github/scripts/check-mdx-format.mjs`
-- [ ] Stat block (if created) has CR, ability scores, and correct deed structure
+- [ ] Stat block (if created) has Lethality, ability scores, and correct deed structure
 - [ ] File does not exceed 250 lines (or exception documented)
 ```
 

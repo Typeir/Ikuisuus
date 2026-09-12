@@ -82,7 +82,7 @@ export const STAT_CONTENT = {
   nonmagicalDamage:
     /bludgeoning,?\s+piercing,?\s+and\s+slashing\s+from\s+nonmagical\s+[^;,]+/i,
   keyValueBullet:
-    /^[-*]\s+\*\*(Tier Bonus|Challenge|Languages|Senses|Condition Immunities|Damage|Skills|Saving Throws)\*\*/i,
+    /^[-*]\s+\*\*(Tier Bonus|Lethality|Languages|Senses|Condition Immunities|Damage|Skills|Saving Throws)\*\*/i,
   blockquotePrefix: /^>\s*/,
   blockquoteMarker: /^> ?/,
   armorClassRow: /^>?\s*\|\s*\*\*Armor Class\*\*/i,

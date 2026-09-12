@@ -300,14 +300,14 @@ function parseSenses(raw: string | undefined, sharedData: SharedData) {
 }
 
 /**
- * Parses challenge rating from Challenge line.
+ * Parses lethality from Lethality line.
  *
- * @param {string} [rawChallenge] - Raw challenge string
- * @returns {string | undefined} CR value
+ * @param {string} [rawChallenge] - Raw lethality string
+ * @returns {string | undefined} Lethality value
  */
 function parseCR(rawChallenge?: string): string | undefined {
   if (!rawChallenge) return undefined;
-  const m = rawChallenge.match(MONSTER.challengeRating);
+  const m = rawChallenge.match(MONSTER.lethality);
   return m ? m[1] : undefined;
 }
 
@@ -602,7 +602,7 @@ function parseStatBlockSection(
   );
   const condImm = splitList(bulletMap['Condition Immunities']);
   const skills = bulletMap['Skills'] ? splitList(bulletMap['Skills']) : [];
-  const cr = parseCR(bulletMap['Challenge']);
+  const cr = parseCR(bulletMap['Lethality']);
   const tierBonus = parseTierBonus(bulletMap['Tier Bonus']);
 
   const linesToScan =
@@ -685,7 +685,7 @@ function parseStatBlockSection(
       nested: isNested,
     });
   if (!cr)
-    log.debug('Missing CR', {
+    log.debug('Missing Lethality', {
       creature: displayName,
       file: baseSlug,
       nested: isNested,

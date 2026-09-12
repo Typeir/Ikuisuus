@@ -93,7 +93,7 @@ const createMockCombatant = (
   legendaryDeedsUsed: [],
   resistRemaining: 0,
   phaseDeeds: { wounded: false, bloodied: false, doomed: false },
-  crText: 'CR 5',
+  crText: 'Lethality 5',
   ...overrides,
 });
 
@@ -150,7 +150,7 @@ describe('CombatantHeroicSection not awakened', () => {
   });
 
   it('should render force awakening buttons when crText is present', () => {
-    renderWithProvider({ crText: 'CR 5' });
+    renderWithProvider({ crText: 'Lethality 5' });
 
     expect(screen.getByText('heroic.awakened')).toBeInTheDocument();
     expect(screen.getByText('heroic.legendary')).toBeInTheDocument();
@@ -243,7 +243,7 @@ describe('CombatantHeroicSection force awakening', () => {
     const user = userEvent.setup();
     const { onUpdate } = renderWithProvider({
       heroicAwakening: createDefaultHeroicAwakening({ awakened: false }),
-      crText: 'CR 5',
+      crText: 'Lethality 5',
     });
 
     await user.click(screen.getByText('heroic.awakened'));
@@ -255,7 +255,7 @@ describe('CombatantHeroicSection force awakening', () => {
     const user = userEvent.setup();
     const { onUpdate } = renderWithProvider({
       heroicAwakening: createDefaultHeroicAwakening({ awakened: false }),
-      crText: 'CR 5',
+      crText: 'Lethality 5',
     });
 
     await user.click(screen.getByText('heroic.legendary'));
@@ -267,7 +267,7 @@ describe('CombatantHeroicSection force awakening', () => {
     const user = userEvent.setup();
     const { onUpdate } = renderWithProvider({
       heroicAwakening: createDefaultHeroicAwakening({ awakened: false }),
-      crText: 'CR 5',
+      crText: 'Lethality 5',
     });
 
     await user.click(screen.getByText('heroic.mythic'));
@@ -276,7 +276,7 @@ describe('CombatantHeroicSection force awakening', () => {
   });
 
   it('should render unawaken button when crText is present', () => {
-    renderWithProvider({ crText: 'CR 5' });
+    renderWithProvider({ crText: 'Lethality 5' });
 
     expect(
       screen.getByRole('button', { name: 'removeAwakening' }),
@@ -291,7 +291,7 @@ describe('CombatantHeroicSection force awakening', () => {
         tier: 'legendary',
         affixes: [createAffixEntry('Test')],
       }),
-      crText: 'CR 5',
+      crText: 'Lethality 5',
     });
 
     await user.click(screen.getByRole('button', { name: 'removeAwakening' }));

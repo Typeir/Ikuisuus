@@ -98,7 +98,7 @@ describe('Heirloom Metadata Generator', () => {
     /**
      * Tests weapon property extraction
      *
-     * @description Validates parsing of weapon properties like Two-Handed, Heavy, etc.
+     * @description Validates parsing of weapon properties like Two-Handed, Unwieldy, etc.
      */
     it('should extract weapon properties', async () => {
       const filePath = path.join(FIXTURES_DIR, 'mythic-weapon.mdx');
@@ -110,7 +110,7 @@ describe('Heirloom Metadata Generator', () => {
       const props =
         result.weaponProperties?.map((p: string) => p.toLowerCase()) || [];
       expect(props).toContain('two-handed');
-      expect(props).toContain('heavy');
+      expect(props).toContain('unwieldy');
     });
 
     /**

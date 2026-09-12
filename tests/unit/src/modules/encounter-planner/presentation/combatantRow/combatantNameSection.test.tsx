@@ -1,7 +1,7 @@
 /**
  * @fileoverview Unit tests for CombatantNameSection.
  * @module tests/unit/src/modules/encounter-planner/presentation/combatantRow/combatantNameSection.test
- * @description Tests name display, CR badge, awakening badges, stratagem badge, and remove button.
+ * @description Tests name display, Lethality badge, awakening badges, stratagem badge, and remove button.
  *
  * @version 2.0.0
  * @author Typeir
@@ -72,7 +72,7 @@ const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InPr
   slain: false,
   sessionOnly: false,
   locked: [],
-  crText: 'CR 5',
+  crText: 'Lethality 5',
   sourceHref: '/library/monsters/test',
   heroicAwakening: createDefaultHeroicAwakening(),
   mechanics: createDefaultMechanics(),
@@ -123,16 +123,16 @@ describe('CombatantNameSection rendering', () => {
     expect(screen.getByDisplayValue('Test Creature')).toBeInTheDocument();
   });
 
-  it('should render CR badge when crText is provided', () => {
-    renderWithProvider({ crText: 'CR 5' });
+  it('should render Lethality badge when crText is provided', () => {
+    renderWithProvider({ crText: 'Lethality 5' });
 
-    expect(screen.getByText('CR 5')).toBeInTheDocument();
+    expect(screen.getByText('Lethality 5')).toBeInTheDocument();
   });
 
-  it('should not render CR badge when crText is undefined', () => {
+  it('should not render Lethality badge when crText is undefined', () => {
     renderWithProvider({ crText: undefined });
 
-    expect(screen.queryByText(/CR/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Lethality/)).not.toBeInTheDocument();
   });
 
   it('should render wiki link when sourceHref is provided', () => {
@@ -259,7 +259,7 @@ describe('CombatantNameSection remove button', () => {
 describe('CombatantNameSection combined badges', () => {
   it('should render all badges together when applicable', () => {
     renderWithProvider({
-      crText: 'CR 10',
+      crText: 'Lethality 10',
       heroicAwakening: createDefaultHeroicAwakening({
         awakened: true,
         tier: 'legendary',
@@ -271,7 +271,7 @@ describe('CombatantNameSection combined badges', () => {
       mechanics: createDefaultMechanics({ stratagem: true }),
     });
 
-    expect(screen.getByText('CR 10')).toBeInTheDocument();
+    expect(screen.getByText('Lethality 10')).toBeInTheDocument();
     expect(screen.getByTestId('awakened-badge')).toBeInTheDocument();
     expect(screen.getByTestId('legendary-badge')).toBeInTheDocument();
     expect(screen.getByTestId('stratagem-badge')).toBeInTheDocument();

@@ -104,7 +104,7 @@ describe('applyHeroicAwakening', () => {
 
     const combatant = makeCombatant();
 
-    applyHeroicAwakening(combatant, 'CR 5');
+    applyHeroicAwakening(combatant, 'Lethality 5');
 
     expect(combatant.heroicAwakening.fateDieResult).toBeGreaterThan(0);
     expect(combatant.heroicAwakening.heroicDc).toBeGreaterThan(0);
@@ -115,7 +115,7 @@ describe('applyHeroicAwakening', () => {
 
     const combatant = makeCombatant();
 
-    applyHeroicAwakening(combatant, 'CR 10');
+    applyHeroicAwakening(combatant, 'Lethality 10');
 
     expect(combatant.heroicAwakening.awakened).toBe(false);
     expect(combatant.heroicAwakening.tier).toBe('none');
@@ -126,7 +126,7 @@ describe('applyHeroicAwakening', () => {
 
     const combatant = makeCombatant();
 
-    applyHeroicAwakening(combatant, 'CR 5');
+    applyHeroicAwakening(combatant, 'Lethality 5');
 
     expect(combatant.heroicAwakening.awakened).toBe(true);
     expect(['awakened', 'legendary', 'mythic']).toContain(
@@ -139,7 +139,7 @@ describe('applyHeroicAwakening', () => {
 
     const combatant = makeCombatant({ ac: 15 });
 
-    applyHeroicAwakening(combatant, 'CR 5');
+    applyHeroicAwakening(combatant, 'Lethality 5');
 
     if (combatant.heroicAwakening.awakened) {
       expect(combatant.ac).toBeGreaterThan(15);
@@ -151,7 +151,7 @@ describe('applyHeroicAwakening', () => {
 
     const combatant = makeCombatant();
 
-    applyHeroicAwakening(combatant, 'CR 5');
+    applyHeroicAwakening(combatant, 'Lethality 5');
 
     if (combatant.heroicAwakening.awakened) {
       expect(combatant.heroicAwakening.affixes.length).toBeGreaterThan(0);
@@ -164,7 +164,7 @@ describe('applyHeroicAwakening', () => {
 
     const combatant = makeCombatant({ tierBonus: 2 });
 
-    applyHeroicAwakening(combatant, 'CR 5');
+    applyHeroicAwakening(combatant, 'Lethality 5');
 
     if (combatant.heroicAwakening.awakened && combatant.tierBonus !== null) {
       expect(combatant.tierBonusOverride).toBeGreaterThan(combatant.tierBonus);

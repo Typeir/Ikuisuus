@@ -45,7 +45,7 @@ export interface CombatantMechanics {
  *
  * @interface HeroicAwakeningState
  * @property {number} fateDieResult - D20 result from fate die roll (1-20)
- * @property {number} heroicDc - Target DC based on creature CR
+ * @property {number} heroicDc - Target DC based on creature Lethality
  * @property {boolean} awakened - Whether awakening triggered
  * @property {'none'|'awakened'|'legendary'|'mythic'} tier - Current awakening tier
  * @property {AffixEntry[]} affixes - Applied heroic affixes
@@ -93,7 +93,7 @@ export interface HeroicAwakeningState {
  * @property {boolean} sessionOnly - True if added during Play Mode (not from encounter)
  * @property {string[]} [locked] - Array of field names that are locked from editing
  * @property {string} [sourceHref] - Wiki link for imported creatures
- * @property {string} [crText] - Challenge rating display text
+ * @property {string} [crText] - Lethality display text
  * @property {HeroicAwakeningState} heroicAwakening - Awakening state
  * @property {CombatantMechanics} mechanics - Derived mechanic flags
  * @property {boolean[]} legendaryDeedsUsed - Deeds used this round

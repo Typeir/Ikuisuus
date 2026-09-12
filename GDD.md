@@ -1116,7 +1116,7 @@ thing its properties by what it is, one entity at a time.
 
 | Constitutional Rule                                                                                                                              | Rationale                 |
 | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
-| Stat blocks MUST include: AC, HP, Speed, Ability Scores, Saving Throws, Resistances/Immunities, Senses, Languages, Challenge, Proficiency Bonus. | Consistency.              |
+| Stat blocks MUST include: AC, HP, Speed, Ability Scores, Saving Throws, Resistances/Immunities, Senses, Languages, Lethality, Proficiency Bonus. | Consistency.              |
 | Traits and actions MUST be grounded in the monster's lore and cosmology.                                                                         | No "it just does magic."  |
 | Legendary Deeds MUST follow the four-subtype structure: Lair, Act, Stratagem, Phase.                                                             | Encounter design clarity. |
 | Phase Deeds MUST be triggered at HP thresholds: Wounded (75%), Bloodied (50%), Doomed (25%).                                                     | Boss encounter pacing.    |

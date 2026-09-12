@@ -140,11 +140,11 @@ describe('inProgressCombatStorage', () => {
     it('should preserve sourceHref and crText', () => {
       const creature = createEmptyCreature() as CreatureEntry;
       creature.sourceHref = '/library/monsters/goblin';
-      creature.crText = 'CR 1/4';
+      creature.crText = 'Lethality 1/4';
       const combatant = createInProgressCombatant(creature);
 
       expect(combatant.sourceHref).toBe('/library/monsters/goblin');
-      expect(combatant.crText).toBe('CR 1/4');
+      expect(combatant.crText).toBe('Lethality 1/4');
     });
   });
 
@@ -860,7 +860,7 @@ describe('inProgressCombatStorage', () => {
   describe('forceHeroicAwakening', () => {
     it('should apply awakened tier bonuses correctly', () => {
       const combatant = createInProgressCombatant(createEmptyCreature());
-      combatant.crText = 'CR 5';
+      combatant.crText = 'Lethality 5';
       combatant.ac = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
@@ -878,7 +878,7 @@ describe('inProgressCombatStorage', () => {
 
     it('should prevent infinite stacking when clicking awakened multiple times', () => {
       const combatant = createInProgressCombatant(createEmptyCreature());
-      combatant.crText = 'CR 5';
+      combatant.crText = 'Lethality 5';
       combatant.ac = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
@@ -902,7 +902,7 @@ describe('inProgressCombatStorage', () => {
 
     it('should properly transition from awakened to legendary', () => {
       const combatant = createInProgressCombatant(createEmptyCreature());
-      combatant.crText = 'CR 5';
+      combatant.crText = 'Lethality 5';
       combatant.ac = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
@@ -924,7 +924,7 @@ describe('inProgressCombatStorage', () => {
 
     it('should apply mythic tier with 3 affixes', () => {
       const combatant = createInProgressCombatant(createEmptyCreature());
-      combatant.crText = 'CR 5';
+      combatant.crText = 'Lethality 5';
       combatant.ac = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;

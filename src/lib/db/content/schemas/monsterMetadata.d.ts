@@ -137,7 +137,7 @@ export interface MonsterSenses {
  * @property {string[]} [conditionImmunities] - Condition immunities
  * @property {MonsterSenses} [senses] - Senses
  * @property {string[]} [languages] - Known languages
- * @property {string} [cr] - Challenge rating (fractional or whole, e.g. "1/4", "10")
+ * @property {string} [cr] - Lethality (fractional or whole, e.g. "1/4", "10")
  * @property {number} [tierBonus] - Tier bonus
  * @property {MonsterFeatureSummary[]} [features] - Extracted feature shards, each with its own aspects
  * @property {string} [image] - Image path extracted from BlendedImage in MDX (e.g. "/library/images/Albedo.webp")
@@ -193,7 +193,7 @@ export interface MonsterFeatureSummary {
  * Lightweight projection for combobox / dropdown search.
  *
  * @interface MonsterIndexEntry
- * @property {string} [cr] - Challenge rating
+ * @property {string} [cr] - Lethality
  * @property {string} [size] - Creature size
  * @property {string} [creatureType] - Creature type
  */

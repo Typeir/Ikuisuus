@@ -145,16 +145,16 @@ describe('parseHeirloomV2', () => {
 
   it('keeps a qualified property out of the unique tags', () => {
     const parsed = parseHeirloomSource(
-      '# Rifle\n\n<Heirloom rarity="rare" base="Rifle (Heavy, Ranged 60/120, Reach ([= 6 stride =]), Special)">\n\nProse.\n\n</Heirloom>\n',
+      '# Rifle\n\n<Heirloom rarity="rare" base="Rifle (Unwieldy, Ranged 60/120, Reach ([= 6 stride =]), Special)">\n\nProse.\n\n</Heirloom>\n',
       FIXTURE,
       sharedData as never,
     ) as { weaponProperties?: string[]; tags: string[] };
 
     expect(parsed.weaponProperties).toEqual([
-      'heavy',
       'ranged',
       'reach',
       'special',
+      'unwieldy',
     ]);
     expect(parsed.tags.filter((tag) => tag.startsWith('unique:'))).toEqual([]);
   });

@@ -14,7 +14,7 @@
  * @requires ../listEditors Buff, item, spell, affix list editors
  * @requires ../playMode/CombatantContext CombatantProvider and useCombatant hook
  * @requires ./combatantMainStats Displays HP, AC, stats, initiative, slain toggle
- * @requires ./combatantNameSection Displays name, CR, awakening badges
+ * @requires ./combatantNameSection Displays name, Lethality, awakening badges
  * @requires ./combatantMechanicsSection Manages legendary deeds and resists
  * @requires ./combatantHeroicSection Manages heroic awakening state
  * @requires ./combatantConditionsManager Manages active conditions

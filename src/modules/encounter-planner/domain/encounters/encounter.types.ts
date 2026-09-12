@@ -105,7 +105,7 @@ export interface CreatureDetails {
  * @property {CreatureDetails} details - Extended details (buffs, items, spells, affixes)
  * @property {boolean} [slain=false] - Whether creature is marked as slain
  * @property {string} [sourceHref] - Wiki link for library-imported creatures
- * @property {string} [crText] - Challenge rating display text (e.g., "CR 5")
+ * @property {string} [crText] - Lethality display text (e.g., "Lethality 5")
  * @property {string[]} [tags] - Monster metadata tags for mechanic flags
  */
 export interface CreatureEntry {

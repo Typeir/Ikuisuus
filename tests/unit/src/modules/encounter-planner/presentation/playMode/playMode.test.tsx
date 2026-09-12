@@ -137,7 +137,7 @@ const createMockCombatant = (
   slain: false,
   sessionOnly: false,
   sourceHref: '/library/monsters/test',
-  crText: 'CR 2',
+  crText: 'Lethality 2',
   legendaryDeedsUsed: [],
   mechanics: {
     lair: false,

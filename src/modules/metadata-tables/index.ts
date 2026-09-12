@@ -8,6 +8,7 @@
 
 export { FilteredSpellTable } from './presentation/FilteredSpellTable';
 export { HeirloomTable } from './presentation/HeirloomTable';
+export { LethalityTable } from './presentation/LethalityTable';
 export { MonsterTable } from './presentation/MonsterTable';
 export { SpellTable } from './presentation/SpellTable';
 export { SpellTableSkeleton } from './presentation/SpellTableSkeleton';

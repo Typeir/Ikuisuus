@@ -49,7 +49,7 @@ All wrappers are **client components** that fetch data from API routes.
 - Name (sortable)
 - Size (sortable, filterable by select)
 - Type (sortable, filterable by select)
-- CR (sortable, filterable by range)
+- Lethality (sortable, filterable by range)
 - AC (sortable, filterable by range)
 - HP (sortable, filterable by range)
 - Alignment (sortable, filterable by select)
@@ -282,7 +282,7 @@ type ColumnConfig = {
 - **text**: Free-text search within column values
 - **select**: Dropdown with unique values from the dataset
 - **multiselect**: Multiple selection (useful for tags/arrays)
-- **range**: Min/max numeric inputs (for numbers like CR, HP, level)
+- **range**: Min/max numeric inputs (for numbers like Lethality, HP, level)
 
 ### Custom Render Functions
 
@@ -331,12 +331,12 @@ Provide explicit filter options instead of auto-generating from data:
 
 ### Custom Sort Comparison
 
-Handle special sorting logic (e.g., CR fractions like "1/4"):
+Handle special sorting logic (e.g., Lethality fractions like "1/4"):
 
 ```typescript
 {
   key: 'cr',
-  label: 'CR',
+  label: 'Lethality',
   getValue: (row: any) => row.cr,
   compareValues: (a: any, b: any) => {
     const numA = typeof a === 'string' ? parseFloat(a) || 0 : a;

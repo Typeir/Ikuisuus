@@ -122,9 +122,9 @@ describe('encounterFactory', () => {
       expect(creature.stats.cha).toBe(23);
     });
 
-    it('should set CR text', () => {
+    it('should set Lethality text', () => {
       const creature = createCreatureFromMonster(fullMonsterData, 'en');
-      expect(creature.crText).toBe('CR 24');
+      expect(creature.crText).toBe('Lethality 24');
     });
 
     it('should set tier bonus', () => {

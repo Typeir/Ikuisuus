@@ -31,7 +31,7 @@ describe('Monster', () => {
         cha='9'
         senses='Passive Perception 12'
         languages='—'
-        challenge='3'
+        lethality='3'
         xp='700'>
         <p>Body prose.</p>
       </Monster>,
@@ -59,15 +59,15 @@ describe('Monster', () => {
     ]);
   });
 
-  it('derives the tier bonus from the challenge rating', () => {
-    render(<Monster challenge='3' xp='700' />);
+  it('derives the tier bonus from the lethality', () => {
+    render(<Monster lethality='3' xp='700' />);
     const tier = document.querySelector('[data-slot="tierBonus"]');
     expect(tier?.textContent).toContain('+1');
-    expect(tier?.querySelector('[data-derived-from="challenge"]')).not.toBeNull();
+    expect(tier?.querySelector('[data-derived-from="lethality"]')).not.toBeNull();
   });
 
   it('prefers a written tier bonus and marks it as authored', () => {
-    render(<Monster challenge='3' xp='700' tierBonus='+9' />);
+    render(<Monster lethality='3' xp='700' tierBonus='+9' />);
     const tier = document.querySelector('[data-slot="tierBonus"]');
     expect(tier?.textContent).toContain('+9');
     expect(tier?.querySelector('[data-derived-from]')).toBeNull();
@@ -92,20 +92,20 @@ describe('Monster', () => {
   });
 
   it('leaves the identity line out when no identity slot was written', () => {
-    render(<Monster challenge='3' />);
+    render(<Monster lethality='3' />);
     expect(document.querySelector('[data-monster-identity]')).toBeNull();
   });
 
   it('derives the XP a sheet leaves out from its rating', () => {
-    render(<Monster challenge='3' />);
+    render(<Monster lethality='3' />);
     const xp = document.querySelector('[data-monster-xp]');
     expect(xp?.textContent).toContain('700 XP');
-    expect(xp?.getAttribute('data-derived-from')).toBe('challenge');
+    expect(xp?.getAttribute('data-derived-from')).toBe('lethality');
   });
 
   it('derives the rating a sheet leaves out from its XP', () => {
     render(<Monster xp='10000' />);
-    const row = document.querySelector('[data-slot="challenge"]');
+    const row = document.querySelector('[data-slot="lethality"]');
     expect(row?.querySelector('[data-derived-from="xp"]')?.textContent).toBe(
       '13',
     );
@@ -116,17 +116,17 @@ describe('Monster', () => {
   });
 
   it('prints a fixed save DC among the list rows, before the rating', () => {
-    render(<Monster saveDc='16' challenge='13' xp='10000' />);
-    expect(printed()).toEqual(['saveDc', 'challenge', 'tierBonus']);
+    render(<Monster saveDc='16' lethality='13' xp='10000' />);
+    expect(printed()).toEqual(['saveDc', 'lethality', 'tierBonus']);
     expect(
       document.querySelector('[data-slot="saveDc"]')?.textContent,
     ).toContain('16');
   });
 
   it('prints both as written when the sheet carries both', () => {
-    render(<Monster challenge='3' xp='700' />);
-    const row = document.querySelector('[data-slot="challenge"]');
+    render(<Monster lethality='3' xp='700' />);
+    const row = document.querySelector('[data-slot="lethality"]');
     expect(row?.querySelector('[data-derived-from]')).toBeNull();
-    expect(row?.textContent).toBe('slots.challenge3 (700 XP)');
+    expect(row?.textContent).toBe('slots.lethality3 (700 XP)');
   });
 });

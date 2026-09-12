@@ -2,7 +2,7 @@
 name: mdx-format-monsters
 description: >
   Monster stat block format (.sheet.mdx). Required structure, stat table,
-  Challenge Rating, section dividers, feature headings, Legendary Deeds,
+  Lethality, section dividers, feature headings, Legendary Deeds,
   Spellcasting, Meta directive, metadata fields (generateMonsterMetadata.ts),
   health-check rules.
 ---
@@ -61,7 +61,7 @@ Optional flavor or lore prose here.
 - **Condition Immunities**: Poisoned
 - **Senses**: Darkvision 60 ft., passive Perception 12
 - **Languages**: Common, Deep Speech
-- **Challenge**: 11 (7,200 XP)
+- **Lethality**: 11 (7,200 XP)
 - **Proficiency Bonus**: +4
 
 ---
@@ -147,7 +147,7 @@ Individual features use `####` (H4).
 
 ### Stat Block Property List
 
-Format: `- **Name**: value`. Omit empty lines. Mandatory: Challenge, Proficiency Bonus.
+Format: `- **Name**: value`. Omit empty lines. Mandatory: Lethality, Proficiency Bonus.
 
 ```
 - **Saving Throws**: (proficiency only)
@@ -158,7 +158,7 @@ Format: `- **Name**: value`. Omit empty lines. Mandatory: Challenge, Proficiency
 - **Condition Immunities**: ...
 - **Senses**: ... (include passive Perception)
 - **Languages**: ...
-- **Challenge**: CR (XP)       ← REQUIRED
+- **Lethality**: Lethality (XP)       ← REQUIRED
 - **Proficiency Bonus**: +N    ← REQUIRED
 ```
 
@@ -212,7 +212,7 @@ Use for variants (Young/Adult/Ancient dragon).
 | damage\*         | `**Damage**` bullets     |
 | senses           | `**Senses**`             |
 | languages        | `**Languages**`          |
-| cr/xp            | `**Challenge**`          |
+| cr/xp            | `**Lethality**`          |
 | proficiencyBonus | `**Proficiency**`        |
 | tags             | damage types, conditions |
 | features         | feature-extraction array |
@@ -223,7 +223,7 @@ Use for variants (Young/Adult/Ancient dragon).
 | -------------------------------- | -------- | --------------------------------- |
 | non-kebab-filename               | critical | Rename to kebab-case              |
 | monster-sheet-missing-stat-table | critical | Add STR/DEX/CON/INT/WIS/CHA table |
-| monster-sheet-missing-cr         | warning  | Add `**Challenge**: N (XP)`       |
+| monster-sheet-missing-cr         | warning  | Add `**Lethality**: N (XP)`       |
 | fullsize-image-path              | critical | Use `/library/images/`            |
 | raw-img-tag                      | critical | Use `<BlendedImage>`              |
 | missing-alt-text                 | warning  | Add `alt` prop                    |
@@ -242,7 +242,7 @@ See `mdx-format` skill for universal rules.
 ## Pitfalls
 
 - **Missing stat table** → Generator needs it. Fill empty as `— (—)` if no scores.
-- **CR format** → `- **Challenge**: 11 (7,200 XP)`. CR first, XP in parens.
+- **Lethality format** → `- **Lethality**: 11 (7,200 XP)`. Lethality first, XP in parens.
 - **Feature H4** → Use `####`. `###` breaks parser.
 - **Section separators** → Precede each major section with `---`, not just blank.
 - **Multi-variant** → Separate blocks with `---`, then fresh `# Name` H1.

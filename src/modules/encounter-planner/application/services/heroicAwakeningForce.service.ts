@@ -22,7 +22,7 @@ import {
  *
  * @function undoPreviousAwakeningBonuses
  * @param {InProgressCombatant} combatant - The combatant (mutated in place)
- * @param {number} cr - Numeric challenge rating
+ * @param {number} cr - Numeric lethality
  */
 const undoPreviousAwakeningBonuses = (
   combatant: InProgressCombatant,
@@ -51,7 +51,7 @@ const undoPreviousAwakeningBonuses = (
  * @function applyAwakeningBonuses
  * @param {InProgressCombatant} combatant - The combatant (mutated in place)
  * @param {number} tierMultiplier - Tier multiplier (1=awakened, 2=legendary, 3=mythic)
- * @param {number} cr - Numeric challenge rating
+ * @param {number} cr - Numeric lethality
  */
 const applyAwakeningBonuses = (
   combatant: InProgressCombatant,
@@ -75,11 +75,11 @@ const applyAwakeningBonuses = (
 };
 
 /**
- * Parse CR number from crText string.
+ * Parse Lethality number from crText string.
  *
  * @function parseCr
- * @param {string} crText - CR text like "CR 5"
- * @returns {number} Parsed CR number, or 0 if not parseable
+ * @param {string} crText - Lethality text like "Lethality 5"
+ * @returns {number} Parsed Lethality number, or 0 if not parseable
  */
 const parseCr = (crText: string): number => {
   const crMatch = crText.match(/(\d+)/);

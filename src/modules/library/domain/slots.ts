@@ -124,7 +124,7 @@ export const MONSTER_SLOTS = {
   damageThreshold: 'DamageThreshold',
   material: 'Material',
   saveDc: 'SaveDc',
-  challenge: 'Challenge',
+  lethality: 'Lethality',
   xp: 'Xp',
   tierBonus: 'TierBonus',
 } as const;
@@ -364,7 +364,7 @@ export const MONSTER_LIST_SLOTS: readonly MonsterSlotName[] = [
   'languages',
   'material',
   'saveDc',
-  'challenge',
+  'lethality',
   'xp',
   'tierBonus',
 ];

@@ -60,20 +60,20 @@ export function validateTag(tag: string, sharedData: SharedData): boolean {
 }
 
 /**
- * Determines rarity tag from a challenge rating based on configured thresholds.
+ * Determines rarity tag from a lethality based on configured thresholds.
  *
- * @param {number | string} challengeRating - CR value (e.g. 5, "1/2", "0.25")
+ * @param {number | string} lethality - Lethality value (e.g. 5, "1/2", "0.25")
  * @param {SharedData} sharedData - Shared game data with rarity thresholds
  * @returns {string} Rarity tag (e.g. "rarity:rare")
  */
 export function getRarityFromCR(
-  challengeRating: number | string,
+  lethality: number | string,
   sharedData: SharedData,
 ): string {
   const crValue =
-    typeof challengeRating === 'string'
-      ? parseFloat(challengeRating)
-      : challengeRating;
+    typeof lethality === 'string'
+      ? parseFloat(lethality)
+      : lethality;
   const thresholds = sharedData.taxonomies.rarityThresholds;
 
   for (const threshold of thresholds) {
@@ -122,7 +122,7 @@ export function validateMetadata(
 
   if (type === 'monster') {
     if (!metadata.creatureType) errors.push('Missing creature type');
-    if (metadata.cr === undefined) errors.push('Missing challenge rating');
+    if (metadata.cr === undefined) errors.push('Missing lethality');
   } else if (type === 'heirloom') {
     if (!metadata.rarity) errors.push('Missing rarity');
     if (!metadata.itemType) errors.push('Missing item type');

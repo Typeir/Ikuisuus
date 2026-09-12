@@ -4,7 +4,7 @@
 
 - **Main repo**: Ikuisuus (Next.js + metadata)
 - **Content submodule**: `src/content` → `https://github.com/Typeir/ikuisuus-content.git`
-- **Challenge**: Keep both repos in sync when committing changes that span both
+- **Lethality**: Keep both repos in sync when committing changes that span both
 
 ---
 

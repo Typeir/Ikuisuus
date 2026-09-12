@@ -81,7 +81,7 @@ _Small monstrosity, Unaligned_
 | ------- | ------- | ------- | ------ | ------- | ------ |
 | 12 (+1) | 10 (+0) | 13 (+1) | 2 (−4) | 10 (+0) | 5 (−3) |
 
-- **Challenge**: 2 (450 XP)
+- **Lethality**: 2 (450 XP)
 - **Tier Bonus**: +1
 - **Saving Throws**: Con +2
 - **Skills**: Stealth +4
@@ -221,8 +221,8 @@ describe('unslotMonster', () => {
   });
 
   it('restores a tier bonus the converter dropped as derived', () => {
-    const text = unslotMonster('<Monster\n  size="Large"\n  type="Beast"\n  alignment="Unaligned"\n  challenge="7"\n  xp="2,900">\n\n<Trait>\n\n#### Bite\n\n</Trait>\n\n</Monster>\n');
-    expect(text).toContain('- **Challenge**: 7 (2,900 XP)\n- **Tier Bonus**: +3');
+    const text = unslotMonster('<Monster\n  size="Large"\n  type="Beast"\n  alignment="Unaligned"\n  lethality="7"\n  xp="2,900">\n\n<Trait>\n\n#### Bite\n\n</Trait>\n\n</Monster>\n');
+    expect(text).toContain('- **Lethality**: 7 (2,900 XP)\n- **Tier Bonus**: +3');
     expect(text).toContain('_Large Beast, Unaligned_');
     expect(text).not.toMatch(/<\/?(Trait|Monster)/);
   });

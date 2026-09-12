@@ -40,7 +40,7 @@ _Large Aberration, Neutral Evil_
 | 18 (+4) | 12 (+1) | 14 (+2) | 10 (+0) | 12 (+1) | 8 (-1) |
 
 - **Senses**: darkvision [= 12 stride =]
-- **Challenge**: 8 (3,900 XP)
+- **Lethality**: 8 (3,900 XP)
 
 ---
 

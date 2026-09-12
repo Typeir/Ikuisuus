@@ -100,9 +100,9 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * @description Verifies CR parses from the stat block
+     * @description Verifies Lethality parses from the stat block
      */
-    it('should extract challenge rating', async () => {
+    it('should extract lethality', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
       const result = await parseMonsterFile(filePath, sharedData);
       const monster = result[0];
@@ -253,9 +253,9 @@ describe('Monster Metadata Generator', () => {
 
   describe('Extreme Stats Handling', () => {
     /**
-     * @description Verifies high values (CR 35, AC 35, HP 1640) parse
+     * @description Verifies high values (Lethality 35, AC 35, HP 1640) parse
      */
-    it('should handle extreme stat values (CR 35, high AC, massive HP)', async () => {
+    it('should handle extreme stat values (Lethality 35, high AC, massive HP)', async () => {
       const filePath = path.join(FIXTURES_DIR, 'extreme-stats.sheet.mdx');
       const result = await parseMonsterFile(filePath, sharedData);
 

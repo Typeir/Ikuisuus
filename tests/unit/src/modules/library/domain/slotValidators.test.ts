@@ -23,15 +23,15 @@ describe('slotFailure', () => {
     expect(slotFailure('str', '18 (+4)')).toContain('whole number');
   });
 
-  it('accepts the low fractional challenge ratings', () => {
-    expect(slotFailure('challenge', '3')).toBeNull();
-    expect(slotFailure('challenge', '1/8')).toBeNull();
-    expect(slotFailure('challenge', '1/4')).toBeNull();
-    expect(slotFailure('challenge', '1/2')).toBeNull();
+  it('accepts the low fractional lethalitys', () => {
+    expect(slotFailure('lethality', '3')).toBeNull();
+    expect(slotFailure('lethality', '1/8')).toBeNull();
+    expect(slotFailure('lethality', '1/4')).toBeNull();
+    expect(slotFailure('lethality', '1/2')).toBeNull();
   });
 
-  it('rejects a challenge rating with XP buried in it', () => {
-    expect(slotFailure('challenge', '3 (700 XP)')).toContain('own slot');
+  it('rejects a lethality with XP buried in it', () => {
+    expect(slotFailure('lethality', '3 (700 XP)')).toContain('own slot');
   });
 
   it('wants a whole number of XP, thousands separators allowed', () => {

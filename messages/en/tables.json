@@ -38,7 +38,7 @@
       "name": "Name",
       "size": "Size",
       "type": "Type",
-      "cr": "CR",
+      "cr": "Lethality",
       "ac": "AC",
       "hp": "HP",
       "alignment": "Alignment"
@@ -74,6 +74,15 @@
       "prerequisite": "Prerequisite",
       "repeatable": "Repeatable",
       "summary": "Summary"
+    }
+  },
+  "lethality": {
+    "caption": "What each Lethality is worth, and how many creatures the bestiary writes there.",
+    "columns": {
+      "lethality": "Lethality",
+      "xp": "XP",
+      "tierBonus": "Tier Bonus",
+      "creatures": "Creatures"
     }
   }
 }

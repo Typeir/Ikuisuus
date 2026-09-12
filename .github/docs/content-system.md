@@ -701,7 +701,7 @@ TODO: Add content here
    This magical greatsword bursts into flames when drawn.
 
    **Damage:** 2d6 + 1d6 fire
-   **Properties:** Heavy, Two-Handed
+   **Properties:** Unwieldy, Two-Handed
    **Weight:** 6 lb.
 
    ## Special Abilities
@@ -766,7 +766,7 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
 - **Condition Immunities**: Terrified, Paralyzed, Poisoned, Prone, Banishment
 - **Senses**: Truesight 120 ft., Tremorsense 120 ft., passive Perception 25
 - **Languages**: Empyrean; telepathy 300 ft.
-- **Challenge**: 23 (32,000 XP)
+- **Lethality**: 23 (32,000 XP)
 - **Proficiency Bonus**: +7
 
 ---
