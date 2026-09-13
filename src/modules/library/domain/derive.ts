@@ -278,9 +278,8 @@ export interface DerivedDc {
  * @returns {DerivedDc | null} The DC, or null when there is no accuracy to add to
  *
  * @example
- * saveDcFrom('+10'); // { total: 20, working: '10 + accuracy(10)' }
- * saveDcFrom('your level + your tb');
- * // { total: null, working: '10 + accuracy(your level + your tb)' }
+ * saveDcFrom('+10'); // { total: 20, working: '10 + Accuracy' }
+ * saveDcFrom('Level + TB'); // { total: null, working: '10 + Accuracy' }
  */
 export function saveDcFrom(accuracy: string): DerivedDc | null {
   const written = accuracy.trim().replace(/^\+\s*/, '');
@@ -289,6 +288,6 @@ export function saveDcFrom(accuracy: string): DerivedDc | null {
   const value = Number(written);
   return {
     total: Number.isFinite(value) ? 10 + value : null,
-    working: `10 + accuracy(${written})`,
+    working: '10 + Accuracy',
   };
 }
