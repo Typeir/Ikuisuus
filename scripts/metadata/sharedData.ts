@@ -71,6 +71,13 @@ export interface GameDataSection {
  * @property {string[]} clothingTypes - Clothing subtypes
  * @property {string[]} weaponProperties - Weapon property keywords
  * @property {string[]} masteryProperties - Weapon mastery properties
+ * @property {string[]} chassis - Weapon chassis names
+ * @property {string[]} finishes - Base damage finishes
+ * @property {string[]} arts - Weapon art names
+ * @property {string[]} masteries - Art mastery names
+ * @property {string[]} blows - Masterful blow names
+ * @property {string[]} attributes - Weapon attribute names
+ * @property {string[]} catalystTypes - Catalyst parenthetical types
  */
 export interface ItemDataSection {
   rarities: string[];
@@ -81,6 +88,13 @@ export interface ItemDataSection {
   clothingTypes: string[];
   weaponProperties: string[];
   masteryProperties: string[];
+  chassis: string[];
+  finishes: string[];
+  arts: string[];
+  masteries: string[];
+  blows: string[];
+  attributes: string[];
+  catalystTypes: string[];
 }
 
 /**

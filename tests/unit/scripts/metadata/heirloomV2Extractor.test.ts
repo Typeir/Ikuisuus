@@ -53,6 +53,50 @@ function golden(): object {
   ) as object;
 }
 
+describe('parseHeirloomSource with a built base', () => {
+  it('reads pattern, chassis, finish, art, attributes and catalyst', () => {
+    const source = [
+      '---',
+      'source: Ikuisuus',
+      'contentType: heirlooms',
+      '---',
+      '',
+      '# Probe',
+      '',
+      '<Heirloom',
+      '  rarity="legendary"',
+      '  attunement="required"',
+      '  pattern="rifle"',
+      '  base="Hammered, Pointed, Hammering"',
+      '  attributes="Unwieldy, Two-handed, Catalyst (Key, Fold)"',
+      '  enchantment="+2 accuracy and damage"',
+      '  damage="[% 1d12 holy %] + [% 1d12 poison %]"',
+      '  mastery="Slow"',
+      '  burden="[= 5 burden =]">',
+      '',
+      'Prose.',
+      '',
+      '</Heirloom>',
+    ].join('\n');
+    const meta = parseHeirloomSource(
+      source,
+      'src/content/en/items/heirlooms/probe.heirloom.mdx',
+      sharedData as Parameters<typeof parseHeirloomSource>[2],
+    ) as Record<string, unknown>;
+    expect(meta.itemType).toBe('weapon');
+    expect(meta.weaponType).toBe('rifle');
+    expect(meta.chassis).toBe('hammered');
+    expect(meta.finish).toBe('pointed');
+    expect(meta.art).toBe('hammering');
+    expect(meta.weaponProperties).toEqual(['catalyst', 'two-handed', 'unwieldy']);
+    expect(meta.catalyst).toEqual(['key', 'fold']);
+    expect(meta.mastery).toEqual(['slow']);
+    expect(meta.weaponDamage).toBe('1d12');
+    expect(meta.weaponDamageType).toBe('holy');
+    expect(meta.hitModifier).toBe(2);
+  });
+});
+
 describe('parseHeirloomV2', () => {
   it('extracts the golden shape from the attribute spelling', () => {
     expect(parseHeirloomV2(readFileSync(FIXTURE, 'utf8'))).toEqual(golden());

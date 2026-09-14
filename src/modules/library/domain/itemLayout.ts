@@ -34,6 +34,7 @@ export const ITEM_BRIEF_SLOTS: readonly HeirloomSlotName[] = [
   'rarity',
   'attunement',
   'category',
+  'pattern',
   'base',
   'quality',
   'enchantment',
@@ -45,6 +46,7 @@ export const ITEM_BRIEF_SLOTS: readonly HeirloomSlotName[] = [
  * Item slots that print as rows, in display order.
  */
 export const ITEM_ROW_SLOTS: readonly HeirloomSlotName[] = [
+  'attributes',
   'cost',
   'charges',
   'recharge',

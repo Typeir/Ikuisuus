@@ -397,7 +397,11 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
   file: string;                    // Relative path
   rarity: string;                  // 'mythic artifact', 'rare', 'legendary'
   itemType: string;                // 'weapon', 'armor', 'wondrous item'
-  weaponType?: string;             // 'greatsword', 'longsword'
+  weaponType?: string;             // 'greatsword', 'longsword' (from the pattern slot)
+  chassis?: string;                // 'hilted' (first term of a built base)
+  finish?: string;                 // 'edged' (second term of a built base)
+  art?: string;                    // 'vexing' (third term of a built base)
+  catalyst?: string[];             // ['fold', 'key'] (from Catalyst (…) in the attributes slot)
   requiresAttunement: boolean;     // true/false
   weaponProperties?: string[];     // ['unwieldy', 'two-handed', 'magical']
   mastery?: string[];              // ['push', 'enhanced sunder']
@@ -455,8 +459,11 @@ _Greatsword +4 (Two-Handed, Large, Unwieldy, Magical, Mastery: Push, Enhanced Su
   "rarity": "mythic artifact",
   "itemType": "weapon",
   "weaponType": "greatsword",
+  "chassis": "hilted",
+  "finish": "blunt",
+  "art": "vexing",
   "requiresAttunement": true,
-  "weaponProperties": ["unwieldy", "large", "magical", "two-handed"],
+  "weaponProperties": ["two-handed", "unwieldy"],
   "mastery": ["enhanced sunder", "push"],
   "weaponDamage": {
     "damage": "4d8",

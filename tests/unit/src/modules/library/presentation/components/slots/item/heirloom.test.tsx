@@ -45,6 +45,29 @@ describe('Heirloom', () => {
     expect(screen.getByText('Body prose.')).toBeInTheDocument();
   });
 
+  it('prints the pattern as its own line and the attributes as a row', () => {
+    render(
+      <Heirloom
+        rarity='legendary'
+        pattern='greatsword'
+        base='Hilted, Blunt, Crushing'
+        attributes='Two-handed, Unwieldy'>
+        <p>Body.</p>
+      </Heirloom>,
+    );
+    const lines = Array.from(
+      document.querySelectorAll('[data-heirloom-brief] em'),
+    ).map((line) => line.textContent);
+    expect(lines).toEqual([
+      'Legendary kind',
+      'Greatsword pattern',
+      'Hilted, Blunt, Crushing',
+    ]);
+    expect(
+      document.querySelector('[data-slot="attributes"]')?.textContent,
+    ).toContain('Two-handed, Unwieldy');
+  });
+
   it('omits the quality adjective for a Mundane object and the clause without attunement', () => {
     render(
       <Heirloom rarity='common' base='Dagger' quality='Mundane'>

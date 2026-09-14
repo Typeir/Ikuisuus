@@ -303,7 +303,9 @@ export function slotElementOf(name: SlotName): SlotElement {
 export const {
   Rarity,
   Attunement,
+  Pattern,
   Base,
+  AttributeList,
   Quality,
   Enchantment,
   Damage,

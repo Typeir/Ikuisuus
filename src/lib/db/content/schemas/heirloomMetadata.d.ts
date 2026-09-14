@@ -32,6 +32,10 @@ export interface HeirloomCharges {
  * @property {string} [rarity] - Rarity tier (e.g. "common", "uncommon", "rare", "very rare", "legendary")
  * @property {string} [itemType] - High-level item category (e.g. "weapon", "armor", "wondrous item")
  * @property {string} [weaponType] - Specific weapon/armor subtype (e.g. "curved longsword", "cloak")
+ * @property {string} [chassis] - Weapon chassis (e.g. "hilted")
+ * @property {string} [finish] - Base damage finish (e.g. "edged")
+ * @property {string} [art] - Weapon art the base is built under (e.g. "vexing")
+ * @property {string[]} [catalyst] - Catalyst types the item channels (e.g. ["fold", "key"])
  * @property {boolean} [requiresAttunement] - Whether attunement is required
  * @property {string} [attunementRequirements] - Specific attunement restrictions (e.g. "by a paladin")
  * @property {string[]} [weaponProperties] - Weapon property keywords (e.g. ["finesse", "martial", "versatile"])
@@ -51,6 +55,10 @@ export interface HeirloomMetadata extends BaseMetadata {
   rarity?: string;
   itemType?: string;
   weaponType?: string;
+  chassis?: string;
+  finish?: string;
+  art?: string;
+  catalyst?: string[];
   requiresAttunement?: boolean;
   attunementRequirements?: string;
   weaponProperties?: string[];

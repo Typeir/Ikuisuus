@@ -614,6 +614,139 @@ async function parseHeirloomFile(
 }
 
 /**
+ * A base written as chassis, finish and art.
+ *
+ * @property {string} chassis - Chassis name
+ * @property {string} [finish] - Base damage finish
+ * @property {string} [art] - Art the base is built under
+ */
+interface BuiltBase {
+  chassis: string;
+  finish?: string;
+  art?: string;
+}
+
+/**
+ * Reads a base of the form "Chassis, Finish, Art".
+ *
+ * @param {string} base - Base slot value
+ * @param {SharedData} sharedData - Shared game data
+ * @returns {BuiltBase | undefined} The triplet, or undefined for a noun base
+ *
+ * @example
+ * parseBaseTriplet('Hilted, Edged, Vexing', data); // { chassis: 'hilted', finish: 'edged', art: 'vexing' }
+ * parseBaseTriplet('Longsword (Versatile)', data); // undefined
+ */
+function parseBaseTriplet(
+  base: string,
+  sharedData: SharedData,
+): BuiltBase | undefined {
+  const parts = base.split(',').map((part) => part.trim().toLowerCase());
+  const chassisNames = ItemData.getChassis(sharedData);
+  const first = parts[0]?.split(/\s+(?:\+|or)\s+/)[0] ?? '';
+  if (!chassisNames.includes(first)) return undefined;
+  const finishes = ItemData.getFinishes(sharedData);
+  const arts = ItemData.getArts(sharedData);
+  return {
+    chassis: parts[0],
+    finish: parts.find((part) => finishes.includes(part)),
+    art: parts.find((part) => arts.includes(part)),
+  };
+}
+
+/**
+ * Authored attributes split from the header slot.
+ *
+ * @property {string[]} attributes - Attribute names, lower-cased
+ * @property {string[]} catalyst - Catalyst types named in a Catalyst parenthetical
+ */
+interface AuthoredAttributes {
+  attributes: string[];
+  catalyst: string[];
+}
+
+/**
+ * Reads the attributes slot.
+ *
+ * @param {string} value - Attributes slot value
+ * @returns {AuthoredAttributes} Attribute names and catalyst types
+ *
+ * @example
+ * parseAttributeList('Unwieldy, Two-handed, Catalyst (Fold, Key)');
+ * // { attributes: ['unwieldy', 'two-handed', 'catalyst'], catalyst: ['fold', 'key'] }
+ */
+function parseAttributeList(value: string): AuthoredAttributes {
+  const attributes: string[] = [];
+  const catalyst: string[] = [];
+  for (const part of splitTopLevel(value)) {
+    const trimmed = part.trim();
+    if (!trimmed) continue;
+    const match = trimmed.match(/^catalyst\s*\(([^)]*)\)$/i);
+    if (match) {
+      attributes.push('catalyst');
+      match[1]
+        .split(',')
+        .map((type) => type.trim().toLowerCase())
+        .filter(Boolean)
+        .forEach((type) => catalyst.push(type));
+      continue;
+    }
+    attributes.push(trimmed.replace(/\s*\(.*$/, '').toLowerCase());
+  }
+  return { attributes, catalyst };
+}
+
+/**
+ * Dice and type read from a damage slot.
+ *
+ * @param {string | undefined} damage - Damage slot value, shortcodes included
+ * @param {string | undefined} versatile - Versatile slot value
+ * @param {SharedData} sharedData - Shared game data, for the damage type list
+ * @returns {{ damage?: string, damageType?: string, versatileDamage?: string } | undefined} Parsed damage
+ *
+ * @example
+ * parseSlotDamage('[% 1d12 holy %] + [% 1d12 poison %]', undefined, data); // { damage: '1d12', damageType: 'holy' }
+ */
+function parseSlotDamage(
+  damage: string | undefined,
+  versatile: string | undefined,
+  sharedData: SharedData,
+): { damage?: string; damageType?: string; versatileDamage?: string } | undefined {
+  if (!damage) return undefined;
+  const plainDamage = damage.replace(/\[%\s*(.*?)\s*%\]/g, '$1');
+  const types = sharedData.gameData.damageTypes
+    .map((type) => type.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('|');
+  const match = plainDamage.match(
+    new RegExp(`(\\d+d\\d+)\\s+(${types})(?:\\s*\\((\\d+d\\d+)\\s*(?:versatile)?\\))?`, 'i'),
+  );
+  if (!match) return undefined;
+  const plainVersatile = versatile?.replace(/\[%\s*(.*?)\s*%\]/g, '$1');
+  const versatileMatch = plainVersatile?.match(/(\d+d\d+)/);
+  return {
+    damage: match[1],
+    damageType: match[2].toLowerCase(),
+    versatileDamage: match[3] ?? versatileMatch?.[1],
+  };
+}
+
+/**
+ * Enhancement bonus read from an enchantment slot.
+ *
+ * @param {string | undefined} enchantment - Enchantment slot value
+ * @returns {number | undefined} The bonus
+ *
+ * @example
+ * enchantmentModifier('+4 accuracy and damage'); // 4
+ */
+function enchantmentModifier(
+  enchantment: string | undefined,
+): number | undefined {
+  const match = enchantment?.match(/\+(\d+)/);
+  return match ? Number(match[1]) : undefined;
+}
+
+/**
  * Parses heirloom metadata from raw MDX source, no file read.
  *
  * @description The slot form's `base` carries the same "Type (properties)"
@@ -655,22 +788,24 @@ export function parseHeirloomSource(
       ? header.attunement
       : undefined);
   const { weaponInfo } = italic;
+  const built = header?.base ? parseBaseTriplet(header.base, sharedData) : undefined;
   /* The detector reads italic header lines, so the element's identity slots
-     are offered to it in that spelling. */
+     are offered to it in that spelling. A pattern names the catalogue noun;
+     a built base names no noun and is a weapon by construction. */
   const headerLines = [
-    header?.base,
+    header?.pattern,
+    built ? undefined : header?.base,
     (header as Partial<Record<string, string>> | null)?.category,
   ]
     .filter((value): value is string => typeof value === 'string')
     .map((value) => `_${value}_`);
-  const itemType = ItemData.detectItemType(
-    [...headerLines, ...lines],
-    sharedData,
-  );
+  const itemType = built
+    ? 'weapon'
+    : ItemData.detectItemType([...headerLines, ...lines], sharedData);
   const properties = parseProperties(raw) ?? {};
 
   const typeProperties =
-    !properties.Type && header?.base
+    !properties.Type && header?.base && !built
       ? { ...properties, Type: parenthesizeSubtype(header.base) }
       : properties;
 
@@ -680,7 +815,7 @@ export function parseHeirloomSource(
   const rangeFromProps = parseRange(properties);
 
   let weaponType: string | undefined =
-    weaponInfo?.weaponType || typeInfo.weaponType;
+    header?.pattern || weaponInfo?.weaponType || typeInfo.weaponType;
   let weaponTypeFromParen = !weaponInfo?.weaponType && typeInfo.typeFromParen;
   const hitModifier = weaponInfo?.hitModifier;
   const range = weaponInfo?.range || rangeFromProps;
@@ -742,12 +877,22 @@ export function parseHeirloomSource(
     weaponInfo.properties.forEach((p) => allWeaponProps.add(p));
   if (typeInfo.weaponProperties)
     typeInfo.weaponProperties.forEach((p) => allWeaponProps.add(p));
+  const authored = header?.attributes
+    ? parseAttributeList(header.attributes)
+    : undefined;
+  authored?.attributes.forEach((p) => allWeaponProps.add(p));
   const weaponProperties =
     allWeaponProps.size > 0 ? Array.from(allWeaponProps).sort() : undefined;
 
   const allMastery = new Set<string>();
   if (weaponInfo?.mastery) weaponInfo.mastery.forEach((m) => allMastery.add(m));
   if (typeInfo.mastery) typeInfo.mastery.forEach((m) => allMastery.add(m));
+  header?.mastery?.forEach((m) => allMastery.add(m));
+  const slotDamage =
+    weaponDamage ??
+    parseSlotDamage(header?.damage, header?.versatile, sharedData);
+  const slotModifier =
+    hitModifier ?? enchantmentModifier(header?.enchantment);
   const mastery =
     allMastery.size > 0 ? Array.from(allMastery).sort() : undefined;
 
@@ -833,14 +978,18 @@ export function parseHeirloomSource(
     rarity,
     itemType: itemType?.toLowerCase(),
     weaponType: weaponType?.toLowerCase(),
+    chassis: built?.chassis,
+    finish: built?.finish,
+    art: built?.art,
+    catalyst: authored?.catalyst.length ? authored.catalyst : undefined,
     requiresAttunement,
     attunementRequirements,
     weaponProperties,
     mastery,
-    weaponDamage: weaponDamage?.damage,
-    weaponDamageType: weaponDamage?.damageType,
-    versatileDamage: weaponDamage?.versatileDamage,
-    hitModifier,
+    weaponDamage: slotDamage?.damage,
+    weaponDamageType: slotDamage?.damageType,
+    versatileDamage: slotDamage?.versatileDamage,
+    hitModifier: slotModifier,
     range,
     ...(weight ?? {}),
     damageTypesDealt,
@@ -876,7 +1025,9 @@ export interface HeirloomV2Feature {
 export interface HeirloomV2Result {
   rarity: string;
   attunement?: string;
+  pattern?: string;
   base?: string;
+  attributes?: string;
   quality?: string;
   enchantment?: string;
   damage?: string;

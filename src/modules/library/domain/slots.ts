@@ -16,7 +16,9 @@ import { BLOODLINE_SLOT_NAMES, BLOODLINE_SLOTS, type BloodlineSlotName } from '.
 export const HEIRLOOM_SLOTS = {
   rarity: 'Rarity',
   attunement: 'Attunement',
+  pattern: 'Pattern',
   base: 'Base',
+  attributes: 'AttributeList',
   quality: 'Quality',
   enchantment: 'Enchantment',
   damage: 'Damage',

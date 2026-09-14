@@ -86,6 +86,26 @@ export class ItemData {
     return data.itemData.weaponTypes;
   }
 
+  /** @returns {string[]} Weapon chassis names */
+  static getChassis(data: SharedData): string[] {
+    return data.itemData.chassis;
+  }
+
+  /** @returns {string[]} Base damage finishes */
+  static getFinishes(data: SharedData): string[] {
+    return data.itemData.finishes;
+  }
+
+  /** @returns {string[]} Weapon art names */
+  static getArts(data: SharedData): string[] {
+    return data.itemData.arts;
+  }
+
+  /** @returns {string[]} Weapon attribute names */
+  static getAttributes(data: SharedData): string[] {
+    return data.itemData.attributes;
+  }
+
   /** @returns {string[]} Armor subtypes */
   static getArmorTypes(data: SharedData): string[] {
     return data.itemData.armorTypes;

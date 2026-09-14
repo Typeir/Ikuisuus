@@ -7,7 +7,9 @@
     "recharge": "Recharge",
     "rarity": "Rarity",
     "attunement": "Attunement",
+    "pattern": "Pattern",
     "base": "Base",
+    "attributes": "Attributes",
     "quality": "Quality",
     "enchantment": "Enchantment",
     "damage": "Damage",
@@ -81,12 +83,13 @@
     "kind": "Heirloom",
     "requiresAttunement": "requires attunement",
     "enchanted": "enchanted",
+    "pattern": "pattern",
     "focus": "focus",
     "nullifying": "Nullifying"
   },
   "feature": {
-    "masteryAny": "Requires mastery with this weapon",
-    "masteryWith": "Requires mastery with {kind}",
+    "masteryAny": "Requires Expert in this weapon's art",
+    "masteryWith": "Requires Expert in {kind}",
     "deed": {
       "stratagem": "Declared at the end of your turn, resolving at the start of your next",
       "act": "Taken at the end of another creature's turn",

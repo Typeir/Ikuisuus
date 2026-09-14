@@ -27,7 +27,7 @@ describe('slots schema', () => {
     for (const name of FEATURE_SLOT_NAMES) {
       expect(SLOT_NAMES, name).toContain(name);
     }
-    expect(HEIRLOOM_SLOT_NAMES).toHaveLength(23);
+    expect(HEIRLOOM_SLOT_NAMES).toHaveLength(25);
     expect(HEIRLOOM_SLOT_NAMES[0]).toBe('rarity');
   });
 

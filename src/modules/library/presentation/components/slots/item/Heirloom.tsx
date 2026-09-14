@@ -130,6 +130,12 @@ function briefLines(
   }
   if (first.length) lines.push(first);
 
+  if (typeof values.pattern === 'string') {
+    lines.push([`${capitalize(values.pattern.trim())} ${t('pattern')}`]);
+  } else if (values.pattern !== undefined) {
+    lines.push([values.pattern, ` ${t('pattern')}`]);
+  }
+
   const second: ReactNode[] = [];
   const quality =
     typeof values.quality === 'string' ? values.quality.trim() : undefined;
