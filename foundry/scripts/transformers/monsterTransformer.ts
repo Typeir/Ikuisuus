@@ -13,9 +13,11 @@
 
 import type { MonsterMetadata } from '../../../src/lib/db/content/schemas/monsterMetadata';
 import {
+    ABILITY_SOURCE_MAP,
     SIZE_MAP,
     SKILL_ABILITY_MAP,
     SKILL_MAP,
+    SKILL_SOURCE_ABILITY,
     TOKEN_SIZE_MAP,
 } from '../constants/dnd5eMaps';
 import { generateFoundryId } from '../utils/idGenerator';
@@ -77,17 +79,20 @@ function parseCr(cr: string): number {
 }
 
 /**
- * Parses a skill string like "Perception +15" into a skill key and bonus.
+ * Parses a skill string like "Descry +15" into a skill key and bonus.
  *
  * @param {string} skillStr - Skill string from metadata
- * @returns {{ key: string; bonus: number } | null} Parsed skill or null
+ * @returns {{ key: string; bonus: number; source: string } | null} Parsed skill, with the Ikuisuus skill name it came from, or null
  */
-function parseSkill(skillStr: string): { key: string; bonus: number } | null {
+function parseSkill(
+  skillStr: string,
+): { key: string; bonus: number; source: string } | null {
   const match = skillStr.match(/^(.+?)\s+\+?(-?\d+)$/);
   if (!match) return null;
-  const key = SKILL_MAP[match[1].toLowerCase().trim()];
+  const source = match[1].toLowerCase().trim();
+  const key = SKILL_MAP[source];
   if (!key) return null;
-  return { key, bonus: parseInt(match[2]) };
+  return { key, bonus: parseInt(match[2]), source };
 }
 
 /**
@@ -109,15 +114,17 @@ function computeSkillProf(bonus: number, mod: number, prof: number): number {
 /**
  * Builds the dnd5e ability scores object.
  *
+ * @description dnd5e keeps six abilities; each reads the Ikuisuus ability
+ * behind it, so the mind stat fills both Intelligence and Wisdom
  * @param {MonsterMetadata} m - Source monster metadata
  * @returns {Record<string, unknown>} Abilities keyed by str/dex/con/int/wis/cha
  */
 function buildAbilities(m: MonsterMetadata): Record<string, unknown> {
   const out: Record<string, unknown> = {};
-  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha'] as const) {
+  for (const [key, source] of Object.entries(ABILITY_SOURCE_MAP)) {
     out[key] = {
-      value: m.scores?.[key] ?? 10,
-      proficient: m.saves?.[key] !== undefined ? 1 : 0,
+      value: m.scores?.[source] ?? 10,
+      proficient: m.saves?.[source] !== undefined ? 1 : 0,
       bonuses: { check: '', save: '' },
     };
   }
@@ -139,8 +146,12 @@ function buildSkills(m: MonsterMetadata): Record<string, unknown> {
     const parsed = parseSkill(str);
     if (!parsed) continue;
     const abl = SKILL_ABILITY_MAP[parsed.key];
+    const measured =
+      SKILL_SOURCE_ABILITY[parsed.source] ?? ABILITY_SOURCE_MAP[abl];
     const score =
-      abl && m.scores ? (m.scores[abl as keyof typeof m.scores] ?? 10) : 10;
+      measured && m.scores
+        ? (m.scores[measured as keyof typeof m.scores] ?? 10)
+        : 10;
     const mod = Math.floor((score - 10) / 2);
     out[parsed.key] = {
       value: computeSkillProf(parsed.bonus, mod, prof),
@@ -184,7 +195,7 @@ export async function transformMonster(
     system: {
       abilities: buildAbilities(monster),
       attributes: {
-        ac: { flat: monster.ac?.value ?? 10, calc: 'flat', formula: '' },
+        ac: { flat: monster.defence?.value ?? 10, calc: 'flat', formula: '' },
         hp: {
           value: monster.hp?.average ?? 0,
           max: monster.hp?.average ?? 0,

@@ -59,20 +59,25 @@ export const CONDITION_MAP: Record<string, string> = {
   unconscious: 'unconscious',
 };
 
-/** Maps skill display names to dnd5e skill keys. */
+/**
+ * Maps skill display names to dnd5e skill keys.
+ *
+ * @description Descry and Discern are the two halves of Perception, so both
+ * land on dnd5e's `prc`; a sheet that carries both writes Discern last
+ */
 export const SKILL_MAP: Record<string, string> = {
   acrobatics: 'acr',
-  'animal handling': 'ani',
   arcana: 'arc',
   athletics: 'ath',
   deception: 'dec',
+  descry: 'prc',
+  discern: 'prc',
   history: 'his',
   insight: 'ins',
   intimidation: 'itm',
   investigation: 'inv',
   medicine: 'med',
   nature: 'nat',
-  perception: 'prc',
   performance: 'prf',
   persuasion: 'per',
   religion: 'rel',
@@ -81,10 +86,35 @@ export const SKILL_MAP: Record<string, string> = {
   survival: 'sur',
 };
 
-/** Maps dnd5e skill keys to their governing ability. */
+/**
+ * Ikuisuus ability each skill's bonus is measured against, where it differs
+ * from dnd5e's: Descry reads Dexterity, Discern and the knowledge skills read
+ * the mind stat, Insight is social
+ */
+export const SKILL_SOURCE_ABILITY: Record<string, string> = {
+  descry: 'dex',
+  discern: 'wis',
+  insight: 'cha',
+};
+
+/**
+ * Ikuisuus ability behind each dnd5e ability.
+ *
+ * @description The sheet has five abilities; the mind stat, kept under the
+ * name Wisdom, fills both dnd5e Intelligence and dnd5e Wisdom
+ */
+export const ABILITY_SOURCE_MAP: Record<string, 'str' | 'dex' | 'con' | 'wis' | 'cha'> = {
+  str: 'str',
+  dex: 'dex',
+  con: 'con',
+  int: 'wis',
+  wis: 'wis',
+  cha: 'cha',
+};
+
+/** Maps dnd5e skill keys to their governing dnd5e ability. */
 export const SKILL_ABILITY_MAP: Record<string, string> = {
   acr: 'dex',
-  ani: 'wis',
   arc: 'int',
   ath: 'str',
   dec: 'cha',
