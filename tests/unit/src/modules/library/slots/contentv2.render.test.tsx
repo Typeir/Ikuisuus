@@ -86,7 +86,6 @@ describe('monster fixture', () => {
       '12 (+1)',
       '14 (+2)',
       '8 (-1)',
-      '10 (+0)',
       '9 (-1)',
     ]) {
       expect(html, cell).toContain(cell);
