@@ -115,6 +115,10 @@ describe('SKILL_DEFAULTS', () => {
     expect(ability('skills.arcana')).toBe('wis');
     expect(ability('skills.insight')).toBe('cha');
     expect(ability('skills.tinkering')).toBe('wis');
+    expect(ability('skills.survival')).toBe('con');
+    expect(SKILL_DEFAULTS.filter((s) => s.ability === 'con').map((s) => s.name)).toEqual([
+      'skills.survival',
+    ]);
   });
 });
 

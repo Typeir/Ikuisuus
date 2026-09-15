@@ -69,7 +69,8 @@ export const TIER_LABELS: Record<
  *
  * @description Wisdom is the mind stat: the knowledge skills sit on it, Descry
  * (noticing a thing before it hurts) is Dexterity, Discern (the minutiae of a
- * thing) is Wisdom, and Insight is social, so Charisma
+ * thing) is Wisdom, Insight is social, so Charisma, and Survival is the one
+ * Constitution skill
  * @constant SKILL_DEFAULTS
  * @type {CharacterSkill[]}
  */
@@ -91,7 +92,7 @@ export const SKILL_DEFAULTS: CharacterSkill[] = [
   { name: 'skills.religion', ability: 'wis', tier: 'none' },
   { name: 'skills.sleightOfHand', ability: 'dex', tier: 'none' },
   { name: 'skills.stealth', ability: 'dex', tier: 'none' },
-  { name: 'skills.survival', ability: 'wis', tier: 'none' },
+  { name: 'skills.survival', ability: 'con', tier: 'none' },
   { name: 'skills.tinkering', ability: 'wis', tier: 'none' },
 ];
 

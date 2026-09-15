@@ -89,12 +89,13 @@ export const SKILL_MAP: Record<string, string> = {
 /**
  * Ikuisuus ability each skill's bonus is measured against, where it differs
  * from dnd5e's: Descry reads Dexterity, Discern and the knowledge skills read
- * the mind stat, Insight is social
+ * the mind stat, Insight is social, Survival is Constitution
  */
 export const SKILL_SOURCE_ABILITY: Record<string, string> = {
   descry: 'dex',
   discern: 'wis',
   insight: 'cha',
+  survival: 'con',
 };
 
 /**
