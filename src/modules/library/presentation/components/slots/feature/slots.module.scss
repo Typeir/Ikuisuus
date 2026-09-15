@@ -192,6 +192,16 @@ $heading-meta-height: 1.5rem;
   }
 }
 
+/* The level a feature arrives at, beside the name. */
+.level {
+  font-weight: 500;
+  font-style: italic;
+  font-size: 0.8em;
+  color: var(--color-text-secondary);
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
 /* Stat-block table */
 /* Fills the width its wrapper is given. */
 .statTable {

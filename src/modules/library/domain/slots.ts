@@ -9,6 +9,7 @@
  */
 
 import { BLOODLINE_SLOT_NAMES, BLOODLINE_SLOTS, type BloodlineSlotName } from './bloodlineSlots';
+import { MONSTER_SLOT_NAMES, MONSTER_SLOTS, type MonsterSlotName } from './monsterSlots';
 
 /**
  * Header slots of an heirloom.
@@ -25,7 +26,9 @@ export const HEIRLOOM_SLOTS = {
   versatile: 'Versatile',
   reach: 'Reach',
   range: 'Range',
-  armorClass: 'ArmorClass',
+  deflect: 'Deflect',
+  dodge: 'Dodge',
+  maxDodge: 'MaxDodge',
   stealth: 'Stealth',
   mastery: 'Mastery',
   masterfulBlow: 'MasterfulBlow',
@@ -100,38 +103,6 @@ export const SPELL_SLOTS = {
 export const TRINKET_SLOTS = HEIRLOOM_SLOTS;
 
 /**
- * Header slots of a monster.
- */
-export const MONSTER_SLOTS = {
-  size: 'Size',
-  type: 'Type',
-  alignment: 'Alignment',
-  armorClass: 'ArmorClass',
-  hitPoints: 'HitPoints',
-  speed: 'Speed',
-  str: 'Str',
-  dex: 'Dex',
-  con: 'Con',
-  int: 'Int',
-  wis: 'Wis',
-  cha: 'Cha',
-  saves: 'Saves',
-  skills: 'Skills',
-  resistances: 'Resistances',
-  vulnerabilities: 'Vulnerabilities',
-  immunities: 'Immunities',
-  conditionImmunities: 'ConditionImmunities',
-  senses: 'Senses',
-  languages: 'Languages',
-  damageThreshold: 'DamageThreshold',
-  material: 'Material',
-  saveDc: 'SaveDc',
-  lethality: 'Lethality',
-  xp: 'Xp',
-  tierBonus: 'TierBonus',
-} as const;
-
-/**
  * Header slots of a vocation
  */
 export const VOCATION_SLOTS = {
@@ -199,11 +170,6 @@ export type SpellSlotName = keyof typeof SPELL_SLOTS;
  * Trinket slot names.
  */
 export type TrinketSlotName = HeirloomSlotName;
-
-/**
- * Monster slot names.
- */
-export type MonsterSlotName = keyof typeof MONSTER_SLOTS;
 
 /**
  * Vocation slot names.
@@ -309,13 +275,6 @@ export const TRINKET_SLOT_NAMES: readonly TrinketSlotName[] =
   HEIRLOOM_SLOT_NAMES;
 
 /**
- * Monster slot names in display order.
- */
-export const MONSTER_SLOT_NAMES = Object.keys(
-  MONSTER_SLOTS,
-) as MonsterSlotName[];
-
-/**
  * Vocation slot names in display order.
  */
 export const VOCATION_SLOT_NAMES = Object.keys(
@@ -339,37 +298,6 @@ export const FEAT_SLOT_NAMES = Object.keys(FEAT_SLOTS) as FeatSlotName[];
 export const ATTACK_SLOT_NAMES = Object.keys(
   ATTACK_SLOTS,
 ) as AttackSlotName[];
-
-/**
- * The six ability scores a monster sheet carries, in sheet order.
- */
-export const ABILITY_SLOTS: readonly MonsterSlotName[] = [
-  'str',
-  'dex',
-  'con',
-  'int',
-  'wis',
-  'cha',
-];
-
-/**
- * Monster slots that print as the labelled list under the tables, in order.
- */
-export const MONSTER_LIST_SLOTS: readonly MonsterSlotName[] = [
-  'saves',
-  'skills',
-  'resistances',
-  'vulnerabilities',
-  'immunities',
-  'conditionImmunities',
-  'senses',
-  'languages',
-  'material',
-  'saveDc',
-  'lethality',
-  'xp',
-  'tierBonus',
-];
 
 /**
  * Every slot name, heirloom slots first.
@@ -423,4 +351,11 @@ export const SLOT_HOSTS: Readonly<
 
 export { SLOT_LABEL_OVERRIDES, slotLabelKey } from './slotLabels';
 export { BLOODLINE_SLOTS, BLOODLINE_SLOT_NAMES, BLOODLINE_TABLES, type BloodlineSlotName } from './bloodlineSlots';
+export {
+  ABILITY_SLOTS,
+  MONSTER_LIST_SLOTS,
+  MONSTER_SLOTS,
+  MONSTER_SLOT_NAMES,
+  type MonsterSlotName,
+} from './monsterSlots';
 

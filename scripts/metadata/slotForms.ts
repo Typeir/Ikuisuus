@@ -254,7 +254,7 @@ export function unslotMonster(text: string): string {
     const alignment = get('alignment');
     if (size && type && alignment) header.push(`_${size} ${type}, ${alignment}_`, '');
 
-    const armorClass = get('armorClass');
+    const armorClass = get('defence') ?? get('armorClass');
     const hitPoints = get('hitPoints');
     const speed = get('speed');
     if (armorClass || hitPoints || speed) {

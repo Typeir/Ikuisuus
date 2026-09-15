@@ -42,8 +42,8 @@ export type StatletProps = SlotProps<MonsterSlotName> & {
  * The defences each kind is measured by.
  */
 const DEFENCES: Record<StatletKind, readonly MonsterSlotName[]> = {
-  creature: ['armorClass', 'hitPoints', 'speed'],
-  object: ['armorClass', 'hitPoints', 'damageThreshold'],
+  creature: ['defence', 'deflect', 'dodge', 'hitPoints', 'speed'],
+  object: ['defence', 'deflect', 'dodge', 'hitPoints', 'damageThreshold'],
 };
 
 /**

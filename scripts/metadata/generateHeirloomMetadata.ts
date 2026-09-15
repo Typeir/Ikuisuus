@@ -1034,7 +1034,9 @@ export interface HeirloomV2Result {
   versatile?: string;
   reach?: string;
   range?: string;
-  armorClass?: string;
+  deflect?: string;
+  dodge?: string;
+  maxDodge?: string;
   stealth?: string;
   mastery?: string[];
   masterfulBlow?: string;

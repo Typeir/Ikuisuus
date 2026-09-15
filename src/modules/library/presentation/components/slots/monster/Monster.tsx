@@ -49,7 +49,9 @@ export type MonsterProps = SlotProps<MonsterSlotName> & {
  * Defence columns, in table order.
  */
 const DEFENCE_SLOTS: readonly MonsterSlotName[] = [
-  'armorClass',
+  'defence',
+  'deflect',
+  'dodge',
   'hitPoints',
   'speed',
 ];

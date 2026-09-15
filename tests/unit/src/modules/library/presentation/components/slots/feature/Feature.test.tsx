@@ -185,6 +185,28 @@ describe('Feature', () => {
       '1 Minor Action',
     );
   });
+
+  it('prints the level beside the name, in the summary when it folds, never as a row', () => {
+    const { container: open } = render(
+      <Feature level='3'>
+        <h2>Extra Attack</h2>
+        <p>Body.</p>
+      </Feature>,
+    );
+    expect(open.querySelector('h2 [data-feature-level]')).not.toBeNull();
+    expect(open.querySelector('[data-slot="level"]')).toBeNull();
+
+    const { container: folded } = render(
+      <Feature collapsible level='5'>
+        <h2>Weapon Expertise</h2>
+        <p>Body.</p>
+      </Feature>,
+    );
+    expect(
+      folded.querySelector('details > summary [data-feature-level]'),
+    ).not.toBeNull();
+    expect(folded.querySelector('[data-slot="level"]')).toBeNull();
+  });
 });
 
 describe('Attack', () => {

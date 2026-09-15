@@ -99,7 +99,7 @@ describe('Heirloom', () => {
 
   it('prints the numbers where the marker sits, and nowhere on its own', () => {
     render(
-      <Heirloom rarity='rare' base='Plate' armorClass='18' stealth='disadvantage' burden='4'>
+      <Heirloom rarity='rare' base='Plate' deflect='8' stealth='disadvantage' burden='4'>
         <p>Primer.</p>
         <hr />
         <section data-heading-level={3} data-anchor='attributes'>
@@ -116,11 +116,11 @@ describe('Heirloom', () => {
     const rows = Array.from(
       filed?.querySelectorAll(':scope > [data-slot]') ?? [],
     ).map((row) => row.getAttribute('data-slot'));
-    expect(rows).toEqual(['armorClass', 'stealth', 'burden']);
+    expect(rows).toEqual(['deflect', 'stealth', 'burden']);
     expect(
-      document.querySelector('[data-slot="armorClass"] [data-slot-value]')
+      document.querySelector('[data-slot="deflect"] [data-slot-value]')
         ?.textContent,
-    ).toBe('18');
+    ).toBe('8');
     expect(
       document.querySelector('[data-heirloom] > [data-heirloom-stats]'),
     ).toBeNull();
@@ -128,7 +128,7 @@ describe('Heirloom', () => {
 
   it('prints nothing without a marker', () => {
     render(
-      <Heirloom rarity='rare' base='Plate' armorClass='18'>
+      <Heirloom rarity='rare' base='Plate' deflect='8'>
         <p>Primer.</p>
         <hr />
       </Heirloom>,
@@ -138,14 +138,14 @@ describe('Heirloom', () => {
 
   it('the marker can ask for particular slots', () => {
     render(
-      <Heirloom rarity='rare' base='Plate' armorClass='18' stealth='disadvantage' burden='4'>
-        <Attributes burden armorClass />
+      <Heirloom rarity='rare' base='Plate' deflect='8' stealth='disadvantage' burden='4'>
+        <Attributes burden deflect />
       </Heirloom>,
     );
     const rows = Array.from(
       document.querySelectorAll('[data-heirloom-stats] > [data-slot]'),
     ).map((row) => row.getAttribute('data-slot'));
-    expect(rows).toEqual(['armorClass', 'burden']);
+    expect(rows).toEqual(['deflect', 'burden']);
   });
 
   it('prints the versatile die inside the damage line', () => {

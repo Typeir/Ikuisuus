@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('Statlet', () => {
   it('should stand as an object unless told otherwise', () => {
-    const { container } = render(<Statlet armorClass='12' />);
+    const { container } = render(<Statlet defence='12' />);
     expect(container.querySelector('[data-statlet]')).toHaveAttribute(
       'data-statlet-kind',
       'object',
@@ -24,7 +24,7 @@ describe('Statlet', () => {
 
   it('should open with the heading it was given', () => {
     const { container } = render(
-      <Statlet armorClass='12'>
+      <Statlet defence='12'>
         <h4>Barricade</h4>
         <p>It blocks the way.</p>
       </Statlet>,
@@ -37,7 +37,7 @@ describe('Statlet', () => {
 
   it('should keep the heading out of the body', () => {
     const { container } = render(
-      <Statlet armorClass='12'>
+      <Statlet defence='12'>
         <h4>Barricade</h4>
         <p>It blocks the way.</p>
       </Statlet>,
@@ -49,7 +49,7 @@ describe('Statlet', () => {
   });
 
   it('should say nothing about identity when it has nothing to say', () => {
-    const { container } = render(<Statlet armorClass='12' />);
+    const { container } = render(<Statlet defence='12' />);
     expect(container.querySelector('[data-statlet-identity]')).toBeNull();
   });
 
@@ -73,7 +73,7 @@ describe('Statlet', () => {
 
   it('should give an object a damage threshold where a creature has speed', () => {
     const { container: object } = render(
-      <Statlet armorClass='15' hitPoints='30' damageThreshold='10' speed='0 ft.' />,
+      <Statlet defence='15' deflect='5' dodge='0' hitPoints='30' damageThreshold='10' speed='0 ft.' />,
     );
     const shown = object.querySelector('[data-statlet-defences]');
     expect(shown).toHaveTextContent('10');

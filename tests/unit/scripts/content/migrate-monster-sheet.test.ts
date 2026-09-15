@@ -87,7 +87,7 @@ describe('migrateMonsterSheet', () => {
       '  size="Small"',
       '  type="monstrosity"',
       '  alignment="Unaligned"',
-      '  armorClass="12"',
+      '  defence="12"',
       '  hitPoints="18 ([% 4d6 +4 %])"',
       '  speed="[= 4 stride =], burrow [= 2 stride =]"',
       '  str="12"',

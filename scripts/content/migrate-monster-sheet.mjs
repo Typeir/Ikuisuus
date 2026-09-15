@@ -101,7 +101,7 @@ function readHeader(lines) {
   }
 
   const [armorClass, hitPoints, speed] = cells(lines[acIndex + 2]);
-  if (armorClass) slots.armorClass = armorClass;
+  if (armorClass) slots.defence = armorClass;
   if (hitPoints) slots.hitPoints = hitPoints;
   if (speed) slots.speed = speed;
   [acIndex, acIndex + 1, acIndex + 2].forEach((i) => consumed.add(i));

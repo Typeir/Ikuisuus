@@ -3,7 +3,7 @@
  * @description Renders a declared-by-name feature
  *
  * @module modules/library/presentation/components/slots/feature/Feature
- * @version 0.6.0
+ * @version 0.7.0
  * @author Typeir
  * @since 2026-09-02
  */
@@ -141,18 +141,31 @@ const Feature: React.FC<FeatureProps> = ({
         {spend !== undefined && <>{spend} </>}({t('slots.recharge')} {recharge})
       </>
     );
+  /* The level a feature arrives at reads beside the name, in the heading or
+     the folded summary, so a list of features is scanned without opening one. */
+  const atLevel = entries.find((entry) => entry.name === 'level')?.value;
   const rows = entries.filter(
-    (entry) => entry.name !== 'cost' && entry.name !== 'recharge',
+    (entry) =>
+      entry.name !== 'cost' &&
+      entry.name !== 'recharge' &&
+      entry.name !== 'level',
   );
 
-  const level = headingNode ? headingLevelOf(headingNode) : 0;
-  const Tag = HEADING_TAGS[level];
+  const levelElement = atLevel !== undefined && (
+    <span className={styles.level} data-feature-level>
+      {atLevel}
+    </span>
+  );
+
+  const headingLevel = headingNode ? headingLevelOf(headingNode) : 0;
+  const Tag = HEADING_TAGS[headingLevel];
 
   const headingElement = Tag ? (
     <Tag data-anchor={anchor ?? undefined} className={styles.heading}>
       <span className={styles.headingTitle} data-heading-title>
         {parsed.titleNodes}
       </span>
+      {levelElement}
       {cost !== undefined && (
         <span className={styles.cost} data-feature-cost>
           {cost}
@@ -197,6 +210,7 @@ const Feature: React.FC<FeatureProps> = ({
   const summary = (
     <>
       <span data-heading-title>{parsed.titleNodes}</span>
+      {levelElement}
       {parsed.cost && <span data-feature-tag>{parsed.cost}</span>}
       {cost !== undefined && <span data-feature-cost>{cost}</span>}
     </>

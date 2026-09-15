@@ -46,11 +46,11 @@ describe('Trinket', () => {
     );
   });
 
-  it('prints an armor class, reach and save DC', () => {
+  it('prints a Dodge, reach and save DC', () => {
     render(
-      <Trinket category='shield' armorClass='+2' reach='2 stride' saveDc='14' />,
+      <Trinket category='shield' dodge='+2' reach='2 stride' saveDc='14' />,
     );
-    expect(printed()).toEqual(['reach', 'armorClass', 'saveDc']);
+    expect(printed()).toEqual(['reach', 'dodge', 'saveDc']);
   });
 
   it('reads attunement written with the phrase the card already prints', () => {

@@ -119,7 +119,7 @@ describe('vocation fixture', () => {
 
   it('carries the level on its feature blocks', async () => {
     const html = await renderNamed('vocation.mdx');
-    expect(html).toContain('data-slot="level"');
+    expect(html).toContain('data-feature-level');
     expect(html).toContain('Martial Arts');
     expect(html).toContain('Extra Attack');
   });
