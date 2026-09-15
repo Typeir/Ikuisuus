@@ -29,6 +29,10 @@ import {
     type CharacterSheetAction,
     type CharacterSheetState,
 } from '../types/characterSheet';
+import {
+    type LegacyCharacter,
+    migrateCharacter,
+} from '@/modules/character-builder/lib/utils/characterMigration';
 import { ensureStorageSchema } from '../utils/storageSchema';
 import {
     fetchPersistentDataRef,
@@ -60,7 +64,11 @@ function readPersistedCharacters(): SerializedCharacterSheetState {
   try {
     const parsed = JSON.parse(raw) as Partial<SerializedCharacterSheetState>;
     return {
-      characters: Array.isArray(parsed.characters) ? parsed.characters : [],
+      characters: Array.isArray(parsed.characters)
+        ? parsed.characters.map((character) =>
+            migrateCharacter(character as LegacyCharacter),
+          )
+        : [],
       activeId: typeof parsed.activeId === 'string' ? parsed.activeId : null,
     };
   } catch {

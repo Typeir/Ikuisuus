@@ -26,7 +26,7 @@ describe('encounterFactory', () => {
         str: 10,
         dex: 10,
         con: 10,
-        int: 10,
+        
         wis: 10,
         cha: 10,
       });
@@ -47,7 +47,7 @@ describe('encounterFactory', () => {
       const creature = createEmptyCreature();
       expect(creature.hpCurrent).toBe(10);
       expect(creature.hpMax).toBe(10);
-      expect(creature.ac).toBe(10);
+      expect(creature.defence).toBe(10);
     });
 
     it('should initialize empty details', () => {
@@ -85,12 +85,12 @@ describe('encounterFactory', () => {
     const fullMonsterData = {
       title: 'Ancient Red Dragon',
       hp: { average: 546, formula: '28d20+252' },
-      ac: { value: 22 },
+      defence: { value: 22 },
       scores: {
         str: 30,
         dex: 10,
         con: 29,
-        int: 18,
+        
         wis: 15,
         cha: 23,
       },
@@ -109,7 +109,7 @@ describe('encounterFactory', () => {
 
     it('should create a creature with monster AC', () => {
       const creature = createCreatureFromMonster(fullMonsterData, 'en');
-      expect(creature.ac).toBe(22);
+      expect(creature.defence).toBe(22);
     });
 
     it('should populate all ability scores', () => {
@@ -117,7 +117,6 @@ describe('encounterFactory', () => {
       expect(creature.stats.str).toBe(30);
       expect(creature.stats.dex).toBe(10);
       expect(creature.stats.con).toBe(29);
-      expect(creature.stats.int).toBe(18);
       expect(creature.stats.wis).toBe(15);
       expect(creature.stats.cha).toBe(23);
     });
@@ -169,7 +168,7 @@ describe('encounterFactory', () => {
 
     it('should default to 10 AC when missing', () => {
       const creature = createCreatureFromMonster({}, 'en');
-      expect(creature.ac).toBe(10);
+      expect(creature.defence).toBe(10);
     });
 
     it('should default ability scores to 10 when missing', () => {
@@ -178,7 +177,7 @@ describe('encounterFactory', () => {
         str: 10,
         dex: 10,
         con: 10,
-        int: 10,
+        
         wis: 10,
         cha: 10,
       });
@@ -217,7 +216,7 @@ describe('encounterFactory', () => {
     const monsterData = {
       title: 'Goblin',
       hp: { average: 7 },
-      ac: { value: 15 },
+      defence: { value: 15 },
     };
 
     it('should create the requested number of creatures', () => {
@@ -280,7 +279,7 @@ describe('encounterFactory', () => {
       creatures.forEach((c) => {
         expect(c.name).toBe('Goblin');
         expect(c.hpMax).toBe(7);
-        expect(c.ac).toBe(15);
+        expect(c.defence).toBe(15);
       });
     });
   });

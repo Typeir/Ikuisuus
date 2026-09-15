@@ -46,7 +46,7 @@ const rollAffixesAndDetermineTier = (
 ): HeroicAwakeningState => {
   let tier: 'awakened' | 'legendary' | 'mythic' = 'awakened';
   let affixCount = 1;
-  let bonuses = { tier: 1, ac: 1, savingThrow: 1, hpPerCr: 0 };
+  let bonuses = { tier: 1, defence: 1, savingThrow: 1, hpPerCr: 0 };
 
   const affixes: AffixEntry[] = [];
   const usedAffixNames = new Set<string>();
@@ -59,11 +59,11 @@ const rollAffixesAndDetermineTier = (
       if (tier === 'awakened') {
         tier = 'legendary';
         affixCount = 2;
-        bonuses = { tier: 2, ac: 2, savingThrow: 2, hpPerCr: 2 };
+        bonuses = { tier: 2, defence: 2, savingThrow: 2, hpPerCr: 2 };
       } else if (tier === 'legendary') {
         tier = 'mythic';
         affixCount = 3;
-        bonuses = { tier: 3, ac: 3, savingThrow: 3, hpPerCr: 3 };
+        bonuses = { tier: 3, defence: 3, savingThrow: 3, hpPerCr: 3 };
       }
       affixRoll = rollAffix();
       affixName = getAffixFromRoll(affixRoll);
@@ -88,7 +88,7 @@ const rollAffixesAndDetermineTier = (
     affixes,
     bonuses: {
       tierBonus: bonuses.tier,
-      acBonus: bonuses.ac,
+      defenceBonus: bonuses.defence,
       savingThrowBonus: bonuses.savingThrow,
     },
     hpOverride: null,
@@ -141,7 +141,7 @@ export const applyHeroicAwakening = (
   combatant.heroicAwakening.tier = result.tier;
 
   combatant.heroicAwakening.bonuses.tierBonus = result.bonuses.tierBonus;
-  combatant.heroicAwakening.bonuses.acBonus = result.bonuses.acBonus;
+  combatant.heroicAwakening.bonuses.defenceBonus = result.bonuses.defenceBonus;
   combatant.heroicAwakening.bonuses.savingThrowBonus =
     result.bonuses.savingThrowBonus;
 
@@ -150,7 +150,7 @@ export const applyHeroicAwakening = (
       combatant.tierBonus + result.bonuses.tierBonus;
   }
 
-  combatant.ac += result.bonuses.acBonus;
+  combatant.defence += result.bonuses.defenceBonus;
 
   if (result.bonuses.tierBonus > 0 && combatant.hpMaxOverride !== null) {
     const hpBonus = result.bonuses.tierBonus * cr;

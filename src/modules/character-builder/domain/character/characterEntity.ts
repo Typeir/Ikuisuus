@@ -22,11 +22,11 @@ export type TierLevel =
   | 'savanthood';
 
 /**
- * Ability score keys — the six core stats, in canonical order.
+ * Ability score keys — the five core stats, in canonical order.
  *
- * @type {readonly ['str', 'dex', 'con', 'int', 'wis', 'cha']}
+ * @type {readonly ['str', 'dex', 'con', 'wis', 'cha']}
  */
-export const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'] as const;
+export const ABILITY_KEYS = ['str', 'dex', 'con', 'wis', 'cha'] as const;
 
 /**
  * Ability score key union, derived from {@link ABILITY_KEYS}.
@@ -243,9 +243,9 @@ export interface CharacterCoinHoldings {
  * @property {string} b - Bloodline slug
  * @property {string} vc - Vocation slug
  * @property {string} s - Specialization slug
- * @property {number[]} as - Ability scores [str, dex, con, int, wis, cha]
+ * @property {number[]} as - Ability scores [str, dex, con, wis, cha]
  * @property {number} hp - Max HP
- * @property {number} ac - Armor class
+ * @property {number} df - Defence
  * @property {string[]} boons - Selected boon heading names
  */
 export interface CompactCharacterRef {
@@ -257,7 +257,7 @@ export interface CompactCharacterRef {
   s: string;
   as: number[];
   hp: number;
-  ac: number;
+  df: number;
   boons: string[];
 }
 
@@ -325,12 +325,13 @@ export interface VocationEntry {
  * @property {number} boonBudget - Total Boon Points available from bloodline
  * @property {CharacterShard[]} selectedBoons - Chosen boon shards
  * @property {VocationEntry[]} vocations - Vocation entries, each tracking its own level (mixing support)
- * @property {{ str: number; dex: number; con: number; int: number; wis: number; cha: number }} abilityScores - Six core ability scores
+ * @property {{ str: number; dex: number; con: number; wis: number; cha: number }} abilityScores - Five core ability scores
  * @property {number} hpMax - Maximum hit points
  * @property {number} hpCurrent - Current hit points
  * @property {number} tempHp - Temporary hit points
  * @property {number} [grievousWounds] - Grievous-wound pool; degrades the effective max HP (`base − grievousWounds`).
- * @property {number} ac - Armor class
+ * @property {number} deflect - Deflect, the armour part of Defence
+ * @property {number} dodge - Dodge, the agility part of Defence
  * @property {number} initiativeBonus - Initiative modifier (typically DEX mod)
  * @property {number|null} speedOverride - Override for movement speed (walk); null = no override
  * @property {string[]} bloodlineSpeeds - Raw speed strings from the selected bloodline
@@ -376,7 +377,6 @@ export interface CharacterEntity {
     str: number;
     dex: number;
     con: number;
-    int: number;
     wis: number;
     cha: number;
   };
@@ -384,7 +384,8 @@ export interface CharacterEntity {
   hpCurrent: number;
   tempHp: number;
   grievousWounds?: number;
-  ac: number;
+  deflect: number;
+  dodge: number;
   initiativeBonus: number;
   speedOverride: number | null;
   bloodlineSpeeds: string[];

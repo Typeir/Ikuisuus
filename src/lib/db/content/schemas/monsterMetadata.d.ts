@@ -11,14 +11,18 @@
 import type { BaseMetadata } from './baseMetadata';
 
 /**
- * Armor class parsed from stat block table.
+ * Defence parsed from the stat block table.
  *
- * @property {number} value - Numeric AC value (e.g. 18)
- * @property {string} [notes] - AC source (e.g. "natural armor", "plate mail")
+ * @property {number} value - Defence total (e.g. 18)
+ * @property {string} [deflect] - Deflect as written, per stance where the sheet has two
+ * @property {string} [dodge] - Dodge as written
+ * @property {string} [notes] - Defence source (e.g. "natural armor", "plate mail")
  * @property {string} [raw] - Original text from table cell
  */
-export interface MonsterAC {
+export interface MonsterDefence {
   value: number;
+  deflect?: string;
+  dodge?: string;
   notes?: string;
   raw?: string;
 }
@@ -64,7 +68,6 @@ export interface MonsterSpeed {
  * @property {number} [str] - Strength score (3–30)
  * @property {number} [dex] - Dexterity score (3–30)
  * @property {number} [con] - Constitution score (3–30)
- * @property {number} [int] - Intelligence score (3–30)
  * @property {number} [wis] - Wisdom score (3–30)
  * @property {number} [cha] - Charisma score (3–30)
  */
@@ -72,7 +75,6 @@ export interface MonsterScores {
   str?: number;
   dex?: number;
   con?: number;
-  int?: number;
   wis?: number;
   cha?: number;
 }
@@ -84,7 +86,6 @@ export interface MonsterScores {
  * @property {number} [str] - Strength saving throw bonus
  * @property {number} [dex] - Dexterity saving throw bonus
  * @property {number} [con] - Constitution saving throw bonus
- * @property {number} [int] - Intelligence saving throw bonus
  * @property {number} [wis] - Wisdom saving throw bonus
  * @property {number} [cha] - Charisma saving throw bonus
  */
@@ -92,7 +93,6 @@ export interface MonsterSaves {
   str?: number;
   dex?: number;
   con?: number;
-  int?: number;
   wis?: number;
   cha?: number;
 }
@@ -101,7 +101,8 @@ export interface MonsterSaves {
  * Parsed senses entry.
  *
  * @property {string} raw - Original senses text
- * @property {number} [passivePerception] - Passive Perception score
+ * @property {number} [passiveDescry] - Passive Descry score
+ * @property {number} [passiveDiscern] - Passive Discern score
  * @property {number} [darkvision] - Darkvision range in strides
  * @property {number} [blindsight] - Blindsight range in strides
  * @property {number} [tremorsense] - Tremorsense range in strides
@@ -109,7 +110,8 @@ export interface MonsterSaves {
  */
 export interface MonsterSenses {
   raw: string;
-  passivePerception?: number;
+  passiveDescry?: number;
+  passiveDiscern?: number;
   darkvision?: number;
   blindsight?: number;
   tremorsense?: number;
@@ -125,7 +127,7 @@ export interface MonsterSenses {
  * @property {string} [size] - Creature size (lowercase
  * @property {string} [creatureType] - Creature type (lowercase
  * @property {string} [alignment] - Alignment (lowercase
- * @property {MonsterAC} [ac] - Armor Class
+ * @property {MonsterDefence} [defence] - Defence, with its Deflect and Dodge as written
  * @property {MonsterHP} [hp] - Hit Points
  * @property {MonsterSpeed} [speed] - Movement Speed
  * @property {MonsterScores} [scores] - Flat ability scores matching MonsterScoreEmbed
@@ -151,7 +153,7 @@ export interface MonsterMetadata extends BaseMetadata {
   size?: string;
   creatureType?: string;
   alignment?: string;
-  ac?: MonsterAC;
+  defence?: MonsterDefence;
   hp?: MonsterHP;
   speed?: MonsterSpeed;
   scores?: MonsterScores;

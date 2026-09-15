@@ -54,7 +54,7 @@ const createDefaultHeroicAwakening = (
   awakened: false,
   tier: 'none',
   affixes: [],
-  bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+  bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
   hpOverride: null,
   ...overrides,
 });
@@ -76,8 +76,8 @@ const createMockCombatant = (
   hpMax: 100,
   hpMaxOverride: null,
   tempHp: null,
-  ac: 15,
-  stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+  defence: 15,
+  stats: { str: 10, dex: 10, con: 10, wis: 10, cha: 10 },
   conditions: [],
   initiativeValue: 15,
   initiativeBonus: 2,
@@ -228,12 +228,12 @@ describe('CombatantHeroicSection awakened display', () => {
       heroicAwakening: createDefaultHeroicAwakening({
         awakened: true,
         affixes: [createAffixEntry('Test')],
-        bonuses: { tierBonus: 2, acBonus: 1, savingThrowBonus: 1 },
+        bonuses: { tierBonus: 2, defenceBonus: 1, savingThrowBonus: 1 },
       }),
     });
 
     expect(screen.getByText('Prof +2')).toBeInTheDocument();
-    expect(screen.getByText('AC +1')).toBeInTheDocument();
+    expect(screen.getByText('Defence +1')).toBeInTheDocument();
     expect(screen.getByText('Saves +1')).toBeInTheDocument();
   });
 });
@@ -347,12 +347,12 @@ describe('CombatantHeroicSection bonuses display', () => {
       heroicAwakening: createDefaultHeroicAwakening({
         awakened: true,
         affixes: [createAffixEntry('Test')],
-        bonuses: { tierBonus: 3, acBonus: 2, savingThrowBonus: 1 },
+        bonuses: { tierBonus: 3, defenceBonus: 2, savingThrowBonus: 1 },
       }),
     });
 
     expect(screen.getByText('Prof +3')).toBeInTheDocument();
-    expect(screen.getByText('AC +2')).toBeInTheDocument();
+    expect(screen.getByText('Defence +2')).toBeInTheDocument();
     expect(screen.getByText('Saves +1')).toBeInTheDocument();
   });
 
@@ -361,12 +361,12 @@ describe('CombatantHeroicSection bonuses display', () => {
       heroicAwakening: createDefaultHeroicAwakening({
         awakened: true,
         affixes: [createAffixEntry('Test')],
-        bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+        bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
       }),
     });
 
     expect(screen.getByText('Prof +0')).toBeInTheDocument();
-    expect(screen.getByText('AC +0')).toBeInTheDocument();
+    expect(screen.getByText('Defence +0')).toBeInTheDocument();
     expect(screen.getByText('Saves +0')).toBeInTheDocument();
   });
 });

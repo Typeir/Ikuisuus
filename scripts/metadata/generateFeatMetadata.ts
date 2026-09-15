@@ -74,13 +74,12 @@ function parseCategory(text: string): string | undefined {
 
 /**
  * Map of long-form ability names to canonical short keys used elsewhere in the
- * codebase (`abilityScores: { str, dex, con, int, wis, cha }`).
+ * codebase (`abilityScores: { str, dex, con, wis, cha }`).
  */
 const ABILITY_NAME_MAP: Record<string, string> = {
   strength: 'str',
   dexterity: 'dex',
   constitution: 'con',
-  intelligence: 'int',
   wisdom: 'wis',
   charisma: 'cha',
 };

@@ -37,7 +37,7 @@ const makeChar = (
 ): CharacterSheet => ({
   ...createEmptyCharacter(),
   vocations,
-  abilityScores: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+  abilityScores: { str: 10, dex: 10, con: 10, wis: 10, cha: 10 },
   ...overrides,
 });
 
@@ -58,7 +58,7 @@ describe('syncHitDiceLog', () => {
   it('folds CON x N into hpMax across mixed vocations', () => {
     const patch = syncHitDiceLog(
       makeChar([voc('druid', 8, 2), voc('warrior', 10, 1)], {
-        abilityScores: { str: 10, dex: 10, con: 20, int: 10, wis: 10, cha: 10 },
+        abilityScores: { str: 10, dex: 10, con: 20, wis: 10, cha: 10 },
       }),
     );
     // dice = 8 + 5 + 6 = 19; CON +5 x 3 dice = 15 => 34

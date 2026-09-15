@@ -123,7 +123,7 @@ Pick any of the following:
 
 | Option | Effect | Cost |
 | --- | --- | ---: |
-| Iron Skin | Your AC is 13 + DEX while unarmored. | 1 |
+| Iron Skin | Your Deflect is 3 while unarmored. | 1 |
 
 - You gain advantage on Constitution saving throws.
 - Uses refresh on a **Repose**.
@@ -162,12 +162,12 @@ You can use your reaction when hit by a melee weapon attack to reduce extra dama
       ]),
     );
     const subs = boon.subOptions as Array<{ name: string; tags?: string[] }>;
-    expect(subs.find((s) => s.name === 'Iron Skin')?.tags).toContain('mechanic:ac-bonus');
+    expect(subs.find((s) => s.name === 'Iron Skin')?.tags).toContain('mechanic:defence-bonus');
     expect(subs.find((s) => s.name === 'Inner Bulwark')?.tags).toContain('tempo:reactive');
     expect(boon.tags).toEqual(
       expect.arrayContaining([
         'resource:variable',
-        'mechanic:ac-bonus',
+        'mechanic:defence-bonus',
         'resource:per-repose',
         'tempo:reactive',
         'mechanic:damage-bonus',

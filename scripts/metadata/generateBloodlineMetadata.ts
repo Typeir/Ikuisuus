@@ -391,8 +391,8 @@ function extractBoonMechanicTags(
     tags.add('resource:limited');
   }
 
-  if (BOON_MECHANICS.armorClass.test(lower)) {
-    tags.add('mechanic:ac-bonus');
+  if (BOON_MECHANICS.defence.test(lower)) {
+    tags.add('mechanic:defence-bonus');
   }
 
   if (BOON_MECHANICS.reach.test(lower)) {

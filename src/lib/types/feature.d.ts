@@ -50,7 +50,7 @@ export interface DCToken {
  * Token representing a parsed saving throw.
  *
  * @interface SaveToken
- * @property {string} ability - Ability used (str, dex, con, int, wis, cha)
+ * @property {string} ability - Ability used (str, dex, con, wis, cha)
  * @property {DCToken} dc - The DC for the save
  */
 export interface SaveToken {

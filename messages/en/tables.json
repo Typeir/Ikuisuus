@@ -39,7 +39,7 @@
       "size": "Size",
       "type": "Type",
       "cr": "Lethality",
-      "ac": "AC",
+      "defence": "Defence",
       "hp": "HP",
       "alignment": "Alignment"
     }

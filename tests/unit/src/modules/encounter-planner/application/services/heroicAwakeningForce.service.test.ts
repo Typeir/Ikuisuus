@@ -25,8 +25,8 @@ function createTestCombatant(
     hpMax: 50,
     hpMaxOverride: null,
     tempHp: 0,
-    ac: 15,
-    stats: { str: 16, dex: 12, con: 14, int: 10, wis: 10, cha: 8 },
+    defence: 15,
+    stats: { str: 16, dex: 12, con: 14, wis: 10, cha: 8 },
     conditions: [],
     initiativeValue: 10,
     initiativeBonus: 1,
@@ -45,7 +45,7 @@ function createTestCombatant(
       awakened: false,
       tier: 'none',
       affixes: [],
-      bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+      bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
       hpOverride: null,
     },
     mechanics: {
@@ -84,9 +84,9 @@ describe('forceHeroicAwakening', () => {
 
     expect(combatant.heroicAwakening.awakened).toBe(true);
     expect(combatant.heroicAwakening.tier).toBe('awakened');
-    expect(combatant.ac).toBe(16);
+    expect(combatant.defence).toBe(16);
     expect(combatant.hpMax).toBe(55);
-    expect(combatant.heroicAwakening.bonuses.acBonus).toBe(1);
+    expect(combatant.heroicAwakening.bonuses.defenceBonus).toBe(1);
     expect(combatant.heroicAwakening.bonuses.tierBonus).toBe(1);
     expect(combatant.heroicAwakening.bonuses.savingThrowBonus).toBe(1);
     expect(combatant.heroicAwakening.fateDieResult).toBe(10);
@@ -99,9 +99,9 @@ describe('forceHeroicAwakening', () => {
     forceHeroicAwakening(combatant, 'legendary');
 
     expect(combatant.heroicAwakening.tier).toBe('legendary');
-    expect(combatant.ac).toBe(17);
+    expect(combatant.defence).toBe(17);
     expect(combatant.hpMax).toBe(60);
-    expect(combatant.heroicAwakening.bonuses.acBonus).toBe(2);
+    expect(combatant.heroicAwakening.bonuses.defenceBonus).toBe(2);
     expect(combatant.heroicAwakening.fateDieResult).toBe(15);
     expect(combatant.heroicAwakening.affixes).toHaveLength(2);
   });
@@ -112,9 +112,9 @@ describe('forceHeroicAwakening', () => {
     forceHeroicAwakening(combatant, 'mythic');
 
     expect(combatant.heroicAwakening.tier).toBe('mythic');
-    expect(combatant.ac).toBe(18);
+    expect(combatant.defence).toBe(18);
     expect(combatant.hpMax).toBe(65);
-    expect(combatant.heroicAwakening.bonuses.acBonus).toBe(3);
+    expect(combatant.heroicAwakening.bonuses.defenceBonus).toBe(3);
     expect(combatant.heroicAwakening.fateDieResult).toBe(20);
     expect(combatant.heroicAwakening.affixes).toHaveLength(3);
   });
@@ -123,11 +123,11 @@ describe('forceHeroicAwakening', () => {
     const combatant = createTestCombatant();
 
     forceHeroicAwakening(combatant, 'awakened');
-    const acAfterAwakened = combatant.ac;
+    const acAfterAwakened = combatant.defence;
 
     forceHeroicAwakening(combatant, 'mythic');
 
-    expect(combatant.ac).toBe(15 + 3);
+    expect(combatant.defence).toBe(15 + 3);
     expect(combatant.hpMax).toBe(50 + 15);
   });
 
@@ -145,7 +145,7 @@ describe('forceHeroicAwakening', () => {
     forceHeroicAwakening(combatant, 'mythic');
 
     expect(combatant.heroicAwakening.awakened).toBe(false);
-    expect(combatant.ac).toBe(15);
+    expect(combatant.defence).toBe(15);
   });
 
   it('should preserve hpOverride from previous awakening', () => {
@@ -177,7 +177,7 @@ describe('forceHeroicAwakeningWithAffixes', () => {
     expect(combatant.heroicAwakening.awakened).toBe(true);
     expect(combatant.heroicAwakening.affixes).toHaveLength(1);
     expect(combatant.heroicAwakening.affixes[0].text).toBe('Venomous');
-    expect(combatant.ac).toBe(16);
+    expect(combatant.defence).toBe(16);
   });
 
   it('should apply legendary tier for 2 affixes', () => {
@@ -188,7 +188,7 @@ describe('forceHeroicAwakeningWithAffixes', () => {
 
     expect(combatant.heroicAwakening.tier).toBe('legendary');
     expect(combatant.heroicAwakening.affixes).toHaveLength(2);
-    expect(combatant.ac).toBe(17);
+    expect(combatant.defence).toBe(17);
   });
 
   it('should apply mythic tier for 3 or more affixes', () => {
@@ -199,7 +199,7 @@ describe('forceHeroicAwakeningWithAffixes', () => {
 
     expect(combatant.heroicAwakening.tier).toBe('mythic');
     expect(combatant.heroicAwakening.affixes).toHaveLength(3);
-    expect(combatant.ac).toBe(18);
+    expect(combatant.defence).toBe(18);
   });
 
   it('should remove awakening when 0 affixes provided', () => {
@@ -211,7 +211,7 @@ describe('forceHeroicAwakeningWithAffixes', () => {
     expect(combatant.heroicAwakening.awakened).toBe(false);
     expect(combatant.heroicAwakening.tier).toBe('none');
     expect(combatant.heroicAwakening.affixes).toEqual([]);
-    expect(combatant.ac).toBe(15);
+    expect(combatant.defence).toBe(15);
   });
 
   it('should do nothing when crText is empty', () => {
@@ -232,7 +232,7 @@ describe('forceHeroicAwakeningWithAffixes', () => {
 
     forceHeroicAwakeningWithAffixes(combatant, [makeAffix('V')]);
 
-    expect(combatant.ac).toBe(16);
+    expect(combatant.defence).toBe(16);
     expect(combatant.heroicAwakening.tier).toBe('awakened');
   });
 });

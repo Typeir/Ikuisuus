@@ -36,7 +36,7 @@ import { OverviewTab } from '../tabs/overviewTab';
 import { VocationTab } from '../tabs/vocationTab';
 import styles from './characterSheet.module.scss';
 
-/** Ordered ability keys for rendering the six-block row. */
+/** Ordered ability keys for rendering the five-block row. */
 const ABILITY_KEYS: Array<{
   key: keyof CharacterSheetType['abilityScores'];
   label: string;
@@ -44,7 +44,6 @@ const ABILITY_KEYS: Array<{
   { key: 'str', label: 'STR' },
   { key: 'dex', label: 'DEX' },
   { key: 'con', label: 'CON' },
-  { key: 'int', label: 'INT' },
   { key: 'wis', label: 'WIS' },
   { key: 'cha', label: 'CHA' },
 ];

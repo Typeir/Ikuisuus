@@ -19,7 +19,7 @@ const SKILLS: CharacterSkill[] = [
   { name: 'Athletics', ability: 'str', tier: 'proficient' },
 ];
 
-const ABILITY_SCORES = { str: 14, dex: 12, con: 10, int: 10, wis: 10, cha: 10 };
+const ABILITY_SCORES = { str: 14, dex: 12, con: 10, wis: 10, cha: 10 };
 
 describe('SkillsTable', () => {
   it('renders all skill rows', () => {

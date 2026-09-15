@@ -25,7 +25,7 @@ vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-const defaultStats = { str: 10, dex: 14, con: 12, int: 10, wis: 10, cha: 8 };
+const defaultStats = { str: 10, dex: 14, con: 12, wis: 10, cha: 8 };
 
 /**
  * Creates a mock combatant for testing
@@ -37,7 +37,7 @@ const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InPr
   hpMax: 100,
   hpMaxOverride: null,
   tempHp: null,
-  ac: 15,
+  defence: 15,
   stats: defaultStats,
   conditions: [],
   initiativeValue: 15,
@@ -56,7 +56,7 @@ const createMockCombatant = (overrides: Partial<InProgressCombatant> = {}): InPr
     awakened: false,
     tier: 'none',
     affixes: [],
-    bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+    bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
   mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: false, phase: false },
@@ -247,7 +247,7 @@ describe('CombatantMainStats AC display', () => {
   });
 
   it('should render AC input with value', () => {
-    renderWithProvider({ ac: 18 });
+    renderWithProvider({ defence: 18 });
 
     const acInput = screen.getByDisplayValue('18');
     expect(acInput).toBeInTheDocument();
@@ -256,26 +256,26 @@ describe('CombatantMainStats AC display', () => {
   it('should render AC label', () => {
     renderWithProvider();
 
-    expect(screen.getByText('ac')).toBeInTheDocument();
+    expect(screen.getByText('defence')).toBeInTheDocument();
   });
 
-  it('should call onUpdate with ac when AC input is edited and committed', async () => {
+  it('should call onUpdate with defence when Defence input is edited and committed', async () => {
     const user = userEvent.setup();
     const mockOnUpdate = vi.fn();
-    renderWithProvider({ ac: 15 }, {}, mockOnUpdate);
+    renderWithProvider({ defence: 15 }, {}, mockOnUpdate);
 
-    const acInput = screen.getByLabelText('ac');
+    const acInput = screen.getByLabelText('defence');
     await user.clear(acInput);
     await user.type(acInput, '20');
     fireEvent.blur(acInput);
 
-    expect(mockOnUpdate).toHaveBeenCalledWith(expect.objectContaining({ ac: 20 }));
+    expect(mockOnUpdate).toHaveBeenCalledWith(expect.objectContaining({ defence: 20 }));
   });
 
   it('should disable AC input when locked', () => {
     renderWithProvider({ locked: ['stats'] }, { locked: ['stats'] });
 
-    const acInput = screen.getByLabelText('ac');
+    const acInput = screen.getByLabelText('defence');
     expect(acInput).toBeDisabled();
   });
 });
@@ -291,13 +291,12 @@ describe('CombatantMainStats ability scores', () => {
     expect(screen.getByText('stats.str')).toBeInTheDocument();
     expect(screen.getByText('stats.dex')).toBeInTheDocument();
     expect(screen.getByText('stats.con')).toBeInTheDocument();
-    expect(screen.getByText('stats.int')).toBeInTheDocument();
     expect(screen.getByText('stats.wis')).toBeInTheDocument();
     expect(screen.getByText('stats.cha')).toBeInTheDocument();
   });
 
   it('should render positive ability modifiers with plus sign', () => {
-    const stats = { str: 16, dex: 14, con: 12, int: 10, wis: 10, cha: 10 };
+    const stats = { str: 16, dex: 14, con: 12, wis: 10, cha: 10 };
     renderWithProvider({ stats });
 
     expect(screen.getByText('+3')).toBeInTheDocument();
@@ -306,7 +305,7 @@ describe('CombatantMainStats ability scores', () => {
   });
 
   it('should render negative ability modifiers', () => {
-    const stats = { str: 8, dex: 6, con: 10, int: 10, wis: 10, cha: 10 };
+    const stats = { str: 8, dex: 6, con: 10, wis: 10, cha: 10 };
     renderWithProvider({ stats });
 
     expect(screen.getByText('-1')).toBeInTheDocument();
@@ -314,7 +313,7 @@ describe('CombatantMainStats ability scores', () => {
   });
 
   it('should render zero modifier as +0', () => {
-    const stats = { str: 10, dex: 11, con: 10, int: 10, wis: 10, cha: 10 };
+    const stats = { str: 10, dex: 11, con: 10, wis: 10, cha: 10 };
     renderWithProvider({ stats });
 
     const zeroMods = screen.getAllByText('+0');

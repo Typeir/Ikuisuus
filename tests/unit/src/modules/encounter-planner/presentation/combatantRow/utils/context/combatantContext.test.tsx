@@ -36,8 +36,8 @@ function createMockCombatant(
     hpMax: 100,
     hpMaxOverride: null,
     tempHp: null,
-    ac: 15,
-    stats: { str: 16, dex: 14, con: 16, int: 10, wis: 12, cha: 8 },
+    defence: 15,
+    stats: { str: 16, dex: 14, con: 16, wis: 12, cha: 8 },
     conditions: [],
     initiativeValue: 15,
     initiativeBonus: 2,
@@ -61,7 +61,7 @@ function createMockCombatant(
       affixes: [],
       bonuses: {
         tierBonus: 0,
-        acBonus: 0,
+        defenceBonus: 0,
         savingThrowBonus: 0,
       },
       hpOverride: null,
@@ -141,7 +141,7 @@ describe('CombatantContext', () => {
 
       const { result } = renderHook(() => useCombatant(), { wrapper });
 
-      const newStats = { str: 20, dex: 14, con: 18, int: 10, wis: 12, cha: 8 };
+      const newStats = { str: 20, dex: 14, con: 18, wis: 12, cha: 8 };
       act(() => {
         result.current.updateStats(newStats);
       });

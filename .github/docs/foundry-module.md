@@ -219,8 +219,8 @@ All string-to-dnd5e-key mappings live here as exported `Record<string, string>` 
 | `TOKEN_SIZE_MAP`    | `"gargantuan"` → `4` (grid squares), `"large"` → `2`, etc. |
 | `DAMAGE_TYPE_MAP`   | `"fire"` → `"fire"`, 13 standard damage types              |
 | `CONDITION_MAP`     | `"terrified"` → `"frightened"` + all standard conditions   |
-| `SKILL_MAP`         | `"perception"` → `"prc"`, all 18 skills                    |
-| `SKILL_ABILITY_MAP` | `"prc"` → `"wis"`, maps skills to their governing ability  |
+| `SKILL_MAP`         | `"descry"` and `"discern"` → `"prc"`, all 19 skills        |
+| `SKILL_ABILITY_MAP` | `"prc"` → `"wis"`, maps skills to their governing ability (Descry reads Dexterity here) |
 | `LANGUAGE_MAP`      | `"common"` → `"common"`, 16 standard languages             |
 
 Custom Damocles conditions or damage types not in these maps land in the `custom` string field of the trait object (visible in Foundry as free-text).
@@ -241,7 +241,7 @@ Saving throw proficiency is detected by the presence of the key in `savingThrows
 
 ### Skills
 
-Skill entries from metadata look like `"Perception +15"`. The transformer:
+Skill entries from metadata look like `"Descry +15"`. The transformer:
 
 1. Parses the skill name and bonus with a regex
 2. Looks up the dnd5e skill key (`prc`) and governing ability (`wis`)
@@ -252,9 +252,9 @@ Skill entries from metadata look like `"Perception +15"`. The transformer:
    - ≥ `floor(prof/2)` → half-proficient (multiplier `0.5`)
    - otherwise → non-proficient (multiplier `0`)
 
-### AC Calculation
+### AC Calculation (from Defence)
 
-All AC is stored as a flat override (`calc: 'flat'`). This is a deliberate simplification; dnd5e's auto-calculated AC types require knowing equipped items, and NPCs only need the flat value from their stat block.
+The monster's Defence total (`defence.value`, 10 + Deflect + Dodge) is stored as dnd5e's flat AC override (`calc: 'flat'`). This is a deliberate simplification; dnd5e's auto-calculated AC types require knowing equipped items, and NPCs only need the flat value from their stat block.
 
 ### Token Dimensions
 

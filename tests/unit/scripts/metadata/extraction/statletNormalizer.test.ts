@@ -80,7 +80,7 @@ const ALBEDO = [
   '',
   '_Small Aberration_',
   '',
-  '| **Armor Class** | **Hit Points** | **Speed** |',
+  '| **Defence** | **Hit Points** | **Speed** |',
   '| 15 | 40 | 8 |',
   '- **Resistances**: Chemical, Dark;',
   '- **Senses**: Blindsight [= 6 stride =]',
@@ -92,7 +92,7 @@ const ALBEDO = [
 const PLATO = [
   '### Wax-Bound Homunculi',
   '',
-  '| **Armor Class** | **Hit Points** | **Speed** |',
+  '| **Defence** | **Hit Points** | **Speed** |',
   '| 15 | 72 | 8 |',
   '- **Senses**: Darkvision',
   '',
@@ -105,7 +105,7 @@ const PLATO = [
 const YSKEIA = [
   '#### Primeval Plating',
   '',
-  '| **Armor Class** | **Hit Points** | **Damage Threshold** |',
+  '| **Defence** | **Hit Points** | **Damage Threshold** |',
   '| 30 | 100 | 25 |',
   '',
   '- **Size**: Medium object',

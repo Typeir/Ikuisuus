@@ -23,7 +23,7 @@ describe('CombatStatChips', () => {
   it('renders all six stat chips', () => {
     renderWithActiveSheet(<CombatStatChips />, { character: CHARACTER });
     expect(screen.getByText('hp')).toBeInTheDocument();
-    expect(screen.getByText('ac')).toBeInTheDocument();
+    expect(screen.getByText('defence')).toBeInTheDocument();
     expect(screen.getByText('initiative')).toBeInTheDocument();
     expect(screen.getByText('speed')).toBeInTheDocument();
     expect(screen.getByText('tierShort')).toBeInTheDocument();
@@ -43,9 +43,9 @@ describe('CombatStatChips', () => {
 
   it('reflects the locks stored on the character', () => {
     renderWithActiveSheet(<CombatStatChips />, {
-      character: { ...CHARACTER, manualStatOverrides: ['ac'] },
+      character: { ...CHARACTER, manualStatOverrides: ['defence'] },
     });
-    expect(screen.getByLabelText('ac').tagName).toBe('INPUT');
+    expect(screen.getByLabelText('deflect').tagName).toBe('INPUT');
   });
 
   it('writes an unlocked stat back to the character', async () => {
@@ -73,6 +73,6 @@ describe('CombatStatChips', () => {
     const acLock = screen.getAllByRole('button', { name: /lock/i })[1];
     await userEvent.click(acLock);
 
-    expect(sheet.overrides).toContain('ac');
+    expect(sheet.overrides).toContain('defence');
   });
 });

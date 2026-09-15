@@ -22,7 +22,7 @@ import {
 import { Collection } from '@mikro-orm/core';
 
 import {
-  MonsterACEmbed,
+  MonsterDefenceEmbed,
   MonsterHPEmbed,
   MonsterSaveEmbed,
   MonsterScoreEmbed,
@@ -100,8 +100,8 @@ export class MonsterEntity {
   })
   tierBonus?: number | null;
 
-  @OrmEmbedded({ entity: 'MonsterACEmbed', prefix: 'ac_', object: false })
-  ac = new MonsterACEmbed();
+  @OrmEmbedded({ entity: 'MonsterDefenceEmbed', prefix: 'defence_', object: false })
+  defence = new MonsterDefenceEmbed();
 
   @OrmEmbedded({ entity: 'MonsterHPEmbed', prefix: 'hp_', object: false })
   hp = new MonsterHPEmbed();

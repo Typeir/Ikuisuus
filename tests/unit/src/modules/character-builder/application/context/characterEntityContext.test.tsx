@@ -29,12 +29,12 @@ import { describe, expect, it, vi } from 'vitest';
  */
 function Consumer() {
   const entity = useCharacterEntity();
-  const ac = useCharacterEntityField('ac');
+  const deflect = useCharacterEntityField('deflect');
   const { patchEntity } = useCharacterEntityContext();
   return (
     <div>
       <span data-testid='name'>{entity.name}</span>
-      <span data-testid='ac'>{ac}</span>
+      <span data-testid='deflect'>{deflect}</span>
       <span data-testid='writable'>{String(patchEntity !== null)}</span>
     </div>
   );
@@ -42,14 +42,14 @@ function Consumer() {
 
 describe('CharacterEntityContext', () => {
   it('exposes the entity JSON to consumers', () => {
-    const entity = { ...createEmptyCharacter(), name: 'Aila', ac: 15 };
+    const entity = { ...createEmptyCharacter(), name: 'Aila', deflect: 5 };
     render(
       <CharacterEntityProvider entity={entity}>
         <Consumer />
       </CharacterEntityProvider>,
     );
     expect(screen.getByTestId('name').textContent).toBe('Aila');
-    expect(screen.getByTestId('ac').textContent).toBe('15');
+    expect(screen.getByTestId('deflect').textContent).toBe('5');
   });
 
   it('is read-only when no patchEntity is supplied', () => {

@@ -72,7 +72,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     hpMax,
     hpMaxOverride = null,
     tempHp,
-    ac,
+    defence,
     initiativeValue,
     initiativeBonus,
     slain = false,
@@ -115,7 +115,7 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
     useCallback(
       (value: string) => {
         const parsed = clampNonNegative(parseIntSafe(value, false)) ?? 0;
-        updateField('ac', parsed);
+        updateField('defence', parsed);
       },
       [updateField],
     ),
@@ -228,17 +228,17 @@ export const CombatantMainStats: React.FC<CombatantMainStatsProps> = ({
       )}
 
       <div className={styles.acSection}>
-        <label className={styles.label}>{tCommon('ac')}</label>
+        <label className={styles.label}>{tCommon('defence')}</label>
         <input
           type='text'
           className={`${styles.numberInput} ${styles.acInput} ${isStatsLocked ? styles.lockedInput : ''}`}
-          value={acField.editing !== null ? acField.editing : ac}
+          value={acField.editing !== null ? acField.editing : defence}
           onChange={(e) => acField.onChange(e.target.value)}
-          onFocus={() => acField.setEditing(String(ac))}
+          onFocus={() => acField.setEditing(String(defence))}
           onBlur={acField.commit}
           onKeyDown={(e) => handleKeyDown(e, acField.commit, acField.cancel)}
           disabled={isStatsLocked}
-          aria-label={tCommon('ac')}
+          aria-label={tCommon('defence')}
         />
       </div>
 

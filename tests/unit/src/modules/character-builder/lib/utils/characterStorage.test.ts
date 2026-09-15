@@ -59,7 +59,6 @@ describe('createEmptyCharacter', () => {
     expect(ch.abilityScores.str).toBe(10);
     expect(ch.abilityScores.dex).toBe(10);
     expect(ch.abilityScores.con).toBe(10);
-    expect(ch.abilityScores.int).toBe(10);
     expect(ch.abilityScores.wis).toBe(10);
     expect(ch.abilityScores.cha).toBe(10);
   });
@@ -101,11 +100,21 @@ describe('SKILL_DEFAULTS', () => {
     expect(SKILL_DEFAULTS).toHaveLength(19);
   });
 
-  it('should have Perception linked to wis', () => {
-    const perception = SKILL_DEFAULTS.find(
-      (s) => s.name === 'skills.perception',
-    );
-    expect(perception?.ability).toBe('wis');
+  it('should split Perception into Descry on dex and Discern on wis', () => {
+    const descry = SKILL_DEFAULTS.find((s) => s.name === 'skills.descry');
+    const discern = SKILL_DEFAULTS.find((s) => s.name === 'skills.discern');
+    expect(descry?.ability).toBe('dex');
+    expect(discern?.ability).toBe('wis');
+    expect(SKILL_DEFAULTS.some((s) => s.name === 'skills.perception')).toBe(false);
+    expect(SKILL_DEFAULTS.some((s) => s.name === 'skills.animalHandling')).toBe(false);
+  });
+
+  it('should put the knowledge skills and Insight on their new abilities', () => {
+    const ability = (name: string) =>
+      SKILL_DEFAULTS.find((s) => s.name === name)?.ability;
+    expect(ability('skills.arcana')).toBe('wis');
+    expect(ability('skills.insight')).toBe('cha');
+    expect(ability('skills.tinkering')).toBe('wis');
   });
 });
 

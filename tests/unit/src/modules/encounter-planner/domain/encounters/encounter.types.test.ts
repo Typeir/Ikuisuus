@@ -33,7 +33,7 @@ describe('Encounter domain types', () => {
       str: 18,
       dex: 10,
       con: 16,
-      int: 8,
+      
       wis: 12,
       cha: 6,
     };

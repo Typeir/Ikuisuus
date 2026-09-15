@@ -256,7 +256,7 @@ export function extractItemMechanicTags(text: string): string[] {
   if (ITEM_MECHANICS.accuracyBonus.test(text))
     tags.push('mechanic:accuracy-bonus');
   if (ITEM_MECHANICS.damageBonus.test(text)) tags.push('mechanic:damage-bonus');
-  if (ITEM_MECHANICS.acBonus.test(text)) tags.push('mechanic:ac-bonus');
+  if (ITEM_MECHANICS.defenceBonus.test(text)) tags.push('mechanic:defence-bonus');
   if (ITEM_MECHANICS.savingThrowBonus.test(text))
     tags.push('mechanic:save-bonus');
 

@@ -46,7 +46,7 @@ export const SECTION_BLOCKS = [
 ];
 
 const IDENTITY = /^_([A-Z][\w-]+) ([^,()_]+?)(?: \(([^)]+)\))?, ([^_]+?)_\s*$/;
-const AC_HEADER = /^\|\s*\*\*Armor Class\*\*/;
+const AC_HEADER = /^\|\s*\*\*Defence\*\*/;
 const STR_HEADER = /^\|\s*\*{0,2}STR\*{0,2}\s*\|/;
 const BULLET = /^- \*\*([^*]+?)\*\*:?\s*(.*?)\s*$/;
 const SCORE = /^(\d+)\s*\([^)]*\)$/;
@@ -80,7 +80,7 @@ function readHeader(lines) {
 
   const acIndex = lines.findIndex((line) => AC_HEADER.test(line));
   if (acIndex === -1 || !lines[acIndex + 2]) {
-    return { skipped: 'no Armor Class / Hit Points / Speed table' };
+    return { skipped: 'no Defence / Hit Points / Speed table' };
   }
 
   let tagAt = acIndex;
@@ -110,7 +110,7 @@ function readHeader(lines) {
   const strIndex = lines.findIndex((line, i) => i > acIndex && STR_HEADER.test(line));
   if (strIndex !== -1 && lines[strIndex + 2]) {
     const scores = cells(lines[strIndex + 2]);
-    ['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach((name, i) => {
+    ['str', 'dex', 'con', 'wis', 'cha'].forEach((name, i) => {
       const raw = scores[i] ?? '';
       const plain = raw.match(SCORE);
       if (plain) slots[name] = plain[1];

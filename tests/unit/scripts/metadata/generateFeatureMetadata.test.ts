@@ -22,7 +22,7 @@ import { describe, expect, it } from 'vitest';
 const ROTWORM_LINES = [
   '# Rotworm',
   '_Small monstrosity, Unaligned_',
-  '| **Armor Class** | **Hit Points** | **Speed** |',
+  '| **Defence** | **Hit Points** | **Speed** |',
   '| 12 | 18 (4d6 + 4) | 20 ft., burrow 10 ft. |',
   '---',
   '### Traits',

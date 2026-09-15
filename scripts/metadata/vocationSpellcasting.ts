@@ -48,7 +48,6 @@ function parseSpellcastingAbility(raw: string): string | null {
         'Strength',
         'Dexterity',
         'Constitution',
-        'Intelligence',
         'Wisdom',
         'Charisma',
       ];

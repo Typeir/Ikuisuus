@@ -24,8 +24,8 @@ function makeCombatant(
     hpMax: 50,
     hpMaxOverride: 50,
     tempHp: null,
-    ac: 15,
-    stats: { str: 16, dex: 14, con: 14, int: 10, wis: 12, cha: 8 },
+    defence: 15,
+    stats: { str: 16, dex: 14, con: 14, wis: 12, cha: 8 },
     conditions: [],
     initiativeValue: 12,
     initiativeBonus: 2,
@@ -42,7 +42,7 @@ function makeCombatant(
       awakened: false,
       tier: 'none',
       affixes: [],
-      bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+      bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
       hpOverride: null,
     },
     mechanics: {
@@ -137,12 +137,12 @@ describe('applyHeroicAwakening', () => {
   it('should apply AC bonus when awakened', () => {
     mockHighRolls();
 
-    const combatant = makeCombatant({ ac: 15 });
+    const combatant = makeCombatant({ defence: 15 });
 
     applyHeroicAwakening(combatant, 'Lethality 5');
 
     if (combatant.heroicAwakening.awakened) {
-      expect(combatant.ac).toBeGreaterThan(15);
+      expect(combatant.defence).toBeGreaterThan(15);
     }
   });
 

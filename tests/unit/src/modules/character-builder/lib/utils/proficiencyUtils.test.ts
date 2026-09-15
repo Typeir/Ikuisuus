@@ -46,7 +46,7 @@ describe('proficiencyUtils', () => {
     });
 
     it('should use 10 for missing ability score', () => {
-      const skill: CharacterSkill = { name: 'arcana', ability: 'int', tier: 'proficient' };
+      const skill: CharacterSkill = { name: 'arcana', ability: 'wis', tier: 'proficient' };
       const abilityScores = {};
       const bonus = computeSkillBonus(skill, abilityScores, 2);
       expect(bonus).toBe(2);

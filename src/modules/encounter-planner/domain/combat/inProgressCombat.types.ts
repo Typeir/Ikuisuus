@@ -51,7 +51,7 @@ export interface CombatantMechanics {
  * @property {AffixEntry[]} affixes - Applied heroic affixes
  * @property {Object} bonuses - Stat bonuses from awakening tier
  * @property {number} bonuses.tierBonus - Additional tier bonus
- * @property {number} bonuses.acBonus - Additional AC bonus
+ * @property {number} bonuses.defenceBonus - Additional Defence bonus
  * @property {number} bonuses.savingThrowBonus - Additional save bonus
  * @property {number|null} hpOverride - Overridden hpMax if maximized and scaled
  */
@@ -63,7 +63,7 @@ export interface HeroicAwakeningState {
   affixes: AffixEntry[];
   bonuses: {
     tierBonus: number;
-    acBonus: number;
+    defenceBonus: number;
     savingThrowBonus: number;
   };
   hpOverride: number | null;
@@ -79,7 +79,7 @@ export interface HeroicAwakeningState {
  * @property {number} hpMax - Maximum hit points
  * @property {number|null} hpMaxOverride - Overridden max HP for Heroic Awakening
  * @property {number|null} tempHp - Temporary hit points
- * @property {number} ac - Armor class
+ * @property {number} defence - Defence
  * @property {CreatureStats} stats - Ability scores
  * @property {Array<{id: string, text: string}>} conditions - Active conditions
  * @property {number|null} initiativeValue - Rolled initiative
@@ -107,7 +107,7 @@ export interface InProgressCombatant {
   hpMax: number;
   hpMaxOverride: number | null;
   tempHp: number | null;
-  ac: number;
+  defence: number;
   stats: CreatureStats;
   conditions: Array<{ id: string; text: string }>;
   initiativeValue: number | null;

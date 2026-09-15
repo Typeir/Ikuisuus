@@ -73,13 +73,13 @@ contentType: monsters
 
 _Small monstrosity, Unaligned_
 
-| **Armor Class** | **Hit Points** | **Speed** |
+| **Defence** | **Hit Points** | **Speed** |
 | --------------- | -------------- | --------- |
 | 12 (natural) | 18 ([% 4d6 +4 %]) | [= 4 stride =], burrow [= 2 stride =] |
 
-| STR     | DEX     | CON     | INT    | WIS     | CHA    |
-| ------- | ------- | ------- | ------ | ------- | ------ |
-| 12 (+1) | 10 (+0) | 13 (+1) | 2 (−4) | 10 (+0) | 5 (−3) |
+| STR     | DEX     | CON     | WIS     | CHA    |
+| ------- | ------- | ------- | ------- | ------ |
+| 12 (+1) | 10 (+0) | 13 (+1) | 10 (+0) | 5 (−3) |
 
 - **Lethality**: 2 (450 XP)
 - **Tier Bonus**: +1
@@ -211,7 +211,7 @@ describe('unslotMonster', () => {
     const [before] = parseMonsterSource(SHEET, path, sharedData) as Record<string, unknown>[];
     const [after] = parseMonsterSource(converted, path, sharedData) as Record<string, unknown>[];
     expect(after).toBeDefined();
-    const keys = ['title', 'size', 'creatureType', 'alignment', 'ac', 'hp', 'speed', 'scores', 'saves', 'skills', 'damageResistances', 'damageVulnerabilities', 'conditionImmunities', 'senses', 'languages', 'cr', 'tierBonus', 'tags'];
+    const keys = ['title', 'size', 'creatureType', 'alignment', 'defence', 'hp', 'speed', 'scores', 'saves', 'skills', 'damageResistances', 'damageVulnerabilities', 'conditionImmunities', 'senses', 'languages', 'cr', 'tierBonus', 'tags'];
     expect(pick(after, keys)).toEqual(pick(before, keys));
     expect((after.features as Array<{ name: string }>).map((f) => f.name)).toEqual(
       (before.features as Array<{ name: string }>).map((f) => f.name),

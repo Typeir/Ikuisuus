@@ -726,8 +726,8 @@ describe('inProgressCombatStorage', () => {
               hpMax: 50,
               hpMaxOverride: null,
               tempHp: null,
-              ac: 15,
-              stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+              defence: 15,
+              stats: { str: 10, dex: 10, con: 10, wis: 10, cha: 10 },
               conditions: [],
               initiativeValue: 15,
               initiativeBonus: 0,
@@ -746,7 +746,7 @@ describe('inProgressCombatStorage', () => {
                 affixes: [],
                 bonuses: {
                   tierBonus: 0,
-                  acBonus: 0,
+                  defenceBonus: 0,
                   savingThrowBonus: 0,
                 },
                 hpOverride: null,
@@ -798,8 +798,8 @@ describe('inProgressCombatStorage', () => {
               hpMax: 50,
               hpMaxOverride: null,
               tempHp: null,
-              ac: 15,
-              stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+              defence: 15,
+              stats: { str: 10, dex: 10, con: 10, wis: 10, cha: 10 },
               conditions: [],
               initiativeValue: 15,
               initiativeBonus: 0,
@@ -818,7 +818,7 @@ describe('inProgressCombatStorage', () => {
                 affixes: [],
                 bonuses: {
                   tierBonus: 0,
-                  acBonus: 0,
+                  defenceBonus: 0,
                   savingThrowBonus: 0,
                 },
                 hpOverride: null,
@@ -861,7 +861,7 @@ describe('inProgressCombatStorage', () => {
     it('should apply awakened tier bonuses correctly', () => {
       const combatant = createInProgressCombatant(createEmptyCreature());
       combatant.crText = 'Lethality 5';
-      combatant.ac = 15;
+      combatant.defence = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
       combatant.tierBonus = 3;
@@ -870,8 +870,8 @@ describe('inProgressCombatStorage', () => {
 
       expect(combatant.heroicAwakening.tier).toBe('awakened');
       expect(combatant.heroicAwakening.awakened).toBe(true);
-      expect(combatant.heroicAwakening.bonuses.acBonus).toBe(1);
-      expect(combatant.ac).toBe(16); // 15 + 1
+      expect(combatant.heroicAwakening.bonuses.defenceBonus).toBe(1);
+      expect(combatant.defence).toBe(16); // 15 + 1
       expect(combatant.hpMax).toBe(105); // 100 + (1 * 5)
       expect(combatant.heroicAwakening.affixes).toHaveLength(1);
     });
@@ -879,19 +879,19 @@ describe('inProgressCombatStorage', () => {
     it('should prevent infinite stacking when clicking awakened multiple times', () => {
       const combatant = createInProgressCombatant(createEmptyCreature());
       combatant.crText = 'Lethality 5';
-      combatant.ac = 15;
+      combatant.defence = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
       combatant.tierBonus = 3;
 
       // First click
       forceHeroicAwakening(combatant, 'awakened', 'en');
-      const firstAc = combatant.ac;
+      const firstAc = combatant.defence;
       const firstHpMax = combatant.hpMax;
 
       // Second click (should not stack)
       forceHeroicAwakening(combatant, 'awakened', 'en');
-      const secondAc = combatant.ac;
+      const secondAc = combatant.defence;
       const secondHpMax = combatant.hpMax;
 
       expect(firstAc).toBe(16);
@@ -903,29 +903,29 @@ describe('inProgressCombatStorage', () => {
     it('should properly transition from awakened to legendary', () => {
       const combatant = createInProgressCombatant(createEmptyCreature());
       combatant.crText = 'Lethality 5';
-      combatant.ac = 15;
+      combatant.defence = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
       combatant.tierBonus = 3;
 
       // First: awakened
       forceHeroicAwakening(combatant, 'awakened', 'en');
-      expect(combatant.ac).toBe(16); // 15 + 1
+      expect(combatant.defence).toBe(16); // 15 + 1
       expect(combatant.hpMax).toBe(105); // 100 + 5
 
       // Second: legendary (should undo awakened and apply legendary)
       forceHeroicAwakening(combatant, 'legendary', 'en');
-      expect(combatant.ac).toBe(17); // (15 + 1 - 1) + 2 = 17
+      expect(combatant.defence).toBe(17); // (15 + 1 - 1) + 2 = 17
       expect(combatant.hpMax).toBe(110); // (100 + 5 - 5) + 10 = 110
       expect(combatant.heroicAwakening.tier).toBe('legendary');
-      expect(combatant.heroicAwakening.bonuses.acBonus).toBe(2);
+      expect(combatant.heroicAwakening.bonuses.defenceBonus).toBe(2);
       expect(combatant.heroicAwakening.affixes).toHaveLength(2);
     });
 
     it('should apply mythic tier with 3 affixes', () => {
       const combatant = createInProgressCombatant(createEmptyCreature());
       combatant.crText = 'Lethality 5';
-      combatant.ac = 15;
+      combatant.defence = 15;
       combatant.hpMax = 100;
       combatant.hpCurrent = 100;
       combatant.tierBonus = 3;
@@ -933,8 +933,8 @@ describe('inProgressCombatStorage', () => {
       forceHeroicAwakening(combatant, 'mythic', 'en');
 
       expect(combatant.heroicAwakening.tier).toBe('mythic');
-      expect(combatant.heroicAwakening.bonuses.acBonus).toBe(3);
-      expect(combatant.ac).toBe(18); // 15 + 3
+      expect(combatant.heroicAwakening.bonuses.defenceBonus).toBe(3);
+      expect(combatant.defence).toBe(18); // 15 + 3
       expect(combatant.hpMax).toBe(115); // 100 + (3 * 5)
       expect(combatant.heroicAwakening.affixes).toHaveLength(3);
     });

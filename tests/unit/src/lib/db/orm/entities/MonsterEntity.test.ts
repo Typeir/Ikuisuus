@@ -7,7 +7,7 @@
  */
 
 import {
-    MonsterACEmbed,
+    MonsterDefenceEmbed,
     MonsterEntity,
     MonsterHPEmbed,
     MonsterSaveEmbed,
@@ -22,7 +22,7 @@ describe('MonsterEntity', () => {
     const entity = new MonsterEntity();
 
     expect(entity).toBeInstanceOf(MonsterEntity);
-    expect(entity.ac).toBeInstanceOf(MonsterACEmbed);
+    expect(entity.defence).toBeInstanceOf(MonsterDefenceEmbed);
     expect(entity.hp).toBeInstanceOf(MonsterHPEmbed);
     expect(entity.speed).toBeInstanceOf(MonsterSpeedEmbed);
     expect(entity.scores).toBeInstanceOf(MonsterScoreEmbed);
@@ -59,9 +59,9 @@ describe('MonsterEntity', () => {
   });
 });
 
-describe('MonsterACEmbed', () => {
+describe('MonsterDefenceEmbed', () => {
   it('should be constructable with undefined fields', () => {
-    const embed = new MonsterACEmbed();
+    const embed = new MonsterDefenceEmbed();
     expect(embed.value).toBeUndefined();
     expect(embed.notes).toBeUndefined();
     expect(embed.raw).toBeUndefined();
@@ -96,7 +96,6 @@ describe('MonsterScoreEmbed', () => {
     expect(embed.str).toBeUndefined();
     expect(embed.dex).toBeUndefined();
     expect(embed.con).toBeUndefined();
-    expect(embed.int).toBeUndefined();
     expect(embed.wis).toBeUndefined();
     expect(embed.cha).toBeUndefined();
   });
@@ -108,7 +107,6 @@ describe('MonsterSaveEmbed', () => {
     expect(embed.str).toBeUndefined();
     expect(embed.dex).toBeUndefined();
     expect(embed.con).toBeUndefined();
-    expect(embed.int).toBeUndefined();
     expect(embed.wis).toBeUndefined();
     expect(embed.cha).toBeUndefined();
   });
@@ -118,7 +116,8 @@ describe('MonsterSenseEmbed', () => {
   it('should be constructable with undefined fields', () => {
     const embed = new MonsterSenseEmbed();
     expect(embed.raw).toBeUndefined();
-    expect(embed.passivePerception).toBeUndefined();
+    expect(embed.passiveDescry).toBeUndefined();
+    expect(embed.passiveDiscern).toBeUndefined();
     expect(embed.darkvision).toBeUndefined();
     expect(embed.blindsight).toBeUndefined();
     expect(embed.tremorsense).toBeUndefined();

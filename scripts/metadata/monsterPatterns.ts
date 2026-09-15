@@ -23,13 +23,13 @@ export const ITALIC_META = {
  * Stat block table detection patterns.
  *
  * @property {RegExp} dataRow - Line starting with pipe (table data row)
- * @property {RegExp} abilityHeader - Six-ability header row (STR DEX CON INT WIS CHA)
+ * @property {RegExp} abilityHeader - Five-ability header row (STR DEX CON WIS CHA)
  * @property {RegExp} separatorRow - Table separator row (|---|---|)
  */
 export const STAT_TABLE = {
   dataRow: /^\s*\|/,
   abilityHeader:
-    /^\s*\|\s*\*?\*?STR\*?\*?\s+\|\s*\*?\*?DEX\*?\*?\s+\|\s*\*?\*?CON\*?\*?\s+\|\s*\*?\*?INT\*?\*?\s+\|\s*\*?\*?WIS\*?\*?\s+\|\s*\*?\*?CHA\*?\*?\s*\|/i,
+    /^\s*\|\s*\*?\*?STR\*?\*?\s+\|\s*\*?\*?DEX\*?\*?\s+\|\s*\*?\*?CON\*?\*?\s+\|\s*\*?\*?WIS\*?\*?\s+\|\s*\*?\*?CHA\*?\*?\s*\|/i,
   separatorRow: /^\|[-\s|]+\|$/,
 } as const;
 
@@ -75,7 +75,7 @@ export const IMAGE = {
  * @property {RegExp} keyValueBullet - Key-value bullet with known stat label
  * @property {RegExp} blockquotePrefix - Blockquote line prefix "> " and any indentation after it
  * @property {RegExp} blockquoteMarker - Just the "> " marker; keeps the line's own indentation
- * @property {RegExp} armorClassRow - Header-table row opening with **Armor Class**, quoted or not
+ * @property {RegExp} defenceRow - Header-table row opening with **Defence**, quoted or not
  * @property {RegExp} sheetFilePattern - Monster sheet file extension pattern
  */
 export const STAT_CONTENT = {
@@ -85,6 +85,6 @@ export const STAT_CONTENT = {
     /^[-*]\s+\*\*(Tier Bonus|Lethality|Languages|Senses|Condition Immunities|Damage|Skills|Saving Throws)\*\*/i,
   blockquotePrefix: /^>\s*/,
   blockquoteMarker: /^> ?/,
-  armorClassRow: /^>?\s*\|\s*\*\*Armor Class\*\*/i,
+  defenceRow: /^>?\s*\|\s*\*\*Defence\*\*/i,
   sheetFilePattern: /\.sheet\.mdx$/i,
 } as const;

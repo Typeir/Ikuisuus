@@ -129,7 +129,7 @@ All generators import utilities from the shared `src/lib/metadata/` TypeScript m
    ```typescript
    GameData.getDamageTypes(sharedData); // ['acid', 'bludgeoning', ..., 'true']
    GameData.getConditions(sharedData); // ['blinded', 'charmed', ..., 'stunned']
-   GameData.getAbilities(sharedData); // ['str', 'dex', 'con', 'int', 'wis', 'cha']
+   GameData.getAbilities(sharedData); // ['str', 'dex', 'con', 'wis', 'cha']
    GameData.getSizes(sharedData); // ['tiny', 'small', ..., 'gargantuan']
    GameData.getCreatureTypes(sharedData); // ['aberration', ..., 'undead']
    ```
@@ -248,7 +248,7 @@ export { main, parseMyContentFile };
   size: string;                    // 'gargantuan'
   creatureType: string;            // 'aberration'
   alignment: string;               // 'lawful evil'
-  ac: {                            // Armor Class
+  defence: {                       // Defence, with deflect and dodge as written
     value: number;                 // 20
     notes?: string;                // 'natural'
     raw: string;                   // '20 (natural)'
@@ -271,13 +271,14 @@ export { main, parseMyContentFile };
     cha: { score: number; mod: number };
   };
   savingThrows?: Record<string, number>;  // { con: 14, wis: 15 }
-  skills?: string[];                      // ['Perception +15', 'Insight +15']
+  skills?: string[];                      // ['Descry +15', 'Insight +15']
   damageResistances?: string[];           // ['Acid', 'Necrotic', 'Psychic']
   damageImmunities?: string[];            // ['Poison']
   conditionImmunities?: string[];         // ['Charmed', 'Frightened', 'Paralyzed']
   senses?: {                              // Senses with parsed values
     raw: string;                          // 'Truesight 120 ft., ...'
-    passivePerception?: number;           // 25
+    passiveDescry?: number;               // 25
+    passiveDiscern?: number;              // 25
     [key: string]: number | string;       // darkvision: 120, truesight: 120
   };
   languages?: string[];                   // ['Empyrean', 'telepathy 300 ft.']
@@ -291,7 +292,7 @@ export { main, parseMyContentFile };
 
 ```javascript
 parseStatBlock(content); // Extract size/type from "Gargantuan aberration"
-parseArmorClass(line); // "**Armor Class** 20 (natural armor)"
+findDefenceHpSpeed(lines); // "| **Defence** | **Deflect** | **Dodge** | **Hit Points** | **Speed** |"
 parseHitPoints(line); // "**Hit Points** 780 (60d10 + 420)"
 parseSpeed(line); // "**Speed** 40 ft., fly 80 ft."
 parseAbilities(tableRows); // Parse ability score table
@@ -307,7 +308,7 @@ _Hiisi of False Life and Eternal Growth_
 
 _Gargantuan Aberration (Hiisi), Lawful Evil_
 
-| **Armor Class** | **Hit Points**    | **Speed**                              |
+| **Defence** | **Deflect** | **Dodge** | **Hit Points** | **Speed** |
 | --------------- | ----------------- | -------------------------------------- |
 | 20 (natural)    | 780 (60d10 + 420) | 40 ft., climb 30 ft., **swim 120 ft.** |
 
@@ -316,11 +317,11 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
 | 24 (+7) | 14 (+2) | 24 (+7) | 20 (+5) | 26 (+8) | 28 (+9) |
 
 - **Saving Throws**: Con +14, Wis +15, Cha +16
-- **Skills**: Perception +15, Insight +15, Athletics +14
+- **Skills**: Descry +15, Insight +15, Athletics +14
 - **Damage Resistances**: Acid, Necrotic, Psychic; Bludgeoning, Piercing, and Slashing from Nonmagical Attacks
 - **Damage Immunities**: Poison
 - **Condition Immunities**: Terrified, Paralyzed, Poisoned, Prone, Banishment
-- **Senses**: Truesight 120 ft., Tremorsense 120 ft., passive Perception 25
+- **Senses**: Truesight 120 ft., Tremorsense 120 ft., passive Descry 25, passive Discern 25
 - **Languages**: Empyrean; telepathy 300 ft.
 - **Lethality**: 23 (32,000 XP)
 - **Proficiency Bonus**: +7
@@ -337,7 +338,7 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
   "size": "gargantuan",
   "creatureType": "aberration",
   "alignment": "lawful evil",
-  "ac": { "value": 20, "notes": "natural", "raw": "20 (natural)" },
+  "defence": { "value": 20, "deflect": "10", "dodge": "0", "notes": "natural", "raw": "20 (natural)" },
   "hp": { "average": 780, "formula": "60d10 + 420", "raw": "780 (60d10 + 420)" },
   "speed": {
     "raw": "40 ft., climb 30 ft., **swim 120 ft.**",
@@ -352,13 +353,14 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
     "cha": { "score": 28, "mod": 9 }
   },
   "savingThrows": { "con": 14, "wis": 15, "cha": 16 },
-  "skills": ["Perception +15", "Insight +15", "Athletics +14"],
+  "skills": ["Descry +15", "Insight +15", "Athletics +14"],
   "damageResistances": ["Acid", "Necrotic", "Psychic"],
   "damageImmunities": ["Poison"],
   "conditionImmunities": ["Charmed", "Frightened", "Paralyzed", "Poisoned"],
   "senses": {
-    "raw": "Truesight 120 ft., Tremorsense 120 ft., passive Perception 25",
-    "passivePerception": 25,
+    "raw": "Truesight 120 ft., Tremorsense 120 ft., passive Descry 25, passive Discern 25",
+    "passiveDescry": 25,
+    "passiveDiscern": 25,
     "tremorsense": 120,
     "truesight": 120
   },
@@ -414,7 +416,8 @@ _Gargantuan Aberration (Hiisi), Lawful Evil_
   weight?: string;                 // '45 lbs' (string, not number)
   savingThrowTypes?: string[];     // ['Dexterity', 'Strength']
   armorType?: string;              // 'light', 'medium', 'heavy', 'shield'
-  ac?: number;                     // For armor
+  deflect?: string;                // For armor, its Deflect
+  maxDodge?: string;               // For armor, the cap on Dexterity's part of Dodge
   charges?: {                      // For items with limited uses
     max: number;
     recharge: string;

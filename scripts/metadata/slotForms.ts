@@ -254,23 +254,25 @@ export function unslotMonster(text: string): string {
     const alignment = get('alignment');
     if (size && type && alignment) header.push(`_${size} ${type}, ${alignment}_`, '');
 
-    const armorClass = get('defence') ?? get('armorClass');
+    const defence = get('defence');
+    const deflect = get('deflect');
+    const dodge = get('dodge');
     const hitPoints = get('hitPoints');
     const speed = get('speed');
-    if (armorClass || hitPoints || speed) {
+    if (defence || hitPoints || speed) {
       header.push(
-        '| **Armor Class** | **Hit Points** | **Speed** |',
-        '| --- | --- | --- |',
-        `| ${armorClass ?? ''} | ${hitPoints ?? ''} | ${speed ?? ''} |`,
+        '| **Defence** | **Deflect** | **Dodge** | **Hit Points** | **Speed** |',
+        '| --- | --- | --- | --- | --- |',
+        `| ${defence ?? ''} | ${deflect ?? ''} | ${dodge ?? ''} | ${hitPoints ?? ''} | ${speed ?? ''} |`,
         '',
       );
     }
 
-    const scores = ['str', 'dex', 'con', 'int', 'wis', 'cha'].map(get);
+    const scores = ['str', 'dex', 'con', 'wis', 'cha'].map(get);
     if (scores.some((score) => score !== undefined)) {
       header.push(
-        '| STR | DEX | CON | INT | WIS | CHA |',
-        '| --- | --- | --- | --- | --- | --- |',
+        '| STR | DEX | CON | WIS | CHA |',
+        '| --- | --- | --- | --- | --- |',
         `| ${scores.map((score) => score ?? '').join(' | ')} |`,
         '',
       );

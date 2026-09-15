@@ -25,10 +25,10 @@ type MetaHandler = (
 ) => void;
 
 /**
- * Parses a blockquote stat table with AC/HP/DT columns.
+ * Parses a blockquote stat table with Defence/HP/DT columns.
  *
  * @param {string} body - Raw body text containing a markdown table
- * @returns {{ ac?: string; hp?: string; dt?: string }} Extracted stats
+ * @returns {{ ac?: string; hp?: string; dt?: string }} Extracted stats, `ac` being the Defence
  */
 function parseStatTableRow(body: string): {
   ac?: string;
@@ -38,7 +38,7 @@ function parseStatTableRow(body: string): {
   const lines = body.split('\n');
   let headerIdx = -1;
   for (let i = 0; i < lines.length; i++) {
-    if (/\*\*Armor Class\*\*/.test(lines[i]) && /\|/.test(lines[i])) {
+    if (/\*\*Defence\*\*/.test(lines[i]) && /\|/.test(lines[i])) {
       headerIdx = i;
       break;
     }
@@ -79,7 +79,7 @@ function handleDestructibleComponent(
   attrs: Record<string, string>,
 ): void {
   const tableRow = parseStatTableRow(body);
-  if (tableRow.ac) feat.meta = { ...feat.meta, componentAC: tableRow.ac };
+  if (tableRow.ac) feat.meta = { ...feat.meta, componentDefence: tableRow.ac };
   if (tableRow.hp) feat.meta = { ...feat.meta, componentHP: tableRow.hp };
   if (tableRow.dt) feat.meta = { ...feat.meta, damageThreshold: tableRow.dt };
 

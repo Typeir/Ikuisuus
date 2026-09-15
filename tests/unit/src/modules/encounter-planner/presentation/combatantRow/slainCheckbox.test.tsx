@@ -43,12 +43,12 @@ const createMockCombatant = (overrides?: Partial<InProgressCombatant>): InProgre
   hpMax: 100,
   hpMaxOverride: null,
   tempHp: null,
-  ac: 15,
+  defence: 15,
   stats: {
     str: 16,
     dex: 14,
     con: 16,
-    int: 10,
+    
     wis: 12,
     cha: 8,
   },
@@ -77,7 +77,7 @@ const createMockCombatant = (overrides?: Partial<InProgressCombatant>): InProgre
     affixes: [],
     bonuses: {
       tierBonus: 0,
-      acBonus: 0,
+      defenceBonus: 0,
       savingThrowBonus: 0,
     },
     hpOverride: null,
@@ -325,12 +325,12 @@ describe('CombatantRow - Slain Checkbox', () => {
     it('should render all stat values when slain', () => {
       const combatant = createMockCombatant({ 
         slain: true,
-        ac: 18,
+        defence: 18,
         stats: {
           str: 20,
           dex: 14,
           con: 16,
-          int: 12,
+          
           wis: 15,
           cha: 10,
         },
@@ -512,7 +512,7 @@ describe('CombatantRow - Slain Checkbox', () => {
           affixes: [],
           bonuses: {
             tierBonus: 2,
-            acBonus: 2,
+            defenceBonus: 2,
             savingThrowBonus: 2,
           },
           hpOverride: 150,

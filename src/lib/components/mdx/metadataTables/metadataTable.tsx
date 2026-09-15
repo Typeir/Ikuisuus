@@ -96,8 +96,8 @@ export type { ColumnConfig, MetadataRow } from './metadataTable.types';
  *   columns={[
  *     {
  *       key: 'ac',
- *       label: 'AC',
- *       getValue: (row) => row.armorClass?.value,
+ *       label: 'Defence',
+ *       getValue: (row) => row.defence?.value,
  *       compareValues: (a, b) => (a ?? 0) - (b ?? 0),
  *       filterType: 'range'
  *     }

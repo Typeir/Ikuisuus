@@ -57,7 +57,7 @@ const DEFAULT_HEROIC_STATE: HeroicAwakeningState = {
   affixes: [],
   bonuses: {
     tierBonus: 0,
-    acBonus: 0,
+    defenceBonus: 0,
     savingThrowBonus: 0,
   },
   hpOverride: null,
@@ -127,7 +127,7 @@ export const CombatantHeroicSection: React.FC<
           )}
           <div className={styles.heroicBonuses}>
             <span>Prof +{heroicAwakening.bonuses.tierBonus}</span>
-            <span>AC +{heroicAwakening.bonuses.acBonus}</span>
+            <span>Defence +{heroicAwakening.bonuses.defenceBonus}</span>
             <span>Saves +{heroicAwakening.bonuses.savingThrowBonus}</span>
           </div>
         </div>

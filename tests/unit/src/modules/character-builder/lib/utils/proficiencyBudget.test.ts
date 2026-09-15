@@ -37,7 +37,7 @@ const voc = (over: Partial<VocationEntry>): VocationEntry =>
   }) as VocationEntry;
 
 const skill = (name: string, tier: string) =>
-  ({ name, ability: 'int', tier }) as unknown;
+  ({ name, ability: 'wis', tier }) as unknown;
 
 const character = (over: Partial<CharacterSheet>): CharacterSheet =>
   ({

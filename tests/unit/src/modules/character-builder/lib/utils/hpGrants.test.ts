@@ -19,7 +19,7 @@ import { describe, expect, it } from 'vitest';
 
 const character = (over: Partial<CharacterSheet>): CharacterSheet =>
   ({
-    abilityScores: { str: 10, dex: 10, con: 14, int: 10, wis: 10, cha: 10 },
+    abilityScores: { str: 10, dex: 10, con: 14, wis: 10, cha: 10 },
     experience: 0,
     level: 6,
     vocations: [],

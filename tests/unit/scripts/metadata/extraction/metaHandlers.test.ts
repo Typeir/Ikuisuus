@@ -64,19 +64,19 @@ describe('destructible_component handler', () => {
 
 > #### Primeval Plating
 >
-> | **Armor Class** | **Hit Points** | **Damage Threshold** |
+> | **Defence** | **Hit Points** | **Damage Threshold** |
 > | --------------- | -------------- | -------------------- |
 > | 30              | 100            | 25                   |
 >
 > - **Resistances**: All damage except **Force**
 > - **Immunities**: **Poison**, **Psychic**, **Necrotic**, **Radiant**`;
 
-  it('should extract component AC, HP, and damage threshold', () => {
+  it('should extract component Defence, HP, and damage threshold', () => {
     const feat = makeFeat();
     applyMetaHandler(feat, body, 'destructible_component', {
       customHandler: 'destructible_component',
     });
-    expect(feat.meta?.componentAC).toBe('30');
+    expect(feat.meta?.componentDefence).toBe('30');
     expect(feat.meta?.componentHP).toBe('100');
     expect(feat.meta?.damageThreshold).toBe('25');
   });
@@ -153,7 +153,7 @@ describe('summon handler', () => {
 
 > #### Warling
 >
-> | **Armor Class** | **Hit Points** | **Speed**          |
+> | **Defence** | **Hit Points** | **Speed**          |
 > | --------------- | -------------- | ------------------ |
 > | 18              | 50             | 40 ft., fly 60 ft. |
 >

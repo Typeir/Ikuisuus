@@ -309,8 +309,8 @@ describe('featurePatterns', () => {
       expect(MONSTER.targets.test('two creatures')).toBe(true);
     });
 
-    it('passivePerception should capture value', () => {
-      const m = 'passive Perception 14'.match(MONSTER.passivePerception);
+    it('passiveDescry should capture value', () => {
+      const m = 'passive Descry 14'.match(MONSTER.passiveDescry);
       expect(m![1]).toBe('14');
     });
   });
@@ -342,8 +342,8 @@ describe('featurePatterns', () => {
       expect(DAMAGE_TYPES.has('true')).toBe(true);
     });
 
-    it('ABILITY_SHORTS should contain 6 abilities', () => {
-      expect(ABILITY_SHORTS.size).toBe(6);
+    it('ABILITY_SHORTS should contain 5 abilities', () => {
+      expect(ABILITY_SHORTS.size).toBe(5);
       expect(ABILITY_SHORTS.has('str')).toBe(true);
       expect(ABILITY_SHORTS.has('cha')).toBe(true);
     });
@@ -351,7 +351,7 @@ describe('featurePatterns', () => {
     it('ABILITY_MAP should map long to short names', () => {
       expect(ABILITY_MAP['strength']).toBe('str');
       expect(ABILITY_MAP['charisma']).toBe('cha');
-      expect(Object.keys(ABILITY_MAP)).toHaveLength(6);
+      expect(Object.keys(ABILITY_MAP)).toHaveLength(5);
     });
 
     it('SHAPES should contain expected shapes', () => {

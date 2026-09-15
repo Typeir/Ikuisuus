@@ -101,8 +101,8 @@ describe('UnassignedChips', () => {
     renderWithActiveSheet(<UnassignedChips categories={SKILL_CATS} />, {
       character: character({
         skills: [
-          { name: 'skills.arcana', ability: 'int', tier: 'expertise' },
-          { name: 'skills.history', ability: 'int', tier: 'proficient' },
+          { name: 'skills.arcana', ability: 'wis', tier: 'expertise' },
+          { name: 'skills.history', ability: 'wis', tier: 'proficient' },
         ] as never,
       }),
     });

@@ -25,7 +25,7 @@ export type {
 } from './schemas/heirloomMetadata';
 
 export type {
-    MonsterAC,
+    MonsterDefence,
     MonsterHP,
     MonsterIndexEntry,
     MonsterMetadata,

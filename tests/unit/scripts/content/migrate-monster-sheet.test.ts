@@ -27,13 +27,13 @@ _Small monstrosity, Unaligned_
 
 <BlendedImage src='/library/images/monsters/rotworm.webp' alt='Rotworm' />
 
-| **Armor Class** | **Hit Points** | **Speed**             |
+| **Defence** | **Hit Points** | **Speed**             |
 | --------------- | -------------- | --------------------- |
 | 12              | 18 ([% 4d6 +4 %])   | [= 4 stride =], burrow [= 2 stride =] |
 
-| STR     | DEX     | CON     | INT    | WIS     | CHA    |
-| ------- | ------- | ------- | ------ | ------- | ------ |
-| 12 (+1) | 10 (+0) | 13 (+1) | 2 (−4) | 10 (+0) | 5 (−3) |
+| STR     | DEX     | CON     | WIS     | CHA    |
+| ------- | ------- | ------- | ------- | ------ |
+| 12 (+1) | 10 (+0) | 13 (+1) | 10 (+0) | 5 (−3) |
 
 - **Lethality**: 1
 - **Tier Bonus**: +1
@@ -93,7 +93,6 @@ describe('migrateMonsterSheet', () => {
       '  str="12"',
       '  dex="10"',
       '  con="13"',
-      '  int="2"',
       '  wis="10"',
       '  cha="5"',
       '  lethality="1"',
@@ -217,8 +216,8 @@ Blocks.
     ],
     ['2 stat blocks; convert by hand', SHEET + '\n- **Lethality**: 2\n'],
     [
-      'no Armor Class / Hit Points / Speed table',
-      SHEET.replace('**Armor Class**', 'AC'),
+      'no Defence / Hit Points / Speed table',
+      SHEET.replace('**Defence**', 'AC'),
     ],
   ])('skips with "%s"', (reason, text) => {
     const result = migrateMonsterSheet(text);

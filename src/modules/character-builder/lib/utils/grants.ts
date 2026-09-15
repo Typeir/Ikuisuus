@@ -104,8 +104,6 @@ const ABILITY_ALIASES: Record<string, AbilityKey> = {
   dex: 'dex',
   constitution: 'con',
   con: 'con',
-  intelligence: 'int',
-  int: 'int',
   wisdom: 'wis',
   wis: 'wis',
   charisma: 'cha',

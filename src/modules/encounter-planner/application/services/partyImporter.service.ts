@@ -15,6 +15,7 @@ import type {
     InProgressCombatant,
 } from '@/modules/encounter-planner/domain/combat/inProgressCombat.types';
 import type { SavedParty } from '@/modules/encounter-planner/domain/parties/party.types';
+import { computeDefence } from '@/modules/character-builder/lib/utils/characterStorage';
 import { generateId } from '@/modules/encounter-planner/domain/shared/utils';
 
 /**
@@ -35,12 +36,11 @@ export const createPartyMemberCombatant = (
   hpMax: character?.hpMax ?? 0,
   hpMaxOverride: null,
   tempHp: character?.tempHp ?? null,
-  ac: character?.ac ?? 0,
+  defence: character ? computeDefence(character) : 0,
   stats: character?.abilityScores ?? {
     str: 10,
     dex: 10,
     con: 10,
-    int: 10,
     wis: 10,
     cha: 10,
   },
@@ -61,7 +61,7 @@ export const createPartyMemberCombatant = (
     awakened: false,
     tier: 'none',
     affixes: [],
-    bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+    bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
   mechanics: {

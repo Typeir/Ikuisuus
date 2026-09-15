@@ -17,7 +17,7 @@ import { getEM } from '@/lib/db/orm/orm';
 import { logger } from '@/lib/logging/logger';
 import type { MonsterRepository } from '../../repositories/monsterRepository';
 import type {
-    MonsterAC,
+    MonsterDefence,
     MonsterFeatureSummary,
     MonsterHP,
     MonsterIndexEntry,
@@ -33,15 +33,17 @@ const log = logger.child({ module: 'PGMonsterRepo' });
 /* ─────────────────────  Embed → Domain mappers  ─────────────────────── */
 
 /**
- * Maps the AC embed to a domain `MonsterAC`.
+ * Maps the Defence embed to a domain `MonsterDefence`.
  *
  * @param {MonsterEntity} row - Monster entity row
- * @returns {MonsterAC} Armor class value object
+ * @returns {MonsterDefence} Defence value object
  */
-const mapAC = (row: MonsterEntity): MonsterAC => ({
-  value: row.ac.value ?? 0,
-  notes: orUndef(row.ac.notes),
-  raw: orUndef(row.ac.raw),
+const mapDefence = (row: MonsterEntity): MonsterDefence => ({
+  value: row.defence.value ?? 0,
+  deflect: orUndef(row.defence.deflect),
+  dodge: orUndef(row.defence.dodge),
+  notes: orUndef(row.defence.notes),
+  raw: orUndef(row.defence.raw),
 });
 
 /**
@@ -76,13 +78,12 @@ const mapSpeed = (row: MonsterEntity): MonsterSpeed => ({
  * Maps the Score embed to domain `MonsterScores`.
  *
  * @param {MonsterEntity} row - Monster entity row
- * @returns {MonsterScores} Six flat ability scores
+ * @returns {MonsterScores} Five flat ability scores
  */
 const mapScores = (row: MonsterEntity): MonsterScores => ({
   str: orUndef(row.scores.str),
   dex: orUndef(row.scores.dex),
   con: orUndef(row.scores.con),
-  int: orUndef(row.scores.int),
   wis: orUndef(row.scores.wis),
   cha: orUndef(row.scores.cha),
 });
@@ -97,7 +98,7 @@ const mapSaves = (row: MonsterEntity): MonsterSaves | undefined => {
   const s = row.saves;
   const saves: MonsterSaves = {};
   let hasAny = false;
-  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha'] as const) {
+  for (const key of ['str', 'dex', 'con', 'wis', 'cha'] as const) {
     const val = s[key];
     if (val != null) {
       saves[key] = val;
@@ -115,7 +116,8 @@ const mapSaves = (row: MonsterEntity): MonsterSaves | undefined => {
  */
 const mapSenses = (row: MonsterEntity): MonsterSenses => ({
   raw: row.senses.raw ?? '',
-  passivePerception: orUndef(row.senses.passivePerception),
+  passiveDescry: orUndef(row.senses.passiveDescry),
+  passiveDiscern: orUndef(row.senses.passiveDiscern),
   darkvision: orUndef(row.senses.darkvision),
   blindsight: orUndef(row.senses.blindsight),
   tremorsense: orUndef(row.senses.tremorsense),
@@ -167,7 +169,7 @@ const rowToMonster = (row: MonsterEntity): MonsterMetadata => ({
   alignment: orUndef(row.alignment),
   cr: orUndef(row.cr),
   tierBonus: orUndef(row.tierBonus),
-  ac: mapAC(row),
+  defence: mapDefence(row),
   hp: mapHP(row),
   speed: mapSpeed(row),
   scores: mapScores(row),

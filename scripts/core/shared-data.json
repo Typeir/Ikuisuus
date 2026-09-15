@@ -76,10 +76,6 @@
         "long": "constitution"
       },
       {
-        "short": "int",
-        "long": "intelligence"
-      },
-      {
         "short": "wis",
         "long": "wisdom"
       },
@@ -149,7 +145,7 @@
       "reroll",
       "accuracy-bonus",
       "damage-bonus",
-      "ac-bonus",
+      "defence-bonus",
       "save-bonus",
       "magic-weapon",
       "magic-resistance",

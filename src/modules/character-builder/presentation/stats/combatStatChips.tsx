@@ -19,7 +19,7 @@ import { deriveHitPoints } from '@/modules/character-builder/lib/utils/hitDiceUt
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 import styles from '../CharacterSheet/characterSheet.module.scss';
-import { AcChipMemo } from './acChip';
+import { DefenceChipMemo } from './defenceChip';
 import { GritChipMemo } from './gritChip';
 import { HpChipMemo } from './hpChip';
 import { InitChipMemo } from './initChip';
@@ -73,7 +73,11 @@ export const CombatStatChips: React.FC = () => {
       patch({ gritCurrent: data.gritCurrent + 1 });
   }, [patch, data.gritCurrent, data.gritMax]);
 
-  const setAc = useCallback((ac: number) => patch({ ac }), [patch]);
+  const setDeflect = useCallback(
+    (deflect: number) => patch({ deflect }),
+    [patch],
+  );
+  const setDodge = useCallback((dodge: number) => patch({ dodge }), [patch]);
   const setInitiative = useCallback(
     (initiativeBonus: number) => patch({ initiativeBonus }),
     [patch],
@@ -106,11 +110,13 @@ export const CombatStatChips: React.FC = () => {
         toggle={toggle}
         onHitDiceCommit={handleHitDiceCommit}
       />
-      <AcChipMemo
-        ac={data.ac}
+      <DefenceChipMemo
+        deflect={data.deflect}
+        dodge={data.dodge}
         isUnlocked={isUnlocked}
         toggle={toggle}
-        onChange={setAc}
+        onDeflect={setDeflect}
+        onDodge={setDodge}
       />
       <InitChipMemo
         initBonus={data.initiativeBonus}

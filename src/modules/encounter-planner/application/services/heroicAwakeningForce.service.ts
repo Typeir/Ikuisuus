@@ -34,7 +34,7 @@ const undoPreviousAwakeningBonuses = (
   const previousMultiplier =
     previousTier === 'mythic' ? 3 : previousTier === 'legendary' ? 2 : 1;
 
-  combatant.ac -= previousMultiplier;
+  combatant.defence -= previousMultiplier;
   combatant.hpMax -= previousMultiplier * cr;
 
   if (
@@ -63,7 +63,7 @@ const applyAwakeningBonuses = (
       combatant.tierBonus + tierMultiplier;
   }
 
-  combatant.ac += tierMultiplier;
+  combatant.defence += tierMultiplier;
   combatant.hpMax += tierMultiplier * cr;
 
   if (combatant.hpFormula) {
@@ -115,7 +115,7 @@ export const forceHeroicAwakening = (
     heroicDc: getHeroicDc(cr),
     bonuses: {
       tierBonus: tierMultiplier,
-      acBonus: tierMultiplier,
+      defenceBonus: tierMultiplier,
       savingThrowBonus: tierMultiplier,
     },
     affixes: generateUniqueAffixes(affixCount, locale),
@@ -167,7 +167,7 @@ export const forceHeroicAwakeningWithAffixes = (
       awakened: false,
       tier: 'none',
       affixes: [],
-      bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+      bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
       hpOverride: combatant.heroicAwakening.hpOverride,
     };
     return;
@@ -182,7 +182,7 @@ export const forceHeroicAwakeningWithAffixes = (
     heroicDc: getHeroicDc(cr),
     bonuses: {
       tierBonus: tierMultiplier,
-      acBonus: tierMultiplier,
+      defenceBonus: tierMultiplier,
       savingThrowBonus: tierMultiplier,
     },
     affixes: affixes.map((a) => ({ ...a })),

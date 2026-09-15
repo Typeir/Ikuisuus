@@ -94,7 +94,7 @@ describe('recalculateHpMax', () => {
  */
 const character = (overrides: Partial<CharacterSheet>): CharacterSheet =>
   ({
-    abilityScores: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+    abilityScores: { str: 10, dex: 10, con: 10, wis: 10, cha: 10 },
     hitDiceLog: [],
     vocations: [
       {
@@ -133,7 +133,7 @@ const rolled = (
 describe('deriveHitPoints', () => {
   it('sums rolled dice plus CON × N', () => {
     const c = character({
-      abilityScores: { str: 10, dex: 10, con: 14, int: 10, wis: 10, cha: 10 },
+      abilityScores: { str: 10, dex: 10, con: 14, wis: 10, cha: 10 },
       hitDiceLog: [
         rolled({ id: 'a', result: 6, levelIndex: 1 }),
         rolled({ id: 'b', result: 8, levelIndex: 2 }),
@@ -144,7 +144,7 @@ describe('deriveHitPoints', () => {
 
   it('counts only rolled+added dice toward N, never total level', () => {
     const c = character({
-      abilityScores: { str: 10, dex: 10, con: 12, int: 10, wis: 10, cha: 10 },
+      abilityScores: { str: 10, dex: 10, con: 12, wis: 10, cha: 10 },
       hitDiceLog: [
         rolled({ id: 'a', result: 7 }),
         rolled({ id: 'b', result: 5, addedToHp: false }),
@@ -210,7 +210,7 @@ describe('deriveHitPoints', () => {
 
   it('degrades effective by the grievous-wound pool, leaving base intact', () => {
     const c = character({
-      abilityScores: { str: 10, dex: 10, con: 14, int: 10, wis: 10, cha: 10 },
+      abilityScores: { str: 10, dex: 10, con: 14, wis: 10, cha: 10 },
       hitDiceLog: [
         rolled({ id: 'a', result: 6, levelIndex: 1 }),
         rolled({ id: 'b', result: 8, levelIndex: 2 }),
@@ -222,7 +222,7 @@ describe('deriveHitPoints', () => {
 
   it('stays finite on a pre-migration character with no grievousWounds field', () => {
     const c = character({
-      abilityScores: { str: 10, dex: 10, con: 12, int: 10, wis: 10, cha: 10 },
+      abilityScores: { str: 10, dex: 10, con: 12, wis: 10, cha: 10 },
       hitDiceLog: [rolled({ id: 'a', result: 6 })],
     });
     const derived = deriveHitPoints(c);
@@ -233,7 +233,7 @@ describe('deriveHitPoints', () => {
 
   it('yields 0 with no rolled dice even when grants exist (unrolled contributes nothing)', () => {
     const c = character({
-      abilityScores: { str: 10, dex: 10, con: 20, int: 10, wis: 10, cha: 10 },
+      abilityScores: { str: 10, dex: 10, con: 20, wis: 10, cha: 10 },
       vocations: [
         {
           slug: 'warrior',
@@ -252,7 +252,7 @@ describe('deriveHitPoints', () => {
 
   it('clamps the aggregate at 0 while letting a negative CON reduce it', () => {
     const c = character({
-      abilityScores: { str: 10, dex: 10, con: 6, int: 10, wis: 10, cha: 10 },
+      abilityScores: { str: 10, dex: 10, con: 6, wis: 10, cha: 10 },
       hitDiceLog: [rolled({ id: 'a', result: 1 })],
     });
     expect(deriveHitPoints(c).base).toBe(0);
@@ -262,7 +262,7 @@ describe('deriveHitPoints', () => {
 describe('perLevelGrantBonus', () => {
   it('sums CON and matching per-level grants, excluding once grants and other vocations', () => {
     const c = character({
-      abilityScores: { str: 10, dex: 10, con: 14, int: 10, wis: 10, cha: 10 },
+      abilityScores: { str: 10, dex: 10, con: 14, wis: 10, cha: 10 },
       vocations: [
         {
           slug: 'warrior',

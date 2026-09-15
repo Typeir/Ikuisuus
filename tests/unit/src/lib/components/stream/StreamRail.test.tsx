@@ -52,7 +52,7 @@ describe('streamStyle', () => {
     const text = '// Mucklord · Lethality:28 · GARGANTUAN · CONSTRUCT · HP:999 //';
     const style = vars(text);
     expect(style['--stream-text']).toBe(`"${text}"`);
-    expect(style['--stream-speed']).toBe('8.7s');
+    expect(style['--stream-speed']).toBe('9.8s');
   });
 
   it('scales the duration with the text length', () => {

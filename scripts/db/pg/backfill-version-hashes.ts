@@ -30,7 +30,7 @@ import {
   BloodlineEntity,
   HeirloomChargesEmbed,
   HeirloomEntity,
-  MonsterACEmbed,
+  MonsterDefenceEmbed,
   MonsterHPEmbed,
   MonsterSaveEmbed,
   MonsterScoreEmbed,
@@ -233,7 +233,7 @@ async function main(): Promise<void> {
     defineConfig({
       entities: [
         MonsterEntity,
-        MonsterACEmbed,
+        MonsterDefenceEmbed,
         MonsterHPEmbed,
         MonsterSpeedEmbed,
         MonsterScoreEmbed,

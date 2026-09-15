@@ -20,12 +20,11 @@ import { calculateInitiativeMod, generateId } from '../../domain/shared/utils';
  */
 type MonsterLibraryData = {
   hp?: { average?: number; formula?: string } | null;
-  ac?: { value?: number } | null;
+  defence?: { value?: number } | null;
   scores?: {
     str?: number;
     dex?: number;
     con?: number;
-    int?: number;
     wis?: number;
     cha?: number;
   } | null;
@@ -51,7 +50,6 @@ export const createEmptyCreature = (): CreatureEntry => {
     str: 10,
     dex: 10,
     con: 10,
-    int: 10,
     wis: 10,
     cha: 10,
   };
@@ -64,7 +62,7 @@ export const createEmptyCreature = (): CreatureEntry => {
     hpCurrent: 10,
     hpMax: 10,
     tempHp: null,
-    ac: 10,
+    defence: 10,
     stats,
     conditions: [],
     initiativeValue: null,
@@ -118,13 +116,12 @@ export const createCreatureFromMonster = (
   locale: string = 'en',
 ): CreatureEntry => {
   const hp = monsterData.hp?.average || 10;
-  const ac = monsterData.ac?.value || 10;
+  const defence = monsterData.defence?.value || 10;
 
   const stats: CreatureStats = {
     str: monsterData.scores?.str || 10,
     dex: monsterData.scores?.dex || 10,
     con: monsterData.scores?.con || 10,
-    int: monsterData.scores?.int || 10,
     wis: monsterData.scores?.wis || 10,
     cha: monsterData.scores?.cha || 10,
   };
@@ -148,7 +145,7 @@ export const createCreatureFromMonster = (
     hpCurrent: hp,
     hpMax: hp,
     tempHp: null,
-    ac,
+    defence,
     stats,
     conditions: [],
     initiativeValue: null,

@@ -38,8 +38,8 @@ const createTestCombatant = (
   hpMax: 100,
   hpMaxOverride: null,
   tempHp: null,
-  ac: 15,
-  stats: { str: 16, dex: 14, con: 16, int: 10, wis: 12, cha: 8 },
+  defence: 15,
+  stats: { str: 16, dex: 14, con: 16, wis: 12, cha: 8 },
   conditions: [],
   initiativeValue: null,
   initiativeBonus: 2,
@@ -57,7 +57,7 @@ const createTestCombatant = (
     awakened: false,
     tier: 'none',
     affixes: [],
-    bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+    bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
   mechanics: {
@@ -251,10 +251,10 @@ describe('combatMechanics', () => {
 
     it('should apply AC bonus when awakened', () => {
       vi.mocked(Math.random).mockReturnValueOnce(0.99).mockReturnValue(0.01);
-      const combatant = createTestCombatant({ ac: 15 });
-      const originalAc = combatant.ac;
+      const combatant = createTestCombatant({ defence: 15 });
+      const originalAc = combatant.defence;
       applyHeroicAwakening(combatant, 'Lethality 5');
-      expect(combatant.ac).toBeGreaterThan(originalAc);
+      expect(combatant.defence).toBeGreaterThan(originalAc);
     });
 
     it('should apply tier bonus override when awakened', () => {
@@ -326,29 +326,29 @@ describe('combatMechanics', () => {
     });
 
     it('should apply AC bonus matching tier multiplier', () => {
-      const combatant = createTestCombatant({ ac: 15 });
+      const combatant = createTestCombatant({ defence: 15 });
       forceHeroicAwakening(combatant, 'awakened');
-      expect(combatant.ac).toBe(16);
+      expect(combatant.defence).toBe(16);
     });
 
     it('should apply double AC bonus for legendary', () => {
-      const combatant = createTestCombatant({ ac: 15 });
+      const combatant = createTestCombatant({ defence: 15 });
       forceHeroicAwakening(combatant, 'legendary');
-      expect(combatant.ac).toBe(17);
+      expect(combatant.defence).toBe(17);
     });
 
     it('should apply triple AC bonus for mythic', () => {
-      const combatant = createTestCombatant({ ac: 15 });
+      const combatant = createTestCombatant({ defence: 15 });
       forceHeroicAwakening(combatant, 'mythic');
-      expect(combatant.ac).toBe(18);
+      expect(combatant.defence).toBe(18);
     });
 
     it('should undo previous awakening bonuses before applying new ones', () => {
-      const combatant = createTestCombatant({ ac: 15 });
+      const combatant = createTestCombatant({ defence: 15 });
       forceHeroicAwakening(combatant, 'awakened');
-      expect(combatant.ac).toBe(16);
+      expect(combatant.defence).toBe(16);
       forceHeroicAwakening(combatant, 'mythic');
-      expect(combatant.ac).toBe(18);
+      expect(combatant.defence).toBe(18);
     });
 
     it('should set proficiency override when tierBonus exists', () => {

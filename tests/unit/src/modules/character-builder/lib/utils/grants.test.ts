@@ -310,7 +310,7 @@ describe('deriveGrantFloors', () => {
       ],
       selectedFeats: [],
       skills: [
-        { name: 'skills.arcana', ability: 'int', tier: 'none' },
+        { name: 'skills.arcana', ability: 'wis', tier: 'none' },
         { name: 'skills.stealth', ability: 'dex', tier: 'proficient' },
       ],
       tools: [],
@@ -326,7 +326,7 @@ describe('deriveGrantFloors', () => {
       vocations: [
         {
           level: 1,
-          baseSavingThrows: ['Constitution', 'Intelligence'],
+          baseSavingThrows: ['Constitution', 'Wisdom'],
           vocationFeatures: [],
           specializationFeatures: [],
         },
@@ -342,7 +342,7 @@ describe('deriveGrantFloors', () => {
 
     const floors = deriveGrantFloors(character);
     expect(floors.savingThrows.con).toBe('proficient');
-    expect(floors.savingThrows.int).toBe('proficient');
+    expect(floors.savingThrows.wis).toBe('proficient');
     expect(floors.savingThrows.str).toBeUndefined();
     expect(floors.savingThrows.dex).toBeUndefined();
   });

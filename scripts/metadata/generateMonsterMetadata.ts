@@ -141,14 +141,21 @@ function parseTableRowCells(line: string): string[] {
 }
 
 /**
- * Extracts AC, HP, and Speed from the stat block table.
+ * Extracts Defence, HP, Speed and Damage Threshold from the stat block table.
  *
+ * @description Columns are read by their header names, so a creature's
+ * Defence, Deflect, Dodge, Hit Points, Speed table and an object's Defence,
+ * Hit Points, Damage Threshold table both parse
  * @param {string[]} lines - Array of document lines
- * @returns {{ ac?: object, hp?: object, speed?: SpeedData }} Parsed combat stats
+ * @returns {{ defence?: object, hp?: object, speed?: SpeedData, damageThreshold?: string }} Parsed combat stats
  */
-function findArmorHpSpeed(lines: string[]) {
-  const idx = lines.findIndex((l) => MONSTER.armorClassHeader.test(l));
+function findDefenceHpSpeed(lines: string[]) {
+  const idx = lines.findIndex((l) => MONSTER.defenceHeader.test(l));
   if (idx === -1) return {};
+
+  const headers = parseTableRowCells(lines[idx].replace(/^>\s*/, '')).map((cell) =>
+    cell.replace(/\*/g, '').trim().toLowerCase(),
+  );
 
   let dataRow = lines[idx + 2];
   if (!STAT_TABLE.dataRow.test(dataRow)) {
@@ -157,24 +164,38 @@ function findArmorHpSpeed(lines: string[]) {
   }
 
   const cells = parseTableRowCells(dataRow || '');
-  const [acRaw, hpRaw, speedRaw] = cells;
+  const cell = (name: string): string | undefined => {
+    const at = headers.indexOf(name);
+    return at === -1 ? undefined : cells[at];
+  };
+  const defenceRaw = cell('defence');
+  const hpRaw = cell('hit points');
 
-  const acMatch = (acRaw || '').match(STRUCTURE.numericWithParen);
-  const ac = acMatch ? parseNumericValue(acMatch[1]) : undefined;
-  const acNotes = acMatch?.[2] || undefined;
+  const defenceMatch = (defenceRaw || '').match(STRUCTURE.numericWithParen);
+  const defence = defenceMatch ? parseNumericValue(defenceMatch[1]) : undefined;
+  const defenceNotes = defenceMatch?.[2] || undefined;
 
   const hpMatch = (hpRaw || '').match(STRUCTURE.numericWithParen);
   const hpAverage = hpMatch ? parseNumericValue(hpMatch[1]) : undefined;
   const hpFormula = hpMatch?.[2] || undefined;
 
   return {
-    ac:
-      ac !== undefined ? { value: ac, notes: acNotes, raw: acRaw } : undefined,
+    defence:
+      defence !== undefined
+        ? {
+            value: defence,
+            deflect: cell('deflect') || undefined,
+            dodge: cell('dodge') || undefined,
+            notes: defenceNotes,
+            raw: defenceRaw,
+          }
+        : undefined,
     hp:
       hpAverage !== undefined
         ? { average: hpAverage, formula: hpFormula, raw: hpRaw }
         : undefined,
-    speed: parseSpeed(speedRaw),
+    speed: parseSpeed(cell('speed') ?? ''),
+    damageThreshold: cell('damage threshold'),
   };
 }
 
@@ -213,10 +234,10 @@ function parseSpeed(raw: string): SpeedData | undefined {
 }
 
 /**
- * Parses the six core ability scores from the stat block table.
+ * Parses the five core ability scores from the stat block table.
  *
  * @param {string[]} lines - Array of document lines
- * @returns {{ str?: number, dex?: number, con?: number, int?: number, wis?: number, cha?: number } | undefined} Flat ability scores
+ * @returns {{ str?: number, dex?: number, con?: number, wis?: number, cha?: number } | undefined} Flat ability scores
  */
 function parseAbilities(lines: string[]) {
   const idx = lines.findIndex((l) => STAT_TABLE.abilityHeader.test(l));
@@ -240,15 +261,14 @@ function parseAbilities(lines: string[]) {
     return m ? Number(m[1]) : undefined;
   };
 
-  if (cells.length < 6) return undefined;
+  if (cells.length < 5) return undefined;
 
   const scores: Record<string, number | undefined> = {
     str: toScore(cells[0]),
     dex: toScore(cells[1]),
     con: toScore(cells[2]),
-    int: toScore(cells[3]),
-    wis: toScore(cells[4]),
-    cha: toScore(cells[5]),
+    wis: toScore(cells[3]),
+    cha: toScore(cells[4]),
   };
 
   const defined = Object.fromEntries(
@@ -276,7 +296,7 @@ function parseSavingThrows(raw?: string): Record<string, number> | undefined {
 }
 
 /**
- * Parses senses including passive Perception and special vision.
+ * Parses senses including passive Descry, passive Discern and special vision.
  *
  * @param {string} [raw] - Raw senses string
  * @param {SharedData} sharedData - Shared data for sense types
@@ -285,8 +305,10 @@ function parseSavingThrows(raw?: string): Record<string, number> | undefined {
 function parseSenses(raw: string | undefined, sharedData: SharedData) {
   if (!raw) return undefined;
   const senses: Record<string, unknown> = { raw: toNativeMeasure(raw) };
-  const p = raw.match(MONSTER.passivePerception);
-  if (p) senses.passivePerception = Number(p[1]);
+  const descry = raw.match(MONSTER.passiveDescry);
+  if (descry) senses.passiveDescry = Number(descry[1]);
+  const discern = raw.match(MONSTER.passiveDiscern);
+  if (discern) senses.passiveDiscern = Number(discern[1]);
   const senseKeys = GameData.getSenses(sharedData);
   for (const key of senseKeys) {
     const r = new RegExp(
@@ -389,7 +411,7 @@ function isObjectBlockAnchor(
     const line = lines[i];
     if (!line.startsWith('>')) return false;
     if (creatureLine.test(line)) return false;
-    if (STAT_CONTENT.armorClassRow.test(line)) return true;
+    if (STAT_CONTENT.defenceRow.test(line)) return true;
   }
   return false;
 }
@@ -579,7 +601,7 @@ function parseStatBlockSection(
     : undefined;
 
   const italicMeta = parseItalicMeta(sectionLines, sharedData);
-  const headerStats = findArmorHpSpeed(sectionLines);
+  const headerStats = findDefenceHpSpeed(sectionLines);
   const abilities = parseAbilities(sectionLines);
 
   const bulletMap = parseKeyBullets(sectionText);
@@ -690,8 +712,8 @@ function parseStatBlockSection(
       file: baseSlug,
       nested: isNested,
     });
-  if (!headerStats.ac)
-    log.debug('Missing AC', {
+  if (!headerStats.defence)
+    log.debug('Missing Defence', {
       creature: displayName,
       file: baseSlug,
       nested: isNested,
@@ -741,7 +763,7 @@ function parseStatBlockSection(
     size: italicMeta.size?.toLowerCase(),
     creatureType: italicMeta.creatureType?.toLowerCase(),
     alignment: italicMeta.alignment?.toLowerCase(),
-    ac: headerStats.ac,
+    defence: headerStats.defence,
     hp: headerStats.hp,
     speed: headerStats.speed,
     scores: abilities,
@@ -998,16 +1020,11 @@ function parseObjectBlock(
     .replace(SLUG.multiHyphens, '-')
     .replace(SLUG.singleEdgeHyphens, '');
   const subSlug = `${baseSlug}-${objectSlug}`;
-  const headerStats = findArmorHpSpeed(quoted);
-  const headerIdx = quoted.findIndex((l) => MONSTER.armorClassHeader.test(l));
-  const thresholdRow =
-    headerIdx === -1
-      ? undefined
-      : quoted
-          .slice(headerIdx + 1)
-          .find((l) => STAT_TABLE.dataRow.test(l) && !/^\|\s*-/.test(l));
-  const thresholdRaw = thresholdRow ? parseTableRowCells(thresholdRow)[2] : '';
-  const threshold = parseInt((thresholdRaw ?? '').replace(/\D/g, ''), 10);
+  const headerStats = findDefenceHpSpeed(quoted);
+  const threshold = parseInt(
+    (headerStats.damageThreshold ?? '').replace(/\D/g, ''),
+    10,
+  );
   const content = quoted.join('\n');
 
   const tags = extractAllTags(content, filePath, sharedData, {
@@ -1024,7 +1041,7 @@ function parseObjectBlock(
     file: path.relative(process.cwd(), filePath).replace(SLUG.pathBackslash, '/'),
     link: `/library/monsters/${baseSlug}#${objectSlug}`,
     kind: 'object',
-    ac: headerStats.ac,
+    defence: headerStats.defence,
     hp: headerStats.hp,
     damageThreshold: Number.isNaN(threshold) ? undefined : threshold,
     tags: Array.from(new Set(tags)).sort(),

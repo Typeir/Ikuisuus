@@ -10,7 +10,7 @@ import {
     CorrectionsUserEntity,
     HeirloomChargesEmbed,
     HeirloomEntity,
-    MonsterACEmbed,
+    MonsterDefenceEmbed,
     MonsterEntity,
     MonsterHPEmbed,
     MonsterSaveEmbed,
@@ -42,7 +42,7 @@ describe('entities/index barrel', () => {
   });
 
   it('should re-export all embeddable classes', () => {
-    expect(MonsterACEmbed).toBeDefined();
+    expect(MonsterDefenceEmbed).toBeDefined();
     expect(MonsterHPEmbed).toBeDefined();
     expect(MonsterSpeedEmbed).toBeDefined();
     expect(MonsterScoreEmbed).toBeDefined();

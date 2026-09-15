@@ -65,31 +65,34 @@ export const TIER_LABELS: Record<
 };
 
 /**
- * All 28 standard Damocles skills with their linked ability.
+ * The 19 standard Damocles skills with their linked ability.
  *
+ * @description Wisdom is the mind stat: the knowledge skills sit on it, Descry
+ * (noticing a thing before it hurts) is Dexterity, Discern (the minutiae of a
+ * thing) is Wisdom, and Insight is social, so Charisma
  * @constant SKILL_DEFAULTS
  * @type {CharacterSkill[]}
  */
 export const SKILL_DEFAULTS: CharacterSkill[] = [
   { name: 'skills.acrobatics', ability: 'dex', tier: 'none' },
-  { name: 'skills.animalHandling', ability: 'wis', tier: 'none' },
-  { name: 'skills.arcana', ability: 'int', tier: 'none' },
+  { name: 'skills.arcana', ability: 'wis', tier: 'none' },
   { name: 'skills.athletics', ability: 'str', tier: 'none' },
   { name: 'skills.deception', ability: 'cha', tier: 'none' },
-  { name: 'skills.history', ability: 'int', tier: 'none' },
-  { name: 'skills.insight', ability: 'wis', tier: 'none' },
+  { name: 'skills.descry', ability: 'dex', tier: 'none' },
+  { name: 'skills.discern', ability: 'wis', tier: 'none' },
+  { name: 'skills.history', ability: 'wis', tier: 'none' },
+  { name: 'skills.insight', ability: 'cha', tier: 'none' },
   { name: 'skills.intimidation', ability: 'cha', tier: 'none' },
-  { name: 'skills.investigation', ability: 'int', tier: 'none' },
+  { name: 'skills.investigation', ability: 'wis', tier: 'none' },
   { name: 'skills.medicine', ability: 'wis', tier: 'none' },
-  { name: 'skills.nature', ability: 'int', tier: 'none' },
-  { name: 'skills.perception', ability: 'wis', tier: 'none' },
+  { name: 'skills.nature', ability: 'wis', tier: 'none' },
   { name: 'skills.performance', ability: 'cha', tier: 'none' },
   { name: 'skills.persuasion', ability: 'cha', tier: 'none' },
-  { name: 'skills.religion', ability: 'int', tier: 'none' },
+  { name: 'skills.religion', ability: 'wis', tier: 'none' },
   { name: 'skills.sleightOfHand', ability: 'dex', tier: 'none' },
   { name: 'skills.stealth', ability: 'dex', tier: 'none' },
   { name: 'skills.survival', ability: 'wis', tier: 'none' },
-  { name: 'skills.tinkering', ability: 'int', tier: 'none' },
+  { name: 'skills.tinkering', ability: 'wis', tier: 'none' },
 ];
 
 /**
@@ -138,10 +141,28 @@ const DEFAULT_SAVES: Record<AbilityKey, 'none'> = {
   str: 'none',
   dex: 'none',
   con: 'none',
-  int: 'none',
   wis: 'none',
   cha: 'none',
 };
+
+/**
+ * The base every Defence starts from.
+ *
+ * @constant DEFENCE_BASE
+ * @type {number}
+ */
+export const DEFENCE_BASE = 10;
+
+/**
+ * Defence of a sheet: the base plus its Deflect and its Dodge.
+ *
+ * @function computeDefence
+ * @param {Pick<CharacterSheet, 'deflect' | 'dodge'>} sheet - Sheet carrying the two parts
+ * @returns {number} Defence total, which either part can pull below the base
+ */
+export const computeDefence = (
+  sheet: Pick<CharacterSheet, 'deflect' | 'dodge'>,
+): number => DEFENCE_BASE + sheet.deflect + sheet.dodge;
 
 /**
  * Compute tier bonus from level
@@ -219,12 +240,13 @@ export const createEmptyCharacter = (): CharacterSheet => {
     boonBudget: 0,
     selectedBoons: [],
     vocations: [],
-    abilityScores: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+    abilityScores: { str: 10, dex: 10, con: 10, wis: 10, cha: 10 },
     hpMax: 0,
     hpCurrent: 0,
     tempHp: 0,
     grievousWounds: 0,
-    ac: 10,
+    deflect: 0,
+    dodge: 0,
     initiativeBonus: 0,
     speedOverride: null,
     bloodlineSpeeds: [],

@@ -39,7 +39,6 @@ export interface SpellRef {
  * @property {number} str - Strength score (1-30)
  * @property {number} dex - Dexterity score (1-30)
  * @property {number} con - Constitution score (1-30)
- * @property {number} int - Intelligence score (1-30)
  * @property {number} wis - Wisdom score (1-30)
  * @property {number} cha - Charisma score (1-30)
  */
@@ -47,7 +46,6 @@ export interface CreatureStats {
   str: number;
   dex: number;
   con: number;
-  int: number;
   wis: number;
   cha: number;
 }
@@ -94,7 +92,7 @@ export interface CreatureDetails {
  * @property {number} hpCurrent - Current hit points
  * @property {number} hpMax - Maximum hit points
  * @property {number|null} tempHp - Temporary hit points
- * @property {number} ac - Armor class
+ * @property {number} defence - Defence
  * @property {CreatureStats} stats - Ability scores
  * @property {ConditionEntry[]} conditions - Active conditions
  * @property {number|null} initiativeValue - Rolled initiative (null if not yet rolled)
@@ -114,7 +112,7 @@ export interface CreatureEntry {
   hpCurrent: number;
   hpMax: number;
   tempHp: number | null;
-  ac: number;
+  defence: number;
   stats: CreatureStats;
   conditions: ConditionEntry[];
   initiativeValue: number | null;

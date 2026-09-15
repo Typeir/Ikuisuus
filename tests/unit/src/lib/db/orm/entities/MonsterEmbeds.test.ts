@@ -8,7 +8,7 @@
  */
 
 import {
-  MonsterACEmbed,
+  MonsterDefenceEmbed,
   MonsterHPEmbed,
   MonsterSaveEmbed,
   MonsterScoreEmbed,
@@ -20,7 +20,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('MonsterEmbeds', () => {
   it('should construct every embeddable', () => {
-    expect(new MonsterACEmbed()).toBeInstanceOf(MonsterACEmbed);
+    expect(new MonsterDefenceEmbed()).toBeInstanceOf(MonsterDefenceEmbed);
     expect(new MonsterHPEmbed()).toBeInstanceOf(MonsterHPEmbed);
     expect(new MonsterSpeedEmbed()).toBeInstanceOf(MonsterSpeedEmbed);
     expect(new MonsterScoreEmbed()).toBeInstanceOf(MonsterScoreEmbed);
@@ -28,8 +28,8 @@ describe('MonsterEmbeds', () => {
     expect(new MonsterSenseEmbed()).toBeInstanceOf(MonsterSenseEmbed);
   });
 
-  it('should accept armour class assignments', () => {
-    const embed = new MonsterACEmbed();
+  it('should accept defence assignments', () => {
+    const embed = new MonsterDefenceEmbed();
     embed.value = 15;
     embed.notes = 'natural armour';
 
@@ -59,7 +59,7 @@ describe('MonsterEmbeds', () => {
   });
 
   it('should stay re-exported from MonsterEntity', () => {
-    expect(MonsterEntityModule.MonsterACEmbed).toBe(MonsterACEmbed);
+    expect(MonsterEntityModule.MonsterDefenceEmbed).toBe(MonsterDefenceEmbed);
     expect(MonsterEntityModule.MonsterHPEmbed).toBe(MonsterHPEmbed);
     expect(MonsterEntityModule.MonsterSpeedEmbed).toBe(MonsterSpeedEmbed);
     expect(MonsterEntityModule.MonsterScoreEmbed).toBe(MonsterScoreEmbed);

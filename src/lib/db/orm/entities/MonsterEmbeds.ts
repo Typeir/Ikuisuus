@@ -11,12 +11,19 @@
 import { OrmEmbeddable, OrmProperty } from '@/lib/db/orm/schema';
 
 /**
- * Armour class value object — maps to `ac_value`, `ac_notes`, `ac_raw`.
+ * Defence value object — maps to `defence_value`, `defence_deflect`,
+ * `defence_dodge`, `defence_notes`, `defence_raw`.
  */
-@OrmEmbeddable('MonsterACEmbed')
-export class MonsterACEmbed {
+@OrmEmbeddable('MonsterDefenceEmbed')
+export class MonsterDefenceEmbed {
   @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
   value?: number | null;
+
+  @OrmProperty({ type: 'string', nullable: true })
+  deflect?: string | null;
+
+  @OrmProperty({ type: 'string', nullable: true })
+  dodge?: string | null;
 
   @OrmProperty({ type: 'string', nullable: true })
   notes?: string | null;
@@ -83,9 +90,6 @@ export class MonsterScoreEmbed {
   con?: number | null;
 
   @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
-  int?: number | null;
-
-  @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
   wis?: number | null;
 
   @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
@@ -107,9 +111,6 @@ export class MonsterSaveEmbed {
   con?: number | null;
 
   @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
-  int?: number | null;
-
-  @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
   wis?: number | null;
 
   @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
@@ -117,8 +118,9 @@ export class MonsterSaveEmbed {
 }
 
 /**
- * Senses value object — maps to `sense_raw`, `sense_passive_perception`,
- * `sense_darkvision`, `sense_blindsight`, `sense_tremorsense`, `sense_truesight`.
+ * Senses value object — maps to `sense_raw`, `sense_passive_descry`,
+ * `sense_passive_discern`, `sense_darkvision`, `sense_blindsight`,
+ * `sense_tremorsense`, `sense_truesight`.
  */
 @OrmEmbeddable('MonsterSenseEmbed')
 export class MonsterSenseEmbed {
@@ -127,11 +129,19 @@ export class MonsterSenseEmbed {
 
   @OrmProperty({
     type: 'number',
-    fieldName: 'passive_perception',
+    fieldName: 'passive_descry',
     columnType: 'smallint',
     nullable: true,
   })
-  passivePerception?: number | null;
+  passiveDescry?: number | null;
+
+  @OrmProperty({
+    type: 'number',
+    fieldName: 'passive_discern',
+    columnType: 'smallint',
+    nullable: true,
+  })
+  passiveDiscern?: number | null;
 
   @OrmProperty({ type: 'number', columnType: 'smallint', nullable: true })
   darkvision?: number | null;

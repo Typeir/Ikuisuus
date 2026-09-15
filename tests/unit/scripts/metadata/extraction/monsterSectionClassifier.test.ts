@@ -72,7 +72,7 @@ describe('classifySections', () => {
     const lines = [
       '# Monster Name',
       '_Medium beast, Neutral_',
-      '| **Armor Class** | **Hit Points** | **Speed** |',
+      '| **Defence** | **Hit Points** | **Speed** |',
       '| 12 | 18 | 30 ft. |',
       '---',
       '### Traits',

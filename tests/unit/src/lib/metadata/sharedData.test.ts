@@ -37,9 +37,9 @@ describe('loadSharedData', () => {
     expect(data.gameData.damageTypes).toContain('fire');
   });
 
-  it('should return six abilities', async () => {
+  it('should return five abilities', async () => {
     const data = await loadSharedData();
-    expect(data.gameData.abilities).toHaveLength(6);
+    expect(data.gameData.abilities).toHaveLength(5);
     expect(data.gameData.abilities[0]).toHaveProperty('short');
     expect(data.gameData.abilities[0]).toHaveProperty('long');
   });

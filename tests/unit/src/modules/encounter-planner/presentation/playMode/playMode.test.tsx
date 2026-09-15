@@ -62,8 +62,8 @@ vi.mock('@/modules/encounter-planner', () => ({
     hpCurrent: 50,
     hpMax: 50,
     tempHp: null,
-    ac: 15,
-    stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+    defence: 15,
+    stats: { str: 10, dex: 10, con: 10, wis: 10, cha: 10 },
     conditions: [],
     initiativeValue: null,
     initiativeBonus: 2,
@@ -124,8 +124,8 @@ const createMockCombatant = (
   hpMax: 50,
   hpMaxOverride: null,
   tempHp: null,
-  ac: 15,
-  stats: { str: 10, dex: 14, con: 12, int: 10, wis: 10, cha: 8 },
+  defence: 15,
+  stats: { str: 10, dex: 14, con: 12, wis: 10, cha: 8 },
   conditions: [],
   initiativeValue: 15,
   initiativeBonus: 2,
@@ -154,7 +154,7 @@ const createMockCombatant = (
     awakened: false,
     tier: 'none',
     affixes: [],
-    bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+    bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
   ...overrides,
@@ -239,7 +239,7 @@ describe('PlayMode Component', () => {
         awakened: false,
         tier: 'none',
         affixes: [],
-        bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+        bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
         hpOverride: null,
       },
     }));
@@ -698,7 +698,7 @@ describe('PlayMode Component', () => {
         Promise.resolve({
           json: () =>
             Promise.resolve([
-              { slug: 'test-slug', title: 'Test Monster', ac: { value: 15 } },
+              { slug: 'test-slug', title: 'Test Monster', defence: { value: 15 } },
             ]),
         }),
       ) as any;

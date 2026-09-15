@@ -93,8 +93,8 @@ export const MONSTER_MECHANICS = {
  * Item mechanic detection patterns.
  *
  * @property {RegExp} accuracyBonus - "+N to attack/hit", or an accuracy bonus in canonical wording
- * @property {RegExp} damageBonus - "+N to damage/AC", or a damage bonus in canonical wording
- * @property {RegExp} acBonus - "+N to AC"
+ * @property {RegExp} damageBonus - "+N to damage", or a damage bonus in canonical wording
+ * @property {RegExp} defenceBonus - "+N to Defence", Deflect or Dodge
  * @property {RegExp} savingThrowBonus - "+N to saving throws"
  * @property {RegExp} advantage - Advantage, excluding the "disadvantage" substring
  * @property {RegExp} disadvantage - Disadvantage
@@ -120,8 +120,8 @@ export const MONSTER_MECHANICS = {
 export const ITEM_MECHANICS = {
   accuracyBonus:
     /\+\d+\s+(?:to\s+)?(?:attack|hit)|\baccuracy(?:\s+and\s+damage)?\s+bonus\b/i,
-  damageBonus: /\+\d+\s+(?:to\s+)?(?:damage|AC)|\bdamage\s+bonus\b/i,
-  acBonus: /\+\d+\s+(?:to\s+|bonus\s+to\s+)?AC/i,
+  damageBonus: /\+\d+\s+(?:to\s+)?damage|\bdamage\s+bonus\b/i,
+  defenceBonus: /\+\d+\s+(?:to\s+|bonus\s+to\s+)?(?:Defence|Deflect|Dodge)\b/i,
   savingThrowBonus: /\+\d+\s+(?:to\s+|bonus\s+to\s+)?saving throws?/i,
   advantage: /\badvantage\b/i,
   disadvantage: /\bdisadvantage\b/i,

@@ -53,7 +53,7 @@ describe('ormConfig', () => {
 
     expect(names).toContain('MonsterEntity');
     expect(names).toContain('FeatFeatureEntity');
-    expect(names).toContain('MonsterACEmbed');
+    expect(names).toContain('MonsterDefenceEmbed');
     expect(new Set(names).size).toBe(names.length);
   });
 

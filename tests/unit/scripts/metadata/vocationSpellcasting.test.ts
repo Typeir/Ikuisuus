@@ -30,8 +30,8 @@ describe('parseSpellcastingAbility', () => {
 
   it('reads reversed and modifier phrasing', () => {
     expect(
-      parseSpellcastingAbility('Intelligence is your casting ability'),
-    ).toBe('Intelligence');
+      parseSpellcastingAbility('Wisdom is your casting ability'),
+    ).toBe('Wisdom');
     expect(
       parseSpellcastingAbility('Spell save DC uses your Charisma modifier'),
     ).toBe('Charisma');

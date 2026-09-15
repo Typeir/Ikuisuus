@@ -130,7 +130,7 @@ describe('encounterStorage', () => {
 
     it('should have default AC of 10', () => {
       const creature = createEmptyCreature();
-      expect(creature.ac).toBe(10);
+      expect(creature.defence).toBe(10);
     });
 
     it('should have all ability scores at 10', () => {
@@ -138,7 +138,6 @@ describe('encounterStorage', () => {
       expect(creature.stats.str).toBe(10);
       expect(creature.stats.dex).toBe(10);
       expect(creature.stats.con).toBe(10);
-      expect(creature.stats.int).toBe(10);
       expect(creature.stats.wis).toBe(10);
       expect(creature.stats.cha).toBe(10);
     });

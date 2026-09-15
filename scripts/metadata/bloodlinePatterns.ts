@@ -85,7 +85,7 @@ export const PROFICIENCY = {
  * @property {RegExp} repose - Repose-recharge detection
  * @property {RegExp} recovery - Recovery-recharge detection
  * @property {RegExp} limitedUses - Limited uses per tier bonus
- * @property {RegExp} armorClass - AC or armor class mechanic
+ * @property {RegExp} defence - Defence, Deflect or Dodge mechanic
  * @property {RegExp} reach - Weapon reach
  * @property {RegExp} extraDamage - Extra damage dealing
  * @property {RegExp} minorAction - Minor Action
@@ -101,7 +101,7 @@ export const BOON_MECHANICS = {
   repose: /\brepose\b/,
   recovery: /\brecovery\b/,
   limitedUses: /\b(per|equal to your tier bonus)\b/i,
-  armorClass: /\bac\b|\barmor class\b|\bunarmored\b/i,
+  defence: /\bdefence\b|\bdeflect\b|\bdodge\b|\bunarmou?red\b/i,
   reach: /\breach\b/i,
   extraDamage: /\bextra\b[\s\S]{0,20}\bdamage\b|\bdeal extra\b/i,
   minorAction: /\bminor action\b/i,

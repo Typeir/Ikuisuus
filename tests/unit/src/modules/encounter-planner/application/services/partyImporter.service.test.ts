@@ -75,7 +75,7 @@ describe('partyImporter', () => {
       const combatant = createPartyMemberCombatant('Alaric');
       expect(combatant.hpCurrent).toBe(0);
       expect(combatant.hpMax).toBe(0);
-      expect(combatant.ac).toBe(0);
+      expect(combatant.defence).toBe(0);
     });
 
     it('should generate unique IDs per invocation', () => {
@@ -88,14 +88,14 @@ describe('partyImporter', () => {
       const combatant = createPartyMemberCombatant('Alaric');
       expect(combatant.hpCurrent).toBe(0);
       expect(combatant.hpMax).toBe(0);
-      expect(combatant.ac).toBe(0);
+      expect(combatant.defence).toBe(0);
       expect(combatant.initiativeBonus).toBe(0);
       expect(combatant.tierBonus).toBeNull();
       expect(combatant.stats).toEqual({
         str: 10,
         dex: 10,
         con: 10,
-        int: 10,
+        
         wis: 10,
         cha: 10,
       });
@@ -108,10 +108,11 @@ describe('partyImporter', () => {
         hpCurrent: 28,
         hpMax: 35,
         tempHp: 5,
-        ac: 16,
+        deflect: 3,
+        dodge: 3,
         initiativeBonus: 3,
         tierBonus: 4,
-        abilityScores: { str: 14, dex: 16, con: 13, int: 10, wis: 12, cha: 15 },
+        abilityScores: { str: 14, dex: 16, con: 13, wis: 12, cha: 15 },
       } as CharacterSheet;
 
       const combatant = createPartyMemberCombatant(
@@ -121,14 +122,14 @@ describe('partyImporter', () => {
       expect(combatant.hpCurrent).toBe(28);
       expect(combatant.hpMax).toBe(35);
       expect(combatant.tempHp).toBe(5);
-      expect(combatant.ac).toBe(16);
+      expect(combatant.defence).toBe(16);
       expect(combatant.initiativeBonus).toBe(3);
       expect(combatant.tierBonus).toBe(4);
       expect(combatant.stats).toEqual({
         str: 14,
         dex: 16,
         con: 13,
-        int: 10,
+        
         wis: 12,
         cha: 15,
       });

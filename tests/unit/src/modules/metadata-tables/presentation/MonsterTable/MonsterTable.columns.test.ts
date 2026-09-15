@@ -9,7 +9,7 @@ describe('buildMonsterColumns', () => {
       'size',
       'creatureType',
       'cr',
-      'ac',
+      'defence',
       'hp',
       'alignment',
     ]);

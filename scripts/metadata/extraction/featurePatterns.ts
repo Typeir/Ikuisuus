@@ -243,10 +243,11 @@ export const TEMPLATES = {
  * @property {RegExp} declareResolve - "**Declare** ..."
  * @property {RegExp} chargeRecharge - "(3 charges, Recharge 5-6)"
  * @property {RegExp} targets - "one target", "two creatures"
- * @property {RegExp} passivePerception - "passive Perception 14"
+ * @property {RegExp} passiveDescry - "passive Descry 14"
+ * @property {RegExp} passiveDiscern - "passive Discern 14"
  * @property {RegExp} speedMode - "fly 60 ft."
  * @property {RegExp} hover - "hover"
- * @property {RegExp} armorClassHeader - "| **Armor Class**"
+ * @property {RegExp} defenceHeader - "| **Defence**"
  * @property {RegExp} savingThrowBonus - "Str +5"
  * @property {RegExp} lethality - "1/2" or "17"
  */
@@ -279,12 +280,13 @@ export const MONSTER = {
   declareResolve: /\*\*(Declare|Resolve).*?\*\*:?/i,
   chargeRecharge: /\((\d+)\s*charges?,?\s*Recharge\s*(\d+)(?:[–\-](\d+))?\)/i,
   targets: /(?:one|two|three|four|all)\s+(?:target|creature|enemy|object)s?/i,
-  passivePerception: /passive\s+Perception\s+(\d+)/i,
+  passiveDescry: /passive\s+Descry\s+(\d+)/i,
+  passiveDiscern: /passive\s+Discern\s+(\d+)/i,
   speedMode:
     /(?:(walk|climb|fly|swim|burrow)\s+)?(?:\[=\s*)?(\d+)\s*(?:stride(?:;ADJ)?\s*=\]|ft\.?)/i,
   hover: /\bhover\b/i,
-  armorClassHeader: /\|\s*\*\*Armor\s*Class\*\*/i,
-  savingThrowBonus: /^(Str|Dex|Con|Int|Wis|Cha)\s*([+-]?\d+)/i,
+  defenceHeader: /\|\s*\*\*Defence\*\*/i,
+  savingThrowBonus: /^(Str|Dex|Con|Wis|Cha)\s*([+-]?\d+)/i,
   lethality: /(\d+\/\d+|\d+)/,
 } as const;
 
@@ -333,7 +335,6 @@ export const ABILITY_SHORTS: ReadonlySet<string> = new Set([
   'str',
   'dex',
   'con',
-  'int',
   'wis',
   'cha',
 ]);
@@ -345,7 +346,6 @@ export const ABILITY_MAP: Readonly<Record<string, string>> = {
   strength: 'str',
   dexterity: 'dex',
   constitution: 'con',
-  intelligence: 'int',
   wisdom: 'wis',
   charisma: 'cha',
 };

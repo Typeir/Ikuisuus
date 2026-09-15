@@ -12,7 +12,7 @@ import type {
     HeirloomIndexEntry,
     HeirloomMetadata,
     HeirloomWeaponDamage,
-    MonsterAC,
+    MonsterDefence,
     MonsterHP,
     MonsterIndexEntry,
     MonsterMetadata,
@@ -34,7 +34,7 @@ describe('schemas/index barrel', () => {
       file: 'test.mdx',
       link: '/test',
     };
-    const ac: MonsterAC = { value: 10 };
+    const defence: MonsterDefence = { value: 10 };
     const hp: MonsterHP = { average: 10 };
     const speed: MonsterSpeed = { raw: '30 ft.', modes: { walk: 30 } };
     const score: AbilityScore = { score: 10 };
@@ -46,11 +46,11 @@ describe('schemas/index barrel', () => {
       wis: score,
       cha: score,
     };
-    const senses: MonsterSenses = { raw: 'passive Perception 10' };
+    const senses: MonsterSenses = { raw: 'passive Descry 10' };
     const idx: MonsterIndexEntry = { slug: 'test', title: 'Test' };
 
     expect(monster.slug).toBe('test');
-    expect(ac.value).toBe(10);
+    expect(defence.value).toBe(10);
     expect(hp.average).toBe(10);
     expect(speed.modes.walk).toBe(30);
     expect(scores.str.score).toBe(10);

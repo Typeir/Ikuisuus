@@ -20,7 +20,7 @@ export type {
 } from './bloodlineMetadata';
 
 export type {
-    MonsterAC,
+    MonsterDefence,
     MonsterHP,
     MonsterIndexEntry,
     MonsterMetadata,

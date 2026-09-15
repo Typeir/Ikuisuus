@@ -17,9 +17,7 @@ describe('proficiencyRowKey', () => {
     expect(proficiencyRowKey('skill', 'Sleight of Hand')).toBe(
       'skills.sleightOfHand',
     );
-    expect(proficiencyRowKey('skill', 'Animal Handling')).toBe(
-      'skills.animalHandling',
-    );
+    expect(proficiencyRowKey('skill', 'Descry')).toBe('skills.descry');
   });
 
   it('strips stray bold markers left by split table cells', () => {

@@ -39,15 +39,16 @@ export interface MonsterData {
     average: number;
     formula: string;
   };
-  ac?: {
+  defence?: {
     value: number;
+    deflect?: string;
+    dodge?: string;
     notes?: string;
   };
   scores?: {
     str?: number;
     dex?: number;
     con?: number;
-    int?: number;
     wis?: number;
     cha?: number;
   };

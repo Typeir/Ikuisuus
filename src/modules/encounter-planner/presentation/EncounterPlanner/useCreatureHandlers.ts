@@ -83,7 +83,7 @@ export const useCreatureHandlers = (
             hpCurrent: updatedCombatant.hpCurrent,
             hpMax: updatedCombatant.hpMaxOverride ?? updatedCombatant.hpMax,
             tempHp: updatedCombatant.tempHp,
-            ac: updatedCombatant.ac,
+            defence: updatedCombatant.defence,
             stats: updatedCombatant.stats,
             conditions: updatedCombatant.conditions,
             initiativeValue: updatedCombatant.initiativeValue,

@@ -38,7 +38,7 @@ export interface MonsterMetadata {
   size: string;
   creatureType: string;
   cr: string;
-  ac: number | { value: number; notes?: string };
+  defence: number | { value: number; deflect?: string; dodge?: string; notes?: string };
   hp: number | { average: number; formula?: string };
   alignment?: string;
   [key: string]: unknown;
@@ -104,11 +104,13 @@ export function buildMonsterColumns(
       filterType: 'range',
     },
     {
-      key: 'ac',
-      label: tColumns('ac'),
+      key: 'defence',
+      label: tColumns('defence'),
       getValue: (row: MetadataRow) => {
         const monster = asMonsterMetadata(row);
-        return typeof monster.ac === 'number' ? monster.ac : monster.ac?.value;
+        return typeof monster.defence === 'number'
+          ? monster.defence
+          : monster.defence?.value;
       },
       sortable: true,
       filterable: true,

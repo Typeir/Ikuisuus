@@ -31,13 +31,13 @@ contentType: monsters
 # Hive Mother
 _Large Aberration, Neutral Evil_
 
-| **Armor Class** | **Hit Points** | **Speed** |
+| **Defence** | **Hit Points** | **Speed** |
 | --------------- | -------------- | --------- |
 | 16 (natural) | 120 ([% 16d10 +32 %]) | [= 6 stride =] |
 
-| STR | DEX | CON | INT | WIS | CHA |
-| --- | --- | --- | --- | --- | --- |
-| 18 (+4) | 12 (+1) | 14 (+2) | 10 (+0) | 12 (+1) | 8 (-1) |
+| STR | DEX | CON | WIS | CHA |
+| --- | --- | --- | --- | --- |
+| 18 (+4) | 12 (+1) | 14 (+2) | 12 (+1) | 8 (-1) |
 
 - **Senses**: darkvision [= 12 stride =]
 - **Lethality**: 8 (3,900 XP)
@@ -65,13 +65,13 @@ _Hit:_ 12 ([% 2d8 +4 piercing %]).
 >
 > _Small Aberration_
 >
-> | **Armor Class** | **Hit Points** | **Speed** |
+> | **Defence** | **Hit Points** | **Speed** |
 > | --------------- | -------------- | --------- |
 > | 13 | 20 ([% 4d6 +6 %]) | [= 8 stride =], fly [= 8 stride =] |
 >
-> | STR | DEX | CON | INT | WIS | CHA |
-> | --- | --- | --- | --- | --- | --- |
-> | 8 (-1) | 16 (+3) | 12 (+1) | 4 (-3) | 10 (+0) | 4 (-3) |
+> | STR | DEX | CON | WIS | CHA |
+> | --- | --- | --- | --- | --- |
+> | 8 (-1) | 16 (+3) | 12 (+1) | 10 (+0) | 4 (-3) |
 >
 > - **Resistances**: Poison
 > - **Senses**: Blindsight [= 6 stride =]
@@ -83,7 +83,7 @@ _Hit:_ 12 ([% 2d8 +4 piercing %]).
 
 > #### Wax Comb
 >
-> | **Armor Class** | **Hit Points** | **Damage Threshold** |
+> | **Defence** | **Hit Points** | **Damage Threshold** |
 > | --------------- | -------------- | -------------------- |
 > | 12              | 60             | 10                   |
 >
@@ -142,7 +142,7 @@ describe('parseMonsterSource — statlets', () => {
     expect(records[2].kind).toBe('object');
     expect(records[2].link).toBe('/library/monsters/hive#wax-comb');
     expect(records[2].damageThreshold).toBe(10);
-    expect((records[2].ac as { value: number }).value).toBe(12);
+    expect((records[2].defence as { value: number }).value).toBe(12);
     expect(records[2].tags).toContain('meta:content:object');
   });
 
