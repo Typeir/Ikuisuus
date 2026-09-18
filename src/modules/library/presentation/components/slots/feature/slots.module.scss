@@ -215,11 +215,19 @@ $heading-meta-height: 1.5rem;
     text-align: center;
   }
 
+  /* A table beside a floated image is squeezed to the column the float leaves,
+     and a value that cannot break there would push the table past its wrapper
+     into a scrollbar. */
+  td {
+    overflow-wrap: anywhere;
+  }
+
   th {
     font-family: var(--font-default);
     font-weight: 700;
     font-synthesis-weight: none;
     color: var(--color-emphasis);
+    white-space: nowrap;
   }
 
   /* A value the card worked out rather than read, marked so a reviewer can

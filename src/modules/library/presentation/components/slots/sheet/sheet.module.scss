@@ -244,3 +244,53 @@ $ground-lead: 0.6rem;
   inline-size: auto;
 }
 
+
+/* ── In a panel ──────────────────────────────────────────────────────────── */
+
+/* A panel is a small frame with a scroll of its own, and a bar pinned to the
+   top of one stands over most of what the panel was opened to show. The row is
+   read where it was written, and the ground a header takes stays a page's. */
+:global([data-embed]) {
+  .sheet[data-foot='true'] {
+    padding-block-end: 0;
+  }
+
+  .strip {
+    position: relative;
+    inset: auto;
+    min-block-size: 0;
+  }
+
+  .strip[data-foot='true'] {
+    position: relative;
+    inset: auto;
+    padding-inline: 0;
+    margin-block: 1rem 0;
+  }
+
+  .strip[data-stuck='true']::after,
+  .strip[data-foot='true'][data-stuck='true']::after {
+    inset: 0;
+    background: none;
+    box-shadow: none;
+    border-bottom-color: var(--color-border);
+  }
+
+  .strip[data-foot='true'][data-stuck='true']::after {
+    border-top-color: var(--color-border);
+  }
+
+  .strip[data-stuck='true'] .tab {
+    font-size: 1rem;
+  }
+
+  .rail {
+    inset-inline: 0;
+    inline-size: auto;
+  }
+
+  .page {
+    /* Nothing stands over the sections, so one taken to rests at the top. */
+    scroll-margin-block-start: 0.5rem;
+  }
+}
