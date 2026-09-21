@@ -34,6 +34,9 @@ const HIT_POINTS = /^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\s*\(.+\))?$/;
 /** A lethality */
 const LETHALITY = /^(?:\d+|1\/(?:8|4|2))$/;
 
+/** A stability multiplier, as a sheet prints one. */
+const MULTIPLIER = /^×\d+$/;
+
 /** A signed bonus, as a sheet prints one. */
 const BONUS = /^[+-]\d+$/;
 
@@ -84,6 +87,8 @@ export const SLOT_RULES: Readonly<Partial<Record<SlotName, SlotRule>>> = {
     expects: 'a whole number of hit points, with the dice in parentheses if you like',
   },
   level: { pattern: /^\d{1,2}$/, expects: 'a whole number' },
+  stability: { pattern: MULTIPLIER, expects: 'a multiplier, such as ×3' },
+  poise: { pattern: GROUPED_COUNT, expects: 'a whole number of poise, such as 228' },
 };
 
 /**

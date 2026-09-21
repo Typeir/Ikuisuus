@@ -20,6 +20,8 @@ export const MONSTER_SLOTS = {
   deflect: 'Deflect',
   dodge: 'Dodge',
   hitPoints: 'HitPoints',
+  poise: 'Poise',
+  stability: 'Stability',
   speed: 'Speed',
   str: 'Str',
   dex: 'Dex',
@@ -71,6 +73,7 @@ export const ABILITY_SLOTS: readonly MonsterSlotName[] = [
  * Monster slots that print as the labelled list under the tables, in order.
  */
 export const MONSTER_LIST_SLOTS: readonly MonsterSlotName[] = [
+  'speed',
   'saves',
   'skills',
   'resistances',

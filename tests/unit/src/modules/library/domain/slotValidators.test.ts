@@ -53,6 +53,15 @@ describe('slotFailure', () => {
     expect(slotFailure('tierBonus', '4')).toContain('signed');
   });
 
+  it('wants a multiplier sign on stability and a count for poise', () => {
+    expect(slotFailure('stability', '×3')).toBeNull();
+    expect(slotFailure('stability', '3')).toContain('multiplier');
+    expect(slotFailure('stability', '3x')).toContain('multiplier');
+    expect(slotFailure('poise', '228')).toBeNull();
+    expect(slotFailure('poise', '1,020')).toBeNull();
+    expect(slotFailure('poise', '228 poise')).toContain('whole number');
+  });
+
   it('lets a spell level be a cantrip, but only under Spell', () => {
     expect(slotFailure('level', 'cantrip', 'Spell')).toBeNull();
     expect(slotFailure('level', '0', 'Spell')).toBeNull();

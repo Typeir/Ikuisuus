@@ -237,6 +237,17 @@ $heading-meta-height: 1.5rem;
   }
 }
 
+/* Short stat tables share a row while both fit, and stack when they do not. */
+.statTablePair {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.5rem;
+
+  > * {
+    flex: 1 1 auto;
+  }
+}
+
 /* The header of a tail block. */
 .overcastLabel {
   @include mdx-heading-rule;

@@ -345,6 +345,8 @@ export const {
   Type,
   Alignment,
   HitPoints,
+  Stability,
+  Poise,
   Speed,
   Str,
   Dex,

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Monster stat block.
  * @description Size, type and alignment read as the italic line a sheet opens
- * with; defences and ability scores print as the two tables a reader expects;
+ * with; defences, hit points and ability scores print as three tables;
  * the rest print as labelled rows.
  *
  * @module modules/library/presentation/components/slots/monster/Monster
@@ -49,11 +49,18 @@ export type MonsterProps = SlotProps<MonsterSlotName> & {
  * Defence columns, in table order.
  */
 const DEFENCE_SLOTS: readonly MonsterSlotName[] = [
-  'defence',
   'deflect',
   'dodge',
+  'defence',
+];
+
+/**
+ * Hit point and poise columns, in table order.
+ */
+const VITAL_SLOTS: readonly MonsterSlotName[] = [
   'hitPoints',
-  'speed',
+  'poise',
+  'stability',
 ];
 
 /**
@@ -172,6 +179,7 @@ const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
   });
 
   const hasDefences = DEFENCE_SLOTS.some((n) => values[n] !== undefined);
+  const hasVitals = VITAL_SLOTS.some((n) => values[n] !== undefined);
   const hasAbilities = ABILITY_SLOTS.some((n) => values[n] !== undefined);
 
   return (
@@ -184,13 +192,25 @@ const Monster: React.FC<MonsterProps> = ({ children, ...slots }) => {
         </p>
       )}
 
-      {hasDefences && (
-        <SlotTable
-          names={DEFENCE_SLOTS}
-          values={values}
-          cell={(name) => inlineValue(values[name])}
-          mark='monster-defences'
-        />
+      {(hasDefences || hasVitals) && (
+        <div className={styles.statTablePair} data-monster-table-pair>
+          {hasDefences && (
+            <SlotTable
+              names={DEFENCE_SLOTS}
+              values={values}
+              cell={(name) => inlineValue(values[name])}
+              mark='monster-defences'
+            />
+          )}
+          {hasVitals && (
+            <SlotTable
+              names={VITAL_SLOTS}
+              values={values}
+              cell={(name) => inlineValue(values[name])}
+              mark='monster-vitals'
+            />
+          )}
+        </div>
       )}
 
       {hasAbilities && (

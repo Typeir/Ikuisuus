@@ -80,6 +80,8 @@
     "creatureTypes": "Creature Types",
     "age": "Age",
     "damageThreshold": "Damage Threshold",
+    "stability": "Stability",
+    "poise": "Poise",
     "material": "Material"
   },
   "heirloom": {

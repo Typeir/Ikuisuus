@@ -14,7 +14,7 @@ import Monster from '@/modules/library/presentation/components/slots/monster/Mon
 import { briefText, printed } from '../cardQueries';
 
 describe('Monster', () => {
-  it('writes the identity line, both tables, and the list', () => {
+  it('writes the identity line, the three tables, and the list', () => {
     render(
       <Monster
         size='Large'
@@ -42,6 +42,7 @@ describe('Monster', () => {
       'Large Monstrosity, Unaligned',
     );
     expect(document.querySelector('[data-monster-defences]')).not.toBeNull();
+    expect(document.querySelector('[data-monster-vitals]')).not.toBeNull();
     expect(document.querySelector('[data-monster-abilities]')).not.toBeNull();
     expect(screen.getByText('Body prose.')).toBeInTheDocument();
   });
@@ -75,9 +76,50 @@ describe('Monster', () => {
     expect(tier?.querySelector('[data-derived-from]')).toBeNull();
   });
 
+  it('splits defences from hit points, and lists speed first among the rows', () => {
+    render(
+      <Monster
+        defence='18'
+        deflect='7'
+        dodge='1'
+        hitPoints='38'
+        stability='×2'
+        poise='56'
+        speed='4 stride'
+        str='18'
+        saves='Dex +7'
+      />,
+    );
+    const cells = (mark: string) =>
+      Array.from(document.querySelectorAll(`[data-${mark}] td`)).map((cell) => [
+        cell.getAttribute('data-slot'),
+        cell.textContent,
+      ]);
+    expect(cells('monster-defences')).toEqual([
+      ['deflect', '7'],
+      ['dodge', '1'],
+      ['defence', '18'],
+    ]);
+    expect(cells('monster-vitals')).toEqual([
+      ['hitPoints', '38'],
+      ['poise', '56'],
+      ['stability', '×2'],
+    ]);
+    expect(cells('monster-abilities')).toEqual([['str', '18 (+4)']]);
+    const pair = document.querySelector('[data-monster-table-pair]');
+    expect(pair?.querySelector('[data-monster-defences]')).not.toBeNull();
+    expect(pair?.querySelector('[data-monster-vitals]')).not.toBeNull();
+    expect(pair?.querySelector('[data-monster-abilities]')).toBeNull();
+    expect(printed()).toEqual(['speed', 'saves']);
+    expect(
+      document.querySelector('[data-monster-stats] [data-slot="speed"]')?.textContent,
+    ).toContain('4 stride');
+  });
+
   it('omits a table the sheet carries no slot for', () => {
     render(<Monster size='Tiny' type='Wildlife' />);
     expect(document.querySelector('[data-monster-defences]')).toBeNull();
+    expect(document.querySelector('[data-monster-vitals]')).toBeNull();
     expect(document.querySelector('[data-monster-abilities]')).toBeNull();
   });
 
