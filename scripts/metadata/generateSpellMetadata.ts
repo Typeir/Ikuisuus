@@ -306,7 +306,10 @@ function generateSpellTags(
   const abilities = GameData.getAbilities(sharedData);
   for (const ability of abilities) {
     if (
-      new RegExp(`\\b${ability.long}\\s+saving\\s+throw\\b`, 'i').test(fullText)
+      new RegExp(
+        `\\b(?:${ability.long}|${ability.short})\\s+saving\\s+throw\\b`,
+        'i',
+      ).test(fullText)
     ) {
       tags.push(`save:${ability.short.toLowerCase()}`);
     }

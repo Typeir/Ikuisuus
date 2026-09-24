@@ -244,6 +244,13 @@ describe('featurePatterns', () => {
       expect(m![1]).toBe('Wisdom');
     });
 
+    it('abilityModifier should capture the abbreviation in its own group', () => {
+      const m = 'times your **CHA** that'.match(TEMPLATES.abilityModifier);
+      expect(m![1]).toBeUndefined();
+      expect(m![2]).toBe('CHA');
+      expect('your cha'.match(TEMPLATES.abilityModifier)).toBeNull();
+    });
+
     it('tierBonus should match', () => {
       expect(TEMPLATES.tierBonus.test('your tier bonus')).toBe(true);
     });
@@ -255,6 +262,12 @@ describe('featurePatterns', () => {
 
     it('compositeFormula should capture components', () => {
       const m = '8 + Tier + CHA modifier'.match(TEMPLATES.compositeFormula);
+      expect(m![1]).toBe('8');
+      expect(m![2]).toBe('CHA');
+    });
+
+    it('compositeFormula should read the bare abbreviation', () => {
+      const m = '8 + Tier + CHA'.match(TEMPLATES.compositeFormula);
       expect(m![1]).toBe('8');
       expect(m![2]).toBe('CHA');
     });

@@ -290,6 +290,13 @@ describe('shared token recognizers', () => {
       expect(result).toEqual({ expr: 'ability:WIS' });
     });
 
+    it('should parse the abbreviated modifier the corpus writes', () => {
+      expect(recognizeTemplate('equal to your **CHA** (minimum one)')).toEqual({ expr: 'ability:CHA' });
+      expect(recognizeTemplate('plus your CHA.')).toEqual({ expr: 'ability:CHA' });
+      expect(recognizeTemplate('your **Strength Score** is')).toBeNull();
+      expect(recognizeTemplate('your CHAnge')).toBeNull();
+    });
+
     it('should parse tier bonus reference', () => {
       const result = recognizeTemplate('add your tier bonus');
       expect(result).toEqual({ expr: 'tier' });

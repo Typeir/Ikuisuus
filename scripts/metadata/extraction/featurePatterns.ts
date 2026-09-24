@@ -211,18 +211,18 @@ export const RESOURCES = {
 /**
  * Pre-compiled patterns for formula template expressions.
  *
- * @property {RegExp} abilityModifier - "your Wisdom modifier"
+ * @property {RegExp} abilityModifier - "your Wisdom modifier", or "your WIS" as the corpus writes it
  * @property {RegExp} tierBonus - "your tier bonus"
  * @property {RegExp} classLevel - "your Warrior level"
- * @property {RegExp} compositeFormula - "8 + Prof + CHA modifier"
+ * @property {RegExp} compositeFormula - "8 + Tier + CHA", with or without "modifier"
  */
 export const TEMPLATES = {
   abilityModifier:
-    /your\s+(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+modifier/i,
+    /your\s+\*{0,2}(?:([Ss]trength|[Dd]exterity|[Cc]onstitution|[Ii]ntelligence|[Ww]isdom|[Cc]harisma)\*{0,2}\s+modifier|(STR|DEX|CON|INT|WIS|CHA)(?![A-Za-z]))/,
   tierBonus: /your\s+tier\s+bonus/i,
   classLevel: /your\s+(\w+)\s+level/i,
   compositeFormula:
-    /(\d+)\s*\+\s*(?:your\s+)?(?:tier\s+bonus|Tier)\s*\+\s*(?:your\s+)?(STR|DEX|CON|INT|WIS|CHA)\s+mod(?:ifier)?/i,
+    /(\d+)\s*\+\s*(?:your\s+)?(?:tier\s+bonus|Tier)\s*\+\s*(?:your\s+)?(STR|DEX|CON|INT|WIS|CHA)(?:\s+mod(?:ifier)?)?/i,
 } as const;
 
 /**

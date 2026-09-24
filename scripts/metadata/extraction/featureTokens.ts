@@ -270,8 +270,8 @@ export function recognizeDuration(text: string): DurationToken | null {
 }
 
 /**
- * Recognizes a template expression like "your Wisdom modifier" or
- * "your tier bonus".
+ * Recognizes a template expression like "your WIS", "your Wisdom modifier"
+ * or "your tier bonus".
  *
  * @param {string} text - Input text
  * @returns {TemplateToken | null} Parsed template token or null
@@ -279,8 +279,9 @@ export function recognizeDuration(text: string): DurationToken | null {
 export function recognizeTemplate(text: string): TemplateToken | null {
   const modMatch = text.match(TEMPLATES.abilityModifier);
   if (modMatch) {
-    const short = ABILITY_MAP[modMatch[1].toLowerCase()];
-    return { expr: `ability:${short?.toUpperCase() ?? modMatch[1]}` };
+    const named = modMatch[1] ?? modMatch[2];
+    const short = ABILITY_MAP[named.toLowerCase()] ?? (ABILITY_SHORTS.has(named.toLowerCase()) ? named.toLowerCase() : undefined);
+    return { expr: `ability:${short?.toUpperCase() ?? named}` };
   }
   if (TEMPLATES.tierBonus.test(text)) {
     return { expr: 'tier' };
