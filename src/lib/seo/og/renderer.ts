@@ -7,12 +7,12 @@
  * @since 3.0.0
  */
 
+import { toPng } from '@/lib/raster';
 import { Resvg } from '@resvg/resvg-js';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import React from 'react';
 import satori from 'satori';
-import sharp from 'sharp';
 import type { OGTemplateProps } from './OGTemplate';
 import { OGTemplate } from './OGTemplate';
 import { OG_HEIGHT, OG_WIDTH } from './tokens';
@@ -123,13 +123,7 @@ export async function renderOgCard(
   });
 
   const png = resvg.render().asPng();
-  const compressed = await sharp(Buffer.from(png))
-    .png({
-      compressionLevel: 9,
-      palette: true,
-      effort: 10,
-    })
-    .toBuffer();
+  const compressed = await toPng(Buffer.from(png), true);
 
   return new Uint8Array(compressed);
 }

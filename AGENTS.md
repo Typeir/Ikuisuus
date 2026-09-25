@@ -35,6 +35,7 @@ npm test
 
 | Change           | Details                                                                                          | Doc                                                     |
 | ---------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| Raster lib       | `sharp` lives behind `src/lib/raster/`. Compressor, OG cards and Foundry tokens share it. ESLint bans the bare import. | [Raster](.github/docs/raster-module.md)                 |
 | Copilot Workflow | A→B→C: Analyze → Gate → Reconcile. Agents, skills, hooks, checks.                                | [Workflow](.github/docs/copilot-workflow-system.md)     |
 | MDX Format Check | Validates structure, naming, components. Composite gate + lint hook.                             | [MDX](.github/instructions/mdx-content.instructions.md) |
 | World Sim        | Three.js system, phase render, DOM overlay, celestial renderers.                                 | [World Sim](.github/docs/world-sim-module.md)           |

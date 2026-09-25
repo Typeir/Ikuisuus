@@ -1,8 +1,8 @@
 /**
- * @fileoverview Section Track — vertical navigation widget for library content pages.
+ * @fileoverview Section Track — vertical navigation widget for library content pages on desktop viewports.
  * @module modules/library/presentation/components/SectionTrack/SectionTrack
  * @author Typeir
- * @version 1.3.0
+ * @version 1.4.0
  * @since 7.0.0
  * @todo Candidate for motion.js (Motion) — CSS transitions here are hand-rolled and growing.
  */
@@ -11,15 +11,12 @@
 
 import { Tooltip } from '@/lib/components/ui/tooltip';
 import { useSidebarMenuState } from '@/lib/context/PersistentUiContext';
+import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import { useSectionTrack } from '@/modules/library/application/hooks/useSectionTrack';
 import type { SectionTrackItem } from '@/modules/library/domain';
-import type { TooltipPlacement } from '@/lib/components/ui/tooltip';
 import type { JSX } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import styles from './SectionTrack.module.scss';
-
-/** Width below which the track sits on the right (the stylesheet's `max-width: 1023px`) */
-const SMALL_SCREEN_BP = 1024;
 
 /**
  * Bar width base (rem) for heading level 1.
@@ -84,26 +81,27 @@ function computeSpacedTopPercents(
 }
 
 /**
- * Vertical navigation track that floats alongside library content.
+ * Vertical navigation track that floats alongside library content on desktop viewports.
  *
- * @returns {JSX.Element | null} The track element, or null if no headings found.
+ * @returns {JSX.Element | null} The track element, or null on mobile viewports and before hydration.
  */
 export function SectionTrack(): JSX.Element | null {
-  const { items, activeAnchor, visible, docH, viewportH, centerProximity } =
+  const isMobile = useIsMobileViewport();
+
+  if (isMobile !== false) return null;
+
+  return <SectionTrackWidget />;
+}
+
+/**
+ * Track body that scans headings and lays out the bars.
+ *
+ * @returns {JSX.Element | null} The track element, or null when no headings are found.
+ */
+function SectionTrackWidget(): JSX.Element | null {
+  const { items, activeAnchor, docH, viewportH, centerProximity } =
     useSectionTrack();
   const { isOpen: menuOpen } = useSidebarMenuState();
-  const [isSmallScreen, setIsSmallScreen] = useState(
-    () => typeof window !== 'undefined' && window.innerWidth < SMALL_SCREEN_BP,
-  );
-
-  useEffect(() => {
-    const onResize = () => {
-      setIsSmallScreen(window.innerWidth < SMALL_SCREEN_BP);
-    };
-
-    window.addEventListener('resize', onResize, { passive: true });
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
 
   const topPercents = useMemo(
     () => computeSpacedTopPercents(items, docH, viewportH),
@@ -112,14 +110,11 @@ export function SectionTrack(): JSX.Element | null {
 
   if (items.length === 0 || docH === 0) return null;
 
-  const tooltipPlacement: TooltipPlacement = isSmallScreen ? 'left' : 'right';
-
   return (
     <nav
       className={styles.track}
       aria-label='Page sections'
-      data-visible={visible && !menuOpen}
-      data-menu-open={menuOpen}>
+      data-visible={!menuOpen}>
       {/* A page holding several creatures gives each the same anchors — every
           one of them has Traits — so a bar is identified by where it stands as
           well as by what it points at. */}
@@ -131,7 +126,6 @@ export function SectionTrack(): JSX.Element | null {
             topPercent={topPercents[i]}
             active={item.anchor === activeAnchor}
             proximity={centerProximity(item)}
-            tooltipPlacement={tooltipPlacement}
             disabled={menuOpen}
           />
         ))}
@@ -147,7 +141,6 @@ export function SectionTrack(): JSX.Element | null {
  * @property {number} topPercent - Vertical position as percentage of track height.
  * @property {boolean} active - Whether this section is currently active.
  * @property {number} proximity - Center proximity score (0–1).
- * @property {TooltipPlacement} tooltipPlacement - Which side the tooltip appears on.
  * @property {boolean} disabled - When true, clicks are suppressed (menu open).
  */
 interface SectionTrackBarProps {
@@ -155,7 +148,6 @@ interface SectionTrackBarProps {
   topPercent: number;
   active: boolean;
   proximity: number;
-  tooltipPlacement: TooltipPlacement;
   disabled: boolean;
 }
 
@@ -170,7 +162,6 @@ function SectionTrackBar({
   topPercent,
   active,
   proximity,
-  tooltipPlacement,
   disabled,
 }: SectionTrackBarProps): JSX.Element {
   const width = BAR_WIDTH_BASE - (item.level - 1) * 0.35;
@@ -186,7 +177,7 @@ function SectionTrackBar({
   return (
     <Tooltip
       content={<span>{item.label}</span>}
-      placement={tooltipPlacement}
+      placement='right'
       showArrow
       showClickIcon={false}
       inline>

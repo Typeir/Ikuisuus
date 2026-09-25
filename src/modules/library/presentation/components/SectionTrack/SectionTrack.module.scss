@@ -1,7 +1,8 @@
 /* ============================================
    SECTION TRACK — SectionTrack.module.scss
    Fixed-position navigation widget for
-   library content pages. */
+   library content pages. Desktop only: the
+   component never mounts below 1024px. */
 
 @use '@/styles/mixins' as *;
 
@@ -23,28 +24,12 @@
     opacity: 0;
   }
 
-  &[data-menu-open='true'] {
-    opacity: 0;
-  }
-
-  &[data-visible='false'] .bar,
-  &[data-menu-open='true'] .bar {
+  &[data-visible='false'] .bar {
     pointer-events: none;
   }
 
   :global([data-embed]) & {
     display: none;
-  }
-
-  @media (max-width: 1023px) {
-    left: auto;
-    right: 0.75rem;
-  }
-
-  @media (max-width: 768px) {
-    left: auto;
-    right: 0.5rem;
-    height: 70vh;
   }
 }
 
@@ -99,21 +84,6 @@
   @starting-style {
     opacity: 0;
     translate: -6px 0;
-  }
-
-  @media (max-width: 1023px) {
-    left: auto;
-    right: 0;
-    transform-origin: right center;
-
-    &::before {
-      left: auto;
-      right: 0;
-    }
-
-    @starting-style {
-      translate: 6px 0;
-    }
   }
 
   &:hover {

@@ -4,6 +4,10 @@
 /* How far the header's ground reaches above the row it carries. */
 $ground-lead: 0.6rem;
 
+/* How far the ground reaches past the row on the side its rule is drawn, below
+   the wide breakpoint. The rail sits on that rule, so it moves by the same. */
+$ground-tail: 0.85rem;
+
 .sheet {
   /* Where the header comes to rest. */
   --sheet-offset: 0px;
@@ -96,7 +100,7 @@ $ground-lead: 0.6rem;
 
   /* Loose in the page it is a row of tabs and carries no ground; stuck */
   &[data-stuck='true']::after {
-    inset-block: calc(-1 * #{$ground-lead}) -0.85rem;
+    inset-block: calc(-1 * #{$ground-lead}) calc(-1 * #{$ground-tail});
     inset-inline: calc(-1 * var(--sheet-bleed-start, 0px))
       calc(-1 * var(--sheet-bleed-end, 0px));
     background-color: var(--color-bg);
@@ -134,7 +138,7 @@ $ground-lead: 0.6rem;
     }
 
     &[data-stuck='true']::after {
-      inset-block: -0.85rem calc(-1 * #{$ground-lead});
+      inset-block: calc(-1 * #{$ground-tail}) calc(-1 * #{$ground-lead});
       border-top-color: var(--color-accent);
       box-shadow: 0 -8px 16px -12px var(--color-shadow);
 
@@ -200,6 +204,7 @@ $ground-lead: 0.6rem;
 @media (prefers-reduced-motion: reduce) {
   .strip,
   .strip::after,
+  .rail,
   .tab {
     transition: none;
   }
@@ -221,6 +226,19 @@ $ground-lead: 0.6rem;
   inline-size: calc(100vw - var(--layout-sidebar));
   background: none;
   pointer-events: none;
+
+  /* The ground grows on the same curve, and the rail rides its rule. */
+  transition: inset 0.24s var(--springy-bezier);
+}
+
+/* Stuck below the wide breakpoint, the ground reaches past the row, and the
+   rule the rail sits on goes with it. Wide, ground and row share an edge. */
+.strip[data-stuck='true'] .rail {
+  inset-block-end: calc(-1 * #{$ground-tail});
+
+  @media (min-width: 1024px) {
+    inset-block-end: 0;
+  }
 }
 
 /* Scaled rather than resized: scale is the compositor's to do, and this moves
@@ -242,6 +260,14 @@ $ground-lead: 0.6rem;
   inset-block: 0 auto;
   inset-inline: 0;
   inline-size: auto;
+}
+
+.strip[data-foot='true'][data-stuck='true'] .rail {
+  inset-block: calc(-1 * #{$ground-tail}) auto;
+
+  @media (min-width: 1024px) {
+    inset-block: 0 auto;
+  }
 }
 
 
@@ -287,6 +313,15 @@ $ground-lead: 0.6rem;
   .rail {
     inset-inline: 0;
     inline-size: auto;
+  }
+
+  .strip[data-stuck='true'] .rail {
+    /* The ground keeps to the row here, so the rail keeps to its edge. */
+    inset-block-end: 0;
+  }
+
+  .strip[data-foot='true'][data-stuck='true'] .rail {
+    inset-block: 0 auto;
   }
 
   .page {

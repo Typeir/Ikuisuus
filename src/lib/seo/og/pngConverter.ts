@@ -6,7 +6,7 @@
  * @author Typeir
  * @since 3.0.0
  */
-import sharp from 'sharp';
+import { toPngDataUri } from '@/lib/raster';
 
 /**
  * Convert an image URL or data URI to a PNG data URI.
@@ -32,16 +32,12 @@ export async function convertToPngDataUri(
       const buffer = isBase64
         ? Buffer.from(data, 'base64')
         : Buffer.from(decodeURIComponent(data), 'utf8');
-      const out = await sharp(buffer).png().toBuffer();
-      return `data:image/png;base64,${out.toString('base64')}`;
+      return await toPngDataUri(buffer);
     }
 
     const res = await fetch(src);
     if (!res.ok) return undefined;
-    const arr = await res.arrayBuffer();
-    const buf = Buffer.from(arr);
-    const out = await sharp(buf).png().toBuffer();
-    return `data:image/png;base64,${out.toString('base64')}`;
+    return await toPngDataUri(Buffer.from(await res.arrayBuffer()));
   } catch {
     return undefined;
   }

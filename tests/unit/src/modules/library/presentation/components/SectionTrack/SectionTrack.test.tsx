@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { PersistentUiProvider } from '@/lib/context/PersistentUiContext';
 import { SectionTrack } from '@/modules/library/presentation/components/SectionTrack';
 
@@ -118,6 +118,37 @@ describe('SectionTrack', () => {
       await waitFor(() => {
         const nav = screen.getByRole('navigation', { name: 'Page sections' });
         expect(nav.getAttribute('data-visible')).toBe('true');
+      });
+    });
+  });
+
+  describe('viewport', () => {
+    it('should render nothing on a mobile viewport', () => {
+      Object.defineProperty(window, 'innerWidth', { value: 800, writable: true, configurable: true });
+      document.body.innerHTML = `<h1 data-anchor="a">A</h1>`;
+
+      const { container } = render(<SectionTrack />, { wrapper });
+
+      expect(container.innerHTML).toBe('');
+      expect(screen.queryByRole('navigation', { name: 'Page sections' })).toBeNull();
+    });
+
+    it('should unmount the track when the viewport shrinks below desktop', async () => {
+      document.body.innerHTML = `<h1 data-anchor="a">A</h1>`;
+
+      render(<SectionTrack />, { wrapper });
+
+      await waitFor(() => {
+        expect(screen.getByRole('navigation', { name: 'Page sections' })).toBeInTheDocument();
+      });
+
+      Object.defineProperty(window, 'innerWidth', { value: 800, writable: true, configurable: true });
+      act(() => {
+        window.dispatchEvent(new Event('resize'));
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByRole('navigation', { name: 'Page sections' })).toBeNull();
       });
     });
   });

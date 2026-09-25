@@ -197,35 +197,6 @@ describe('useSectionTrack', () => {
     });
   });
 
-  describe('visibility', () => {
-    it('should be visible by default on desktop', () => {
-      const { result } = renderHook(() => useSectionTrack());
-
-      expect(result.current.visible).toBe(true);
-    });
-
-    it('should stay visible on desktop after timeout', () => {
-      vi.useFakeTimers();
-
-      Object.defineProperty(window, 'innerWidth', {
-        value: 1200,
-        writable: true,
-        configurable: true,
-      });
-
-      const { result } = renderHook(() => useSectionTrack());
-
-      act(() => {
-        window.dispatchEvent(new Event('resize'));
-        vi.advanceTimersByTime(2000);
-      });
-
-      expect(result.current.visible).toBe(true);
-
-      vi.useRealTimers();
-    });
-  });
-
   describe('viewportH', () => {
     it('should expose current viewport height', async () => {
       Object.defineProperty(window, 'innerHeight', {

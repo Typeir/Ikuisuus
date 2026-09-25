@@ -1,7 +1,7 @@
 /**
  * @fileoverview What the bar over a sheet says the reader is looking at.
  * @module modules/library/presentation/components/slots/sheet/sheetSpy
- * @version 3.0.0
+ * @version 3.1.0
  * @author Typeir
  * @since 8.0.0
  */
@@ -22,9 +22,11 @@ import type { RefObject } from 'react';
  * reader's — this only watches, so the bar can say where they are and draw how
  * far they have come. Both answers come from one reading of the page, on the
  * frame every watcher shares: which section last passed the line a reader
- * reads at, and how much of the sheet is behind that line. How far is written
- * as a property rather than kept as state, since it changes with every frame
- * of scroll and only a gradient reads it.
+ * reads at, and how far through the sheet they have come. How far is measured
+ * across the scroll the page allows, so the bar is empty at the top of the
+ * page and full at its foot. It is written as a property rather than kept as
+ * state, since it changes with every frame of scroll and only a gradient
+ * reads it.
  *
  * The last section of a sheet at the foot of the page is one the reader can
  * never bring up to that line, because the page runs out first; reaching the
@@ -70,12 +72,26 @@ export function useSheetSpy(
       const box = sheet.getBoundingClientRect();
       if (box.height <= 0) return;
 
-      /* Full at the end of the page for the same reason the last section is
-         the one being read there: what is left of the sheet is behind a line
-         the reader can no longer reach. */
-      const through = done
-        ? 1
-        : Math.min(1, Math.max(0, (line - box.top) / box.height));
+      /* How much of the sheet is behind the line now, and how much would be at
+         the top and the foot of the page. The page runs out before a sheet at
+         its end can pass the line, and a sheet at its start is already partly
+         behind it, so the bar is drawn across what the reader can actually
+         scroll: empty at the top, full at the foot, and even between. */
+      const behind = line - box.top;
+      const remaining = Math.max(
+        0,
+        document.documentElement.scrollHeight -
+          window.innerHeight -
+          window.scrollY,
+      );
+      const first = Math.max(0, behind - window.scrollY);
+      const last = Math.min(box.height, behind + remaining);
+      const span = last - first;
+
+      const through =
+        done || span <= 0
+          ? 1
+          : Math.min(1, Math.max(0, (behind - first) / span));
       strip.current?.style.setProperty('--sheet-read', `${through}`);
     });
   }, [rack, strip, shell, sections]);

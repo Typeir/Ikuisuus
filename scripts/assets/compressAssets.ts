@@ -1,6 +1,6 @@
 /**
- * @fileoverview Compresses images from `public/full-size` into `.webp`,
- * writing mirrored files under `public/library`.
+ * @fileoverview Compresses images from `public/full-size` into `.webp` under
+ * `public/library`, blurring files named `-background`.
  *
  * @module scripts/assets/compressAssets
  * @version 1.0.0
@@ -11,14 +11,21 @@
  * @requires fs/promises Node.js async filesystem
  * @requires fast-glob Glob pattern matching
  * @requires path Node.js path utilities
- * @requires sharp Image processing library
+ * @requires @/lib/raster Image pipeline
  */
 
 import { createLogger } from '@/lib/logging/logger';
+import {
+  DEFAULT_WEBP_QUALITY,
+  fitWidth,
+  gaussianBlur,
+  readDimensions,
+  toWebp,
+  writeBytes,
+} from '@/lib/raster';
 import fg from 'fast-glob';
 import fs from 'fs/promises';
 import path from 'path';
-import sharp from 'sharp';
 
 const log = createLogger({ script: 'compressAssets' });
 
@@ -30,6 +37,18 @@ const OUTPUT_DIR = 'public/library';
 
 /** Resize limit (max width in pixels) */
 const MAX_WIDTH = 1600;
+
+/** Gaussian blur sigma baked into `-background` images. */
+const BACKGROUND_BLUR_SIGMA = 2;
+
+/**
+ * True when the file name ends with `-background`.
+ *
+ * @param {string} file - Source path.
+ * @returns {boolean} Whether the image is a page backdrop.
+ */
+const isBackground = (file: string): boolean =>
+  path.parse(file).name.endsWith('-background');
 
 /**
  * Format bytes to human-readable size
@@ -85,26 +104,21 @@ const compressImages = async (): Promise<void> => {
       /* file does not exist yet — continue */
     }
 
-    await fs.mkdir(path.dirname(outputPath), { recursive: true });
-
     try {
-      const originalStats = await fs.stat(file);
-      const originalSize = originalStats.size;
+      const originalSize = (await fs.stat(file)).size;
+      const { width: originalWidth, height: originalHeight } =
+        await readDimensions(file);
 
-      const metadata = await sharp(file).metadata();
-      const originalWidth = metadata.width || 0;
-      const originalHeight = metadata.height || 0;
-
-      const info = await sharp(file)
-        .resize({ width: MAX_WIDTH, withoutEnlargement: true })
-        .webp({ quality: 80 })
-        .toFile(outputPath);
-
-      const compressedStats = await fs.stat(outputPath);
-      const compressedSize = compressedStats.size;
-
-      const newWidth = info.width;
-      const newHeight = info.height;
+      const blurred = isBackground(file);
+      const source = fitWidth(file, MAX_WIDTH);
+      if (blurred) gaussianBlur(source, BACKGROUND_BLUR_SIGMA);
+      const {
+        data,
+        width: newWidth,
+        height: newHeight,
+        size: compressedSize,
+      } = await toWebp(source, DEFAULT_WEBP_QUALITY);
+      await writeBytes(outputPath, data);
 
       totalOriginalSize += originalSize;
       totalCompressedSize += compressedSize;
@@ -116,9 +130,10 @@ const compressImages = async (): Promise<void> => {
           ? ` (${originalWidth}×${originalHeight} → ${newWidth}×${newHeight})`
           : ` (${originalWidth}×${originalHeight})`;
       const sizeChange = ` (${formatBytes(originalSize)} → ${formatBytes(compressedSize)})`;
+      const blurTag = blurred ? ' (blurred)' : '';
 
       log.message(
-        `✓ Processed: ${path.basename(file)} → ${outputFilename}${dimensionChange}${sizeChange}`,
+        `✓ Processed: ${path.basename(file)} → ${outputFilename}${dimensionChange}${sizeChange}${blurTag}`,
       );
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);

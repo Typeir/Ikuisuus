@@ -314,6 +314,7 @@ export default defineConfig({
             'tests/unit/src/i18n/**/*.test.{ts,tsx}',
             'tests/unit/src/styles/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/seo/**/*.test.{ts,tsx}',
+            'tests/unit/src/lib/raster/**/*.test.{ts,tsx}',
             'tests/unit/src/lib/embed/**/*.test.{ts,tsx}',
             'tests/unit/src/middleware*.test.{ts,tsx}',
             'tests/unit/src/app/*.test.{ts,tsx}',

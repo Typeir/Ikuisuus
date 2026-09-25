@@ -1,7 +1,7 @@
 /**
  * @fileoverview sheetSpy tests.
  * @module tests/unit/src/modules/library/presentation/components/slots/sheet/sheetSpy.test
- * @version 3.0.0
+ * @version 3.1.0
  * @author Typeir
  * @since 8.0.0
  *
@@ -9,7 +9,7 @@
  *
  * @description One reading of the page answers both questions, so both are
  * asked of the same placement here: which section has passed the line a reader
- * reads at, and how much of the sheet is behind it.
+ * reads at, and how far through the sheet they have come.
  */
 
 import { READING_LINE } from '@/lib/constants/reading';
@@ -39,6 +39,9 @@ const SCREEN = 800;
 
 /** Where down that screen a reader is taken to be reading. */
 const LINE = SCREEN * READING_LINE;
+
+/** How tall a page is when nothing says otherwise. */
+const LONG_PAGE = 100000;
 
 /**
  * A sheet whose sections can be placed down the page.
@@ -76,6 +79,21 @@ const Probe = ({ sections }: { sections: number }): React.JSX.Element => {
 const place = (el: Element, top: number, height: number) => {
   el.getBoundingClientRect = () =>
     ({ top, height, bottom: top + height }) as DOMRect;
+};
+
+/**
+ * Puts the page at a scroll position, on a page of the given height.
+ *
+ * @param {number} at - How far the page has been scrolled.
+ * @param {number} [page] - How tall the whole page is.
+ * @returns {void} Nothing.
+ */
+const scrolled = (at: number, page: number = LONG_PAGE): void => {
+  vi.stubGlobal('scrollY', at);
+  Object.defineProperty(document.documentElement, 'scrollHeight', {
+    configurable: true,
+    value: page,
+  });
 };
 
 /**
@@ -117,11 +135,7 @@ beforeEach(() => {
   watchViewport.mockClear();
   watchViewport.mockReturnValue(stop);
   vi.stubGlobal('innerHeight', SCREEN);
-  vi.stubGlobal('scrollY', 0);
-  Object.defineProperty(document.documentElement, 'scrollHeight', {
-    configurable: true,
-    value: 100000,
-  });
+  scrolled(0);
 });
 
 describe('the section the reader has reached', () => {
@@ -149,10 +163,7 @@ describe('the section the reader has reached', () => {
      brought up to the line, and a reader who cannot scroll further has
      finished it. */
   it('should be the last section once the page can scroll no further', () => {
-    Object.defineProperty(document.documentElement, 'scrollHeight', {
-      configurable: true,
-      value: SCREEN,
-    });
+    scrolled(0, SCREEN);
     standing([LINE - 100, LINE + 200, LINE + 400]);
     expect(seen).toBe(2);
   });
@@ -166,10 +177,12 @@ describe('the section the reader has reached', () => {
 
 describe('how far through the sheet the reader has come', () => {
   it('should read nothing before the sheet has reached the line', () => {
+    scrolled(1000);
     expect(read(standing([0, 0], { top: SCREEN, height: 2000 }))).toBe(0);
   });
 
   it('should count how much of the sheet is behind the line', () => {
+    scrolled(1000);
     expect(read(standing([0, 0], { top: LINE - 500, height: 2000 }))).toBe(
       0.25,
     );
@@ -179,23 +192,55 @@ describe('how far through the sheet the reader has come', () => {
      the screen, a sheet barely taller than one would fill inside its first
      section and stay full for the rest of itself. */
   it('should still be reading partway through a barely tall sheet', () => {
+    scrolled(1000);
     const through = read(standing([0, 0], { top: LINE - 250, height: 1000 }));
     expect(through).toBeGreaterThan(0.2);
     expect(through).toBeLessThan(0.3);
   });
 
   it('should be full once the sheet has passed the line', () => {
+    scrolled(5000);
     expect(read(standing([0, 0], { top: LINE - 4000, height: 2000 }))).toBe(1);
   });
 
   /* The same rule that makes the last section the one being read there: what
      is left of the sheet is behind a line the reader can no longer reach. */
   it('should be full once the page can scroll no further', () => {
-    Object.defineProperty(document.documentElement, 'scrollHeight', {
-      configurable: true,
-      value: SCREEN,
-    });
+    scrolled(0, SCREEN);
     expect(read(standing([0, 0], { top: LINE - 100, height: 4000 }))).toBe(1);
+  });
+
+  /* A sheet that ends the page never brings its foot up to the line. Counted
+     against the whole of it, the bar would stop short and then jump to full;
+     it is counted against what the reader can scroll instead. Here the sheet
+     starts 600 down a 3000 page and is 2400 tall, so the page stops at 2200. */
+  it('should fill evenly to the foot of a page the sheet ends', () => {
+    scrolled(1100, 3000);
+    expect(
+      read(standing([0, 0], { top: 600 - 1100, height: 2400 })),
+    ).toBeCloseTo(0.45);
+
+    scrolled(2100, 3000);
+    expect(
+      read(standing([0, 0], { top: 600 - 2100, height: 2400 })),
+    ).toBeCloseTo(0.95);
+
+    scrolled(2200, 3000);
+    expect(read(standing([0, 0], { top: 600 - 2200, height: 2400 }))).toBe(1);
+  });
+
+  /* The mirror of the foot: a sheet that starts the page is already partly
+     behind the line before anything has been scrolled. */
+  it('should read nothing at the top of a page the sheet starts', () => {
+    scrolled(0);
+    expect(read(standing([0, 0], { top: 100, height: 2000 }))).toBe(0);
+  });
+
+  it('should start moving as soon as the reader does on such a page', () => {
+    scrolled(300);
+    expect(
+      read(standing([0, 0], { top: 100 - 300, height: 2000 })),
+    ).toBeCloseTo(300 / 1700);
   });
 
   it('should say nothing about a sheet with no height to speak of', () => {
@@ -205,11 +250,11 @@ describe('how far through the sheet the reader has come', () => {
 
 describe('what the sheet never does', () => {
   it('should never take hold of the scroll, only read it', () => {
-    const scrolled = vi.fn();
-    vi.stubGlobal('scrollTo', scrolled);
+    const scrolledTo = vi.fn();
+    vi.stubGlobal('scrollTo', scrolledTo);
     standing([LINE - 100, LINE + 100]);
 
-    expect(scrolled).not.toHaveBeenCalled();
+    expect(scrolledTo).not.toHaveBeenCalled();
   });
 
   it('should read the page on one watcher, not one for each section', () => {

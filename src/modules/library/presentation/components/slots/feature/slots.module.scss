@@ -111,6 +111,8 @@
 
 /* Slot label */
 .label {
+  flex-shrink: 0;
+  white-space: nowrap;
   font-weight: 700;
   font-family: var(--font-default);
   font-synthesis-weight: none;

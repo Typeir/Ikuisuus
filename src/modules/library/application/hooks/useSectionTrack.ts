@@ -3,7 +3,7 @@
  * computes proportional positions for the visual track widget.
  * @module modules/library/application/hooks/useSectionTrack
  * @author Typeir
- * @version 1.0.0
+ * @version 1.1.0
  * @since 7.0.0
  */
 
@@ -22,12 +22,6 @@ import {
   useState,
 } from 'react';
 import { useScrollProgress } from './useScrollProgress';
-
-/** Mobile auto-hide idle duration (ms). */
-const MOBILE_IDLE_MS = 1_500;
-
-/** Breakpoint below which mobile auto-hide activates. */
-const MOBILE_BREAKPOINT = 768;
 
 /**
  * Label of a heading
@@ -99,7 +93,6 @@ function itemsEqual(a: SectionTrackItem[], b: SectionTrackItem[]): boolean {
  *
  * @property {SectionTrackItem[]} items - All heading items.
  * @property {string | null} activeAnchor - Anchor of the currently active section.
- * @property {boolean} visible - Whether the track is visible (mobile auto-hide).
  * @property {number} docH - Total document height for proportional positioning.
  * @property {number} viewportH - Current viewport height (px).
  * @property {(item: SectionTrackItem) => number} centerProximity - 0–1 score for center distance.
@@ -107,7 +100,6 @@ function itemsEqual(a: SectionTrackItem[], b: SectionTrackItem[]): boolean {
 interface SectionTrackState {
   items: SectionTrackItem[];
   activeAnchor: string | null;
-  visible: boolean;
   docH: number;
   viewportH: number;
   centerProximity: (item: SectionTrackItem) => number;
@@ -116,16 +108,13 @@ interface SectionTrackState {
 /**
  * Tracks `[data-anchor]` headings
  *
- * @returns {SectionTrackState} Heading items, active anchor, visibility flag, center proximity function.
+ * @returns {SectionTrackState} Heading items, active anchor, center proximity function.
  */
 export function useSectionTrack(): SectionTrackState {
   const { scrollY, viewportH, docH } = useScrollProgress();
   const [items, setItems] = useState<SectionTrackItem[]>([]);
   const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
-  const [visible, setVisible] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
 
-  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<number | null>(null);
 
   /** Scan headings synchronously on mount, throttled on resize and details toggle. */
@@ -192,56 +181,6 @@ export function useSectionTrack(): SectionTrackState {
     setActiveAnchor(active);
   }, [items, scrollY, viewportH, docH]);
 
-  /** Mobile detection and auto-hide logic. */
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile, { passive: true });
-
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-    };
-  }, []);
-
-  /** Auto-hide on mobile after idle timeout. */
-  useEffect(() => {
-    if (!isMobile) {
-      setVisible(true);
-      return;
-    }
-
-    const resetTimer = () => {
-      setVisible(true);
-
-      if (idleTimerRef.current !== null) {
-        clearTimeout(idleTimerRef.current);
-      }
-
-      idleTimerRef.current = setTimeout(() => {
-        setVisible(false);
-      }, MOBILE_IDLE_MS);
-    };
-
-    resetTimer();
-
-    window.addEventListener('pointermove', resetTimer, { passive: true });
-    window.addEventListener('touchstart', resetTimer, { passive: true });
-    window.addEventListener('scroll', resetTimer, { passive: true });
-
-    return () => {
-      window.removeEventListener('pointermove', resetTimer);
-      window.removeEventListener('touchstart', resetTimer);
-      window.removeEventListener('scroll', resetTimer);
-
-      if (idleTimerRef.current !== null) {
-        clearTimeout(idleTimerRef.current);
-      }
-    };
-  }, [isMobile]);
-
   /**
    * Computes how close an item is to the center of the visible viewport.
    *
@@ -263,12 +202,11 @@ export function useSectionTrack(): SectionTrackState {
     () => ({
       items,
       activeAnchor,
-      visible,
       viewportH,
       docH,
       centerProximity,
     }),
-    [items, activeAnchor, visible, viewportH, docH, centerProximity],
+    [items, activeAnchor, viewportH, docH, centerProximity],
   );
 
   return trackState;

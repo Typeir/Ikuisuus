@@ -1,26 +1,41 @@
 /**
  * @fileoverview Token image generator for Foundry VTT monster exports.
- * @description Generates circular token images by cropping portraits to
- * center-square, clipping to a circle
  *
  * @module foundry/scripts/utils/tokenGenerator
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 2026-04-14
- *
- * @see {@link generateTokens} for the main entry point
- * @see {@link bundleImages} for portrait copying
  */
 
+import {
+  circleMask,
+  composite,
+  coverSquare,
+  mask,
+  overlay,
+  solidLayer,
+  toPng,
+  toWebp,
+  writeBytes,
+  type Layer,
+} from '@/lib/raster';
 import { copyFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
-import sharp from 'sharp';
 
 /** Token size in pixels (matches frame dimensions). */
 const TOKEN_SIZE = 256;
 
 /** Background color for token circles (fills transparency and default tokens). */
 const TOKEN_BG_COLOR = '#28303b';
+
+/** Fraction of the spare portrait height above the square crop, favouring the face. */
+const PORTRAIT_CROP_BIAS = 0.15;
+
+/** Disc radius as a fraction of half the token, leaving a thin border. */
+const MASK_RADIUS_FRACTION = 0.95;
+
+/** WebP quality for token files. */
+const TOKEN_WEBP_QUALITY = 90;
 
 /** Default token filename for monsters without portraits. */
 export const DEFAULT_TOKEN_FILENAME = '_default.token.webp';
@@ -58,38 +73,27 @@ export function bundleImages(
 }
 
 /**
- * Generates a default round token with a solid background color and frame.
+ * Composites the background disc, an optional portrait, the circle mask and the frame into WebP bytes.
  *
- * @param {Buffer} frameBuffer - Frame overlay PNG buffer
- * @param {Buffer} circleMask - Circular mask SVG buffer
- * @param {string} tokensDir - Output directory for token images
+ * @param {Buffer} frame - Frame overlay PNG bytes
+ * @param {Buffer} [portrait] - Square portrait PNG bytes at token size
+ * @returns {Promise<Buffer>} Token WebP bytes
  */
-async function generateDefaultToken(
-  frameBuffer: Buffer,
-  circleMask: Buffer,
-  tokensDir: string,
-): Promise<void> {
-  const dest = join(tokensDir, DEFAULT_TOKEN_FILENAME);
-  const bgLayer = Buffer.from(
-    `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
-      `<rect width="${TOKEN_SIZE}" height="${TOKEN_SIZE}" fill="${TOKEN_BG_COLOR}"/>` +
-      `</svg>`,
+async function assembleToken(frame: Buffer, portrait?: Buffer): Promise<Buffer> {
+  const layers: Layer[] = portrait ? [overlay(portrait)] : [];
+  layers.push(mask(circleMask(TOKEN_SIZE, MASK_RADIUS_FRACTION)));
+  const disc = await toPng(
+    composite(solidLayer(TOKEN_SIZE, TOKEN_SIZE, TOKEN_BG_COLOR), layers),
   );
-
-  const masked = await sharp(bgLayer)
-    .composite([{ input: circleMask, blend: 'dest-in' }])
-    .png()
-    .toBuffer();
-
-  await sharp(masked)
-    .composite([{ input: frameBuffer, blend: 'over' }])
-    .webp({ quality: 90 })
-    .toFile(dest);
+  const { data } = await toWebp(
+    composite(disc, [overlay(frame)]),
+    TOKEN_WEBP_QUALITY,
+  );
+  return data;
 }
 
 /**
- * Generates circular token images by cropping portraits to center-square,
- * clipping to a circle
+ * Generates circular token images by cropping portraits to a face-biased square and clipping to a disc.
  *
  * @param {Set<string>} imageFiles - Set of image filenames to generate tokens for
  * @param {string} assetsImgDir - Source directory for portrait images
@@ -105,14 +109,7 @@ export async function generateTokens(
 ): Promise<Map<string, string>> {
   mkdirSync(tokensDir, { recursive: true });
 
-  const frameBuffer = readFileSync(framePath);
-  const maskRadius = Math.round((TOKEN_SIZE / 2) * 0.95);
-  const circleMask = Buffer.from(
-    `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
-      `<circle cx="${TOKEN_SIZE / 2}" cy="${TOKEN_SIZE / 2}" r="${maskRadius}" fill="white"/>` +
-      `</svg>`,
-  );
-
+  const frame = readFileSync(framePath);
   const tokenMap = new Map<string, string>();
   let generated = 0;
 
@@ -125,45 +122,10 @@ export async function generateTokens(
     const dest = join(tokensDir, tokenFilename);
 
     try {
-      const portrait = sharp(src);
-      const meta = await portrait.metadata();
-      const w = meta.width ?? TOKEN_SIZE;
-      const h = meta.height ?? TOKEN_SIZE;
-      const cropSize = Math.min(w, h);
-      const left = Math.round((w - cropSize) / 2);
-      const top = Math.round((h - cropSize) * 0.15);
-
-      const bgLayer = Buffer.from(
-        `<svg width="${TOKEN_SIZE}" height="${TOKEN_SIZE}">` +
-          `<rect width="${TOKEN_SIZE}" height="${TOKEN_SIZE}" fill="${TOKEN_BG_COLOR}"/>` +
-          `</svg>`,
+      const portrait = await toPng(
+        await coverSquare(src, TOKEN_SIZE, PORTRAIT_CROP_BIAS),
       );
-
-      const cropped = await sharp(bgLayer)
-        .composite([
-          {
-            input: await portrait
-              .extract({
-                left,
-                top,
-                width: cropSize,
-                height: Math.min(cropSize, h - top),
-              })
-              .resize(TOKEN_SIZE, TOKEN_SIZE, { fit: 'cover' })
-              .png()
-              .toBuffer(),
-            blend: 'over',
-          },
-          { input: circleMask, blend: 'dest-in' },
-        ])
-        .png()
-        .toBuffer();
-
-      await sharp(cropped)
-        .composite([{ input: frameBuffer, blend: 'over' }])
-        .webp({ quality: 90 })
-        .toFile(dest);
-
+      await writeBytes(dest, await assembleToken(frame, portrait));
       tokenMap.set(filename, tokenFilename);
       generated++;
     } catch (err) {
@@ -174,7 +136,10 @@ export async function generateTokens(
     }
   }
 
-  await generateDefaultToken(frameBuffer, circleMask, tokensDir);
+  await writeBytes(
+    join(tokensDir, DEFAULT_TOKEN_FILENAME),
+    await assembleToken(frame),
+  );
   process.stdout.write(`Tokens: ${generated} generated (+ 1 default)\n`);
   return tokenMap;
 }

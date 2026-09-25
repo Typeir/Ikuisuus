@@ -135,7 +135,7 @@ Biography HTML also has its image paths rewritten by `rewriteBiographyImages()` 
 
 ### Stage 4: Token Generation (`generateTokens`)
 
-Circular token images are generated from portraits using Sharp:
+Circular token images are generated from portraits through `@/lib/raster` ([Raster](raster-module.md)):
 
 1. **Crop** — Extract a center-biased square from the portrait (top offset 15% to favor the face region)
 2. **Resize** — Scale to 256×256 pixels

@@ -19,8 +19,9 @@ The build pipeline is a **critical dependency chain** that must run before any N
 **Process**:
 
 1. Scans `public/full-size/` recursively for image files (jpg, jpeg, png, webp)
-2. Uses Sharp to convert to WebP format
+2. Uses `@/lib/raster` ([Raster](raster-module.md)) to convert to WebP format
 3. Resizes to maximum 1600px width (maintains aspect ratio)
+   - Files whose name ends in `-background` also get a gaussian blur (sigma 2), so page backdrops carry no runtime `filter`
 4. Mirrors folder structure in `public/library/`
 5. Generates console report of processed files and compression ratio
 

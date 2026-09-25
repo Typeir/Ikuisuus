@@ -1,36 +1,59 @@
 /**
- * @file parallaxBackdrop.tsx
- * @description
- * Fixed, uninteractable, full-viewport parallax background component.
+ * @fileoverview Fixed full-viewport image that drifts with scroll.
  *
  * @module modules/library/presentation/components/ParallaxBackdrop/ParallaxBackdrop
- * @version 1.0.0
+ * @version 2.0.0
  * @author Typeir
  * @since 1.0.0
- * @fileoverview Module for src/lib/components/mdx/parallaxBackdrop/parallaxBackdrop.tsx
  */
 
 'use client';
 
 import Image from 'next/image';
 import { useViewportSignal } from '@/lib/hooks/motion';
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import styles from './ParallaxBackdrop.module.scss';
 
 /**
- * @interface ParallaxBackdropProps
- * @description
+ * Image scale, keep equal to the `.image` scale in the stylesheet.
+ *
+ * @constant SCALE
+ * @type {number}
+ */
+const SCALE = 1.06;
+
+/**
+ * Fraction of the viewport height the scale leaves past each edge.
+ *
+ * @constant OVERSCAN
+ * @type {number}
+ */
+const OVERSCAN = (SCALE - 1) / 2;
+
+/**
+ * Clamps a value to [min, max].
+ *
+ * @function clamp
+ * @param {number} value - Input.
+ * @param {number} min - Lower bound.
+ * @param {number} max - Upper bound.
+ * @returns {number} The bounded value.
+ */
+const clamp = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value));
+
+/**
  * Props for {@link ParallaxBackdrop}.
  *
- * @property {string} src - The source URL of the backdrop image.
- * @property {string} [alt] - Alternative text for the image (if not aria-hidden).
- * @property {number} [intensity=0.05] - Parallax intensity factor (higher = more movement).
- * @property {number} [maxShiftPx=48] - Maximum vertical shift in pixels.
- * @property {number} [opacity=1] - Opacity of the backdrop image (0 to 1).
- * @property {number} [blurPx=0] - CSS blur radius in pixels.
- * @property {number} [zIndex] - Explicit CSS z-index override.
- * @property {boolean} [ariaHidden=true] - Whether to hide the image from assistive tech.
- * @property {string} [className] - Additional CSS classes for the container div.
+ * @interface ParallaxBackdropProps
+ * @property {string} src - Image URL.
+ * @property {string} [alt] - Alt text, used only when ariaHidden is false.
+ * @property {number} [intensity=0.1] - Pixels of shift per pixel scrolled.
+ * @property {number} [maxShiftPx] - Shift clamp in px, defaults to the overscan.
+ * @property {number} [opacity=1] - Image opacity in [0, 1].
+ * @property {number} [zIndex] - CSS z-index override for the container.
+ * @property {boolean} [ariaHidden=true] - Hides the image from assistive tech.
+ * @property {string} [className] - Extra classes for the container.
  */
 export interface ParallaxBackdropProps {
   src: string;
@@ -38,80 +61,65 @@ export interface ParallaxBackdropProps {
   intensity?: number;
   maxShiftPx?: number;
   opacity?: number;
-  blurPx?: number;
   zIndex?: number;
   ariaHidden?: boolean;
   className?: string;
 }
 
 /**
- * @function ParallaxBackdrop
- * @description
- * Renders a fixed, full-viewport image behind all content, shifted vertically
- * by scroll position and clamped to {@link ParallaxBackdropProps.maxShiftPx}.
+ * Fixed full-viewport image behind the content, shifted by scroll within the overscan.
  *
- * @param {ParallaxBackdropProps} props
- * @param {string} props.src - The source URL of the backdrop image.
- * @param {string} [props.alt=""] - Alternative text for the image (if not aria-hidden).
- * @param {number} [props.intensity=0.05] - Parallax intensity factor (higher = more movement).
- * @param {number} [props.maxShiftPx=48] - Maximum vertical shift in pixels.
- * @param {number} [props.opacity=1] - Opacity of the backdrop image (0 to 1).
- * @param {number} [props.blurPx=0] - CSS blur radius in pixels.
- * @param {number} [props.zIndex] - Explicit CSS z-index override.
- * @param {boolean} [props.ariaHidden=true] - Whether to hide the image from assistive tech.
- * @param {string} [props.className] - Additional CSS classes for the container div.
- *
- * @returns {JSX.Element} The ParallaxBackdrop component.
+ * @component
+ * @param {ParallaxBackdropProps} props - Component props.
+ * @param {string} props.src - Image URL.
+ * @param {string} [props.alt=''] - Alt text, used only when ariaHidden is false.
+ * @param {number} [props.intensity=0.1] - Pixels of shift per pixel scrolled.
+ * @param {number} [props.maxShiftPx] - Shift clamp in px, defaults to the overscan.
+ * @param {number} [props.opacity=1] - Image opacity in [0, 1].
+ * @param {number} [props.zIndex] - CSS z-index override for the container.
+ * @param {boolean} [props.ariaHidden=true] - Hides the image from assistive tech.
+ * @param {string} [props.className] - Extra classes for the container.
+ * @returns {JSX.Element} The backdrop.
  *
  * @example
- * <ParallaxBackdrop
- *   src="/images/fog.webp"
- *   intensity={0.04}
- *   opacity={0.7}
- * />
+ * <ParallaxBackdrop src="/library/images/fog.webp" opacity={0.15} />
  */
 export const ParallaxBackdrop: React.FC<ParallaxBackdropProps> = ({
   src,
   alt = '',
   intensity = 0.1,
-  maxShiftPx = Infinity,
+  maxShiftPx,
   opacity = 1,
-  blurPx = 0,
   zIndex,
   ariaHidden = true,
   className,
 }) => {
   const imgRef = useRef<HTMLImageElement | null>(null);
-
-  const clamp = useMemo(
-    () => (value: number, min: number, max: number) =>
-      Math.min(max, Math.max(min, value)),
-    [],
-  );
+  const lastShift = useRef<number | null>(null);
 
   useViewportSignal(() => {
     const img = imgRef.current;
     if (!img) return;
-    const shift = clamp(-(window.scrollY || 0) * intensity, -maxShiftPx, maxShiftPx);
-    img.style.transform = `translate3d(0, ${shift}px, 0) scale(1.06)`;
+    const limit = maxShiftPx ?? Math.floor(window.innerHeight * OVERSCAN);
+    const shift =
+      Math.round(clamp(-window.scrollY * intensity, -limit, limit) * 10) / 10;
+    if (shift === lastShift.current) return;
+    lastShift.current = shift;
+    img.style.transform = `translate3d(0, ${shift}px, 0) scale(${SCALE})`;
   });
 
   return (
     <div
       aria-hidden={ariaHidden}
       className={`${styles.backdrop} ${className ?? ''}`}
-      style={{
-        opacity,
-        zIndex,
-      }}>
+      style={{ '--backdrop-opacity': opacity, zIndex } as React.CSSProperties}>
       <Image
         className={styles.image}
         ref={imgRef}
         src={src}
         alt={ariaHidden ? '' : alt}
-        style={{ filter: blurPx > 0 ? `blur(${blurPx}px)` : undefined }}
-        unoptimized={true}
-        priority
+        sizes='100vw'
+        fetchPriority='low'
         fill
         draggable={false}
       />

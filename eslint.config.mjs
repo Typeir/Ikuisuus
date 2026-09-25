@@ -68,6 +68,28 @@ const noRawFetch = {
   ],
 };
 
+/**
+ * Files allowed to import `sharp` directly.
+ */
+const rawSharpAllowed = ['src/lib/raster/**'];
+
+/**
+ * Bans bare `sharp` outside the files above.
+ */
+const noRawSharp = {
+  'no-restricted-imports': [
+    'error',
+    {
+      paths: [
+        {
+          name: 'sharp',
+          message: 'Import from @/lib/raster rather than sharp.',
+        },
+      ],
+    },
+  ],
+};
+
 export default [
   { ignores },
   ...nextCoreWebVitals,
@@ -79,5 +101,10 @@ export default [
     files: ['src/**/*.{ts,tsx}'],
     ignores: rawFetchAllowed,
     rules: noRawFetch,
+  },
+  {
+    files: ['src/**/*.{ts,tsx}', 'scripts/**/*.ts', 'foundry/**/*.ts'],
+    ignores: rawSharpAllowed,
+    rules: noRawSharp,
   },
 ];
