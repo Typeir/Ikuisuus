@@ -5,8 +5,10 @@
  */
 
 import {
+    clampTextScale,
     DEFAULT_PERSISTENT_UI_STATE,
     LEGACY_THEME_KEY,
+    MIN_TEXT_SCALE,
     PERSISTED_UI_ACTION_TYPES,
     PERSISTENT_UI_STORAGE_KEY,
 } from '@/lib/types/persistentUiState';
@@ -24,6 +26,19 @@ describe('PersistentUiState types', () => {
 
     it('should have isHydrated as false by default', () => {
       expect(DEFAULT_PERSISTENT_UI_STATE.isHydrated).toBe(false);
+    });
+  });
+
+  describe('clampTextScale', () => {
+    it('should floor at half the base size', () => {
+      expect(MIN_TEXT_SCALE).toBe(0.5);
+      expect(clampTextScale(0.1)).toBe(0.5);
+      expect(clampTextScale(0.5)).toBe(0.5);
+    });
+
+    it('should leave anything above the floor alone, with no ceiling', () => {
+      expect(clampTextScale(0.75)).toBe(0.75);
+      expect(clampTextScale(40)).toBe(40);
     });
   });
 

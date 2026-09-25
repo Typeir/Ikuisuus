@@ -100,6 +100,15 @@ describe('persistentUiStorage', () => {
       expect(state.proseMeasure).toBe(100);
     });
 
+    it('should floor a stored text scale at half the base size', () => {
+      localStorage.setItem(
+        PERSISTENT_UI_STORAGE_KEY,
+        JSON.stringify({ textScale: 0.1 }),
+      );
+
+      expect(readPersistedState([]).textScale).toBe(0.5);
+    });
+
     it('should survive a corrupt payload', () => {
       localStorage.setItem(PERSISTENT_UI_STORAGE_KEY, '{ not json');
 

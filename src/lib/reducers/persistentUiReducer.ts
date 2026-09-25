@@ -23,6 +23,7 @@
  */
 
 import {
+    clampTextScale,
     DEFAULT_PERSISTENT_UI_STATE,
     PERSISTED_UI_ACTION_TYPES,
     PersistentUiAction,
@@ -122,7 +123,7 @@ export function persistentUiReducer(
     case PERSISTED_UI_ACTION_TYPES.SET_TEXT_SCALE: {
       return {
         ...state,
-        textScale: action.payload.scale,
+        textScale: clampTextScale(action.payload.scale),
       };
     }
 

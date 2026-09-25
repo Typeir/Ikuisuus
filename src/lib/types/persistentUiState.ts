@@ -412,6 +412,24 @@ export type PersistentUiAction =
 export const DEFAULT_TEXT_SCALE = 1;
 
 /**
+ * Smallest text scale a reader can set, half the base size.
+ *
+ * @constant
+ */
+export const MIN_TEXT_SCALE = 0.5;
+
+/**
+ * Floors a text scale at {@link MIN_TEXT_SCALE}, with no ceiling.
+ *
+ * @function clampTextScale
+ * @param {number} scale - Requested multiplier
+ * @returns {number} The multiplier, never below the floor
+ */
+export function clampTextScale(scale: number): number {
+  return Math.max(MIN_TEXT_SCALE, scale);
+}
+
+/**
  * Article line length in characters when the reader has not set one.
  *
  * @constant

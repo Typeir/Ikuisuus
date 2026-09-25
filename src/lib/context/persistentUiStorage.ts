@@ -15,6 +15,7 @@ import { isStaticContentRoute } from '@/modules/library/application/selectors/is
 import {
   ASPECT_DISPLAY_MODES,
   type AspectDisplayMode,
+  clampTextScale,
   DEFAULT_PROSE_MEASURE,
   DEFAULT_SECTION_DECOR,
   DEFAULT_STREAM_TEXT,
@@ -134,7 +135,9 @@ export function readPersistedState(
       ) {
         aspectDisplay = parsed.aspectDisplay;
       }
-      textScale = readPositiveNumber(parsed.textScale, DEFAULT_TEXT_SCALE);
+      textScale = clampTextScale(
+        readPositiveNumber(parsed.textScale, DEFAULT_TEXT_SCALE),
+      );
       proseMeasure = readPositiveNumber(
         parsed.proseMeasure,
         DEFAULT_PROSE_MEASURE,

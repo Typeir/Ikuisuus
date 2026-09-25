@@ -47,6 +47,14 @@ describe('PreferencesModal', () => {
     expect(field.value).toBe('100');
   });
 
+  it('should floor the text size input at fifty percent with no ceiling', () => {
+    renderModal();
+
+    const field = screen.getByLabelText('textSize') as HTMLInputElement;
+    expect(field.getAttribute('aria-valuemin')).toBe('50');
+    expect(field.getAttribute('aria-valuemax')).toBeNull();
+  });
+
   it('should show the shipped measure default', () => {
     renderModal();
 

@@ -21,6 +21,7 @@ import {
 import {
   DEFAULT_PROSE_MEASURE,
   DEFAULT_TEXT_SCALE,
+  MIN_TEXT_SCALE,
 } from '@/lib/types/persistentUiState';
 import { PipCheckbox } from '@/modules/character-builder/presentation/components/PipCheckbox';
 import UnitSwitcher from '@/modules/library/presentation/components/UnitSwitcher/UnitSwitcher';
@@ -98,6 +99,7 @@ export function PreferencesModal({
                 )
               }
               ariaLabel={t('textSize')}
+              min={MIN_TEXT_SCALE * SCALE_AS_PERCENT}
               showChevrons
               step={5}
             />

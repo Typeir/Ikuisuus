@@ -32,6 +32,7 @@ import {
   DEFAULT_SECTION_DECOR,
   DEFAULT_TEXT_SCALE,
   LEGACY_THEME_KEY,
+  MIN_TEXT_SCALE,
   PERSISTENT_UI_STORAGE_KEY,
 } from '../types/persistentUiState';
 
@@ -110,7 +111,7 @@ export function getPersistentUiInitScript(): string {
             if (typeof state.constrainedHue === 'boolean') {
               constrainedHue = state.constrainedHue;
             }
-            textScale = positiveNumber(state.textScale, textScale);
+            textScale = Math.max(${MIN_TEXT_SCALE}, positiveNumber(state.textScale, textScale));
             proseMeasure = positiveNumber(state.proseMeasure, proseMeasure);
           } catch (e) {
           }

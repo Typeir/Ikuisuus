@@ -94,6 +94,16 @@ describe('persistentUiScript', () => {
       expect(root.getAttribute('data-constrained-hue')).toBe('false');
     });
 
+    it('floors a stored text scale at half before first paint', () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ textScale: 0.1 }));
+
+      runInitScript();
+
+      expect(
+        document.documentElement.style.getPropertyValue('--text-scale-user'),
+      ).toBe('0.5');
+    });
+
     it('survives a corrupt store and still lifts the body', () => {
       localStorage.setItem(STORAGE_KEY, '{not json');
 

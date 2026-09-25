@@ -82,6 +82,22 @@ describe('persistentUiReducer', () => {
     });
   });
 
+  describe('SET_TEXT_SCALE', () => {
+    it('should set the scale and floor it at half', () => {
+      const raised = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {
+        type: PERSISTED_UI_ACTION_TYPES.SET_TEXT_SCALE,
+        payload: { scale: 3 },
+      });
+      expect(raised.textScale).toBe(3);
+
+      const floored = persistentUiReducer(DEFAULT_PERSISTENT_UI_STATE, {
+        type: PERSISTED_UI_ACTION_TYPES.SET_TEXT_SCALE,
+        payload: { scale: 0.05 },
+      });
+      expect(floored.textScale).toBe(0.5);
+    });
+  });
+
   describe('SET_STREAM_TEXT', () => {
     it('should ship the ticker drawn and drop it on request', () => {
       expect(DEFAULT_PERSISTENT_UI_STATE.streamText).toBe(true);
