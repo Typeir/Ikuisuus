@@ -106,6 +106,14 @@ export class MonsterEntity {
   @OrmEmbedded({ entity: 'MonsterHPEmbed', prefix: 'hp_', object: false })
   hp = new MonsterHPEmbed();
 
+  /** @property {string | null} poise - Poise as written */
+  @OrmProperty({ type: 'string', columnType: 'text', nullable: true })
+  poise?: string | null;
+
+  /** @property {string | null} stability - Stability as written */
+  @OrmProperty({ type: 'string', columnType: 'text', nullable: true })
+  stability?: string | null;
+
   @OrmEmbedded({ entity: 'MonsterSpeedEmbed', prefix: 'speed_', object: false })
   speed = new MonsterSpeedEmbed();
 

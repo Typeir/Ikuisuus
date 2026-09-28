@@ -57,6 +57,8 @@ const entityRow = {
   tierBonus: 4,
   defence: { value: 17, deflect: '7', dodge: '0', notes: 'natural armor', raw: null },
   hp: { average: 135, formula: '18d10+36', raw: null },
+  poise: '96',
+  stability: '×3',
   speed: {
     raw: '10 ft., swim 40 ft.',
     walk: 10,
@@ -115,6 +117,8 @@ describe('pgMonsterRepository', () => {
         cr: '10',
         defence: { value: 17, deflect: '7', dodge: '0', notes: 'natural armor' },
         hp: { average: 135, formula: '18d10+36' },
+        poise: '96',
+        stability: '×3',
         speed: { raw: '10 ft., swim 40 ft.', walk: 10, swim: 40 },
         scores: { str: 21, wis: 15 },
         saves: { wis: 6, cha: 8 },

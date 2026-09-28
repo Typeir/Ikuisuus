@@ -205,3 +205,140 @@ describe('parseMonsterSource — statlets', () => {
     }
   });
 });
+
+const SLOT_SHEET = `---
+source: Ikuisuus
+contentType: monsters
+---
+
+# Hive Mother
+
+<Monster
+  size="Large"
+  type="Aberration"
+  alignment="Neutral Evil"
+  defence="16 (natural)"
+  deflect="5"
+  dodge="1"
+  hitPoints="120 ([% 16d10 +32 %])"
+  poise="54"
+  stability="×3"
+  speed="[= 6 stride =]"
+  str="18"
+  dex="12"
+  con="14"
+  wis="12"
+  cha="8"
+  lethality="8"
+  xp="3,900">
+
+## Traits
+
+<Trait>
+
+#### Brood Link
+
+The mother knows the location of every drone.
+
+</Trait>
+
+<Statlet
+  kind="creature"
+  size="Small"
+  type="Aberration"
+  defence="13"
+  deflect="1"
+  dodge="2"
+  hitPoints="20 ([% 4d6 +6 %])"
+  speed="[= 8 stride =], fly [= 8 stride =]"
+  str="8"
+  dex="16"
+  con="12"
+  wis="10"
+  cha="4"
+  resistances="Poison">
+
+##### Drone
+
+<Attack accuracy="+5" reach="[= 1 stride =]">
+
+###### Sting
+
+On a hit, **5 ([% 1d4 +3 poison %])**.
+
+</Attack>
+
+<Trait>
+
+###### Deathburst
+
+When reduced to 0 HP, creatures within [= 1 stride =] take [% 1d6 chemical %].
+
+</Trait>
+
+</Statlet>
+
+---
+
+<Statlet
+  kind="object"
+  defence="12"
+  hitPoints="60"
+  damageThreshold="10"
+  immunities="Poison, Psychic">
+
+##### Wax Comb
+
+<Trait>
+
+###### Sticky
+
+A creature that touches the comb is restrained until it succeeds on a DC 14 Strength save.
+
+</Trait>
+
+</Statlet>
+
+## Actions
+
+<Action>
+
+#### Swarm Call
+
+Every drone within [= 12 stride =] moves up to its speed.
+
+</Action>
+
+</Monster>
+`;
+
+describe('parseMonsterSource — slot-form statlets', () => {
+  const records = () =>
+    parseMonsterSource(SLOT_SHEET, PATH, sharedData) as Array<Record<string, unknown>>;
+
+  it('should emit the sheet creature, the creature statlet and the object statlet', () => {
+    const [mother, drone, comb] = records();
+    expect(records().map((r) => r.subSlug)).toEqual(['hive-mother', 'drone', 'hive-wax-comb']);
+    expect(drone.link).toBe('/library/monsters/hive#drone');
+    expect(drone.size).toBe('small');
+    expect(drone.defence).toMatchObject({ value: 13, deflect: '1', dodge: '2' });
+    expect(drone.scores).toMatchObject({ dex: 16, cha: 4 });
+    expect(comb.kind).toBe('object');
+    expect(comb.damageThreshold).toBe(10);
+    expect(mother.title).toBe('Hive Mother');
+  });
+
+  it('should read Poise and Stability off the sheet creature as written', () => {
+    const [mother, drone] = records();
+    expect(mother.poise).toBe('54');
+    expect(mother.stability).toBe('×3');
+    expect(drone.poise).toBeUndefined();
+  });
+
+  it('should give each statlet its own features and keep them off the sheet creature', () => {
+    const [mother, drone, comb] = records() as Array<{ features: Array<{ name: string }> }>;
+    expect(drone.features.map((f) => f.name)).toEqual(['Sting', 'Deathburst']);
+    expect(comb.features.map((f) => f.name)).toEqual(['Sticky']);
+    expect(mother.features.map((f) => f.name)).toEqual(['Brood Link', 'Swarm Call']);
+  });
+});

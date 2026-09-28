@@ -141,13 +141,13 @@ function parseTableRowCells(line: string): string[] {
 }
 
 /**
- * Extracts Defence, HP, Speed and Damage Threshold from the stat block table.
+ * Extracts Defence, HP, Poise, Stability, Speed and Damage Threshold from the stat block table.
  *
  * @description Columns are read by their header names, so a creature's
- * Defence, Deflect, Dodge, Hit Points, Speed table and an object's Defence,
- * Hit Points, Damage Threshold table both parse
+ * Defence, Deflect, Dodge, Hit Points, Poise, Stability, Speed table and an
+ * object's Defence, Hit Points, Damage Threshold table both parse
  * @param {string[]} lines - Array of document lines
- * @returns {{ defence?: object, hp?: object, speed?: SpeedData, damageThreshold?: string }} Parsed combat stats
+ * @returns {{ defence?: object, hp?: object, poise?: string, stability?: string, speed?: SpeedData, damageThreshold?: string }} Parsed combat stats
  */
 function findDefenceHpSpeed(lines: string[]) {
   const idx = lines.findIndex((l) => MONSTER.defenceHeader.test(l));
@@ -194,6 +194,8 @@ function findDefenceHpSpeed(lines: string[]) {
       hpAverage !== undefined
         ? { average: hpAverage, formula: hpFormula, raw: hpRaw }
         : undefined,
+    poise: cell('poise') || undefined,
+    stability: cell('stability') || undefined,
     speed: parseSpeed(cell('speed') ?? ''),
     damageThreshold: cell('damage threshold'),
   };
@@ -765,6 +767,8 @@ function parseStatBlockSection(
     alignment: italicMeta.alignment?.toLowerCase(),
     defence: headerStats.defence,
     hp: headerStats.hp,
+    poise: headerStats.poise,
+    stability: headerStats.stability,
     speed: headerStats.speed,
     scores: abilities,
     saves: savingThrows,

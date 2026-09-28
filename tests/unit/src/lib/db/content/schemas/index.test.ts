@@ -54,7 +54,7 @@ describe('schemas/index barrel', () => {
     expect(hp.average).toBe(10);
     expect(speed.modes.walk).toBe(30);
     expect(scores.str.score).toBe(10);
-    expect(senses.raw).toContain('Perception');
+    expect(senses.raw).toContain('Descry');
     expect(idx.slug).toBe('test');
   });
 

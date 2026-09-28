@@ -292,4 +292,109 @@ describe('unslotMonster attacks and spell lists', () => {
     expect(text).toContain('\n##### Lash\n');
     expect(text).not.toMatch(/<\/?(Attack|SpellList|Column|Monster|Action)/);
   });
+
+  it('writes Poise and Stability into the stat table', () => {
+    const text = unslotMonster(
+      '<Monster\n  size="Large"\n  type="Beast"\n  alignment="Unaligned"\n  defence="14"\n  hitPoints="30"\n  poise="21"\n  stability="×2"\n  speed="[= 6 stride =]">\n\n</Monster>\n',
+    );
+    expect(text).toContain(
+      '| **Defence** | **Deflect** | **Dodge** | **Hit Points** | **Poise** | **Stability** | **Speed** |',
+    );
+    expect(text).toContain('| 14 |  |  | 30 | 21 | ×2 | [= 6 stride =] |');
+  });
+});
+
+describe('unslotMonster statlets', () => {
+  const STATLETS = [
+    '<Statlet',
+    '  kind="creature"',
+    '  size="Small"',
+    '  type="Aberration"',
+    '  defence="13"',
+    '  deflect="1"',
+    '  dodge="2"',
+    '  hitPoints="20"',
+    '  str="8"',
+    '  dex="16"',
+    '  con="12"',
+    '  wis="10"',
+    '  cha="4"',
+    '  resistances="Poison">',
+    '',
+    '##### Drone',
+    '',
+    '<Trait>',
+    '',
+    '###### Deathburst',
+    '',
+    'When reduced to 0 HP, creatures within [= 1 stride =] take [% 1d6 chemical %].',
+    '',
+    'The burst leaves a stain.',
+    '',
+    '</Trait>',
+    '',
+    '<Attack accuracy="+5" reach="[= 1 stride =]" cost="1 Reaction">',
+    '',
+    '###### Sting',
+    '',
+    'On a hit, **5 ([% 1d4 +3 poison %])**.',
+    '',
+    '</Attack>',
+    '',
+    '</Statlet>',
+    '',
+    '<Statlet',
+    '  kind="object"',
+    '  defence="12"',
+    '  hitPoints="60"',
+    '  damageThreshold="10"',
+    '  material="Wax">',
+    '',
+    '###### Wax Comb',
+    '',
+    '<Trait>',
+    '',
+    '###### Sticky',
+    '',
+    'A creature that touches the comb is restrained.',
+    '',
+    '</Trait>',
+    '',
+    '</Statlet>',
+    '',
+  ].join('\n');
+
+  it('quotes each statlet in place, keeping line count', () => {
+    const text = unslotMonster(STATLETS);
+    const lines = text.split('\n');
+    expect(lines.length).toBe(STATLETS.split('\n').length);
+    expect(lines[0]).toBe('> #### Drone');
+    expect(lines[2]).toBe('> _Small Aberration_');
+    expect(text).not.toMatch(/<\/?(Statlet|Trait|Attack)/);
+  });
+
+  it('writes one bullet per feature on its heading line, prefixed by section', () => {
+    const lines = unslotMonster(STATLETS).split('\n');
+    const source = STATLETS.split('\n');
+    expect(lines[source.indexOf('###### Deathburst')]).toBe(
+      '> - **Deathburst.** When reduced to 0 HP, creatures within [= 1 stride =] take [% 1d6 chemical %]. The burst leaves a stain.',
+    );
+    expect(lines[source.indexOf('###### Sting')]).toBe(
+      '> - **Reactions — Sting.** Accuracy +5, reach [= 1 stride =], one creature. On a hit, **5 ([% 1d4 +3 poison %])**.',
+    );
+  });
+
+  it('gives an object the damage threshold table and its material', () => {
+    const text = unslotMonster(STATLETS);
+    expect(text).toContain('> #### Wax Comb');
+    expect(text).toContain(
+      '> | **Defence** | **Deflect** | **Dodge** | **Hit Points** | **Damage Threshold** |',
+    );
+    expect(text).toContain('> - **Material**: Wax');
+    expect(text.match(/\| STR \|/g)).toHaveLength(1);
+  });
+
+  it('leaves a file without monster or statlet tags untouched', () => {
+    expect(unslotMonster('# Plain\n\nText.')).toBe('# Plain\n\nText.');
+  });
 });

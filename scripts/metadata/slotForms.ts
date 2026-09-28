@@ -205,14 +205,24 @@ function restoreAttacks(lines: string[]): void {
     if (at < 0) break;
     const tag = readHostTag(lines, at);
     if (!tag) break;
-    const reach = textAttr(tag, 'reach');
-    const range = textAttr(tag, 'range');
-    const span = [reach && `reach ${reach}`, range && `range ${range}`].filter(Boolean).join(' or ');
-    const parts = [`Accuracy ${textAttr(tag, 'accuracy') ?? ''}`.trim(), span, textAttr(tag, 'targets') ?? 'one creature'];
-    splice(lines, tag.start, tag.end, [`${parts.filter(Boolean).join(', ')}.`]);
+    splice(lines, tag.start, tag.end, [attackSentence(tag)]);
     from = tag.start + 1;
   }
   for (let i = 0; i < lines.length; i += 1) if (TABLE_LINE.test(lines[i])) lines[i] = '';
+}
+
+/**
+ * Accuracy sentence of an `<Attack>` tag.
+ *
+ * @param {HostTag} tag - Attack tag
+ * @returns {string} Sentence such as `Accuracy +9, reach 1 stride, one creature.`
+ */
+function attackSentence(tag: HostTag): string {
+  const reach = textAttr(tag, 'reach');
+  const range = textAttr(tag, 'range');
+  const span = [reach && `reach ${reach}`, range && `range ${range}`].filter(Boolean).join(' or ');
+  const parts = [`Accuracy ${textAttr(tag, 'accuracy') ?? ''}`.trim(), span, textAttr(tag, 'targets') ?? 'one creature'];
+  return `${parts.filter(Boolean).join(', ')}.`;
 }
 
 /**
@@ -230,15 +240,111 @@ function tierBonusFor(lethality: string): number | null {
 }
 
 /**
+ * Kind of stat block a slot tag describes.
+ */
+type StatKind = 'creature' | 'object';
+
+/**
+ * Stat table columns per kind, as `[slot, header]` pairs.
+ */
+const STAT_COLUMNS: Record<StatKind, ReadonlyArray<readonly [string, string]>> = {
+  creature: [
+    ['defence', 'Defence'],
+    ['deflect', 'Deflect'],
+    ['dodge', 'Dodge'],
+    ['hitPoints', 'Hit Points'],
+    ['poise', 'Poise'],
+    ['stability', 'Stability'],
+    ['speed', 'Speed'],
+  ],
+  object: [
+    ['defence', 'Defence'],
+    ['deflect', 'Deflect'],
+    ['dodge', 'Dodge'],
+    ['hitPoints', 'Hit Points'],
+    ['damageThreshold', 'Damage Threshold'],
+  ],
+};
+
+/**
+ * Stat bullets per kind, as `[slot, label]` pairs.
+ */
+const STAT_BULLETS: Record<StatKind, ReadonlyArray<readonly [string, string]>> = {
+  creature: [
+    ['saves', 'Saving Throws'],
+    ['skills', 'Skills'],
+    ['resistances', 'Damage Resistances'],
+    ['vulnerabilities', 'Damage Vulnerabilities'],
+    ['immunities', 'Damage Immunities'],
+    ['conditionImmunities', 'Condition Immunities'],
+    ['senses', 'Senses'],
+    ['languages', 'Languages'],
+  ],
+  object: [
+    ['size', 'Size'],
+    ['material', 'Material'],
+    ['resistances', 'Damage Resistances'],
+    ['vulnerabilities', 'Damage Vulnerabilities'],
+    ['immunities', 'Damage Immunities'],
+    ['conditionImmunities', 'Condition Immunities'],
+  ],
+};
+
+/**
+ * Stat table, ability table and stat bullets of a slot tag, on the v1 form.
+ *
+ * @param {(name: string) => string | undefined} get - Attribute reader
+ * @param {StatKind} kind - Block kind; an object has no ability table or Lethality
+ * @returns {string[]} Header lines
+ */
+function statLines(get: (name: string) => string | undefined, kind: StatKind): string[] {
+  const header: string[] = [];
+  const columns = STAT_COLUMNS[kind];
+  if (columns.some(([slot]) => get(slot) !== undefined)) {
+    header.push(
+      `| ${columns.map(([, label]) => `**${label}**`).join(' | ')} |`,
+      `| ${columns.map(() => '---').join(' | ')} |`,
+      `| ${columns.map(([slot]) => get(slot) ?? '').join(' | ')} |`,
+      '',
+    );
+  }
+
+  const scores = kind === 'creature' ? ['str', 'dex', 'con', 'wis', 'cha'].map(get) : [];
+  if (scores.some((score) => score !== undefined)) {
+    header.push(
+      '| STR | DEX | CON | WIS | CHA |',
+      '| --- | --- | --- | --- | --- |',
+      `| ${scores.map((score) => score ?? '').join(' | ')} |`,
+      '',
+    );
+  }
+
+  const lethality = kind === 'creature' ? get('lethality') : undefined;
+  if (lethality) {
+    const xp = get('xp');
+    header.push(`- **Lethality**: ${lethality}${xp ? ` (${xp} XP)` : ''}`);
+  }
+  const derived = lethality ? tierBonusFor(lethality) : null;
+  const tierBonus = kind === 'creature' ? (get('tierBonus') ?? (derived === null ? undefined : `+${derived}`)) : undefined;
+  if (tierBonus) header.push(`- **Tier Bonus**: ${tierBonus}`);
+
+  for (const [slot, label] of STAT_BULLETS[kind]) {
+    const value = get(slot);
+    if (value !== undefined) header.push(`- **${label}**: ${value}`);
+  }
+  return header;
+}
+
+/**
  * Restores a monster's identity line, defence and ability tables and header
- * bullets from each `<Monster>` tag on the page.
+ * bullets from each `<Monster>` tag, and each `<Statlet>` as a quoted block.
  *
  * @param {string} text - File text
  * @returns {string} Text on the v1 form
  */
 export function unslotMonster(text: string): string {
   const lines = text.split('\n');
-  if (findTag(lines, 'Monster') < 0) return text;
+  if (findTag(lines, 'Monster') < 0 && findTag(lines, 'Statlet') < 0) return text;
 
   let from = 0;
   for (;;) {
@@ -253,61 +359,108 @@ export function unslotMonster(text: string): string {
     const type = get('type');
     const alignment = get('alignment');
     if (size && type && alignment) header.push(`_${size} ${type}, ${alignment}_`, '');
-
-    const defence = get('defence');
-    const deflect = get('deflect');
-    const dodge = get('dodge');
-    const hitPoints = get('hitPoints');
-    const speed = get('speed');
-    if (defence || hitPoints || speed) {
-      header.push(
-        '| **Defence** | **Deflect** | **Dodge** | **Hit Points** | **Speed** |',
-        '| --- | --- | --- | --- | --- |',
-        `| ${defence ?? ''} | ${deflect ?? ''} | ${dodge ?? ''} | ${hitPoints ?? ''} | ${speed ?? ''} |`,
-        '',
-      );
-    }
-
-    const scores = ['str', 'dex', 'con', 'wis', 'cha'].map(get);
-    if (scores.some((score) => score !== undefined)) {
-      header.push(
-        '| STR | DEX | CON | WIS | CHA |',
-        '| --- | --- | --- | --- | --- |',
-        `| ${scores.map((score) => score ?? '').join(' | ')} |`,
-        '',
-      );
-    }
-
-    const lethality = get('lethality');
-    if (lethality) {
-      const xp = get('xp');
-      header.push(`- **Lethality**: ${lethality}${xp ? ` (${xp} XP)` : ''}`);
-      const derived = tierBonusFor(lethality);
-      const tierBonus = get('tierBonus') ?? (derived === null ? undefined : `+${derived}`);
-      if (tierBonus) header.push(`- **Tier Bonus**: ${tierBonus}`);
-    }
-    const bullets: Array<[string, string]> = [
-      ['saves', 'Saving Throws'],
-      ['skills', 'Skills'],
-      ['resistances', 'Damage Resistances'],
-      ['vulnerabilities', 'Damage Vulnerabilities'],
-      ['immunities', 'Damage Immunities'],
-      ['conditionImmunities', 'Condition Immunities'],
-      ['senses', 'Senses'],
-      ['languages', 'Languages'],
-    ];
-    for (const [slot, label] of bullets) {
-      const value = get(slot);
-      if (value !== undefined) header.push(`- **${label}**: ${value}`);
-    }
+    header.push(...statLines(get, 'creature'));
 
     splice(lines, tag.start, tag.end, header);
     from = tag.start + Math.max(header.length, tag.end - tag.start + 1);
   }
   for (let i = 0; i < lines.length; i += 1) if (/^<\/Monster>\s*$/.test(lines[i])) lines[i] = '';
+  unslotStatlets(lines);
   restoreAttacks(lines);
   blankBlockTags(lines);
   return lines.join('\n');
+}
+
+const STATLET_CLOSE = /^<\/Statlet>\s*$/;
+const HEADING_LINE = /^#{1,6}\s+\**(.+?)\**\s*$/;
+const FEATURE_BLOCK = /^<(?:Trait|Action|Attack|Feature)\b/;
+const STATLET_TAG = /^<\/?(?:Trait|Action|Attack|Feature|Overcast|SpellList|Column|Row)\b/;
+
+/**
+ * Section prefix a statlet feature bullet carries, from its block tag and cost.
+ *
+ * @param {HostTag | null} block - Block tag holding the feature
+ * @returns {string} `''` for a trait, else `Actions — `, `Minor Actions — ` or `Reactions — `
+ */
+function sectionPrefix(block: HostTag | null): string {
+  if (!block || block.name === 'Trait') return '';
+  const cost = textAttr(block, 'cost') ?? '';
+  if (/reaction/i.test(cost)) return 'Reactions — ';
+  if (/minor/i.test(cost)) return 'Minor Actions — ';
+  return 'Actions — ';
+}
+
+/**
+ * One statlet feature as the single bullet line the quoted-block reader parses.
+ *
+ * @param {string[]} lines - File lines
+ * @param {number} heading - Feature heading line
+ * @param {number} until - Exclusive end of the feature body
+ * @param {number} floor - Line above which the block tag is not searched
+ * @returns {string} Bullet such as `- **Actions — Bite.** Accuracy +5, reach 1 stride, one creature. …`
+ */
+function featureBullet(lines: string[], heading: number, until: number, floor: number): string {
+  let block: HostTag | null = null;
+  for (let i = heading - 1; i > floor; i -= 1) {
+    if (FEATURE_BLOCK.test(lines[i])) {
+      block = readHostTag(lines, i);
+      break;
+    }
+  }
+  const body: string[] = [];
+  for (let i = heading + 1; i < until; i += 1) {
+    if (STATLET_TAG.test(lines[i])) {
+      const tag = lines[i].startsWith('</') ? null : readHostTag(lines, i);
+      if (tag) i = tag.end;
+      continue;
+    }
+    if (lines[i].trim()) body.push(lines[i].trim());
+  }
+  const lead = block?.name === 'Attack' ? attackSentence(block) : '';
+  const name = lines[heading].match(HEADING_LINE)?.[1].trim() ?? '';
+  return `- **${sectionPrefix(block)}${name}.** ${[lead, ...body].filter(Boolean).join(' ')}`.trimEnd();
+}
+
+/**
+ * Writes each `<Statlet>` back as the quoted block the generator reads, keeping every feature on its own line number.
+ *
+ * @param {string[]} lines - File lines, mutated
+ */
+function unslotStatlets(lines: string[]): void {
+  let from = 0;
+  for (;;) {
+    const at = findTag(lines, 'Statlet', from);
+    if (at < 0) break;
+    const tag = readHostTag(lines, at);
+    if (!tag) break;
+    let close = tag.end + 1;
+    while (close < lines.length && !STATLET_CLOSE.test(lines[close])) close += 1;
+
+    const headings: number[] = [];
+    for (let i = tag.end + 1; i < close; i += 1) if (HEADING_LINE.test(lines[i])) headings.push(i);
+    const [title, ...features] = headings;
+    const get = (name: string): string | undefined => textAttr(tag, name);
+    const kind: StatKind = get('kind') === 'creature' ? 'creature' : 'object';
+
+    const block: string[] = [];
+    if (title !== undefined) block.push(`#### ${lines[title].match(HEADING_LINE)?.[1].trim()}`, '');
+    const size = get('size');
+    if (kind === 'creature' && size) {
+      const alignment = get('alignment');
+      block.push(`_${[size, get('type')].filter(Boolean).join(' ')}${alignment ? `, ${alignment}` : ''}_`, '');
+    }
+    block.push(...statLines(get, kind));
+    features.forEach((line, index) => {
+      while (block.length < line - tag.start) block.push('');
+      block.push(featureBullet(lines, line, features[index + 1] ?? close, index === 0 ? title : features[index - 1]));
+    });
+    while (block.length < close - tag.start) block.push('');
+
+    const quoted = block.map((line) => (line ? `> ${line}` : '>'));
+    if (close < lines.length) splice(lines, tag.start, close, [...quoted, '']);
+    else splice(lines, tag.start, close - 1, quoted);
+    from = tag.start + quoted.length;
+  }
 }
 
 /**

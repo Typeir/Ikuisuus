@@ -129,6 +129,8 @@ export interface MonsterSenses {
  * @property {string} [alignment] - Alignment (lowercase
  * @property {MonsterDefence} [defence] - Defence, with its Deflect and Dodge as written
  * @property {MonsterHP} [hp] - Hit Points
+ * @property {string} [poise] - Poise as written (e.g. "184")
+ * @property {string} [stability] - Stability as written (e.g. "×4")
  * @property {MonsterSpeed} [speed] - Movement Speed
  * @property {MonsterScores} [scores] - Flat ability scores matching MonsterScoreEmbed
  * @property {MonsterSaves} [saves] - Flat saving throw bonuses matching MonsterSaveEmbed
@@ -155,6 +157,8 @@ export interface MonsterMetadata extends BaseMetadata {
   alignment?: string;
   defence?: MonsterDefence;
   hp?: MonsterHP;
+  poise?: string;
+  stability?: string;
   speed?: MonsterSpeed;
   scores?: MonsterScores;
   saves?: MonsterSaves;
