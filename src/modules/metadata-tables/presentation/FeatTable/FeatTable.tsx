@@ -133,13 +133,11 @@ export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
         key: 'title',
         label: tColumns('feat'),
         sortable: true,
-        width: '15%',
       },
       {
         key: 'category',
         label: tColumns('category'),
         sortable: true,
-        width: '11%',
         filterable: true,
         filterType: 'select',
         getValue: (row) => (row as FeatMetadata).category ?? '',
@@ -157,7 +155,7 @@ export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
         key: 'prerequisite',
         label: tColumns('prerequisite'),
         sortable: true,
-        width: '18%',
+        wrap: true,
         getValue: (row) =>
           toPlainSummary(prerequisiteSource(row as FeatMetadata)),
         render: (_value, row) => (
@@ -172,7 +170,6 @@ export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
         key: 'repeatable',
         label: tColumns('repeatable'),
         sortable: true,
-        width: '12%',
         filterable: true,
         filterType: 'select',
         getValue: (row) =>
@@ -184,7 +181,7 @@ export default function FeatTable({ locale: localeProp }: FeatTableProps = {}) {
         key: 'description',
         label: tColumns('summary'),
         sortable: false,
-        width: '30%',
+        wrap: true,
         getValue: (row) =>
           toPlainSummary(String((row as FeatMetadata).description ?? '')),
         render: (_value, row) => (

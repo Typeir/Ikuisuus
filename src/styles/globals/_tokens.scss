@@ -32,6 +32,13 @@
   --font-headings: var(--font-junicode), 'Times New Roman', Times, serif;
 }
 
+/* Table text sizes, 11px and 10px at the 14px reference density. */
+:root {
+  --table-font-size: calc(11rem / 14);
+  --table-font-size-s: calc(10rem / 14);
+  --table-wrap-min-width: 10em;
+}
+
 /* Safe-area insets. */
 :root {
   --safe-area-top: env(safe-area-inset-top, 0px);

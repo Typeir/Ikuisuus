@@ -417,4 +417,21 @@ describe('MetadataTable', () => {
     expect(options[2]).toHaveTextContent('uncommon');
     expect(options[3]).toHaveTextContent('exotic');
   });
+
+  it('marks only wrap columns as wrapping cells', () => {
+    const cols: ColumnConfig[] = [
+      { key: 'title', label: 'Name' },
+      { key: 'description', label: 'Summary', wrap: true },
+    ];
+    render(
+      <MetadataTable
+        data={[{ slug: 'a', title: 'Item A', description: 'Long text' }]}
+        columns={cols}
+      />,
+    );
+    const titleCell = screen.getByText('Item A').closest('td');
+    const summaryCell = screen.getByText('Long text').closest('td');
+    expect(titleCell?.className ?? '').not.toMatch(/wrap/);
+    expect(summaryCell?.className).toMatch(/wrap/);
+  });
 });

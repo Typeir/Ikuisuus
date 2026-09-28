@@ -27,6 +27,7 @@ import type { CompileOptions } from '../../domain/compileOptions';
 import { buildMdxOptions } from './compileUtils';
 import rehypeAspects from './rehypeAspects';
 import rehypeSectionize from './rehypeSectionize';
+import rehypeTableColumns from './rehypeTableColumns';
 
 /**
  * Compile MDX using file-wide (static) imports.
@@ -72,6 +73,7 @@ export async function compileStatic(opts: CompileOptions) {
           ],
           rehypePlugins: [
             rehypeKatex,
+            rehypeTableColumns,
             [rehypeSectionize, { entryComponents: BLOCK_COMPONENTS }],
             [rehypeAspects, aspects],
           ],

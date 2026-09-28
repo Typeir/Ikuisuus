@@ -77,11 +77,10 @@
       padding: 0.25rem 0;
     }
     .table {
-      font-size: 0.78rem;
+      font-size: var(--table-font-size-s);
     }
     .table thead th {
       padding: 0.35rem 0.6rem;
-      font-size: 0.68rem;
     }
     .table .headerContent {
       gap: 0.3rem;

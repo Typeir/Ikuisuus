@@ -22,6 +22,7 @@ import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import type { CompileOptions } from '../../domain/compileOptions';
+import rehypeTableColumns from './rehypeTableColumns';
 
 /**
  * Result shape returned by all compile functions.
@@ -78,7 +79,7 @@ function pluginOptions(locale: string) {
       remarkUnit,
       remarkKeyword,
     ],
-    rehypePlugins: [rehypeKatex],
+    rehypePlugins: [rehypeKatex, rehypeTableColumns],
     outputFormat: 'function-body' as const,
   };
 }

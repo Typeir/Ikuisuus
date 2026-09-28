@@ -70,6 +70,7 @@ export async function importAllAsync() {
     remarkMathMod,
     rehypeKatexMod,
     rehypeSectionizeMod,
+    rehypeTableColumnsMod,
   ] = await Promise.all([
     import('next-mdx-remote-client/rsc'),
     import('./rehypeAspects'),
@@ -82,6 +83,7 @@ export async function importAllAsync() {
     import('remark-math'),
     import('rehype-katex'),
     import('./rehypeSectionize'),
+    import('./rehypeTableColumns'),
   ]);
 
   return {
@@ -99,5 +101,6 @@ export async function importAllAsync() {
     rehypeKatex: (rehypeKatexMod as any).default ?? rehypeKatexMod,
     rehypeSectionize:
       (rehypeSectionizeMod as any).default ?? rehypeSectionizeMod,
+    rehypeTableColumns: rehypeTableColumnsMod.default,
   };
 }

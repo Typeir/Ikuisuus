@@ -47,6 +47,7 @@ export async function compileDynamic(opts: CompileOptions) {
     remarkMath,
     rehypeKatex,
     rehypeSectionize,
+    rehypeTableColumns,
   } = await importAllAsync();
 
   const locale = opts.locale ?? DEFAULT_KEYWORD_LOCALE;
@@ -77,6 +78,7 @@ export async function compileDynamic(opts: CompileOptions) {
           ],
           rehypePlugins: [
             rehypeKatex,
+            rehypeTableColumns,
             [rehypeSectionize, { entryComponents: BLOCK_COMPONENTS }],
             [rehypeAspects, aspects],
           ],

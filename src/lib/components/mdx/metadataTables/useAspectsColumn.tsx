@@ -20,6 +20,11 @@ import type { ColumnConfig, MetadataRow } from './metadataTable.types';
 const META_ASPECT_PREFIX = 'meta:';
 
 /**
+ * Glyphs a cell shows on its single line before the rest fold into a `+n` marker.
+ */
+const MAX_GLYPHS = 4;
+
+/**
  * Tags of a row, when it has any.
  *
  * @param {MetadataRow} row - Table row
@@ -35,7 +40,7 @@ function tagsOf(row: MetadataRow): string[] | undefined {
  *
  * @param {ColumnConfig[]} columns - Caller columns
  * @param {MetadataRow[]} data - Table rows
- * @param {'md' | 's'} size - Table density; caps glyphs at 8 or 5
+ * @param {'md' | 's'} size - Table density; picks the column width hint
  * @returns {ColumnConfig[]} Columns to render
  */
 export function useAspectsColumn(
@@ -72,12 +77,7 @@ export function useAspectsColumn(
             ),
           ).sort(),
         render: (_value, row) => (
-          <AspectGlyphs
-            tags={tagsOf(row)}
-            inert
-            wrap
-            max={size === 's' ? 4 : 6}
-          />
+          <AspectGlyphs tags={tagsOf(row)} inert max={MAX_GLYPHS} />
         ),
       },
     ];

@@ -46,6 +46,7 @@ export function useImportColumns(): Record<ImportTab, ColumnConfig[]> {
         key: 'prerequisite',
         label: tFeatColumns('prerequisite'),
         sortable: true,
+        wrap: true,
         getValue: (row) => (row.hasPrerequisite ? (row.prerequisite ?? '') : ''),
         render: (_value, row) =>
           row.hasPrerequisite ? (row.prerequisite ?? '—') : '—',
@@ -63,6 +64,7 @@ export function useImportColumns(): Record<ImportTab, ColumnConfig[]> {
         key: 'description',
         label: tFeatColumns('summary'),
         sortable: false,
+        wrap: true,
         render: (value) => String(value ?? '—'),
       },
     ],

@@ -59,12 +59,16 @@ interface DraftState {
 const compileMdx = async (source: string): Promise<React.ComponentType> => {
   const { evaluate } = await import('@mdx-js/mdx');
   const remarkGfm = (await import('remark-gfm')).default;
+  const rehypeTableColumns = (
+    await import('@/modules/library/infrastructure/compile/rehypeTableColumns')
+  ).default;
 
   const result = await evaluate(source, {
     Fragment: runtime.Fragment,
     jsx: runtime.jsx,
     jsxs: runtime.jsxs,
     remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypeTableColumns],
     useMDXComponents: () => mdxComponents,
   });
 

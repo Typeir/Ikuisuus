@@ -367,32 +367,30 @@ export default function MetadataTable({
       const content = column.render
         ? column.render(value, row)
         : String(value ?? '-');
-      if (onRowSelect) {
-        return (
-          <button
-            type='button'
-            className={styles.rowButton}
-            onClick={() => onRowSelect(row)}>
-            {content}
-          </button>
-        );
-      }
-      if (external) {
-        return (
-          <a
-            href={href}
-            target='_blank'
-            rel='noopener noreferrer'
-            className={styles.rowLink}>
-            {content}
-          </a>
-        );
-      }
-      return (
+      const target = onRowSelect ? (
+        <button
+          type='button'
+          className={styles.rowButton}
+          onClick={() => onRowSelect(row)}>
+          {content}
+        </button>
+      ) : external ? (
+        <a
+          href={href}
+          target='_blank'
+          rel='noopener noreferrer'
+          className={styles.rowLink}>
+          {content}
+        </a>
+      ) : (
         <LazyPrefetchLink href={href} className={styles.rowLink}>
           {content}
         </LazyPrefetchLink>
       );
+      return {
+        className: column.wrap ? styles.wrap : undefined,
+        content: target,
+      };
     });
     if (rowAction) {
       cells.push({
@@ -519,11 +517,7 @@ export default function MetadataTable({
       <DataTable
         columns={tableColumns}
         rows={tableRows}
-        className={
-          ownColumns.some((column) => column.width)
-            ? `${styles.table} ${styles.fixedLayout}`
-            : styles.table
-        }
+        className={styles.table}
         wrapperClassName={styles.tableWrapper}
       />
 

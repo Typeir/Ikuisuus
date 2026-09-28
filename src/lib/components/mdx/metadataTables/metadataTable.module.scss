@@ -114,19 +114,7 @@
     width: 100%;
     border-collapse: collapse;
     margin: 0rem !important;
-    font-size: 0.95rem;
-
-    &.fixedLayout {
-      table-layout: fixed;
-
-      /* Declared widths are shares of the table, so the padding is what a
-         narrow column has left to spend on its own text. */
-      th,
-      td {
-        overflow-wrap: break-word;
-        padding-inline: 0.5rem;
-      }
-    }
+    font-size: var(--table-font-size);
 
     thead {
       background-color: var(--color-bg-secondary);
@@ -140,7 +128,6 @@
         white-space: nowrap;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        font-size: 0.875rem;
 
         &.sortable {
           cursor: pointer;
@@ -187,6 +174,11 @@
         td {
           padding: 0.75rem 1rem;
           color: var(--color-text);
+          white-space: nowrap;
+          &.wrap {
+            white-space: normal;
+            min-width: var(--table-wrap-min-width);
+          }
           &:has(.rowLink),
           &:has(.rowButton) {
             padding: 0;
@@ -278,11 +270,8 @@
     }
 
     .table {
-      font-size: 0.85rem;
-
       thead th {
         padding: 0.5rem 0.75rem;
-        font-size: 0.8rem;
       }
 
       tbody td {

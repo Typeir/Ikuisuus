@@ -37,6 +37,7 @@ export type FilterState = Record<string, any>;
  * @property {Record<string, number>} [filterSortOrder] - Sort order map for dropdown options (e.g., RARITY_SORT_ORDER)
  * @property {string} [width] - CSS width hint for the column, e.g. `40%`
  * @property {boolean} [searchableFilter] - Whether the select filter shows a search input; for columns with many options
+ * @property {boolean} [wrap=false] - Lets the cell text wrap; set on prose columns, every other cell stays on one line
  */
 export type ColumnConfig = {
   key: string;
@@ -51,6 +52,7 @@ export type ColumnConfig = {
   filterSortOrder?: Record<string, number>;
   width?: string;
   searchableFilter?: boolean;
+  wrap?: boolean;
 };
 
 /**
