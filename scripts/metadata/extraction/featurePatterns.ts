@@ -351,6 +351,28 @@ export const ABILITY_MAP: Readonly<Record<string, string>> = {
 };
 
 /**
+ * Short abbreviation to ability name mapping.
+ */
+export const ABILITY_NAMES: Readonly<Record<string, string>> = {
+  str: 'Strength',
+  dex: 'Dexterity',
+  con: 'Constitution',
+  wis: 'Wisdom',
+  cha: 'Charisma',
+};
+
+/**
+ * Resolves an ability written in full or as its abbreviation to its name.
+ *
+ * @param {string} token - Ability as written, in any case
+ * @returns {string | undefined} Capitalised ability name, or undefined for any other word
+ */
+export function abilityName(token: string): string | undefined {
+  const key = token.toLowerCase();
+  return ABILITY_NAMES[key] ?? ABILITY_NAMES[ABILITY_MAP[key]];
+}
+
+/**
  * Canonical set of AoE shape keywords.
  */
 export const SHAPES = new Set([

@@ -11,6 +11,7 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
+import { abilityName } from './extraction/featurePatterns';
 import { CASTING, TABLE } from './vocationPatterns';
 
 /**
@@ -42,20 +43,8 @@ function parseSpellcastingAbility(raw: string): string | null {
 
   for (const pattern of abilityPatterns) {
     const match = searchText.match(pattern);
-    if (match) {
-      const ability = match[1];
-      const abilities = [
-        'Strength',
-        'Dexterity',
-        'Constitution',
-        'Wisdom',
-        'Charisma',
-      ];
-      const found = abilities.find(
-        (a) => a.toLowerCase() === ability.toLowerCase(),
-      );
-      if (found) return found;
-    }
+    const found = match ? abilityName(match[1]) : undefined;
+    if (found) return found;
   }
 
   return null;

@@ -12,6 +12,7 @@
 import type { MonsterFeature } from '@/lib/types/feature';
 import { plain } from '../textUtils';
 import {
+  abilityName,
   DAMAGE_TYPES,
   DURATION,
   ENRICHMENT,
@@ -412,7 +413,9 @@ export function extractSpellcasting(
   }
 
   feat.spellcasting = {
-    ability: ability ? ability.toLowerCase() : 'unknown',
+    ability: ability
+      ? (abilityName(ability) ?? ability).toLowerCase()
+      : 'unknown',
     dc: dc ? parseInt(dc, 10) : 0,
     attack_bonus: attack ? parseInt(attack, 10) : 0,
     slots,

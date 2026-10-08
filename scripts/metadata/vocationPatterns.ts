@@ -57,7 +57,7 @@ export const FEATURE = {
  * @property {RegExp} abilityBold - "**Casting ability**
  * @property {RegExp} abilityIs - "casting ability is Wisdom"
  * @property {RegExp} abilityReversed - "Wisdom is your casting ability"
- * @property {RegExp} keyedTo - "keyed to Wisdom"
+ * @property {RegExp} keyedTo - "keyed to your **WIS**"
  * @property {RegExp} accuracySlot - the ability named in an `accuracy` slot
  * @property {RegExp} modifierRef - "your Wisdom modifier"
  * @property {RegExp} section - Spellcasting block boundary
@@ -68,13 +68,13 @@ export const FEATURE = {
  * @property {RegExp} specHeading - Spellblade/Arcane Trickster heading
  */
 export const CASTING = {
-  /* Emphasis is authored freely around the ability — `**Intelligence** is your
+  /* Emphasis is authored freely around the ability — `**WIS** is your
      casting ability` reads the same as the unbolded form — so every pattern
      tolerates it rather than matching only the plain spelling. */
   abilityBold: /\*{0,2}Casting ability\*{0,2}:\s*\*{0,2}(\w+)/i,
-  abilityIs: /casting ability is \*{0,2}(\w+)/i,
+  abilityIs: /casting ability (?:for [^.]*? )?is \*{0,2}(\w+)/i,
   abilityReversed: /\*{0,2}(\w+)\*{0,2} is your casting ability/i,
-  keyedTo: /keyed to \*{0,2}(\w+)/i,
+  keyedTo: /keyed to (?:your )?\*{0,2}(\w+)/i,
   accuracySlot: /accuracy="[^"]*?your (\w+) modifier/i,
   modifierRef: /your (\w+) modifier/i,
   section:

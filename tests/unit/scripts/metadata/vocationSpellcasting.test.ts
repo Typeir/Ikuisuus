@@ -37,6 +37,25 @@ describe('parseSpellcastingAbility', () => {
     ).toBe('Charisma');
   });
 
+  it('reads the abbreviation in every declaration', () => {
+    expect(parseSpellcastingAbility('**Casting ability**: CHA')).toBe(
+      'Charisma',
+    );
+    expect(parseSpellcastingAbility('**WIS** is your casting ability')).toBe(
+      'Wisdom',
+    );
+    expect(
+      parseSpellcastingAbility(
+        'Your casting ability for Wizard spells is **WIS**.',
+      ),
+    ).toBe('Wisdom');
+    expect(
+      parseSpellcastingAbility(
+        'Your spell accuracy and damage are keyed to your **WIS**.',
+      ),
+    ).toBe('Wisdom');
+  });
+
   it('returns null when no ability is declared', () => {
     expect(parseSpellcastingAbility('A martial with no magic.')).toBeNull();
   });

@@ -1,5 +1,6 @@
 @use 'mixins-mdx-sections' as mdx;
 @use 'mixins-button' as btn;
+@use 'mixins-responsive' as rsp;
 
 .left-aligned-prose {
   margin-left: 0 !important;
@@ -49,5 +50,13 @@
   .bentoPaneled .bentoFeatured {
     grid-column: 1;
     grid-row: 2;
+  }
+}
+
+/* Phones drop the global .prose offset so both gutters match. */
+@include rsp.mobile {
+  .bento .bentoFeatured {
+    margin-inline: 0;
+    max-width: none;
   }
 }

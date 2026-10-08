@@ -99,16 +99,27 @@ Spell save DC uses your Charisma modifier.
     const full = `
 ## Arcane Trickster
 
-casting ability is Intelligence
+**CHA** is your casting ability
 
 | Level | 8th | 9th |
 | ----- | --- | --- |
 | 17    | 1   | 1   |
 `;
     expect(parseSpecializationSpellcasting(full)).toEqual({
-      ability: 'Intelligence',
+      ability: 'Charisma',
       progression: 'Full',
     });
+  });
+
+  it('falls back to Wisdom when no ability is named', () => {
+    const unnamed = `
+## Arcane Trickster
+
+| Level | 1st |
+| ----- | --- |
+| 3     | 2   |
+`;
+    expect(parseSpecializationSpellcasting(unnamed)?.ability).toBe('Wisdom');
   });
 
   it('returns undefined without a spellcasting heading or slot table', () => {

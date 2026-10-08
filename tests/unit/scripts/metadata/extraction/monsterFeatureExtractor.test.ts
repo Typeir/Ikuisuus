@@ -228,6 +228,16 @@ describe('extractSpellcasting', () => {
     expect(feat!.spellcasting!.slots[5]).toBe(2);
   });
 
+  it('stores an abbreviated casting ability under its name', () => {
+    const section = makeSection('spellcasting', [
+      'His casting ability is **CON** (accuracy **+12**).',
+    ]);
+
+    expect(extractSpellcasting(section)!.spellcasting!.ability).toBe(
+      'constitution',
+    );
+  });
+
   it('reads the slot run a sheet writes without the word level', () => {
     const section = makeSection('spellcasting', [
       '1st (4), 2nd (3), 3rd (3), 9th (1).',

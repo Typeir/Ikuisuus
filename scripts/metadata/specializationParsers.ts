@@ -9,6 +9,7 @@
  * @since 2026-09-07
  */
 
+import { abilityName } from './extraction/featurePatterns';
 import { clean } from './textUtils';
 import { LIST, TEXT, UTILITY } from './parsingPatterns';
 import { CASTING, FEATURE, TABLE } from './vocationPatterns';
@@ -158,26 +159,13 @@ export function parseSpecializationSpellcasting(
     CASTING.modifierRef,
   ];
 
-  const abilities = [
-    'Strength',
-    'Dexterity',
-    'Constitution',
-    'Intelligence',
-    'Wisdom',
-    'Charisma',
-  ];
-
-  let ability = 'Intelligence';
+  let ability = 'Wisdom';
   for (const pattern of abilityPatterns) {
     const match = raw.match(pattern);
-    if (match) {
-      const found = abilities.find(
-        (a) => a.toLowerCase() === match[1].toLowerCase(),
-      );
-      if (found) {
-        ability = found;
-        break;
-      }
+    const found = match ? abilityName(match[1]) : undefined;
+    if (found) {
+      ability = found;
+      break;
     }
   }
 
