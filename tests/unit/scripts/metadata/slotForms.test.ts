@@ -23,10 +23,6 @@ import {
   unslotTrinket,
 } from '@scripts/metadata/slotForms';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { migrateFeat } from '../../../../scripts/content/migrate-feat.mjs';
-import { migrateMonsterSheet } from '../../../../scripts/content/migrate-monster-sheet.mjs';
-import { migrateSpellBlock } from '../../../../scripts/content/migrate-spell-block.mjs';
-import { migrateTrinket } from '../../../../scripts/content/migrate-trinket.mjs';
 
 let sharedData: Awaited<ReturnType<typeof loadSharedData>>;
 
@@ -140,6 +136,132 @@ Increase your Strength or Dexterity score by 1.
 - **Bypass Cover.** Your ranged weapon attacks ignore half cover.
 `;
 
+const SPELL_SLOTTED = `---
+source: Ikuisuus
+contentType: spells
+aspects:
+  - school:evocation
+---
+
+# Cone of Cold
+
+A frigid blast erupts in a widening cone.
+
+---
+
+<Spell
+  level="5"
+  ritual
+  cost="1 Major Action"
+  components="V, S, M (a small crystal)"
+  duration="Concentration, up to 1 minute"
+  range="Self ([= 12 stride;ADJ =] cone)"
+  targets="Creatures within the cone">
+
+A blast of cold air erupts from your hands. Targets save Constitution, halving [% 8d8 frost %].
+
+**Overcast:** the spell gains [% 1d8 %] damage.
+
+</Spell>
+
+#### Spell Lists
+
+- [_Wizard Spell List_](/en/library/character-creation/vocations/wizard/spells)
+`;
+
+const SHEET_SLOTTED = `---
+source: Ikuisuus
+contentType: monsters
+---
+
+# Rotworm
+
+<Monster
+  size="Small"
+  type="monstrosity"
+  alignment="Unaligned"
+  defence="12 (natural)"
+  hitPoints="18 ([% 4d6 +4 %])"
+  speed="[= 4 stride =], burrow [= 2 stride =]"
+  str="12"
+  dex="10"
+  con="13"
+  wis="10"
+  cha="5"
+  lethality="2"
+  xp="450"
+  saves="Con +2"
+  skills="Stealth +4"
+  resistances="Dark"
+  vulnerabilities="Fire"
+  conditionImmunities="[# kw:condition:Terrified #]"
+  senses="Blindsight [= 2 stride =], passive Perception 10"
+  languages="—">
+
+---
+
+## Traits
+
+<Trait>
+
+#### Rot-Fed Husk
+
+The rotworm does not require air, food, drink, or sleep.
+
+</Trait>
+
+## Actions
+
+<Action>
+
+#### Gnawing Bite
+
+Accuracy +2, reach [= 1 stride =], one creature. On a hit, 7 ([% 1d8 +1 dark %]).
+
+</Action>
+
+</Monster>
+`;
+
+const TRINKET_SLOTTED = `---
+source: Ikuisuus
+contentType: trinkets
+---
+
+# Bola
+
+<Trinket
+  category="Adventuring Gear"
+  damage="—"
+  range="30/60"
+  properties="Thrown, Special (restrain, trip)"
+  burden="[= 1 burden =]">
+
+A set of weighted cords designed to entangle.
+
+</Trinket>
+`;
+
+const FEAT_SLOTTED = `---
+source: Ikuisuus
+contentType: feats
+---
+
+# Sharpshooter
+
+<Feat
+  prerequisite="**Archery** Fighting Style"
+  ability="Strength or Dexterity">
+
+You can make shots that others find impossible.
+
+---
+
+- **Bypass Cover.** Your ranged weapon attacks ignore half cover.
+
+</Feat>
+`;
+
 /**
  * Metadata fields a round trip must keep.
  *
@@ -182,7 +304,7 @@ describe('ordinal', () => {
 
 describe('unslotSpell', () => {
   it('lets the generator read a converted spell as it read the blockquote', () => {
-    const converted = migrateSpellBlock(SPELL).text;
+    const converted = SPELL_SLOTTED;
     expect(converted).toContain('<Spell');
     const before = parseSpellSource(SPELL, 'src/content/en/spells/cone-of-cold.spell.mdx', sharedData);
     const after = parseSpellSource(converted, 'src/content/en/spells/cone-of-cold.spell.mdx', sharedData);
@@ -205,7 +327,7 @@ describe('unslotSpell', () => {
 
 describe('unslotMonster', () => {
   it('lets the generator read a converted sheet as it read the tables', () => {
-    const converted = migrateMonsterSheet(SHEET).text;
+    const converted = SHEET_SLOTTED;
     expect(converted).toContain('<Monster');
     const path = 'src/content/en/monsters/rotworm.sheet.mdx';
     const [before] = parseMonsterSource(SHEET, path, sharedData) as Record<string, unknown>[];
@@ -230,7 +352,7 @@ describe('unslotMonster', () => {
 
 describe('unslotTrinket', () => {
   it('lets the generator read a converted trinket as it read the stat lines', () => {
-    const converted = migrateTrinket(TRINKET).text;
+    const converted = TRINKET_SLOTTED;
     expect(converted).toContain('<Trinket');
     const path = 'src/content/en/items/trinkets/bolas.trinket.mdx';
     const before = parseTrinketSource(TRINKET, path, sharedData) as Record<string, unknown>;
@@ -245,7 +367,7 @@ describe('unslotTrinket', () => {
 
 describe('unslotFeat', () => {
   it('restores the prerequisite line in place and the ability sentence at the end, keeping line count', () => {
-    const converted = migrateFeat(FEAT).text;
+    const converted = FEAT_SLOTTED;
     const text = unslotFeat(converted);
     expect(text.split('\n').length).toBe(converted.split('\n').length);
     expect(text).toContain('# Sharpshooter\n\n_Prerequisite: **Archery** Fighting Style_\n');

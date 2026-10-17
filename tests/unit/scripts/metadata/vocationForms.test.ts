@@ -14,7 +14,6 @@ import {
   unslotVocation,
 } from '@scripts/metadata/vocationForms';
 import { describe, expect, it } from 'vitest';
-import { migrateVocation } from '../../../../scripts/content/migrate-vocation.mjs';
 
 const VOCATION = `# Rogue
 
@@ -47,6 +46,49 @@ Aim.
 </Collapsible>
 `;
 
+const VOCATION_SLOTTED = `# Rogue
+
+Rogues rely on cunning.
+
+---
+
+<Vocation
+  primaryAbility="Dexterity"
+  hitDie="d8 per Rogue level"
+  saves="Dexterity and Intelligence"
+  skills="Choose 4: Acrobatics, Stealth"
+  weapons="Simple weapons"
+  armor="Light armor">
+
+## Core Rogue Traits
+
+<Equipment>(A) Leather Armor, 8 GP<br/>(B) 100 GP</Equipment>
+
+---
+
+<Feature level="1">
+
+## Expertise
+
+Choose two skill proficiencies.
+
+</Feature>
+
+<Collapsible>
+
+<Feature level="3">
+
+## Steady Aim
+
+Aim.
+
+</Feature>
+
+</Collapsible>
+
+</Vocation>
+`;
+
 describe('readElementSlots', () => {
   it('reads element-form slots in the paragraph after a tag', () => {
     const lines = ['<Vocation armor="None">', '', '<Equipment>(A) 8 GP<br/>(B) 100 GP</Equipment>', '<Trades>Any</Trades>', '', 'Prose'];
@@ -60,7 +102,7 @@ describe('readElementSlots', () => {
 
 describe('unslotVocation', () => {
   it('restores the core traits table and the level headings, keeping line count', () => {
-    const converted = migrateVocation(VOCATION).text;
+    const converted = VOCATION_SLOTTED;
     const text = unslotVocation(converted);
     expect(text.split('\n').length).toBe(converted.split('\n').length);
     expect(text).toContain('## Core Rogue Traits\n\n| Trait | Value |\n| **Primary Ability** | Dexterity |\n| **Hit Point Die** | d8 per Rogue level |');
