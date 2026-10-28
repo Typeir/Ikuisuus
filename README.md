@@ -3,71 +3,114 @@
 [![CI Pipeline](https://github.com/Typeir/Ikuisuus/actions/workflows/ci.yml/badge.svg)](https://github.com/Typeir/Ikuisuus/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/Typeir/Ikuisuus/graph/badge.svg?token=7Y5PMU9AK8)](https://codecov.io/gh/Typeir/Ikuisuus)
 
-A Next.js 15 internationalized documentation site for Damocles OSR content, featuring MDX-based content management.
+> _All that will ever be, laid bare._
+
+**Damocles** is an old-school (OSR) tabletop roleplaying game set after the end of everything. The universe is already dead, and you play the characters and stories that happened anyway. It is a tragic, mythic setting, summed up as "the vile and beautiful lands of Damocles."
+
+**The Library of Ikuisuus** is where Damocles is published: its rules, spells, monsters, items, character options and world lore, written as MDX and built into a fast, searchable, printable website. It also hosts the tools you use at the table.
 
 ---
 
-> Technical descriptions on documentation files such as README.md or other .md files can be incorrect or outdated
+## Disclaimer and Disclosure
 
-## 📦 Features
+Damocles is my life's work. Times have changed and computers talk, and people can now somehow come across my silly little grimdark hopecore game on the internet. If you do, and insist on contributing despite my grumpiness about it: Agentic work is welcome in the codebase, but please abstain from using anything other than your hands to write content. We can all prompt Claude to write a cool-ass monster, keep that to your table. You may use agents for formatting and copyediting, or as a sounding board, but be reasonable and don't let them write content for you. The content is the soul of the game, don't lose it.
 
-- **Dark / Light Themes** with persistent storage
-- **Multi-language Support** (currently only hosts content in English)
-- **MDX Content System** with dynamic routing and metadata extraction
-- **Filterable Tables** for monsters and items with search and sorting
-- **Responsive Sidebar Navigation** generated from content structure
-- **Print Optimization** with two-column layout
-- **Static Site Generation** for fast page loads
+## What's inside
+
+**The library**
+
+- The full rulebook, organised into chapters: character creation, combat, magic, travel and more
+- Spell, monster and item catalogues, shown as filterable and sortable tables
+- An encyclopedia of the setting: lands, gods, creatures, ages and artifacts
+- Full-text search and a sidebar built from the content tree
+- Print-friendly two-column layout, plus dark and light themes
+
+**Table tools**
+
+- **Character builder**: build a character step by step
+- **Encounter planner**: plan encounters and run combat with a live turn tracker
+- **World sim**: an interactive Three.js view of the cosmos
+- **Foundry VTT export**: turns monster data into a Foundry module (`npm run foundry:build`)
+
+**Under the hood**
+
+- Next.js 16 and React 19, statically generated at build time
+- `next-intl` routing: the UI is translated into English, Spanish and Finnish, but the content is English only for now
+- A build pipeline that compresses assets, normalises file names to kebab-case and generates metadata for every content file
+- Optional PostgreSQL backend (MikroORM) for metadata and API features. By default everything reads from the filesystem.
 
 ---
 
-## 🚀 Getting Started
+## Repository layout
+
+| Path            | What lives there                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------------ |
+| `src/content/`  | Game content, a git submodule ([`ikuisuus-content`](https://github.com/Typeir/ikuisuus-content)) |
+| `src/app/`      | Next.js routes and API handlers                                                                  |
+| `src/modules/`  | Features: character builder, encounter planner, world sim, search, sidebar and more              |
+| `messages/`     | UI translations (`en`, `es`, `fi`)                                                               |
+| `scripts/`      | Build pipeline, database, multirepo `ik` CLI                                                     |
+| `foundry/`      | Foundry VTT module output                                                                        |
+| `GDD.md`        | Game design document: the rules for writing Damocles content                                     |
+| `.github/docs/` | Architecture docs                                                                                |
+
+---
+
+## Getting started
+
+### Requirements
+
+- Node.js 20+ (needed by Next.js 16)
+- Git LFS (`git lfs install`), since images are stored in LFS
+- PostgreSQL 14+, only if you use the database backend
 
 ### Setup
 
 ```bash
-# Install dependencies — `postinstall` auto-runs `paw sync` so PAW hooks
-# are ready immediately on fresh clones.
-npm install
+git clone --recurse-submodules https://github.com/Typeir/Ikuisuus.git
+cd Ikuisuus
 
-# One-shot bootstrap: installs the `ik` CLI on your PATH, configures the
-# content submodule to merge (not detach) on update, installs content-repo
-# git hooks, and verifies PAW. Open a new shell afterwards.
-npm run setup
-
-# Run development server (auto-runs pre-init build pipeline)
-npm run dev
+npm install      # postinstall runs `paw sync` only if the PAW CLI is present; otherwise it skips
+npm run setup    # installs the `ik` CLI, sets the content submodule to merge on update, installs hooks
+npm run dev      # runs the pre-init pipeline, then `next dev`
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Open a new shell after `setup` so `ik` is on your PATH.
 
-### Requirements
+`npm run dev` accepts these flags:
 
-- Node.js 18+
-- Git LFS (`git lfs install`)
-- PostgreSQL 14+ (optional, for database features)
+| Flag           | Effect                                        |
+| -------------- | --------------------------------------------- |
+| `--pg`         | Use PostgreSQL as the metadata backend        |
+| `--fs`         | Read content at build time instead of runtime |
+| `--no-preinit` | Skip the pre-init pipeline                    |
+| `--no-replace` | Don't stop an already running dev server      |
 
-### Key Commands
+### Common commands
 
 ```bash
-npm run test           # Run test suite
-npm run build          # Production build
-npm run test:hooks     # Verify git hooks are installed
+npm run pre-init       # Build pipeline: compress, kebab-case, md→mdx, metadata, locales, search index
+npm run build          # Clean, pre-init, run tests, then next build
+npm test               # Test suite (enforcement checks run first)
+npm run health:check   # Project-wide quality gates
+npm run lint           # ESLint on src/
 
-# Content workflow
-npm run pre-init       # Full build pipeline (compress, kebabify, generate metadata)
-npm run linkify:world  # Auto-link content (with backup)
+# Database (optional)
+npm run db:init        # Create schema
+npm run db:migrate     # Apply migrations
+npm run db:seed        # Load content from the filesystem
 
-# Multirepo (both repos together)
-bash scripts/multirepo/ik.sh commit -m "message"
-bash scripts/multirepo/ik.sh status
-
-# Database (if needed)
-npm run db:init       # Create schema
-npm run db:migrate    # Apply migrations
-npm run db:seed       # Load content
+# Site and content repos together (after `npm run setup`)
+ik status
+ik commit -m "message"
+ik pull
+ik push
 ```
 
-See [Copilot Instructions](.github/copilot-instructions.md) for architecture & hard rules, or [Building & Architecture](.github/docs/) for detailed guides.
-
 ---
+
+## Documentation
+
+- [Architecture docs](.github/docs/README.md): build pipeline, metadata, content and i18n, theming, world sim, Foundry
+- [AGENTS.md](AGENTS.md): hard rules for contributors and coding agents (JSDoc, SCSS tokens, testing)
+- [GDD.md](GDD.md): tone, pillars and the mechanical philosophy behind the content
