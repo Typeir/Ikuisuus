@@ -30,28 +30,30 @@ Phase C: Completion Reconciliation & Report
 | ------------ | ---------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | Instructions | `.github/instructions/*.instructions.md` | Architecture-scoped analysis (auto-match via `applyTo`)                                            |
 | Agents       | `.github/agents/*.agent.md`              | Role-separated agents (analyzer, implementer, health-reviewer, completion-auditor)                 |
-| Skills       | `.github/skills/task-lifecycle/SKILL.md` | Task artifact format and lifecycle validation                                                      |
-| Prompts      | `.github/prompts/*.prompt.md`            | User-invokable workflows (`/start-task`, `/run-health`, `/reconcile-completion`, `/full-workflow`) |
-| Hooks        | `.github/hooks/copilot-hooks.json`       | Deterministic enforcement (post-edit lint, on-stop health gate)                                    |
+| Skills       | `.github/skills/*/SKILL.md`              | Reusable capability plus procedure; auto-loaded by description (`task-lifecycle`, `add-test`, …)    |
+| Hooks        | `.github/hooks/hooks.json`               | Deterministic enforcement (post-edit lint, on-stop health gate)                                    |
+
+Prompts are retired. The Copilot CLI harness no longer loads `.prompt.md` files, so
+every former prompt was either deleted (agent-owned workflow) or converted into a skill.
 
 ### Health Check Scripts
 
-| Script                                   | npm command                    | What it checks                           | Severity         |
-| ---------------------------------------- | ------------------------------ | ---------------------------------------- | ---------------- |
-| `.github/scripts/health-check.ts`        | `npm run health:check`         | Composite orchestrator                   | —                |
-| `.github/scripts/check-file-length.ts`   | `npm run health:file-length`   | Files >250 lines                         | CRITICAL         |
-| `.github/scripts/checkDuplicateCssSelectors.ts` | `npm run health:duplicate-css-selectors` | Duplicate CSS selectors | CRITICAL |
-| `.github/scripts/checkDuplicateCssAttributes.ts` | `npm run health:duplicate-css-attributes` | Multi-line declaration values written more than once | CRITICAL |
-| `.github/scripts/check-jsdoc-quality.ts` | `npm run health:jsdoc`         | Inline comments, color literals, alert() | CRITICAL         |
-| `.github/scripts/check-antipatterns.ts`  | `npm run health:antipatterns`  | console.log, any type, force casts       | CRITICAL/WARNING |
-| `.github/scripts/check-test-gaps.ts`     | `npm run health:test-gaps`     | Missing test files for changed code      | CRITICAL         |
+`npm run health:check` runs all of these through `.github/scripts/health-check.ts`.
 
-### Reconciliation Scripts
-
-| Script                              | npm command                | Purpose                     |
-| ----------------------------------- | -------------------------- | --------------------------- |
-| `.github/scripts/reconcile-task.ts` | `npm run health:reconcile` | Verify task file completion |
-| `.github/scripts/write-report.ts`   | `npm run health:report`    | Generate completion report  |
+| Script                                           | What it checks                                    |
+| ------------------------------------------------ | ------------------------------------------------- |
+| `.github/scripts/checkFileLength.ts`             | Files over the line limit                         |
+| `.github/scripts/checkDuplicateCssSelectors.ts`  | Selectors declared twice                          |
+| `.github/scripts/checkDuplicateCssAttributes.ts` | Duplicate multi-line declaration values           |
+| `.github/scripts/checkJsdocQuality.ts`           | Missing or malformed JSDoc, inline comments       |
+| `.github/scripts/checkAntipatterns.ts`           | `console.log`, `any`, force casts, colour literals |
+| `.github/scripts/checkTestGaps.ts`               | Source files without tests                        |
+| `.github/scripts/checkMdxFormat.ts`              | MDX structural violations                         |
+| `.github/scripts/checkOrphanedMdxLinks.ts`       | Links to missing content                          |
+| `.github/scripts/checkSmokeTests.ts`             | Smoke coverage of critical routes                 |
+| `.github/scripts/checkTsCompilation.ts`          | Type errors                                       |
+| `.github/scripts/checkAnchors.ts`                | Duplicate or missing anchors                      |
+| `.github/scripts/checkAspects.ts`                | Aspect shard placement                            |
 
 ---
 

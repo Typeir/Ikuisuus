@@ -218,20 +218,32 @@ export const resolveContentFilePath = async (
 **File**: `src/modules/library/presentation/components/index.tsx`
 
 ```typescript
+import {
+  FeatTable,
+  FilteredSpellTable,
+  HeirloomTable,
+  LethalityTable,
+  MonsterTable,
+  SpellTable,
+  TrinketTable,
+} from '@/modules/metadata-tables/presentation';
 import BlendedImage from './BlendedImage';
 import FlexRenderer from './FlexRenderer';
 import Unit from './Unit';
-import MonsterTableWrapper from './MetadataTable/monsterTableWrapper';
-import HeirloomTableWrapper from './MetadataTable/heirloomTableWrapper';
 
 /**
- * Components available in all MDX files
- * Add new components here to make them globally accessible
+ * Components available in all MDX files.
+ * Add new components here to make them globally accessible.
  */
 export const components = {
   // Metadata tables
-  MonsterTable: MonsterTableWrapper,
-  HeirloomTable: HeirloomTableWrapper,
+  MonsterTable,
+  LethalityTable,
+  HeirloomTable,
+  FeatTable,
+  FilteredSpellTable,
+  SpellTable,
+  TrinketTable,
 
   // Media components
   BlendedImage,
@@ -240,8 +252,8 @@ export const components = {
   // Macro output (remark plugins emit these)
   Unit,
 
-  // Table wrapper for responsive tables
-  table: ({ children }: any) => (
+  // Wrapper for responsive tables
+  table: ({ children }: PropsWithChildren<{}>) => (
     <div className='overflow-x-auto max-w-full'>
       <table>{children}</table>
     </div>
@@ -292,30 +304,36 @@ Browse all magical heirlooms in this campaign.
 
 **Creating a Callout Component**:
 
-**File**: `src/lib/components/mdx/Callout/Callout.tsx`
+**Folder**: `src/modules/library/presentation/components/Callout/`
+
+```
+Callout/
+  Callout.tsx
+  Callout.module.scss
+  index.ts
+```
 
 ```tsx
+// Callout.tsx
+import styles from './Callout.module.scss';
+
 interface CalloutProps {
   type: 'info' | 'warning' | 'danger';
   children: React.ReactNode;
 }
 
 export function Callout({ type, children }: CalloutProps) {
-  const styles = {
-    info: 'bg-blue-100 border-blue-500 text-blue-900',
-    warning: 'bg-yellow-100 border-yellow-500 text-yellow-900',
-    danger: 'bg-red-100 border-red-500 text-red-900',
-  };
-
-  return <div className={`border-l-4 p-4 ${styles[type]}`}>{children}</div>;
+  return <div className={`${styles.callout} ${styles[type]}`}>{children}</div>;
 }
 ```
+
+Colours come from theme variables inside `Callout.module.scss`. No literals, no Tailwind colour classes.
 
 **Register**:
 
 ```tsx
 // src/modules/library/presentation/components/index.tsx
-import { Callout } from './Callout/Callout';
+import { Callout } from './Callout';
 
 const components = {
   // ... existing components
@@ -840,6 +858,6 @@ All content pages are pre-rendered at build time via `generateStaticParams()`:
 
 ## Related Documentation
 
-- [Metadata Generation](./.github/docs/metadata-generation.md) - Three-layer metadata system
-- [Build Pipeline](./.github/docs/build-pipeline.md) - Pre-init stages and asset processing
-- [Theme System](./.github/docs/theme-system.md) - CSS variables and theming
+- [Metadata Generation](./metadata-generation.md) - Metadata pipeline, storage, and serving
+- [Build Pipeline](./build-pipeline.md) - Pre-init stages and asset processing
+- [Theme System](./theme-system.md) - CSS variables and theming

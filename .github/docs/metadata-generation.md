@@ -1,14 +1,16 @@
 # Metadata Generation System Architecture
 
-**Purpose**: Complete documentation of the three-layer metadata extraction, serving, and consumption system for Damocles game content.
+**Purpose**: Complete documentation of the metadata extraction, storage, serving, and consumption pipeline for Damocles game content.
 
 ## System Overview
 
-The metadata system extracts structured data from human-readable MDX content files and makes it available through a three-layer architecture:
+The metadata system extracts structured data from human-readable MDX content files and serves it in stages:
 
-1. **Build-Time Layer**: Parse `.mdx` files → generate `.metadata.json` files
-2. **Runtime API Layer**: Serve metadata via Next.js API routes
-3. **Client Component Layer**: Consume metadata in filterable/sortable tables
+1. **Build-Time Generation**: Parse `.mdx` files → generate `.metadata.json` files (optionally persist to PostgreSQL with `--persist`)
+2. **Domain Schema**: Typed record per content type in `src/lib/db/content/schemas/`
+3. **Storage Adapters + Repositories**: `fs` and `pg` adapters behind one repository port per content type
+4. **Runtime API Layer**: Next.js routes resolve the repository for the requested locale
+5. **Table Layer**: `src/modules/metadata-tables/` fetches rows and renders `MetadataTable`
 
 ## Architecture Diagram
 
@@ -37,7 +39,10 @@ The metadata system extracts structured data from human-readable MDX content fil
 │           scripts/metadata/generateTrinketMetadata.ts,        │
 │           scripts/metadata/generateBloodlineMetadata.ts,      │
 │           scripts/metadata/generateVocationMetadata.ts,       │
-│           scripts/metadata/generateSpecializationMetadata.ts  │
+│           scripts/metadata/generateSpecializationMetadata.ts, │
+│           scripts/metadata/generateFeatMetadata.ts,           │
+│           scripts/metadata/generateWorldMetadata.ts,          │
+│           scripts/metadata/generateRulesMetadata.ts           │
 └─────────────────────────────────────────────────────────────┘
                            │
                            ▼
@@ -56,11 +61,10 @@ The metadata system extracts structured data from human-readable MDX content fil
 │                        │                                     │
 │                        ▼                                     │
 │  ┌──────────────────────────────────────────────────┐       │
-│  │ fs.readdirSync(contentFolder)                    │       │
-│  │ Filter .metadata.json files                      │       │
-│  │ JSON.parse() each file                           │       │
-│  │ .flat() for arrays (monsters)                    │       │
-│  │ Return JSON array                                │       │
+│  │ Repository port, backend from METADATA_BACKEND   │       │
+│  │   fs -> fs{Type}Repository                       │       │
+│  │   pg -> pg{Type}Repository                       │       │
+│  │ Returns typed rows for the requested locale      │       │
 │  └──────────────────────────────────────────────────┘       │
 │                                                              │
 │  Files: src/app/api/monsters/route.ts                       │
@@ -92,11 +96,10 @@ The metadata system extracts structured data from human-readable MDX content fil
 │  │ />                                               │       │
 │  └──────────────────────────────────────────────────┘       │
 │                                                              │
-│  Generic: src/lib/components/mdx/MetadataTable/             │
+│  Generic: src/lib/components/mdx/metadataTables/            │
 │           metadataTable.tsx                                 │
-│  Wrappers: monsterTableWrapper.tsx,                         │
-│            heirloomTableWrapper.tsx,                        │
-│            spellTableWrapper.tsx                            │
+│  Tables:  src/modules/metadata-tables/presentation/         │
+│           {Type}Table/{Type}Table.tsx                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -106,9 +109,9 @@ The metadata system extracts structured data from human-readable MDX content fil
 
 Metadata generators parse MDX content files during the build pipeline and output `.metadata.json` files alongside the source files. This happens before Next.js compilation.
 
-### Shared Architecture (`src/lib/metadata/`)
+### Shared Architecture (`scripts/metadata/`)
 
-All generators import utilities from the shared `src/lib/metadata/` TypeScript module:
+All generators import utilities from the `scripts/metadata` barrel as `from '.'`. `src/lib/metadata/` holds runtime helpers only (`contentHash`, `fnv1a32`, `syncMetadata`) and must not be used by generators.
 
 **Key Functions**:
 
@@ -123,6 +126,8 @@ All generators import utilities from the shared `src/lib/metadata/` TypeScript m
    // 6. Write .metadata.json files (or persist to DB via --persist flag)
    // 7. Report statistics and timing
    ```
+
+   Required keys: `name`, `contentType`, `filePattern`, `parseFile`, `processResult`. Optional keys: `contentDir`, `recursive`, `locale`, `storage`, `metadataVersion`. `processResult` returns `{ metadata, count }` and is what handles array-valued generators such as monsters.
 
 2. **`GameData`** - Single source of truth for d20 data
 
@@ -188,47 +193,64 @@ All generators follow this TypeScript template:
 
 ```typescript
 // scripts/metadata/generateMyContentMetadata.ts
+import { promises as fs } from 'fs';
+import { filePathToSlug, parseTitle } from '.';
 import {
   runGenerator,
-  GameData,
-  parseTitle,
-  extractAllTags,
-} from '@/lib/metadata';
-import type { SharedData } from '@/lib/metadata';
+  runWithCli,
+  type CliOptions,
+  type SharedData,
+} from '.';
 
 /**
- * Parse a single content file and extract metadata.
+ * Parses one content file into metadata rows.
  *
- * @param {string} filePath - Absolute path to .mdx file
+ * @param {string} filePath - Absolute path to the .mdx file
  * @param {SharedData} sharedData - Loaded shared game data
- * @returns {object | null} Metadata object or null on error
+ * @returns {Promise<object | object[] | null>} Metadata row, rows, or null to skip
  */
-async function parseMyContentFile(filePath: string, sharedData: SharedData) {
-  // Content-specific parsing logic here
-  return {
-    slug,
-    title,
-    file: filePath,
-    tags: extractAllTags(content, sharedData, { contentType: 'my-content' }),
-  };
+async function parseMyContentFile(
+  filePath: string,
+  sharedData: SharedData,
+): Promise<object | null> {
+  const content = await fs.readFile(filePath, 'utf-8');
+  return { slug: filePathToSlug(filePath), title: parseTitle(content) };
 }
 
-async function main() {
+/**
+ * Runs the generator.
+ *
+ * @param {CliOptions} options - CLI options from runWithCli
+ * @returns {Promise<void>}
+ */
+async function main(options: CliOptions = {}) {
   await runGenerator({
     name: 'My Content Metadata Generator',
     contentType: 'my-content',
     filePattern: /\.mdx$/,
     parseFile: parseMyContentFile,
+    processResult: (result) =>
+      result === null
+        ? { metadata: null, count: 0 }
+        : { metadata: result, count: 1 },
+    fileFilter: options.fileFilter,
+    storage: options.storage,
+    recursive: true,
+    metadataVersion: '1.0.0',
   });
 }
 
-main().catch((error) => {
-  console.error('❌ Fatal error:', error);
-  process.exit(1);
-});
+if (import.meta.url === `file://${process.argv[1]}`) {
+  runWithCli(main).catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
 
 export { main, parseMyContentFile };
 ```
+
+The entrypoint guard is mandatory. Tests import generator modules; an unconditional `main()` call runs generation during the test suite.
 
 ### Monster Generator (`scripts/metadata/generateMonsterMetadata.ts`)
 
@@ -595,10 +617,10 @@ This spell is not innate to any class...
 
 ### Shared Data Source (`scripts/core/shared-data.json`)
 
-All generators reference a single source of truth for game data, loaded via `loadSharedData()` from `@/lib/metadata`:
+All generators reference a single source of truth for game data, loaded via `loadSharedData()` from the `scripts/metadata` barrel:
 
 ```typescript
-import { loadSharedData, GameData, ItemData } from '@/lib/metadata';
+import { loadSharedData, GameData, ItemData } from '.';
 
 const sharedData = await loadSharedData();
 const damageTypes = GameData.getDamageTypes(sharedData);
@@ -611,10 +633,14 @@ const schools = ItemData.getSpellSchools(sharedData);
 **Orchestrator** (`scripts/metadata/generateMetadata.ts`):
 
 ```typescript
-// Dynamically imports each .ts generator and calls main()
+// CONTENT_TYPES map: key -> { dir, pattern, generator, contentType, subType }
+// Each entry names a content directory, the file pattern it owns, and the
+// generator module that parses it. Adding a content type means adding an entry.
 // Supports --type flag to run a single generator
 // Supports --persist flag to also write to PostgreSQL
 ```
+
+The orchestrator discovers nothing. Registration is the `CONTENT_TYPES` entry; a generator without one is never run by `npm run generate-metadata`.
 
 **Package.json Scripts**:
 
@@ -630,47 +656,42 @@ const schools = ItemData.getSpellSchools(sharedData);
 
 ### Overview
 
-Next.js API routes read `.metadata.json` files from the filesystem and serve them as JSON. This happens at runtime (server-side) during both dev and production.
+API routes resolve a repository port and return its rows. The factory in `src/lib/db/content/repositories/<type>Repository.ts` picks the adapter from `METADATA_BACKEND`: `fs` reads `.metadata.json` files, `pg` reads PostgreSQL through MikroORM. Routes never touch `fs` or `path`.
 
 ### Monster API (src/app/api/monsters/route.ts)
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { getContentFolder } from '@/lib/utils/getContentFolder';
+/**
+ * @fileoverview Serves monster metadata as JSON.
+ *
+ * @module src/app/api/monsters/route
+ */
+import { monsterRepository } from '@/lib/db/content/repositories/monsterRepository';
+import { logger } from '@/lib/logging/logger';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+const log = logger.child({ module: 'API:Monsters' });
+
+/**
+ * GET /api/monsters
+ *
+ * @param {Request} req - Next.js request object
+ * @returns {NextResponse} JSON array of monster objects
+ */
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const locale = searchParams.get('locale') || 'en';
+
   try {
-    // Get locale from query params (default: 'en')
-    const locale = request.nextUrl.searchParams.get('locale') || 'en';
-
-    // Get content folder for locale
-    const contentFolder = getContentFolder(locale, 'monsters');
-
-    // Read all files in directory
-    const files = fs.readdirSync(contentFolder);
-
-    // Filter for .metadata.json files
-    const metadataFiles = files.filter((file) =>
-      file.endsWith('.metadata.json'),
-    );
-
-    // Read and parse each file
-    const metadata = metadataFiles.map((file) => {
-      const filePath = path.join(contentFolder, file);
-      const content = fs.readFileSync(filePath, 'utf-8');
-      return JSON.parse(content);
-    });
-
-    // CRITICAL: Flatten arrays (monster files can have multiple stat blocks)
-    const flattenedMetadata = metadata.flat();
-
-    return NextResponse.json(flattenedMetadata);
+    const monsters = await monsterRepository.list(locale);
+    return NextResponse.json(monsters);
   } catch (error) {
-    console.error('Error loading monster metadata:', error);
+    log.error('Error loading monster metadata', {
+      error: error instanceof Error ? error.message : String(error),
+      locale,
+    });
     return NextResponse.json(
-      { error: 'Failed to load metadata' },
+      { error: 'Failed to load monsters' },
       { status: 500 },
     );
   }
@@ -679,54 +700,49 @@ export async function GET(request: NextRequest) {
 
 **Key Points**:
 
-- Uses `getContentFolder(locale, contentType)` helper for consistent path resolution
-- **Must use `.flat()`** because monster files can contain arrays
-- Locale-aware: `/api/monsters?locale=es` reads from `src/content/es/monsters/`
-- Runs on server-side (has access to `fs` module)
+- The repository flattens array-valued generators (monsters emit one row per stat block), so routes return a flat array
+- Locale-aware: `/api/monsters?locale=es` reads Spanish records
+- Runs on server-side: the repository module is `server-only`
+- Errors are logged through `logger`, never `console.error`
 
-### Heirloom API (src/app/api/heirlooms/route.ts)
+### Other Routes
 
-```typescript
-// Nearly identical to monsters route, with exceptions:
-// 1. Uses getContentFolder(locale, 'heirlooms')
-// 2. Still uses .flat() for consistency, but heirlooms are single objects
-```
-
-### Spell API (src/app/api/spells/route.ts)
+Every content type has the same route shape, differing only in the repository:
 
 ```typescript
-// Nearly identical to monsters route
-// Uses getContentFolder(locale, 'spells')
+// src/app/api/{type}/route.ts
+const rows = await {type}Repository.list(locale);
 ```
 
-### Helper: getContentFolder
+Routes: `monsters`, `heirlooms`, `spells`, `trinkets`, `feats`, `bloodlines`, `vocations`, `specializations`.
 
-**File**: `src/lib/utils/getContentFolder.ts`
+### Backend Selection
+
+**File**: `src/lib/db/content/repositories/{type}Repository.ts`
 
 ```typescript
-import path from 'path';
+const metadataBackend = process.env.METADATA_BACKEND || 'fs';
 
-export function getContentFolder(
-  locale: string,
-  contentType: 'monsters' | 'heirlooms' | 'spells',
-): string {
-  const basePath = path.join(process.cwd(), 'src', 'content', locale);
+const createTrinketRepository = (): TrinketRepository => {
+  switch (metadataBackend) {
+    case 'pg':
+      return pgTrinketRepository;
+    case 'fs':
+      return fsTrinketRepository;
+    default:
+      throw new Error(`Unsupported metadata backend: ${metadataBackend}`);
+  }
+};
 
-  const paths = {
-    monsters: path.join(basePath, 'monsters'),
-    heirlooms: path.join(basePath, 'items', 'heirlooms'),
-    spells: path.join(basePath, 'spells'),
-  };
-
-  return paths[contentType];
-}
+export const trinketRepository = createTrinketRepository();
 ```
 
-**Why Centralized**:
+**Why a Port**:
 
-- Prevents path inconsistencies between API routes
-- Makes locale switching trivial
-- Single place to update if folder structure changes
+- One contract (`list`, `getBySlug`) shared by both adapters
+- API routes stay free of storage detail
+- Switching backend is an env change, not a code change
+- `byContentType.ts` maps each searchable content type to its repository for card-level reads
 
 ### Request/Response Examples
 
@@ -777,84 +793,71 @@ export function getContentFolder(
 
 ### Overview
 
-React components fetch metadata from API routes and render filterable/sortable tables. Uses generic `MetadataTable` component with content-specific wrappers.
+Tables live in the `metadata-tables` module. Each table is a client component that resolves the locale, calls a fetch helper, and hands rows plus column config to the generic `MetadataTable`.
+
+| Layer | Path |
+| --- | --- |
+| Generic table | `src/lib/components/mdx/metadataTables/metadataTable.tsx` |
+| Data hook | `src/modules/metadata-tables/application/hooks/useMetadataTableData.ts` |
+| Fetch helpers | `src/modules/metadata-tables/infrastructure/api-clients/metadataTableClient.ts` |
+| Table components | `src/modules/metadata-tables/presentation/{Type}Table/` |
+| Module barrel | `src/modules/metadata-tables/presentation/index.ts` |
 
 ### Generic MetadataTable Component
 
-**File**: `src/lib/components/mdx/MetadataTable/metadataTable.tsx`
+**File**: `src/lib/components/mdx/metadataTables/metadataTable.tsx`
+
+**Props**: `data`, `columns`, `getRowSlug`, `searchKeys`, `searchScope`, `defaultSort`, `pageSize`, `locale`, `size`, `onRowSelect`, `rowAction`.
 
 **Features**:
 
-- Client-side search across specified keys
+- Index-backed search scoped by `searchScope`, with `searchKeys` as the fallback
 - Column sorting with custom comparators
 - Filter dropdowns for enumerated values
 - Responsive table with horizontal scroll
 - Links to content pages via slug
-- Loading states and error handling
+- Loading skeleton and error states
 
-### Implementation:
+### Table Component Shape
 
-#### Monster Table Wrapper
+Each `{Type}Table` folder holds the component, its column builder, and a barrel:
 
-**File**: `src/lib/components/mdx/MetadataTable/monsterTableWrapper.tsx`
-
-**Usage in MDX**:
-
-```mdx
-# Monster Compendium
-
-Browse all monsters in the library:
-
-<MonsterTable />
-
-Or view Spanish monsters:
-
-<MonsterTable locale='es' />
+```
+src/modules/metadata-tables/presentation/TrinketTable/
+  TrinketTable.tsx
+  TrinketTable.columns.tsx
+  index.ts
 ```
 
-#### Heirloom Table Wrapper
+The component:
 
-**File**: `src/lib/components/mdx/MetadataTable/heirloomTableWrapper.tsx`
+1. Declares `'use client'`
+2. Resolves locale from the `locale` prop, then `useParams()`, then `'en'`
+3. Calls `useMetadataTableData(fetch{Type}Metadata, locale, '{type}')`
+4. Renders `MetadataTableSkeleton` while loading, translated error text on failure
+5. Builds columns with `build{Type}Columns(tColumns)`
+6. Returns `<MetadataTable searchScope='{type}' ... />`
 
-**Key Differences**:
-
-- Fetches from `/api/heirlooms`
-- Columns: title, rarity, itemType, weaponType
-- Custom rarity sorting (common < uncommon < rare < very rare < legendary < artifact)
-- Search keys: title, rarity, itemType, weaponType
-
-#### Spell Table Wrapper
-
-**File**: `src/lib/components/mdx/MetadataTable/spellTableWrapper.tsx`
-
-**Key Differences**:
-
-- Fetches from `/api/spells`
-- Columns: title, level, school, castingTime, concentration
-- Level sorting: 0 (cantrip) → 9
-- Search keys: title, school, castingTime (searches array)
+Translation keys come from `messages/{locale}/tables.json` under `tables.{type}` and `tables.{type}.columns`.
 
 ### Component Registration
 
-**File**: `src/modules/library/presentation/components/index.tsx`
+Two barrels, in order:
 
 ```typescript
-import { MonsterTableWrapper } from './MetadataTable/monsterTableWrapper';
-import { HeirloomTableWrapper } from './MetadataTable/heirloomTableWrapper';
-import { SpellTableWrapper } from './MetadataTable/spellTableWrapper';
-import { BlendedImage } from './BlendedImage';
+// src/modules/metadata-tables/presentation/index.ts
+export { TrinketTable } from './TrinketTable';
 
-// Register all MDX components here
+// src/modules/library/presentation/components/index.tsx
+import { TrinketTable } from '@/modules/metadata-tables/presentation';
+
 export const components = {
-  MonsterTable: MonsterTableWrapper,
-  HeirloomTable: HeirloomTableWrapper,
-  SpellTable: SpellTableWrapper,
-  BlendedImage: BlendedImage,
-  // Add more custom components as needed
+  TrinketTable,
+  // ...
 };
 ```
 
-**Why Centralized**: Components need to be passed to the mdx compiler for pre-rendering.
+**Why Centralized**: `components` is passed to the MDX compiler. A table exported from only one barrel is unavailable in content.
 
 ## Aspect Rows (in-page pills)
 
@@ -873,6 +876,6 @@ Records: a level-1 heading or a quoted heading (statlet) whose slug is in `recor
 ## Related Documentation
 
 - [Build Pipeline](./build-pipeline.md) - Pre-init stages and dependencies
-- [Metadata Library](../../../src/lib/metadata/index.ts) - `runGenerator`, `GameData`, parsing/tagging/file utilities
+- [Metadata Library](../../scripts/metadata/index.ts) - `runGenerator`, `GameData`, parsing/tagging/file utilities
 - [Content System](./content-system.md) - MDX structure and routing
 - [Metadata Table](./metadata-table.md) - Metadata-based table system

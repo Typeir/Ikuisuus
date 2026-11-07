@@ -49,3 +49,7 @@ See `.github/skills/damocles-page-types/SKILL.md` for full templates per content
 ## Structural Format
 
 For MDX structural rules (components, headings, file naming, images), follow `.github/instructions/mdx-content.instructions.md`. The two instruction files are complementary — this one handles editorial tone/lore, the other handles technical format.
+
+## WIP Files And Reports
+
+To populate a WIP file or write a companion stat block, follow [Damocles Authoring Playbook](../docs/damocles-authoring-playbook.md): WIP discovery, research protocol, report template, QA gate. Every edited content file gets a report in `.ignore/reports/`.

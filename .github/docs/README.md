@@ -6,7 +6,7 @@ Comprehensive guides for the Library of Ikuisuus codebase. Each document provide
 
 New to the codebase? Start here:
 
-1. **[AGENT Instructions](../../AGENTS.md.md)** - High-level overview and critical patterns
+1. **[Agent Instructions](../../AGENTS.md)** - High-level overview and critical patterns
 2. **[Build Pipeline](./build-pipeline.md)** - Understand the mandatory pre-init workflow
 3. **[Content System](./content-system.md)** - Learn how MDX content and routing work
 
@@ -161,6 +161,23 @@ MDX-based content system with filesystem routing.
 
 ---
 
+### 🖋️ [Damocles Authoring Playbook](./damocles-authoring-playbook.md)
+
+**When to read**: When populating WIP lore files, writing stat blocks, or auditing content
+
+Process for authoring Damocles content: WIP discovery order, research protocol, per-file report template, QA gate.
+
+**Key Topics**:
+
+- WIP discovery and priority order
+- Grep-before-write research protocol
+- Report format in `.ignore/reports/`
+- QA checklist and health commands
+
+**Essential for**: Lore authoring
+
+---
+
 ### 🌌 [World Sim Module](./world-sim-module.md)
 
 **When to read**: When working with the Three.js solar system, celestial renderers, or DOM overlays
@@ -252,8 +269,8 @@ Phase Deeds mechanic for combat encounters.
 
 Three related docs for the content submodule sync system:
 
-- **[Setup Guide](./MULTIREPO_SETUP.md)** - Implementation summary and file inventory
-- **[Quick Reference](./MULTIREPO_QUICKSTART.md)** - TL;DR usage commands
+- **[Setup Guide](./multirepo-setup.md)** - Implementation summary and file inventory
+- **[Quick Reference](./multirepo-quickstart.md)** - TL;DR usage commands
 - **[Strategy Analysis](./multirepo-sync-analysis.md)** - Design rationale and option comparison
 
 **When to read**: When committing changes that span both the main repo and `src/content` submodule
@@ -314,7 +331,7 @@ Quick reference for where key files are located:
 - `scripts/metadata/generateBloodlineMetadata.ts` - Bloodline parser
 - `scripts/metadata/generateVocationMetadata.ts` - Vocation parser
 - `scripts/metadata/generateSpecializationMetadata.ts` - Specialization parser
-- `src/lib/metadata/` - Shared generator utilities (`runGenerator`, `GameData`, parsing/tagging functions)
+- `scripts/metadata/` - Shared generator utilities (`runGenerator`, `GameData`, parsing/tagging functions)
 - `scripts/core/shared-data.json` - Game data constants
 - `src/app/api/monsters/route.ts` - Monster API endpoint
 - `src/app/api/heirlooms/route.ts` - Heirloom API endpoint
@@ -323,7 +340,7 @@ Quick reference for where key files are located:
 - `src/app/api/trinkets/route.ts` - Trinket API endpoint
 - `src/app/api/vocations/route.ts` - Vocation API endpoint
 - `src/app/api/specializations/route.ts` - Specialization API endpoint
-- `src/lib/components/mdx/MetadataTable/` - Table components
+- `src/modules/metadata-tables/presentation/` - Table components per content type
 
 **Theme System**:
 
@@ -400,11 +417,12 @@ Quick reference for where key files are located:
 
 1. Read: [Metadata Generation § Extending the System](./metadata-generation.md#extending-the-system)
 2. Read: [Content System § Adding New Content](./content-system.md#adding-new-content)
-3. Add shared utilities to `src/lib/metadata/` if needed
-4. Create: `scripts/metadata/generate{Type}Metadata.ts` (import from `@/lib/metadata`)
-5. Create: `src/app/api/{type}/route.ts`
-6. Create: `src/lib/components/mdx/MetadataTable/{type}TableWrapper.tsx`
-7. Register: `src/modules/library/presentation/components/index.tsx`
+3. Create: `scripts/metadata/generate{Type}Metadata.ts` (import from `'.'`)
+4. Register the generator in `CONTENT_TYPES` (`scripts/metadata/generateMetadata.ts`)
+5. Create: schema in `src/lib/db/content/schemas/`, adapters in `adapters/fs` + `adapters/pg`, port in `repositories/`
+6. Create: `src/app/api/{type}/route.ts`
+7. Create: `src/modules/metadata-tables/presentation/{Type}Table/` (component + columns + barrel)
+8. Register the table in `src/modules/metadata-tables/presentation/index.ts` and `src/modules/library/presentation/components/index.tsx`
 
 ### Debugging Build Failures
 
@@ -440,7 +458,7 @@ Quick reference for where key files are located:
 
 **Can't find what you need?**
 
-1. Check [copilot-instructions.md](../copilot-instructions.md) for high-level patterns
+1. Check [AGENTS.md](../../AGENTS.md) for high-level patterns
 2. Search this docs folder for keywords
 3. Grep the codebase: `npm run grep-search "pattern"`
 4. Check related files in the reference map above

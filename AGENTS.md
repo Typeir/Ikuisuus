@@ -8,7 +8,7 @@ Violations → build failure, test failure, review rejection.
 
 | Rule                                                        | Documentation                                             | Acceptance Check                                     |
 | ----------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------- |
-| Caveman Speak — concise only, tokens cost. Technical focus. | [Caveman](.github/skills/caveman/SKILL.md.md)             | "I am caveman, will do — {caveman request}"          |
+| Caveman Speak — concise only, tokens cost. Technical focus. | [Caveman](.github/skills/caveman/SKILL.md)                 | "I am caveman, will do — {caveman request}"          |
 | Agent: load PAW skill fully before any edit.                | [PAW](.github/skills/paw/SKILL.md)                        | PAW SKILL.md read first.                             |
 | JSDoc on exports only, no inline comments                   | [JSDoc](.github/docs/jsdoc.md)                            | `grep -rn "// " src/` → 0                            |
 | No color literals outside `globals.scss`                    | [SCSS](.github/docs/scss-theme-rules.md)                  | `grep -rn "#[0-9a-fA-F]" src/ --include="*.tsx"` → 0 |
@@ -35,6 +35,7 @@ npm test
 
 | Change           | Details                                                                                          | Doc                                                     |
 | ---------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| Prompt retirement | `.github/prompts/` removed. 4 workflows became skills (`add-component`, `add-metadata-type`, `add-test`, `check-damocles-lore-consistency`); 9 agent-owned prompts deleted. Authoring process moved to `.github/docs/damocles-authoring-playbook.md`. Metadata docs realigned to repositories and the `metadata-tables` module. | [Workflow](.github/docs/copilot-workflow-system.md)     |
 | Raster lib       | `sharp` lives behind `src/lib/raster/`. Compressor, OG cards and Foundry tokens share it. ESLint bans the bare import. | [Raster](.github/docs/raster-module.md)                 |
 | Copilot Workflow | A→B→C: Analyze → Gate → Reconcile. Agents, skills, hooks, checks.                                | [Workflow](.github/docs/copilot-workflow-system.md)     |
 | MDX Format Check | Validates structure, naming, components. Composite gate + lint hook.                             | [MDX](.github/instructions/mdx-content.instructions.md) |
@@ -162,7 +163,6 @@ Add module: Define in `src/lib/debug/ik.ts`. `registerIkModule('key', obj)` on m
 - [Agents](.github/agents/)
 - [Skills](.github/skills/)
 - [Instructions](.github/instructions/)
-- [Prompts](.github/prompts/)
 - [Hooks](.github/hooks/hooks.json)
 - [Health](.github/scripts/health-check.ts)
 - [Tasks](.ignore/tasks/)
