@@ -2,6 +2,9 @@
 /**
  * @fileoverview Post-commit hook that warns when the other repo is dirty.
  * @module scripts/multirepo/validate-sync
+ * @author Typeir
+ * @version 1.0.0
+ * @since 3.0.0
  */
 
 import { spawnSync } from 'child_process';
@@ -10,8 +13,8 @@ import { resolve } from 'path';
 
 /**
  * Runs a git command in a repo directory with git env-vars unset.
- * @param repo - Absolute path to the repository root.
- * @param args - Git subcommand and flags.
+ * @param {string} repo - Absolute path to the repository root.
+ * @param {string[]} args - Git subcommand and flags.
  */
 function gitStatus(repo: string, args: string[]): number {
   const result = spawnSync('git', ['-C', repo, ...args], {
@@ -28,7 +31,7 @@ function gitStatus(repo: string, args: string[]): number {
 
 /**
  * Returns whether the repository has any staged or unstaged changes.
- * @param repo - Absolute path to the repository root.
+ * @param {string} repo - Absolute path to the repository root.
  */
 function isDirty(repo: string): boolean {
   return (
@@ -72,7 +75,7 @@ function main(): void {
   if (!existsSync(otherRepo)) process.exit(0);
 
   if (isDirty(otherRepo)) {
-    console.log(`
+    process.stdout.write(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚠️  MULTIREPO OUT OF SYNC
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
