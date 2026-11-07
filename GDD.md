@@ -248,7 +248,7 @@ Every divine or divine-adjacent entity in Damocles belongs to one of seven categ
 | **Virtue**         | Built something that outlasted him. The Miracle, the Brume — these are real, they endure, they have meaning to millions. Even if the architect was a monster.                                             |
 | **Domains**        | Ambition, manipulation, sulphur, devotion, deceit, paranoia, failure. Order (Mist).                                                                                                                       |
 | **Manifestations** | A literal giant floating brain made of demon centipedes. Constant pain.                                                                                                                                   |
-| **Followers**      | Gorgias (founded Brume Empire), the Comanda (silent enforcers), the Benefactor, the High Magii. Alethia the Swordstress was his first believer in the Miracle (later killed by High Magii for pacifism).  |
+| **Followers**      | Gorgias (founded Brume Empire), the Docencia (silent enforcers), the Benefactor, the High Magii. Alethia the Swordstress was his first believer in the Miracle (later killed by High Magii for pacifism). |
 | **Curse**          | Poison of the Mind (d100).                                                                                                                                                                                |
 | **Status**         | Right half sealed in a Casket Tower forever. Left half active, plotting.                                                                                                                                  |
 
@@ -359,7 +359,7 @@ Every divine or divine-adjacent entity in Damocles belongs to one of seven categ
 | Aspect       | Detail                                                                                                                                                                                                                                                   |
 | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Nature**   | The Miracle IS Xanthous. Xanthous IS the Miracle. It holds as much power as he does — that is the gamble. People believe the Miracle is just a philosophy. Xanthous believes he IS the Miracle. An utterly deranged leap of logic that genuinely worked. |
-| **Doctrine** | The human body is a source of corruption. No marks of flesh shall be left upon the world. Citizens fully concealed. Comanda (silent enforcers). Benefactor (anonymous ruler). High Magii (scion-swordsmen).                                              |
+| **Doctrine** | The human body is a source of corruption. No marks of flesh shall be left upon the world. Citizens fully concealed. Docencia (silent enforcers). Benefactor (anonymous ruler). High Magii (scion-swordsmen).                                             |
 | **Factions** | Despots (preserve the Miracle), Penitents (militaristic republic, abolish slavery), Golden Ones (reform toward Päivätär faith, imperial expansion).                                                                                                      |
 | **Status**   | Active. The dominant faith of the Brume Empire.                                                                                                                                                                                                          |
 
@@ -1070,11 +1070,11 @@ are properties of the individual entity, declared where that entity is declared.
 A brain in a jar is an object that feels psychic damage. An artificial lung is an
 object that can be poisoned. The category never decides.
 
-| DO                                                              | DON'T                                                      |
-| --------------------------------------------------------------- | ---------------------------------------------------------- |
-| State an entity's immunities in its own entry.                  | "Objects are immune to poison and psychic damage."         |
-| Let each area declare the population it touches.                | Derive what an effect reaches from the kind of its target. |
-| Key a rule to a state — a condition, a formation, a stance.     | Key a rule to a standing type.                             |
+| DO                                                          | DON'T                                                      |
+| ----------------------------------------------------------- | ---------------------------------------------------------- |
+| State an entity's immunities in its own entry.              | "Objects are immune to poison and psychic damage."         |
+| Let each area declare the population it touches.            | Derive what an effect reaches from the kind of its target. |
+| Key a rule to a state — a condition, a formation, a stance. | Key a rule to a standing type.                             |
 
 Monster entries already follow this: each declares its own immunities, and none
 derives them from a creature type.
