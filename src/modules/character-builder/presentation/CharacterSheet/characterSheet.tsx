@@ -10,6 +10,7 @@
 'use client';
 
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
+import dynamic from 'next/dynamic';
 import type { CharacterSheet as CharacterSheetType } from '@/lib/types/character';
 import {
   ActiveSheetProvider,
@@ -50,6 +51,16 @@ const ABILITY_KEYS: Array<{
 
 /** Available tabs in the character sheet. */
 type TabId = SheetTabId;
+
+/** Dev-only `window.ik.builder` bridge; inline env check so production bundles drop the import. */
+const BuilderDevBridge =
+  process.env.NODE_ENV !== 'production' &&
+  process.env.NEXT_PUBLIC_IK_DEV_BUILDER === '1'
+  ? dynamic(
+      () => import('../dev/builderDevBridge').then((m) => m.BuilderDevBridge),
+      { ssr: false },
+    )
+  : null;
 
 /**
  * Props for the CharacterSheet component.
@@ -140,7 +151,9 @@ const CharacterSheetBody: React.FC = () => {
   return (
     <article
       className={styles.characterSheet}
+      data-testid='builder-sheet'
       aria-label={t('ariaCharacterSheet', { name: data.name })}>
+      {BuilderDevBridge && <BuilderDevBridge />}
       <CharacterSheetHeader />
 
       <section className={styles.statsRow} aria-label={t('ariaAbilityScores')}>
@@ -148,6 +161,7 @@ const CharacterSheetBody: React.FC = () => {
           {ABILITY_KEYS.map(({ key, label }) => (
             <AbilityScoreBlock
               key={key}
+              abilityKey={key}
               label={label}
               score={data.abilityScores[key]}
               saveTier={data.savingThrows?.[key] ?? 'none'}
@@ -170,7 +184,7 @@ const CharacterSheetBody: React.FC = () => {
         <CombatStatChips />
       </section>
 
-      <div>
+      <div data-testid='builder-tabs' data-screenshot-action='switch-tab'>
         <GradientTabs
           tabs={tabs}
           activeTab={activeTab}

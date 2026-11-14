@@ -41,8 +41,12 @@ import { AspectGlyphs } from '@/modules/library/presentation/components/Aspects/
  * @property {ReactNode} [subOptions] - Optional sub-option selector rendered beneath the card row
  * @property {FeatureCardRepeatable} [repeatable] - When present, the primary button adds an instance, a count chip and remove button appear
  * @property {string[]} [aspects] - Aspects of the feature, shown as glyphs under the row
+ * @property {string} [testId] - Test id of the card; the toggle gets `<testId>-toggle`, the remove button `<testId>-remove`
+ * @property {string} [screenshotAction] - Checkpoint name on the toggle button
  */
 export interface FeatureCardProps {
+  testId?: string;
+  screenshotAction?: string;
   label: string;
   badge?: ReactNode;
   selected: boolean;
@@ -106,9 +110,13 @@ export interface FeatureCardRepeatable {
  * @param {ReactNode} [props.subOptions] - Optional sub-option selector rendered beneath the card row
  * @param {FeatureCardRepeatable} [props.repeatable] - Repeatable-selection controls; when present the primary button adds an instance and a count chip + remove button appear
  * @param {string[]} [props.aspects] - Aspects shown as glyphs under the row
+ * @param {string} [props.testId] - Test id of the card
+ * @param {string} [props.screenshotAction] - Checkpoint name on the toggle button
  * @returns {JSX.Element} Rendered feature card
  */
 export const FeatureCard: React.FC<FeatureCardProps> = ({
+  testId,
+  screenshotAction,
   label,
   badge,
   selected,
@@ -141,11 +149,15 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   };
 
   return (
-    <li className={`${styles.boonCard} ${isSelected ? styles.boonSelected : ''}`}>
+    <li
+      className={`${styles.boonCard} ${isSelected ? styles.boonSelected : ''}`}
+      data-testid={testId}>
       <div className={expandStyles.boonRow}>
         <button
           type='button'
           className={styles.boonToggleBtn}
+          data-testid={testId ? `${testId}-toggle` : undefined}
+          data-screenshot-action={screenshotAction}
           onClick={handlePrimary}
           aria-disabled={readOnly}
           aria-pressed={isSelected}
@@ -161,6 +173,8 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
             <button
               type='button'
               className={expandStyles.boonExpandBtn}
+              data-testid={testId ? `${testId}-remove` : undefined}
+              data-screenshot-action={screenshotAction ? 'remove-instance' : undefined}
               onClick={repeatable.onRemove}
               aria-label={repeatable.removeLabel}>
               <Minus size={14} aria-hidden='true' />

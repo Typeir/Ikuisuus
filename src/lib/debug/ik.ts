@@ -72,6 +72,58 @@ export interface IkModules {
   ws: IkWorldSimDebug;
   /** Persistent UI preferences — registered while PersistentUiProvider is mounted */
   ui: IkUiDebug;
+  /** Character builder test hooks — registered while a sheet is mounted and the dev builder flag is on */
+  builder: IkBuilderDebug;
+}
+
+/**
+ * `window.ik.builder` — dev-only character builder hooks against live UI state.
+ *
+ * @interface IkBuilderDebug
+ * @property {() => import('@/lib/types/character').CharacterSheet} getCharacter - Displayed character (draft while editing)
+ * @property {(carry?: import('@/modules/character-builder/application/builderCore/types').CarryOptions) => import('@/modules/character-builder/application/builderCore/builderState').BuilderState} getState - Computed state
+ * @property {(carry?: import('@/modules/character-builder/application/builderCore/types').CarryOptions) => import('@/modules/character-builder/application/builderCore/types').BuilderFlag[]} getFlags - Advisory flags
+ * @property {(patch: Partial<import('@/lib/types/character').CharacterSheet>) => Promise<import('@/modules/character-builder/application/builderCore/types').BuilderSnapshot & { diff: unknown }>} patch - Merges a patch through the sheet mutators, waits for settle, returns snapshot and diff
+ * @property {(character: import('@/lib/types/character').CharacterSheet) => Promise<import('@/modules/character-builder/application/builderCore/types').BuilderSnapshot>} load - Upserts and activates a character, waits for settle
+ * @property {(payload: import('@/modules/character-builder/application/builderCore/types').BuilderPayload, options?: { locale?: string; threshold?: number }) => Promise<unknown>} create - Builds via the dev API, loads the result, waits for settle
+ * @property {(slot: import('@/modules/character-builder/application/builderCore/types').BuilderSlot, vocationIndex?: number) => Promise<unknown>} options - Lists slot options for the displayed character via the dev API
+ * @property {() => void} edit - Enters edit mode
+ * @property {() => void} save - Saves and leaves edit mode
+ * @property {() => void} cancel - Discards edits
+ * @property {() => boolean} isSettled - True when no builder task is pending and state is quiet
+ * @property {(timeoutMs?: number) => Promise<void>} whenSettled - Resolves once settled; rejects after the timeout (default 10000)
+ */
+export interface IkBuilderDebug {
+  getCharacter: () => import('@/lib/types/character').CharacterSheet;
+  getState: (
+    carry?: import('@/modules/character-builder/application/builderCore/types').CarryOptions,
+  ) => import('@/modules/character-builder/application/builderCore/builderState').BuilderState;
+  getFlags: (
+    carry?: import('@/modules/character-builder/application/builderCore/types').CarryOptions,
+  ) => import('@/modules/character-builder/application/builderCore/types').BuilderFlag[];
+  patch: (
+    patch: Partial<import('@/lib/types/character').CharacterSheet>,
+  ) => Promise<
+    import('@/modules/character-builder/application/builderCore/types').BuilderSnapshot & {
+      diff: unknown;
+    }
+  >;
+  load: (
+    character: import('@/lib/types/character').CharacterSheet,
+  ) => Promise<import('@/modules/character-builder/application/builderCore/types').BuilderSnapshot>;
+  create: (
+    payload: import('@/modules/character-builder/application/builderCore/types').BuilderPayload,
+    options?: { locale?: string; threshold?: number },
+  ) => Promise<unknown>;
+  options: (
+    slot: import('@/modules/character-builder/application/builderCore/types').BuilderSlot,
+    vocationIndex?: number,
+  ) => Promise<unknown>;
+  edit: () => void;
+  save: () => void;
+  cancel: () => void;
+  isSettled: () => boolean;
+  whenSettled: (timeoutMs?: number) => Promise<void>;
 }
 
 /**

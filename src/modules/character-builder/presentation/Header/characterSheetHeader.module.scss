@@ -236,6 +236,14 @@ input.nameInput {
   font-variant-numeric: tabular-nums;
 }
 
+/* Over-budget BP mirrors the boon picker warning. */
+.bpCounter[data-over],
+.commandStripBp[data-over] {
+  border-color: var(--color-danger);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger);
+}
+
 .headerActions {
   display: flex;
   gap: 0.5rem;

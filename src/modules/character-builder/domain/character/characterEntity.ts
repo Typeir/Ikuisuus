@@ -8,6 +8,7 @@
  * @since 1.0.0
  */
 import type { HitDieRollEntry } from '@/lib/types/hitDice';
+import type { CarryingInputs } from '../carrying-capacity/types';
 
 /**
  * Proficiency level for saves and skills.
@@ -351,6 +352,7 @@ export interface VocationEntry {
  * @property {string[]} [armorProficiencies] - Armor categories granted by active features (derived from grant tags)
  * @property {string[]} [weaponProficiencies] - Weapon categories/items granted by active features (derived from grant tags)
  * @property {EquipmentItem[]} equipment - Equipment items with name, quantity, and weight
+ * @property {CarryingInputs} [carrying] - Carry widget inputs; absent means medium biped with 0 extra pounds
  * @property {CharacterCurrency} currency - Carried currency
  * @property {string} wants - What the character wants
  * @property {string} fears - What the character fears
@@ -406,6 +408,7 @@ export interface CharacterEntity {
   weaponProficiencies?: string[];
   equipment: EquipmentItem[];
   equipmentNotes: string;
+  carrying?: CarryingInputs;
   selectedFeats: CharacterShard[];
   currency: CharacterCurrency;
   coinHoldings: CharacterCoinHoldings[];

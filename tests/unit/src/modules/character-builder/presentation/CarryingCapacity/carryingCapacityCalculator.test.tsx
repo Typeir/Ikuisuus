@@ -8,6 +8,7 @@
  */
 
 import { CarryingCapacityCalculator } from '@/modules/character-builder/presentation/CarryingCapacity/carryingCapacityCalculator';
+import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
 import { createEmptyCharacter } from '@/modules/character-builder/lib/utils/characterStorage';
 import { fireEvent, screen } from '@testing-library/react';
 import { renderWithActiveSheet } from '@tests/setup/renderWithActiveSheet';
@@ -66,4 +67,47 @@ describe('CarryingCapacityCalculator', () => {
     fireEvent.change(carriedInput, { target: { value: '500' } });
     expect(screen.getByText('Over capacity')).toBeTruthy();
   });
+
+  it('reads stored carry inputs from the character', () => {
+    renderWithActiveSheet(<CarryingCapacityCalculator />, {
+      character: {
+        ...baseSheet(),
+        carrying: { size: 'large', extraLb: 500 },
+      },
+    });
+    expect(screen.getByText(/Heavy ≤ 400 lb/)).toBeTruthy();
+    expect(screen.getByText('Over capacity')).toBeTruthy();
+    expect(
+      (screen.getByLabelText(/Size/) as HTMLSelectElement).value,
+    ).toBe('large');
+  });
+
+  it('writes every input change to the character', () => {
+    renderWithActiveSheet(
+      <>
+        <CarryingCapacityCalculator />
+        <CarryingProbe />
+      </>,
+      { character: baseSheet() },
+    );
+    fireEvent.change(screen.getByLabelText(/Size/), {
+      target: { value: 'small' },
+    });
+    fireEvent.change(screen.getByLabelText(/Carried/), {
+      target: { value: '12' },
+    });
+    expect(JSON.parse(screen.getByTestId('probe').textContent ?? '')).toEqual(
+      { size: 'small', extraLb: 12 },
+    );
+  });
 });
+
+/**
+ * Prints the stored `carrying` field.
+ *
+ * @returns {JSX.Element} Probe span
+ */
+function CarryingProbe() {
+  const data = useSheetData();
+  return <span data-testid='probe'>{JSON.stringify(data.carrying ?? {})}</span>;
+}

@@ -84,13 +84,13 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
       const creature = createEmptyCreature();
       creature.name = 'Test';
       creature.hpMax = 100;
-      creature.ac = 15;
+      creature.defence = 15;
 
       const combatant = createInProgressCombatant(creature);
 
       expect(combatant.name).toBe('Test');
       expect(combatant.hpMax).toBe(100);
-      expect(combatant.ac).toBe(15);
+      expect(combatant.defence).toBe(15);
       expect(combatant.locked).toEqual([]);
     });
   });
@@ -141,9 +141,9 @@ describe('EncounterPlanner Lock Outside PlayMode', () => {
       expect(Array.isArray(combatant.locked)).toBe(true);
     });
 
-    it('should provide proper context for AC input field locking', async () => {
+    it('should provide proper context for Defence input field locking', async () => {
       const creature = createEmptyCreature();
-      creature.ac = 15;
+      creature.defence = 15;
       const combatant = createInProgressCombatant(creature);
 
       const { container } = renderWithIntl(

@@ -16,6 +16,7 @@ import {
   urlForContentShardSingle,
 } from '@/lib/fetch/swrKeys';
 import { shardFor } from '@/lib/utils/contentShards';
+import { buildBoonShardFrom } from '../../application/builderCore/builderMutations';
 import { entryKey, shardIs } from '../../lib/utils/shardKey';
 import type { ContentShardResponse } from '@/lib/types/api';
 import type { CharacterShard } from '@/lib/types/character';
@@ -164,14 +165,5 @@ export async function buildBoonShard(
     } catch {
     }
   }
-  return {
-    id: `${bloodlineSlug}::${boon.name}`,
-    sourceFile: `character-creation/bloodlines/${bloodlineSlug}.bloodline.mdx`,
-    heading: boon.name,
-    key,
-    category: 'boon',
-    bpCost: boon.bpValue,
-    cachedText,
-    tags: boon.tags,
-  };
+  return buildBoonShardFrom(boon, bloodlineSlug, cachedText);
 }

@@ -15,6 +15,7 @@ import { stripInlineMarkdown } from '@/lib/utils/stripInlineMarkdown';
 import { displayAspects } from '@/modules/library/domain/aspects';
 import { ChevronScroll } from '@/lib/components/ui/chevronScroll/ChevronScroll';
 import { AspectGlyphs } from '@/modules/library/presentation/components/Aspects/AspectGlyphs';
+import { anchorOf } from '../../lib/utils/shardKey';
 import pipStyles from '../CharacterSheet/proficiencyTrack.module.scss';
 import styles from './boonSubOptions.module.scss';
 
@@ -92,6 +93,8 @@ export const BoonSubOptions: React.FC<BoonSubOptionsProps> = ({
               aria-checked={isSelected}
               aria-label={option.name}
               disabled={readOnly}
+              data-testid={`builder-boon-${anchorOf(boonName)}-option-${anchorOf(option.name)}`}
+              data-screenshot-action='select-boon-sub-option'
               className={`${
                 pipStyles[isSelected ? 'trackDot-filled' : 'trackDot-empty']
               } ${styles.subOptionPip}`}

@@ -15,12 +15,15 @@ import type { FeatMetadata } from "@/lib/db/content/schemas/featMetadata";
 import { useFeats } from "@/lib/hooks/data/useFeats";
 import { useIsMobileViewport } from "@/lib/hooks/useMediaQuery";
 import type { CharacterShard } from "@/lib/types/character";
+import {
+  buildFeatShard,
+  featSourceFile,
+} from "@/modules/character-builder/application/builderCore/builderMutations";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import styles from "../CharacterSheet/characterSheetWidgets.module.scss";
 import { AspectFilterBar, useAspectFilter } from "../aspects/aspectFilterBar";
 import { matchesAspects } from "../../lib/utils/aspectRollup";
-import { anchorOf } from "../../lib/utils/shardKey";
 import { FeatureCard } from "./featureCard";
 import pickerStyles from "./pickerControls.module.scss";
 
@@ -76,8 +79,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
     });
   }, []);
 
-  /** @param {string} slug - Feat slug to check */
-  const toSourceFile = (slug: string) => `character-creation/feats/${slug}.mdx`;
+  const toSourceFile = featSourceFile;
 
   const isSelected = (slug: string) =>
     selectedFeats.some((s) => s.sourceFile === toSourceFile(slug));
@@ -114,17 +116,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
       onToggle(selectedFeats.filter((s) => s.sourceFile !== sf));
       return;
     }
-    const shard: CharacterShard = {
-      id: `feat::${feat.slug}`,
-      sourceFile: sf,
-      heading: feat.title,
-      key: anchorOf(feat.title),
-      category: "feat",
-      cachedText: feat.description ?? undefined,
-      grants: feat.grants,
-      tags: feat.tags,
-    };
-    onToggle([...selectedFeats, shard]);
+    onToggle([...selectedFeats, buildFeatShard(feat)]);
   };
 
   /** @param {string} slug - Feat slug to count instances of */
@@ -138,17 +130,7 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
    * @param {FeatMetadata} feat - Feat to add another instance of
    */
   const addInstance = (feat: FeatMetadata) => {
-    const shard: CharacterShard = {
-      id: `feat::${feat.slug}::${crypto.randomUUID()}`,
-      sourceFile: toSourceFile(feat.slug),
-      heading: feat.title,
-      key: anchorOf(feat.title),
-      category: "feat",
-      cachedText: feat.description ?? undefined,
-      grants: feat.grants,
-      tags: feat.tags,
-    };
-    onToggle([...selectedFeats, shard]);
+    onToggle([...selectedFeats, buildFeatShard(feat, crypto.randomUUID())]);
   };
 
   /**
@@ -209,6 +191,8 @@ export const FeatPicker: React.FC<FeatPickerProps> = ({
                 return (
                   <FeatureCard
                     key={feat.slug}
+                    testId={`builder-feat-${feat.slug}`}
+                    screenshotAction="toggle-feat"
                     label={feat.title}
                     badge={feat.hasPrerequisite ? t("prereq") : undefined}
                     selected={selected}

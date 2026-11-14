@@ -123,6 +123,8 @@ export const SkillsTableImpl: React.FC<SkillsTableProps> = ({
                   readOnly={readOnly}
                   itemName={skill.name}
                   grantedFloor={floor}
+                  testId={`builder-${skill.name.replace('.', '-')}`}
+                  screenshotAction={readOnly ? undefined : 'set-skill-tier'}
                 />
               </td>
               <td>{bonusStr}</td>

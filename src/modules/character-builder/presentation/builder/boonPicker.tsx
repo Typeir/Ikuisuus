@@ -15,7 +15,8 @@ import { Skeleton, SkeletonGroup } from '@/lib/components/skeleton/skeleton';
 import type { BloodlineBoon } from '@/lib/db/content/schemas/bloodlineMetadata.d';
 import { useBloodlines } from '@/lib/hooks/data/useBloodlines';
 import type { CharacterShard } from '@/lib/types/character';
-import { computeBpSpent } from '@/modules/character-builder/lib/utils/boonPoints';
+import { trackBuilderTask } from '@/modules/character-builder/application/builderCore/builderActivity';
+import { computeBpStatus } from '@/modules/character-builder/application/builderCore/builderMetrics';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { useSWRConfig } from 'swr';
@@ -24,7 +25,7 @@ import { applySubOptionSelection, buildBoonShard } from './boonSelection';
 import { BoonSubOptions } from './boonSubOptions';
 import { AspectFilterBar, useAspectFilter } from '../aspects/aspectFilterBar';
 import { matchesAspects } from '../../lib/utils/aspectRollup';
-import { shardIs } from '../../lib/utils/shardKey';
+import { anchorOf, shardIs } from '../../lib/utils/shardKey';
 import { FeatureCard } from './featureCard';
 import pickerStyles from './pickerControls.module.scss';
 
@@ -127,8 +128,11 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
     [readOnly, filteredBoons, selectedBoons],
   );
 
-  const bpSpent = computeBpSpent(selectedBoons);
-  const bpRemaining = boonBudget - bpSpent;
+  const {
+    spent: bpSpent,
+    remaining: bpRemaining,
+    over: bpOver,
+  } = computeBpStatus(selectedBoons, boonBudget);
 
   const isBoonSelected = (boon: BloodlineBoon) =>
     selectedBoons.some((s) => shardIs(s, boon));
@@ -143,10 +147,9 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
       return;
     }
 
-    const shard = await buildBoonShard(boon, bloodlineSlug, locale, {
-      cache,
-      mutate,
-    });
+    const shard = await trackBuilderTask(
+      buildBoonShard(boon, bloodlineSlug, locale, { cache, mutate }),
+    );
     onToggle([...selectedBoons, shard]);
   };
 
@@ -162,20 +165,24 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
       {!readOnly && (
         <div
           className={styles.boonBudgetMeter}
+          data-testid='builder-bp-meter'
           aria-label={t('ariaBoonBudget')}>
           <span className={styles.boonBudgetLabel}>
             {t('bpFormat', { spent: bpSpent, total: boonBudget })}
           </span>
           <div className={styles.boonBudgetBar}>
             <div
-              className={`${styles.boonBudgetFill} ${bpRemaining < 0 ? styles.boonBudgetOver : ''}`}
+              className={`${styles.boonBudgetFill} ${bpOver ? styles.boonBudgetOver : ''}`}
               style={{
                 width: `${Math.min(100, (bpSpent / Math.max(boonBudget, 1)) * 100)}%`,
               }}
             />
           </div>
-          {bpRemaining < 0 && (
-            <span className={styles.boonBudgetWarning}>
+          {bpOver && (
+            <span
+              className={styles.boonBudgetWarning}
+              data-testid='builder-flag'
+              data-flag-code='BP_OVER_BUDGET'>
               {t('bpOverBudget', { amount: Math.abs(bpRemaining) })}
             </span>
           )}
@@ -251,6 +258,8 @@ export const BoonPicker: React.FC<BoonPickerProps> = ({
                 return (
                   <FeatureCard
                     key={boon.name}
+                    testId={`builder-boon-${anchorOf(boon.name)}`}
+                    screenshotAction={hasSubOptions ? undefined : 'toggle-boon'}
                     label={boon.name}
                     badge={badgeText}
                     selected={selected}

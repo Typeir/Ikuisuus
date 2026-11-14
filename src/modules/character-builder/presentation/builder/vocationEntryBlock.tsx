@@ -137,7 +137,10 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
           {t('colVocation')}
           {!isOnlyEntry ? ` ${index + 1}` : ''}
         </span>
-        <div className={styles.selectorInput}>
+        <div
+          className={styles.selectorInput}
+          data-testid={`builder-vocation-${index}`}
+          data-screenshot-action='select-vocation'>
           {showSkeleton ? (
             <Skeleton variant='button' height='26px' />
           ) : (
@@ -158,32 +161,43 @@ export const VocationEntryBlock: React.FC<VocationEntryBlockProps> = ({
         {showSkeleton ? (
           <Skeleton variant='button' height='26px' width='3.5rem' />
         ) : (
-          <NumericInput
-            value={entry.level}
-            min={1}
-            max={30}
-            size='sm'
-            showChevrons
-            selectOnFocus
-            className={styles.levelInput}
-            ariaLabel={t('ariaVocationLevel')}
-            onChange={(v) => onLevelChange(index, v ?? 1)}
-          />
+          <span
+            data-testid={`builder-vocation-${index}-level`}
+            data-screenshot-action='set-vocation-level'>
+            <NumericInput
+              value={entry.level}
+              min={1}
+              max={30}
+              size='sm'
+              showChevrons
+              selectOnFocus
+              className={styles.levelInput}
+              ariaLabel={t('ariaVocationLevel')}
+              onChange={(v) => onLevelChange(index, v ?? 1)}
+            />
+          </span>
         )}
         {!isOnlyEntry && (
-          <IconButton
-            kind='close'
-            shape='rhombus'
-            label={t('ariaRemoveVocation')}
-            disabled={showSkeleton || isAsyncLoading}
-            onClick={() => onRemove(index)}
-            className={styles.removeSlot}
-          />
+          <span
+            data-testid={`builder-vocation-${index}-remove`}
+            data-screenshot-action='remove-vocation'>
+            <IconButton
+              kind='close'
+              shape='rhombus'
+              label={t('ariaRemoveVocation')}
+              disabled={showSkeleton || isAsyncLoading}
+              onClick={() => onRemove(index)}
+              className={styles.removeSlot}
+            />
+          </span>
         )}
       </div>
       <div className={styles.selectorRow}>
         <span className={styles.selectorLabel}>{t('colSpecialization')}</span>
-        <div className={styles.selectorInput}>
+        <div
+          className={styles.selectorInput}
+          data-testid={`builder-specialization-${index}`}
+          data-screenshot-action='select-specialization'>
           {showSkeleton ? (
             <Skeleton variant='button' height='26px' width='100%' />
           ) : (

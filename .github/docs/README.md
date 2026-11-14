@@ -93,6 +93,23 @@ Combat runner and tracker system documentation.
 
 ---
 
+### 🧪 [Builder Dev API](./builder-dev-api.md)
+
+**When to read**: When an agent or Playwright test creates, inspects, or checks characters
+
+Dev-only character builder API, `window.ik.builder` hooks, test ids, checkpoint names, fixtures.
+
+**Key Topics**:
+
+- `/api/dev/builder/*` create, state, patch, options
+- Flag catalog (UI flairs only, never blocking)
+- Settle waits, checkpoint screenshots, parity spec
+- Character fixture format
+
+**Essential for**: Builder test automation
+
+---
+
 ### 🔧 [Build Pipeline Architecture](./build-pipeline.md)
 
 **When to read**: Before running dev server or making build-related changes

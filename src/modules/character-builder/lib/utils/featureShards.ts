@@ -10,23 +10,10 @@
 
 import { fetcher } from '@/lib/fetch/fetcher';
 import { urlForContentShard } from '@/lib/fetch/swrKeys';
-import { shardFor } from '@/lib/utils/contentShards';
-import { entryKey } from './shardKey';
+import { buildFeatureShards } from '@/modules/character-builder/application/builderCore/builderMutations';
 import type { ContentShardResponse } from '@/lib/types/api';
 import type { CharacterShard } from '@/lib/types/character';
 import type { FeatureEntry } from '@/lib/types/vocations';
-
-/**
- * Strips the `src/content/{locale}/` prefix from a metadata file path,
- * returning the path relative to the content root expected by `/api/shards`.
- *
- * @function stripContentPrefix
- * @param {string} file - Full metadata file path (e.g. `src/content/en/character-creation/vocations/warlock/main.mdx`)
- * @returns {string} Relative path (e.g. `character-creation/vocations/warlock/main.mdx`)
- */
-function stripContentPrefix(file: string): string {
-  return file.replace(/^src\/content\/[^/]+\//, '');
-}
 
 /**
  * Fetches feature shards for a vocation or specialization from
@@ -51,22 +38,11 @@ export async function fetchFeatureShards(
   endpoint: 'vocations' | 'specializations',
   locale: string,
 ): Promise<CharacterShard[]> {
-  const sourceFile = stripContentPrefix(file);
   try {
     const data = await fetcher<ContentShardResponse>(
       urlForContentShard(endpoint, slug, locale),
     );
-    return features.map((f) => ({
-      id: `${slug}::${f.level}::${f.name}`,
-      sourceFile,
-      heading: f.name,
-      key: entryKey(f),
-      category,
-      level: f.level,
-      cachedText: shardFor(data.shards, f.name)?.source,
-      grants: f.grants,
-      tags: f.tags,
-    }));
+    return buildFeatureShards(slug, file, features, category, data.shards ?? []);
   } catch {
     return [];
   }

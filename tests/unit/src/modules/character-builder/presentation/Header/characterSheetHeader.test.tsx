@@ -43,4 +43,29 @@ describe('CharacterSheetHeader', () => {
     expect(screen.getByRole('button', { name: 'save' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'cancel' })).toBeTruthy();
   });
+
+  it('marks the BP counter over budget only when spent exceeds the budget', () => {
+    const boon = {
+      id: 'b',
+      sourceFile: 'x.mdx',
+      heading: 'B',
+      category: 'boon' as const,
+      bpCost: 3,
+    };
+    renderWithActiveSheet(<CharacterSheetHeader />, {
+      character: { boonBudget: 2, selectedBoons: [boon] },
+    });
+    expect(
+      screen.getByTestId('builder-bp-counter').hasAttribute('data-over'),
+    ).toBe(true);
+
+    cleanup();
+
+    renderWithActiveSheet(<CharacterSheetHeader />, {
+      character: { boonBudget: 3, selectedBoons: [boon] },
+    });
+    expect(
+      screen.getByTestId('builder-bp-counter').hasAttribute('data-over'),
+    ).toBe(false);
+  });
 });

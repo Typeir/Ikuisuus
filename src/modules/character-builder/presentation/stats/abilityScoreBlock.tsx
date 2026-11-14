@@ -38,8 +38,10 @@ import styles from './abilityScoreBlock.module.scss';
  * @property {(score: number) => void} [onChange] - Fired when the score changes in edit mode
  * @property {(tier: TierLevel) => void} [onSaveTierChange] - Fired when a save pip is toggled in edit mode
  * @property {TierLevel} [saveFloor='none'] - Save tier auto-granted by active features; the row shows `higherTier(manual, floor)`
+ * @property {string} [abilityKey] - Ability key used in test ids, e.g. `str`
  */
 export interface AbilityScoreBlockProps {
+  abilityKey?: string;
   label: string;
   score: number;
   saveTier: TierLevel;
@@ -63,9 +65,11 @@ export interface AbilityScoreBlockProps {
  * @param {(score: number) => void} [props.onChange] - Fired when the score changes in edit mode
  * @param {(tier: TierLevel) => void} [props.onSaveTierChange] - Fired when a save pip is toggled in edit mode
  * @param {TierLevel} [props.saveFloor='none'] - Save tier auto-granted by active features; the row shows `higherTier(manual, floor)`
+ * @param {string} [props.abilityKey] - Ability key used in test ids
  * @returns {JSX.Element} Rendered ability score block
  */
 export const AbilityScoreBlock: React.FC<AbilityScoreBlockProps> = ({
+  abilityKey,
   label,
   score,
   saveTier,
@@ -93,7 +97,10 @@ export const AbilityScoreBlock: React.FC<AbilityScoreBlockProps> = ({
       <span className={styles.abilityLabel}>{label}</span>
       <span className={styles.abilityMod}>{modStr}</span>
       {editing ? (
-        <div className={styles.abilityEditRow}>
+        <div
+          className={styles.abilityEditRow}
+          data-testid={abilityKey ? `builder-ability-${abilityKey}` : undefined}
+          data-screenshot-action='set-ability-score'>
           <NumericInput
             value={score}
             min={1}
@@ -125,6 +132,8 @@ export const AbilityScoreBlock: React.FC<AbilityScoreBlockProps> = ({
           readOnly={!editing}
           itemName={`${label}-save`}
           grantedFloor={saveFloor}
+          testId={abilityKey ? `builder-save-${abilityKey}` : undefined}
+          screenshotAction={editing ? 'set-save-tier' : undefined}
         />
         <span className={styles.saveBonus}>{saveStr}</span>
       </div>

@@ -13,13 +13,23 @@
 
 import { Chip } from '@/lib/components/ui/chip';
 import { NumericInput } from '@/lib/components/ui/numericInput';
-import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
-import { useEquipmentContext } from '@/modules/character-builder/application/context/equipmentContext';
-import type { CreatureSize } from '@/modules/character-builder/domain/carrying-capacity';
-import { computeCapacity } from '@/modules/character-builder/infrastructure/carrying-capacity';
+import {
+  LOAD_LABELS,
+  computeCarryStatus,
+  loadFlagCode,
+  resolveCarrying,
+} from '@/modules/character-builder/application/builderCore/builderMetrics';
+import {
+  useSheetData,
+  useSheetMutators,
+} from '@/modules/character-builder/application/context/activeSheetContext';
+import type {
+  CarryingInputs,
+  CreatureSize,
+} from '@/modules/character-builder/domain/carrying-capacity';
 import { PipCheckbox } from '@/modules/character-builder/presentation/components/PipCheckbox';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import styles from './carryingCapacityCalculator.module.scss';
 
 /**
@@ -37,24 +47,6 @@ const SIZE_OPTIONS: CreatureSize[] = [
   'colossal',
 ];
 
-/**
- * Determines the load tier for a given carried weight.
- *
- * @function classifyLoad
- * @param {number} carried - Carried weight in pounds
- * @param {{light:number;medium:number;heavy:number}} thresholds - Load thresholds
- * @returns {'none'|'light'|'medium'|'heavy'|'over'} Load tier
- */
-const classifyLoad = (
-  carried: number,
-  thresholds: { light: number; medium: number; heavy: number },
-): 'none' | 'light' | 'medium' | 'heavy' | 'over' => {
-  if (carried <= 0) return 'none';
-  if (carried <= thresholds.light) return 'light';
-  if (carried <= thresholds.medium) return 'medium';
-  if (carried <= thresholds.heavy) return 'heavy';
-  return 'over';
-};
 
 /**
  * Carrying capacity panel.
@@ -64,18 +56,22 @@ const classifyLoad = (
  */
 export const CarryingCapacityCalculator: React.FC = () => {
   const data = useSheetData();
-  const strength = data.abilityScores?.str ?? 10;
-  const { totalWeight } = useEquipmentContext();
-
-  const [size, setSize] = useState<CreatureSize>('medium');
-  const [isQuadruped, setIsQuadruped] = useState(false);
-  const [carried, setCarried] = useState(0);
+  const { patch } = useSheetMutators();
   const t = useTranslations('characterSheet');
 
-  const effectiveCarried = totalWeight > 0 ? totalWeight + carried : carried;
+  const { size, quadruped, extraLb } = resolveCarrying(data);
+  const {
+    carriedLb: effectiveCarried,
+    thresholds,
+    tier,
+  } = useMemo(() => computeCarryStatus(data), [data]);
+  const flagCode = loadFlagCode(tier);
 
-  const thresholds = computeCapacity(strength, size, isQuadruped);
-  const tier = classifyLoad(effectiveCarried, thresholds);
+  const setCarrying = useCallback(
+    (next: CarryingInputs) =>
+      patch({ carrying: { ...data.carrying, ...next } }),
+    [data.carrying, patch],
+  );
 
   const fillPct =
     thresholds.heavy > 0
@@ -85,14 +81,19 @@ export const CarryingCapacityCalculator: React.FC = () => {
   return (
     <div className={styles.calculator}>
       <div className={styles.controls}>
-        <label className={styles.controlField}>
+        <label
+          className={styles.controlField}
+          data-testid='builder-carry-size'
+          data-screenshot-action='set-carry-size'>
           <span className={styles.controlLabel}>
             {t('carryingCapacitySize')}
           </span>
           <select
             className={styles.select}
             value={size}
-            onChange={(e) => setSize(e.target.value as CreatureSize)}>
+            onChange={(e) =>
+              setCarrying({ size: e.target.value as CreatureSize })
+            }>
             {SIZE_OPTIONS.map((option) => (
               <option key={option} value={option}>
                 {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -100,28 +101,34 @@ export const CarryingCapacityCalculator: React.FC = () => {
             ))}
           </select>
         </label>
-        <div className={styles.controlField}>
+        <div
+          className={styles.controlField}
+          data-testid='builder-carry-quadruped'
+          data-screenshot-action='toggle-carry-quadruped'>
           <span className={styles.controlLabel}>
             {t('carryingCapacityQuadruped')}
           </span>
           <PipCheckbox
-            checked={isQuadruped}
-            onChange={setIsQuadruped}
+            checked={quadruped}
+            onChange={(next) => setCarrying({ quadruped: next })}
             ariaLabel={t('carryingCapacityQuadruped')}
             size='lg'
           />
         </div>
-        <label className={styles.controlField}>
+        <label
+          className={styles.controlField}
+          data-testid='builder-carry-extra'
+          data-screenshot-action='set-carry-extra'>
           <span className={styles.controlLabel}>
             {t('carryingCapacityCarried')}
           </span>
           <NumericInput
-            value={carried}
+            value={extraLb}
             min={0}
             size='sm'
             className={styles.numberInput}
             ariaLabel={t('carryingCapacityCarriedAria')}
-            onChange={(v) => setCarried(Math.max(0, v ?? 0))}
+            onChange={(v) => setCarrying({ extraLb: Math.max(0, v ?? 0) })}
           />
         </label>
       </div>
@@ -148,12 +155,12 @@ export const CarryingCapacityCalculator: React.FC = () => {
           style={{ width: `${fillPct}%` }}
         />
       </div>
-      <div className={styles.tierLabel} data-tier={tier}>
-        {tier === 'none' && 'No load'}
-        {tier === 'light' && 'Light load'}
-        {tier === 'medium' && 'Medium load'}
-        {tier === 'heavy' && 'Heavy load'}
-        {tier === 'over' && 'Over capacity'}
+      <div
+        className={styles.tierLabel}
+        data-tier={tier}
+        data-testid={flagCode ? 'builder-flag' : 'builder-carry-tier'}
+        data-flag-code={flagCode ?? undefined}>
+        {LOAD_LABELS[tier]}
       </div>
     </div>
   );

@@ -102,6 +102,8 @@ export function ToolsTable({
                   readOnly={readOnly}
                   itemName={tool.name}
                   grantedFloor={floor}
+                  testId={`builder-${tool.name.replace('.', '-')}`}
+                  screenshotAction={readOnly ? undefined : 'set-trade-tier'}
                 />
               </td>
               <td>{bonusStr}</td>

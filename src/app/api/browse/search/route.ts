@@ -17,7 +17,7 @@ import { isSupportedLocale } from '@/lib/constants/locales';
 import { REPOSITORIES_BY_TYPE } from '@/lib/db/content/repositories/byContentType';
 import type { BaseMetadata } from '@/lib/db/content/schemas/baseMetadata';
 import { logger } from '@/lib/logging/logger';
-import { calculateSimilarity } from '@/modules/library/application/use-cases/findNearestRoute.levenshtein';
+import { scoreFuzzy } from '@/modules/library/application/use-cases/fuzzyScore';
 import {
   localizeLink,
   SEARCH_CONTENT_TYPES,
@@ -29,9 +29,6 @@ const log = logger.child({ module: 'API:Browse:Search' });
 
 /** Scores below this floor never surface. */
 const MIN_SCORE = 0.3;
-
-/** Substring hits rank at least this high. */
-const SUBSTRING_FLOOR = 0.9;
 
 /** Default and maximum result counts. */
 const DEFAULT_LIMIT = 20;
@@ -48,14 +45,7 @@ const CACHE_CONTROL = 'public, s-maxage=3600, stale-while-revalidate=86400';
  * @returns {number} Score in [0, 1]
  */
 function scoreRecord(query: string, record: BaseMetadata): number {
-  const slug = String(record.slug ?? '').toLowerCase();
-  const title = String(record.title ?? '').toLowerCase();
-  const similarity = Math.max(
-    calculateSimilarity(query, slug),
-    calculateSimilarity(query, title),
-  );
-  const isSubstring = slug.includes(query) || title.includes(query);
-  return isSubstring ? Math.max(similarity, SUBSTRING_FLOOR) : similarity;
+  return scoreFuzzy(query, [String(record.slug ?? ''), String(record.title ?? '')]);
 }
 
 /**

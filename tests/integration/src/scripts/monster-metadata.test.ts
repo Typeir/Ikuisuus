@@ -61,16 +61,16 @@ describe('Monster Metadata Generator', () => {
     });
 
     /**
-     * @description Verifies AC includes parenthetical notes
+     * @description Verifies Defence includes parenthetical notes
      */
-    it('should extract armor class with notes', async () => {
+    it('should extract defence with notes', async () => {
       const filePath = path.join(FIXTURES_DIR, 'simple-monster.sheet.mdx');
       const result = await parseMonsterFile(filePath, sharedData);
       const monster = result[0];
 
-      expect(monster.ac).toBeDefined();
-      expect(monster.ac.value).toBe(16);
-      expect(monster.ac.notes).toContain('natural');
+      expect(monster.defence).toBeDefined();
+      expect(monster.defence.value).toBe(16);
+      expect(monster.defence.notes).toContain('natural');
     });
 
     /**
@@ -167,8 +167,8 @@ describe('Monster Metadata Generator', () => {
       expect(elder).toBeDefined();
 
       // Cub should have lower stats than Elder
-      expect(cub.ac.value).toBe(11);
-      expect(elder.ac.value).toBe(13);
+      expect(cub.defence.value).toBe(11);
+      expect(elder.defence.value).toBe(13);
 
       expect(cub.cr).toBe('2');
       expect(elder.cr).toBe('5');
@@ -253,9 +253,9 @@ describe('Monster Metadata Generator', () => {
 
   describe('Extreme Stats Handling', () => {
     /**
-     * @description Verifies high values (Lethality 35, AC 35, HP 1640) parse
+     * @description Verifies high values (Lethality 35, Defence 35, HP 1640) parse
      */
-    it('should handle extreme stat values (Lethality 35, high AC, massive HP)', async () => {
+    it('should handle extreme stat values (Lethality 35, high Defence, massive HP)', async () => {
       const filePath = path.join(FIXTURES_DIR, 'extreme-stats.sheet.mdx');
       const result = await parseMonsterFile(filePath, sharedData);
 
@@ -263,7 +263,7 @@ describe('Monster Metadata Generator', () => {
       const monster = result[0];
 
       expect(monster.cr).toBe('35');
-      expect(monster.ac.value).toBe(35);
+      expect(monster.defence.value).toBe(35);
       expect(monster.hp.average).toBe(1640);
     });
 

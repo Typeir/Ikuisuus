@@ -13,7 +13,6 @@
 import { NumericInput } from '@/lib/components/ui/numericInput';
 import { TextInput } from '@/lib/components/ui/textInput';
 import { Tooltip } from '@/lib/components/ui/tooltip';
-import { useDebounce } from '@/lib/hooks/useDebounce';
 import { useIsMobileViewport } from '@/lib/hooks/useMediaQuery';
 import type { CharacterShard } from '@/lib/types/character';
 import {
@@ -22,7 +21,7 @@ import {
   useSheetMutators,
 } from '@/modules/character-builder/application/context/activeSheetContext';
 import { getCharacterDerived } from '@/modules/character-builder/lib/utils/characterDerivation';
-import { computeBpSpent } from '@/modules/character-builder/lib/utils/boonPoints';
+import { computeBpStatus } from '@/modules/character-builder/application/builderCore/builderMetrics';
 import {
   getXPForLevel,
   getXpAxisPosition,
@@ -32,9 +31,10 @@ import {
 import { IconButton } from '@/lib/components/ui/iconButton';
 import btn from '@/styles/buttons.module.scss';
 import { useTranslations } from 'next-intl';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useMemo } from 'react';
 import { VocationSelector } from '../builder/vocationSelector';
 import styles from './characterSheetHeader.module.scss';
+import { useDebouncedXp } from './useDebouncedXp';
 
 /**
  * Sticky character-sheet header.
@@ -55,9 +55,10 @@ export const CharacterSheetHeader: React.FC = () => {
     saveEdit: onSave,
     cancelEdit: onCancel,
   } = useSheetMutators();
-  const bpSpent = useMemo(
-    () => computeBpSpent(data.selectedBoons as CharacterShard[]),
-    [data.selectedBoons],
+  const { spent: bpSpent, over: bpOver } = useMemo(
+    () =>
+      computeBpStatus(data.selectedBoons as CharacterShard[], data.boonBudget),
+    [data.selectedBoons, data.boonBudget],
   );
   const fullName = data.name || t('unnamedCharacter');
   const derived = useMemo(() => getCharacterDerived(data), [data]);
@@ -72,19 +73,10 @@ export const CharacterSheetHeader: React.FC = () => {
     unassignedLevels,
     hasUnassignedLevels,
   } = derived;
-  const [xpInput, setXpInput] = useState<number>(data.experience ?? 0);
-  const debouncedXp = useDebounce(xpInput, 300);
-  const xpChangedRef = useRef(false);
-
-  useEffect(() => {
-    setXpInput(data.experience ?? 0);
-  }, [data.experience]);
-
-  useEffect(() => {
-    if (!xpChangedRef.current) return;
-    xpChangedRef.current = false;
-    patchExperience(debouncedXp);
-  }, [debouncedXp, patchExperience]);
+  const { xpInput, onXpInput } = useDebouncedXp(
+    data.experience ?? 0,
+    patchExperience,
+  );
 
   return (
     <>
@@ -113,7 +105,10 @@ export const CharacterSheetHeader: React.FC = () => {
           <div className={styles.meta}>
             <span>{t('levelFull', { level: totalLevel })}</span>
             {editing && (
-              <label className={styles.metaEditLabel}>
+              <label
+                className={styles.metaEditLabel}
+                data-testid='builder-experience'
+                data-screenshot-action='set-experience'>
                 {t('xpLabel')}
                 <NumericInput
                   className={styles.metaEditInput}
@@ -121,29 +116,36 @@ export const CharacterSheetHeader: React.FC = () => {
                   min={0}
                   size='sm'
                   ariaLabel={t('ariaExperienceInput')}
-                  onChange={(v) => {
-                    xpChangedRef.current = true;
-                    setXpInput(v ?? 0);
-                  }}
+                  onChange={onXpInput}
                 />
               </label>
             )}
           </div>
 
-          <div className={styles.bpCounter} aria-label={t('ariaBoonBudget')}>
+          <div
+            className={styles.bpCounter}
+            data-over={bpOver || undefined}
+            data-testid='builder-bp-counter'
+            aria-label={t('ariaBoonBudget')}>
             {t('bpFormat', { spent: bpSpent, total: data.boonBudget })}
           </div>
 
           <div className={styles.headerActions}>
             {editing ? (
               <>
-                <button type='button' onClick={onSave}>
+                <button
+                  type='button'
+                  onClick={onSave}
+                  data-testid='builder-save'
+                  data-screenshot-action='save-edit'>
                   {tCommon('save')}
                 </button>
                 <button
                   type='button'
                   className={btn.neutral}
-                  onClick={onCancel}>
+                  onClick={onCancel}
+                  data-testid='builder-cancel'
+                  data-screenshot-action='cancel-edit'>
                   {tCommon('cancel')}
                 </button>
               </>
@@ -152,6 +154,8 @@ export const CharacterSheetHeader: React.FC = () => {
                 type='button'
                 className={btn.neutral}
                 onClick={onEdit}
+                data-testid='builder-edit'
+                data-screenshot-action='begin-edit'
                 aria-label={t('ariaEditCharacter')}>
                 {tCommon('edit')}
               </button>
@@ -164,7 +168,11 @@ export const CharacterSheetHeader: React.FC = () => {
         <div className={styles.xpTrackGroup}>
           {hasUnassignedLevels && (
             <div className={styles.warningRow}>
-              <span className={styles.warningBadge} role='alert'>
+              <span
+                className={styles.warningBadge}
+                role='alert'
+                data-testid='builder-flag'
+                data-flag-code='UNASSIGNED_LEVELS'>
                 {t('unassignedVocationsWarning', { count: unassignedLevels })}
               </span>
               <Tooltip
@@ -227,7 +235,9 @@ export const CharacterSheetHeader: React.FC = () => {
       {isMobile === true && (
         <div className={styles.commandStrip}>
           <span className={styles.commandStripMeta}>
-            <span className={styles.commandStripBp}>
+            <span
+              className={styles.commandStripBp}
+              data-over={bpOver || undefined}>
               {t('bpFormat', { spent: bpSpent, total: data.boonBudget })}
             </span>
           </span>

@@ -113,8 +113,8 @@ export const EquipmentTab: React.FC = () => {
             </thead>
             <tbody>
               {items.map((item, idx) => (
-                <tr key={item.id}>
-                  <td>
+                <tr key={item.id} data-testid={`builder-equipment-${idx}`}>
+                  <td data-screenshot-action='set-equipment-name'>
                     <TextInput
                       className={styles.equipmentInput}
                       value={item.name}
@@ -122,7 +122,7 @@ export const EquipmentTab: React.FC = () => {
                       disabled={!editing}
                     />
                   </td>
-                  <td>
+                  <td data-screenshot-action='set-equipment-quantity'>
                     <NumericInput
                       className={styles.equipmentNumInput}
                       value={item.quantity}
@@ -133,7 +133,7 @@ export const EquipmentTab: React.FC = () => {
                       onChange={(v) => updateItem(idx, { quantity: v ?? 0 })}
                     />
                   </td>
-                  <td>
+                  <td data-screenshot-action='set-equipment-weight'>
                     <NumericInput
                       className={styles.equipmentNumInput}
                       value={item.weightLb}
@@ -161,13 +161,17 @@ export const EquipmentTab: React.FC = () => {
             </table>
           </div>
           {editing && (
-            <IconButton
-              kind='add'
-              dashed
-              label={t('equipmentAddRowAria')}
-              onClick={addRow}>
-              {t('equipmentAddItem')}
-            </IconButton>
+            <span
+              data-testid='builder-equipment-add'
+              data-screenshot-action='add-equipment'>
+              <IconButton
+                kind='add'
+                dashed
+                label={t('equipmentAddRowAria')}
+                onClick={addRow}>
+                {t('equipmentAddItem')}
+              </IconButton>
+            </span>
           )}
 
           <h3 className={styles.sectionTitle}>{t('equipmentNotesTitle')}</h3>

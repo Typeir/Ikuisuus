@@ -27,6 +27,8 @@ import profTrackStyles from '../CharacterSheet/proficiencyTrack.module.scss';
  * @property {boolean} [readOnly=false] - If true, disables pip clicks
  * @property {string} [itemName='item'] - Name for tooltip key (e.g., skill name)
  * @property {TierLevel} [grantedFloor='none'] - Tier auto-granted by active features; those pips render in the granted style and cannot be toggled off
+ * @property {string} [testId] - Test id prefix; each pip gets `<testId>-<tier>`
+ * @property {string} [screenshotAction] - Checkpoint name on each pip
  */
 interface ProficiencyTrackProps {
   currentProficiency: TierLevel;
@@ -34,6 +36,8 @@ interface ProficiencyTrackProps {
   readOnly?: boolean;
   itemName?: string;
   grantedFloor?: TierLevel;
+  testId?: string;
+  screenshotAction?: string;
 }
 
 /**
@@ -46,6 +50,8 @@ interface ProficiencyTrackProps {
  * @param {boolean} [props.readOnly=false] - If true, disables pip clicks
  * @param {string} [props.itemName='item'] - Name for tooltip key (e.g., skill name)
  * @param {TierLevel} [props.grantedFloor='none'] - Tier auto-granted by active features; those pips render in the granted style and cannot be toggled off
+ * @param {string} [props.testId] - Test id prefix for the pips
+ * @param {string} [props.screenshotAction] - Checkpoint name on each pip
  * @returns {JSX.Element} - Rendered proficiency pip track
  */
 export function ProficiencyTrack({
@@ -54,6 +60,8 @@ export function ProficiencyTrack({
   readOnly = false,
   itemName = 'item',
   grantedFloor = 'none',
+  testId,
+  screenshotAction,
 }: ProficiencyTrackProps): JSX.Element {
   const levelIndex = TIER_CYCLE.indexOf(currentProficiency);
   const floorIndex = TIER_CYCLE.indexOf(grantedFloor);
@@ -97,6 +105,8 @@ export function ProficiencyTrack({
               type='button'
               disabled={readOnly || isGranted}
               className={profTrackStyles[dotClass]}
+              data-testid={testId ? `${testId}-${level}` : undefined}
+              data-screenshot-action={screenshotAction}
               onClick={() => handlePipClick(level)}
               aria-label={`${label.label} (${label.tooltip})`}
             />

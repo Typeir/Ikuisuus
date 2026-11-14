@@ -95,6 +95,9 @@ const nextConfig: NextConfig = {
   },
 };
 
+/** Test-only attributes stripped from production bundles. */
+const PRODUCTION_STRIPPED_PROPS = ['^data-testid$', '^data-screenshot-action$'];
+
 /**
  * Resolve Next.js config by phase; build-time fetch for dev/prod, runtime for others.
  *
@@ -107,7 +110,21 @@ function resolveConfig(
   phase: string,
   { defaultConfig }: { defaultConfig: NextConfig },
 ): NextConfig {
-  if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
+  if (phase === PHASE_PRODUCTION_BUILD) {
+    process.env.CONTENT_FETCH_MODE = "build";
+    return withBundleAnalyzerConfig(
+      withNextIntl(
+        withMdx({
+          ...nextConfig,
+          compiler: {
+            reactRemoveProperties: { properties: PRODUCTION_STRIPPED_PROPS },
+          },
+        }),
+      ),
+    );
+  }
+
+  if (phase === PHASE_DEVELOPMENT_SERVER) {
     process.env.CONTENT_FETCH_MODE = "build";
     return withBundleAnalyzerConfig(withNextIntl(withMdx(nextConfig)));
   }

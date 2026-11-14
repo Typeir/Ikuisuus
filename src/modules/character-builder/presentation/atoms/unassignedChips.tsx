@@ -12,9 +12,12 @@
 'use client';
 
 import { Tooltip } from '@/lib/components/ui/tooltip';
+import {
+  UNASSIGNED_LABELS as LABEL_KEYS,
+  unassignedGroupKey as groupKey,
+} from '@/modules/character-builder/application/builderCore/builderMetrics';
 import { useSheetData } from '@/modules/character-builder/application/context/activeSheetContext';
 import { unassignedByCategory } from '@/modules/character-builder/lib/utils/assignableGrants';
-import type { UnassignedGroup } from '@/modules/character-builder/lib/utils/assignableGrants';
 import type { GrantCategory } from '@/modules/character-builder/lib/utils/grants';
 import { useTranslations } from 'next-intl';
 import { memo, useMemo } from 'react';
@@ -22,34 +25,6 @@ import styles from './unassignedChips.module.scss';
 
 /** Number of distinct groups at which the row condenses into one summary pill. */
 const CONDENSE_AT = 3;
-
-/** Maps a `category:tier` group key to its ICU-plural text and aria label keys. */
-const LABEL_KEYS: Record<string, { text: string; aria: string }> = {
-  'skill:proficient': {
-    text: 'unassignedProficiencies',
-    aria: 'ariaUnassignedProficiencies',
-  },
-  'skill:expertise': {
-    text: 'unassignedExpertise',
-    aria: 'ariaUnassignedExpertise',
-  },
-  'trade:proficient': {
-    text: 'unassignedTrades',
-    aria: 'ariaUnassignedTrades',
-  },
-  'feat:': { text: 'unassignedFeats', aria: 'ariaUnassignedFeats' },
-};
-
-/**
- * Builds the label-lookup key for an unassigned group.
- *
- * @function groupKey
- * @param {UnassignedGroup} group - The unassigned group
- * @returns {string} `category:tier` key (tier omitted for feats)
- */
-function groupKey(group: UnassignedGroup): string {
-  return `${group.category}:${group.tier ?? ''}`;
-}
 
 /**
  * Props for `<UnassignedChips>`.
@@ -102,6 +77,8 @@ const UnassignedChipsImpl: React.FC<UnassignedChipsProps> = ({
         <Tooltip content={breakdown} placement='left'>
           <span
             className={`${styles.chip} ${styles.summary}`}
+            data-testid='builder-flag'
+            data-flag-code={groups.map((group) => LABEL_KEYS[groupKey(group)].code).join(' ')}
             role='status'
             tabIndex={0}
             aria-label={t('ariaUnassignedSummary')}>
@@ -120,6 +97,8 @@ const UnassignedChipsImpl: React.FC<UnassignedChipsProps> = ({
           <span
             key={groupKey(group)}
             className={styles.chip}
+            data-testid='builder-flag'
+            data-flag-code={keys.code}
             role='status'
             aria-label={t(keys.aria)}>
             {t(keys.text, { count: group.count })}

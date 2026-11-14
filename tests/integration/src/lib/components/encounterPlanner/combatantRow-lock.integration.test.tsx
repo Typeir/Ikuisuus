@@ -27,7 +27,7 @@ const createCombatant = (overrides: Partial<InProgressCombatant> = {}): InProgre
   hpMax: 100,
   hpMaxOverride: null,
   tempHp: null,
-  ac: 15,
+  defence: 15,
   stats: { str: 16, dex: 14, con: 16, int: 10, wis: 12, cha: 8 },
   conditions: [],
   initiativeValue: null,
@@ -47,12 +47,13 @@ const createCombatant = (overrides: Partial<InProgressCombatant> = {}): InProgre
     awakened: false,
     tier: 'none',
     affixes: [],
-    bonuses: { tierBonus: 0, acBonus: 0, savingThrowBonus: 0 },
+    bonuses: { tierBonus: 0, defenceBonus: 0, savingThrowBonus: 0 },
     hpOverride: null,
   },
-  mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: false },
+  mechanics: { lair: false, stratagem: false, legendaryDeed: false, resist: false, phase: false },
   legendaryDeedsUsed: [],
   resistRemaining: 0,
+  phaseDeeds: { wounded: false, bloodied: false, doomed: false },
   locked: [],
   ...overrides,
 });
@@ -117,7 +118,7 @@ describe('CombatantRow Lock Integration', () => {
   });
 
   describe('Input Disabling Based on Lock State', () => {
-    it('should disable AC input when stats is in locked array', () => {
+    it('should disable Defence input when stats is in locked array', () => {
       const combatant = createCombatant({ locked: ['stats'] });
 
       render(
@@ -129,8 +130,8 @@ describe('CombatantRow Lock Integration', () => {
         />
       );
 
-      const acInput = screen.getByLabelText('ac');
-      expect(acInput).toBeDisabled();
+      const defenceInput = screen.getByLabelText('defence');
+      expect(defenceInput).toBeDisabled();
     });
 
     it('should disable HP Max input when stats is in locked array', () => {
@@ -248,8 +249,8 @@ describe('CombatantRow Lock Integration', () => {
         />
       );
 
-      const acInput = screen.getByLabelText('ac') as HTMLInputElement;
-      expect(acInput.className).toContain('lockedInput');
+      const defenceInput = screen.getByLabelText('defence') as HTMLInputElement;
+      expect(defenceInput.className).toContain('lockedInput');
     });
 
     it('should NOT show locked styling on unlocked inputs', () => {
@@ -264,8 +265,8 @@ describe('CombatantRow Lock Integration', () => {
         />
       );
 
-      const acInput = screen.getByLabelText('ac') as HTMLInputElement;
-      expect(acInput.className).not.toContain('lockedInput');
+      const defenceInput = screen.getByLabelText('defence') as HTMLInputElement;
+      expect(defenceInput.className).not.toContain('lockedInput');
     });
   });
 
@@ -287,8 +288,8 @@ describe('CombatantRow Lock Integration', () => {
       );
 
       // Initial state: inputs should not be disabled
-      let acInput = screen.getByLabelText('ac') as HTMLInputElement;
-      expect(acInput).not.toBeDisabled();
+      let defenceInput = screen.getByLabelText('defence') as HTMLInputElement;
+      expect(defenceInput).not.toBeDisabled();
 
       // Click lock button to lock
       let lockButton = screen.getByRole('button', { name: /lock|unlock/i });
@@ -306,8 +307,8 @@ describe('CombatantRow Lock Integration', () => {
       );
 
       // Now inputs should be disabled
-      acInput = screen.getByLabelText('ac');
-      expect(acInput).toBeDisabled();
+      defenceInput = screen.getByLabelText('defence');
+      expect(defenceInput).toBeDisabled();
 
       // Click lock button again to unlock
       lockButton = screen.getByRole('button', { name: /lock|unlock/i });
@@ -325,13 +326,13 @@ describe('CombatantRow Lock Integration', () => {
       );
 
       // Inputs should be enabled again
-      acInput = screen.getByLabelText('ac');
-      expect(acInput).not.toBeDisabled();
+      defenceInput = screen.getByLabelText('defence');
+      expect(defenceInput).not.toBeDisabled();
     });
 
     it('should prevent editing locked inputs', async () => {
       const user = userEvent.setup();
-      const combatant = createCombatant({ ac: 15, locked: ['stats'] });
+      const combatant = createCombatant({ defence: 15, locked: ['stats'] });
 
       render(
         <CombatantRow
@@ -342,13 +343,13 @@ describe('CombatantRow Lock Integration', () => {
         />
       );
 
-      const acInput = screen.getByLabelText('ac') as HTMLInputElement;
+      const defenceInput = screen.getByLabelText('defence') as HTMLInputElement;
       
       // Try to type in locked input
-      await user.type(acInput, '20');
+      await user.type(defenceInput, '20');
       
       // Input should still have original value (disabled prevents input)
-      expect(acInput.value).toBe('15');
+      expect(defenceInput.value).toBe('15');
     });
 
     it('should allow editing unlocked inputs even when other fields are locked', async () => {
@@ -393,7 +394,7 @@ describe('CombatantRow Lock Integration', () => {
         />
       );
 
-      const acInput = screen.getByLabelText('ac');
+      const defenceInput = screen.getByLabelText('defence');
       const hpCurrentInputs = screen.getAllByDisplayValue('50');
       const hpCurrentInput = hpCurrentInputs[0];
 

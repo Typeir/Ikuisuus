@@ -35,6 +35,7 @@ npm test
 
 | Change           | Details                                                                                          | Doc                                                     |
 | ---------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| Builder Dev API  | `/api/dev/builder/*`, `window.ik.builder`, Playwright `builder` project. Gated by `IK_DEV_BUILDER` / `NEXT_PUBLIC_IK_DEV_BUILDER`, off in prod. Flags mirror UI flairs only; never block. | [Builder Dev API](.github/docs/builder-dev-api.md)      |
 | Prompt retirement | `.github/prompts/` removed. 4 workflows became skills (`add-component`, `add-metadata-type`, `add-test`, `check-damocles-lore-consistency`); 9 agent-owned prompts deleted. Authoring process moved to `.github/docs/damocles-authoring-playbook.md`. Metadata docs realigned to repositories and the `metadata-tables` module. | [Workflow](.github/docs/copilot-workflow-system.md)     |
 | Raster lib       | `sharp` lives behind `src/lib/raster/`. Compressor, OG cards and Foundry tokens share it. ESLint bans the bare import. | [Raster](.github/docs/raster-module.md)                 |
 | Copilot Workflow | A→B→C: Analyze → Gate → Reconcile. Agents, skills, hooks, checks.                                | [Workflow](.github/docs/copilot-workflow-system.md)     |
@@ -120,6 +121,7 @@ Live inspection in DevTools. Each subsystem registers short key.
 | -------------- | ---------------------- | ------------------------------------------- |
 | `window.ik.ws` | `SceneManager.start()` | World Sim controls (removed in `dispose()`) |
 | `window.ik.ui` | `PersistentUiProvider` mount | Persistent UI prefs: `aspectDisplay` (`compact`/`verbose`/`glyph`), `aspectExpanded`, `theme` — all RW, persisted |
+| `window.ik.builder` | `BuilderDevBridge` mount (needs `NEXT_PUBLIC_IK_DEV_BUILDER=1`, non-prod) | Builder test hooks: state, flags, patch, load, create, settle. See [Builder Dev API](.github/docs/builder-dev-api.md) |
 
 ### `window.ik.ws` Properties
 
@@ -157,6 +159,7 @@ Add module: Define in `src/lib/debug/ik.ts`. `registerIkModule('key', obj)` on m
 - [World Sim](.github/docs/world-sim-module.md)
 - [Foundry](.github/docs/foundry-module.md)
 - [Copilot Workflow](.github/docs/copilot-workflow-system.md)
+- [Builder Dev API](.github/docs/builder-dev-api.md)
 
 ### Workflow System
 
@@ -172,3 +175,13 @@ Add module: Define in `src/lib/debug/ik.ts`. `registerIkModule('key', obj)` on m
 
 - [Game Data](scripts/core/shared-data.json)
 - [Celestial Registry](src/lib/components/worldSim/data/blackCradleRegistry.json)
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

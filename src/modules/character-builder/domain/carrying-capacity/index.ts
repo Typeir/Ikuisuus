@@ -12,5 +12,9 @@ export {
     SIZE_MULTIPLIERS,
     STR_TABLE
 } from './constants';
-export type { CapacityThresholds, CreatureSize } from './types';
+export type {
+  CapacityThresholds,
+  CarryingInputs,
+  CreatureSize,
+} from './types';
 

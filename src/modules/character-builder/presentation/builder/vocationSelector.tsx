@@ -15,7 +15,13 @@ import { FilterSelect } from '@/lib/components/ui/filterSelect';
 import { useVocationMetadata } from '@/lib/hooks/data/useVocationMetadata';
 import { useVocationBaseSync } from './useVocationBaseSync';
 import type { VocationEntry } from '@/lib/types/character';
-import { UNKNOWN_DIE } from '@/lib/utils/diceUtils';
+import { trackBuilderTask } from '@/modules/character-builder/application/builderCore/builderActivity';
+import {
+  bloodlinePatch,
+  patchVocationAt,
+  specializationEntryPatch,
+  vocationEntryPatch,
+} from '@/modules/character-builder/application/builderCore/builderMutations';
 import {
   useSheetData,
   useSheetEditing,
@@ -100,32 +106,14 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
 
   const handleBloodlineChange = useCallback(
     (slug: string) => {
-      const bl = bloodlines.find((b) => b.slug === slug);
-      const rawSpeeds = bl?.coreFeatures?.movementSpeeds ?? [];
-      const walkEntry = rawSpeeds.find((s) =>
-        s.toLowerCase().startsWith('walk:'),
-      );
-      const parsedWalk = walkEntry
-        ? parseInt(walkEntry.replace(/[^0-9]/g, ''), 10) || null
-        : null;
-      onChange({
-        bloodlineSlug: slug || null,
-        bloodlineTitle: bl?.title ?? '',
-        boonBudget: bl?.boonBudget ?? 0,
-        selectedBoons: [],
-        bloodlineSpeeds: rawSpeeds,
-        speedOverride: parsedWalk,
-      });
+      onChange(bloodlinePatch(slug, bloodlines.find((b) => b.slug === slug)));
     },
     [bloodlines, onChange],
   );
 
   const patchVocationEntry = useCallback(
     (index: number, patch: Partial<VocationEntry>) => {
-      const updated = vocations.map((v, i) =>
-        i === index ? { ...v, ...patch } : v,
-      );
-      onChange({ vocations: updated });
+      onChange({ vocations: patchVocationAt(vocations, index, patch) });
     },
     [vocations, onChange],
   );
@@ -136,24 +124,18 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
     async (index: number, slug: string) => {
       const voc = vocOptions.find((v) => v.slug === slug);
       const vocationFeatures = voc
-        ? await fetchFeatureShards(
-            slug,
-            voc.file,
-            voc.features,
-            'vocation-feature',
-            'vocations',
-            locale,
+        ? await trackBuilderTask(
+            fetchFeatureShards(
+              slug,
+              voc.file,
+              voc.features,
+              'vocation-feature',
+              'vocations',
+              locale,
+            ),
           )
         : [];
-      patchVocationEntry(index, {
-        slug: slug || '',
-        title: voc?.title ?? '',
-        hitDie: voc?.hitDie ?? UNKNOWN_DIE,
-        vocationFeatures,
-        specializationSlug: null,
-        specializationTitle: '',
-        specializationFeatures: [],
-      });
+      patchVocationEntry(index, vocationEntryPatch(slug, voc, vocationFeatures));
     },
     [vocOptions, locale, patchVocationEntry],
   );
@@ -162,20 +144,21 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
     async (index: number, slug: string) => {
       const spec = specs.find((s) => s.slug === slug);
       const specializationFeatures = spec
-        ? await fetchFeatureShards(
-            slug,
-            spec.file,
-            spec.features,
-            'specialization-feature',
-            'specializations',
-            locale,
+        ? await trackBuilderTask(
+            fetchFeatureShards(
+              slug,
+              spec.file,
+              spec.features,
+              'specialization-feature',
+              'specializations',
+              locale,
+            ),
           )
         : [];
-      patchVocationEntry(index, {
-        specializationSlug: slug || null,
-        specializationTitle: spec?.title ?? '',
-        specializationFeatures,
-      });
+      patchVocationEntry(
+        index,
+        specializationEntryPatch(slug, spec, specializationFeatures),
+      );
     },
     [specs, locale, patchVocationEntry],
   );
@@ -227,7 +210,10 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
           <div className={styles.summaryBody}>
             <div className={styles.selectorRow}>
               <span className={styles.selectorLabel}>{t('colBloodline')}</span>
-              <div className={styles.selectorInput}>
+              <div
+                className={styles.selectorInput}
+                data-testid='builder-bloodline'
+                data-screenshot-action='select-bloodline'>
                 {isLoading ? (
                   <Skeleton variant='button' height='26px' />
                 ) : (
@@ -263,14 +249,18 @@ export const VocationSelector: React.FC<VocationSelectorProps> = ({
               ))}
             </div>
 
-            <IconButton
-              kind='add'
-              dashed
-              size='s'
-              onClick={handleAddVocation}
-              className={styles.addVocationBtn}>
-              {t('addVocation')}
-            </IconButton>
+            <span
+              data-testid='builder-vocation-add'
+              data-screenshot-action='add-vocation'>
+              <IconButton
+                kind='add'
+                dashed
+                size='s'
+                onClick={handleAddVocation}
+                className={styles.addVocationBtn}>
+                {t('addVocation')}
+              </IconButton>
+            </span>
           </div>
         )}
       </div>

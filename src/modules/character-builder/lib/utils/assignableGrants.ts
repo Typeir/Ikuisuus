@@ -152,7 +152,7 @@ function toChoice(grant: ParsedGrant): GrantChoice {
  * @param {GrantChoice} choice - The choice constraint
  * @returns {boolean} True when the key is an allowed target
  */
-function matchesChoice(key: string, choice: GrantChoice): boolean {
+export function matchesChoice(key: string, choice: GrantChoice): boolean {
   switch (choice.kind) {
     case 'specific':
       return key === choice.value;
